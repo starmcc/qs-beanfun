@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import java.lang.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.image.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.control.Hyperlink?>
+<?import javafx.scene.control.Separator?>
+<?import javafx.scene.image.ImageView?>
+<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.text.*?>
+
+<AnchorPane prefHeight="207.0" prefWidth="367.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1"
+            fx:controller="com.starmcc.beanfun.controller.AboutController">
+    <children>
+        <Text fill="RED" layoutX="7.0" layoutY="81.0" strokeType="OUTSIDE" strokeWidth="0.0"
+              text="本工具不是游戏橘子数位科技开发的官方客户端程序" wrappingWidth="347.240234375">
+            <font>
+                <Font size="15.0"/>
+            </font>
+        </Text>
+        <Text fill="#0062ff" layoutX="47.0" layoutY="109.0" strokeType="OUTSIDE" strokeWidth="0.0"
+              text="关于使用本工具请确保下载途径是否安全" wrappingWidth="274.240234375">
+            <font>
+                <Font size="15.0"/>
+            </font>
+        </Text>
+        <Text fill="#0ca118" layoutX="54.0" layoutY="142.0" strokeType="OUTSIDE" strokeWidth="0.0"
+              text="程序实现方式参考Beanfun缤放登录器" wrappingWidth="259.240234375">
+            <font>
+                <Font size="15.0"/>
+            </font>
+        </Text>
+        <Text layoutX="114.0" layoutY="188.0" strokeType="OUTSIDE" strokeWidth="0.0" text="联系开发者："
+              wrappingWidth="94.240234375">
+            <font>
+                <Font size="15.0"/>
+            </font>
+        </Text>
+        <Separator disable="true" focusTraversable="false" layoutX="1.0" layoutY="158.0" prefHeight="2.0"
+                   prefWidth="366.0"/>
+        <Hyperlink focusTraversable="false" layoutX="208.0" layoutY="168.0" onAction="#contactQqAction"
+                   text="QQ：1140526018">
+            <font>
+                <Font size="15.0"/>
+            </font>
+        </Hyperlink>
+        <ImageView fx:id="logoImg" fitHeight="40.0" fitWidth="200.0" layoutX="14.0" layoutY="15.0" pickOnBounds="true"
+                   preserveRatio="true"/>
+        <Text layoutX="232.0" layoutY="49.0" strokeType="OUTSIDE" strokeWidth="0.0" text="版本">
+            <font>
+                <Font size="15.0"/>
+            </font>
+        </Text>
+        <Hyperlink fx:id="versionBtn" alignment="CENTER" focusTraversable="false" layoutX="270.0" layoutY="33.0"
+                   onAction="#verifyVersionAction" prefHeight="21.0" prefWidth="94.0" textAlignment="CENTER"/>
+    </children>
+</AnchorPane>
