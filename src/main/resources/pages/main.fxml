@@ -16,7 +16,7 @@
                                        text="窗口置顶"/>
                         <CheckMenuItem fx:id="autoLunShaoMenu" mnemonicParsing="false" onAction="#autoLunShaoAction"
                                        text="自动轮烧"/>
-                        <MenuItem mnemonicParsing="false" onAction="#openEquipmentCalcWindowMenu" text="装备计算器(未开放)"/>
+                        <MenuItem mnemonicParsing="false" onAction="#openEquipmentCalcWindowMenu" text="装备计算器"/>
                         <MenuItem mnemonicParsing="false" onAction="#updateRateMenu" text="更新汇率"/>
                         <MenuItem mnemonicParsing="false" onAction="#setIEcompatibilityViewAction" text="一键设置IE兼容"/>
                         <MenuItem mnemonicParsing="false" onAction="#exitApplicationAction" text="退出"/>
