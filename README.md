@@ -20,7 +20,7 @@
 
 如果你没有Java环境，可以去下载
 
-[**Jre1.8 x86 Offline Installer**](https://www.oracle.com/java/technologies/downloads/#jre8-windows)
+[**JRE1.8 x86 Offline Installer**](https://www.oracle.com/java/technologies/downloads/#jre8-windows)
 
 傻瓜式安装，请下载`QsBeanfun-install.exe`进行安装即可。
 
@@ -43,7 +43,7 @@
 ## 运行环境
 
 - Windows7 以上
-- [JRE 1.8 32位(install已包含)](https://www.oracle.com/java/technologies/downloads/#java8-windows)
+- [**JRE1.8 x86 Offline Installer**](https://www.oracle.com/java/technologies/downloads/#jre8-windows)
 - [Microsoft Visual C++ Redistributable VC环境](https://aka.ms/vs/17/release/vc_redist.x64.exe)
 - [橘子官方Beanfun插件](http://hk.download.beanfun.com/beanfun20/beanfun_2_0_93_170_hk.exe)
 
