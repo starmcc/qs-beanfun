@@ -8,7 +8,7 @@
 
 开源遵循MIT协议，如遇到问题或 Bug 欢迎提交 Issues。
 
-## 下载
+## 下载安装使用
 
 [Releases](https://github.com/starmcc/qs-beanfun/releases)
 
@@ -22,7 +22,15 @@
 
 [**JRE1.8 x86 Offline Installer**](https://www.oracle.com/java/technologies/downloads/#jre8-windows)
 
-傻瓜式安装，请下载`QsBeanfun-install.exe`进行安装即可。
+**傻瓜式安装，请下载`QsBeanfun-install.exe`进行安装即可。**
+
+下载安装后，直接运行即可。
+
+第一次运行如未安装橘子官方Beanfun插件则会提示下载。
+
+游戏会在系统用户目录释放依赖文件
+
+目录一般为`C:\Users\用户名\QsBeanfun`
 
 ## 工具更新
 
@@ -47,16 +55,6 @@
 - [Microsoft Visual C++ Redistributable VC环境](https://aka.ms/vs/17/release/vc_redist.x64.exe)
 - [橘子官方Beanfun插件](http://hk.download.beanfun.com/beanfun20/beanfun_2_0_93_170_hk.exe)
 
-## 使用
-
-下载安装后，直接运行即可。
-
-第一次运行如未安装橘子官方Beanfun插件则会提示下载。
-
-游戏会在系统用户目录释放依赖文件
-
-目录一般为`C:\Users\用户名\QsBeanfun`
-
 ## 依赖
 
 - JNA - Java 调用DLL支持
@@ -65,7 +63,7 @@
 - apache - httpclient HTTP请求支持
 - eclipse.swt 内置IE浏览器支持
 - [LR区域模拟元件支持](https://github.com/InWILL/Locale_Remulator)
-- 易语言调用`Beanfun`插件支持[BFService]
+- 易语言调用`Beanfun`插件支持 **BFService**
 
 ## 打包
 

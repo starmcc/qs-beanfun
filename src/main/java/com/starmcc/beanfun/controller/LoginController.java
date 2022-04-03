@@ -2,6 +2,7 @@ package com.starmcc.beanfun.controller;
 
 import com.starmcc.beanfun.client.BeanfunClient;
 import com.starmcc.beanfun.constant.QsConstant;
+import com.starmcc.beanfun.exception.BFServiceNotFondException;
 import com.starmcc.beanfun.handler.AccountHandler;
 import com.starmcc.beanfun.model.ConfigJson;
 import com.starmcc.beanfun.model.QsTray;
@@ -111,18 +112,28 @@ public class LoginController implements Initializable {
 
         // 执行登录方法
         FrameUtils.executeThread(() -> {
+            String err = "";
             try {
-                if (BeanfunClient.login(account.getValue(), password.getText())) {
-                    if (BeanfunClient.getAccountList()) {
-                        Platform.runLater(() -> loginSuccessGoMain());
-                        return;
-                    }
+                if (BeanfunClient.login(account.getValue(), password.getText()) && BeanfunClient.getAccountList()) {
+                    Platform.runLater(() -> loginSuccessGoMain());
+                    return;
                 }
-                loginning(false);
-                // 提示信息框
-                Platform.runLater(() -> QsConstant.alert(BeanfunClient.errorMsg, Alert.AlertType.ERROR));
+            } catch (BFServiceNotFondException e) {
+                // 没安装beanfun插件 提示一下，并前往下载
+                if (QsConstant.confirmDialog("初始化失败!没有安装Beanfun插件!是否前往下载?")) {
+                    FrameUtils.openWebUrl("http://hk.download.beanfun.com/beanfun20/beanfun_2_0_93_170_hk.exe");
+                }
             } catch (Exception e) {
                 log.info("login error e={}", e.getMessage(), e);
+                err = e.getMessage();
+            }
+            loginning(false);
+            // 提示信息框
+            if (StringUtils.isNotBlank(BeanfunClient.errorMsg)) {
+                Platform.runLater(() -> QsConstant.alert(BeanfunClient.errorMsg, Alert.AlertType.ERROR));
+            } else {
+                final String errTmp = err;
+                Platform.runLater(() -> QsConstant.alert("异常:" + errTmp, Alert.AlertType.ERROR));
             }
         });
     }
@@ -168,7 +179,7 @@ public class LoginController implements Initializable {
             // 窗口显示
             FrameUtils.openWindow(QsConstant.Page.主界面, jfxStage -> {
                 jfxStage.setCloseEvent(() -> {
-                    if (Objects.nonNull(QsConstant.heartExecutorService)){
+                    if (Objects.nonNull(QsConstant.heartExecutorService)) {
                         QsConstant.heartExecutorService.shutdown();
                     }
                     Platform.exit();

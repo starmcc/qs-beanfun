@@ -8,7 +8,7 @@ public interface BaseBFService {
      *
      * @return int
      */
-    int initialize2();
+    boolean initialize2();
 
 
     /**

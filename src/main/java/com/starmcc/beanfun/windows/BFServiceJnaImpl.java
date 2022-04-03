@@ -7,8 +7,12 @@ public class BFServiceJnaImpl implements BaseBFService {
 
 
     @Override
-    public int initialize2() {
-        return BFServiceX.RUN.initialize2("HK;Production", "", "", 0, "");
+    public boolean initialize2() {
+        if (!BFServiceX.RUN.loadState()){
+            return false;
+        }
+        BFServiceX.RUN.initialize2("HK;Production", "", "", 0, "");
+        return true;
     }
 
     @Override
@@ -127,6 +131,12 @@ public class BFServiceJnaImpl implements BaseBFService {
          */
         String getVersion();
 
+        /**
+         * 加载状态
+         *
+         * @return boolean
+         */
+        boolean loadState();
     }
 
 }

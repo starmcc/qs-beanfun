@@ -6,3 +6,4 @@ log/
 target/
 .idea
 qs-beanfun-logs/
+*.bak

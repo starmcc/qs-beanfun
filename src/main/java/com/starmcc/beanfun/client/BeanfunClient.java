@@ -2,6 +2,7 @@ package com.starmcc.beanfun.client;
 
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
+import com.starmcc.beanfun.exception.BFServiceNotFondException;
 import com.starmcc.beanfun.model.Account;
 import com.starmcc.beanfun.model.ReqParams;
 import com.starmcc.beanfun.utils.DataTools;
@@ -46,7 +47,11 @@ public class BeanfunClient {
             return false;
         }
         loginProcess = 0;
-        BaseBFService.getInstance().initialize2();
+        boolean load = BaseBFService.getInstance().initialize2();
+        if (!load) {
+            errorMsg = "未安装Beanfun插件!";
+            throw new BFServiceNotFondException();
+        }
         loginProcess = 0.2D;
         // 1. 请求获取OTP
         String url = "";
