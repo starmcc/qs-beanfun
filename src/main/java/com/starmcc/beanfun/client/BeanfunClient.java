@@ -205,6 +205,7 @@ public class BeanfunClient {
      */
     public static String getDynamicPassword(Account account) throws Exception {
         if (Objects.isNull(account) || StringUtils.isBlank(account.getId())) {
+            errorMsg = "获取动态密码失败 无账号信息!";
             log.error("获取动态密码 account is null or accountId is null");
             return "";
         }
@@ -385,11 +386,13 @@ public class BeanfunClient {
     private static String decrDesPkcs5Hex(String text) {
         log.debug("开始解密 val={}", text);
         if (StringUtils.isBlank(text)) {
+            errorMsg = "解密失败 空的解密值!";
             log.error("解密失败 val is null");
             return "";
         }
         String[] split = text.split(";");
         if (ArrayUtils.isEmpty(split) || split.length < 2) {
+            errorMsg = "解密失败 解析错误!";
             log.error("解密失败 val arr is empty or arr length < 2");
             return "";
         }
@@ -399,6 +402,7 @@ public class BeanfunClient {
             return DesUtils.decrypt(deVal, key);
         } catch (Exception e) {
             log.error("解密失败 e={}", e.getMessage());
+            errorMsg = "解密异常:" + e.getMessage();
             return "";
         }
     }

@@ -24,7 +24,6 @@ import javafx.stage.FileChooser;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.BooleanUtils;
 import org.apache.commons.lang3.StringUtils;
-import org.apache.commons.lang3.concurrent.BasicThreadFactory;
 
 import java.io.File;
 import java.math.BigDecimal;
@@ -33,9 +32,6 @@ import java.text.MessageFormat;
 import java.text.SimpleDateFormat;
 import java.util.Objects;
 import java.util.ResourceBundle;
-import java.util.concurrent.ScheduledExecutorService;
-import java.util.concurrent.ScheduledThreadPoolExecutor;
-import java.util.concurrent.TimeUnit;
 
 
 /**
@@ -508,6 +504,10 @@ public class MainController implements Initializable {
         FrameUtils.executeThread(() -> {
             try {
                 String dynamicPassword = BeanfunClient.getDynamicPassword(this.nowAccount);
+                if (StringUtils.isBlank(dynamicPassword)) {
+                    Platform.runLater(() -> QsConstant.alert(BeanfunClient.errorMsg, Alert.AlertType.ERROR));
+                    return;
+                }
                 actDynamicPwd.setText(dynamicPassword);
                 log.debug("动态密码 ={}", dynamicPassword);
                 Platform.runLater(() -> getPassword.setDisable(false));
@@ -516,6 +516,7 @@ public class MainController implements Initializable {
                 }
             } catch (Exception e) {
                 log.error("获取密码失败 e={}", e.getMessage(), e);
+                Platform.runLater(() -> QsConstant.alert("获取动态密码异常:" + e.getMessage(), Alert.AlertType.ERROR));
             }
         });
     }
