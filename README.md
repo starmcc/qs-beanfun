@@ -14,9 +14,15 @@
 
 点击上方进入下载页面
 
-如果您拥有Java环境，直接下载`QsBeanfun.exe`即可。
+如果您拥有Java环境
 
-如果您是想简单的使用(没有Java环境)，请下载`QsBeanfun-install.exe`进行安装即可。
+直接下载`QsBeanfun.exe`即可。
+
+如果你没有Java环境，可以去下载
+
+[**Jre1.8 x86 Offline Installer**](https://www.oracle.com/java/technologies/downloads/#jre8-windows)
+
+傻瓜式安装，请下载`QsBeanfun-install.exe`进行安装即可。
 
 ## 工具更新
 
