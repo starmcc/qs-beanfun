@@ -112,29 +112,24 @@ public class LoginController implements Initializable {
 
         // 执行登录方法
         FrameUtils.executeThread(() -> {
-            String err = "";
             try {
                 if (BeanfunClient.login(account.getValue(), password.getText()) && BeanfunClient.getAccountList()) {
                     Platform.runLater(() -> loginSuccessGoMain());
                     return;
                 }
+                Platform.runLater(() -> QsConstant.alert(BeanfunClient.errorMsg, Alert.AlertType.ERROR));
             } catch (BFServiceNotFondException e) {
                 // 没安装beanfun插件 提示一下，并前往下载
-                if (QsConstant.confirmDialog("初始化失败!没有安装Beanfun插件!是否前往下载?")) {
-                    FrameUtils.openWebUrl("http://hk.download.beanfun.com/beanfun20/beanfun_2_0_93_170_hk.exe");
-                }
+                Platform.runLater(() -> {
+                    if (QsConstant.confirmDialog("初始化失败!没有安装Beanfun插件!是否前往下载?")) {
+                        SwtWebBrowser.getInstance("https://hk.beanfun.com/locales/HK/contents/beanfun_block/help/plugin_install.html").open();
+                    }
+                });
             } catch (Exception e) {
                 log.info("login error e={}", e.getMessage(), e);
-                err = e.getMessage();
+                Platform.runLater(() -> QsConstant.alert("异常:" + e.getMessage(), Alert.AlertType.ERROR));
             }
             loginning(false);
-            // 提示信息框
-            if (StringUtils.isNotBlank(BeanfunClient.errorMsg)) {
-                Platform.runLater(() -> QsConstant.alert(BeanfunClient.errorMsg, Alert.AlertType.ERROR));
-            } else {
-                final String errTmp = err;
-                Platform.runLater(() -> QsConstant.alert("异常:" + errTmp, Alert.AlertType.ERROR));
-            }
         });
     }
 

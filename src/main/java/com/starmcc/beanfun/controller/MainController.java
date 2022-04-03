@@ -286,7 +286,6 @@ public class MainController implements Initializable {
     @FXML
     public void memberTopUpAction(ActionEvent actionEvent) {
         FrameUtils.executeThread(() -> SwtWebBrowser.getInstance(BeanfunClient.getWebUrlMemberTopUp()).open());
-
     }
 
 
