@@ -16,7 +16,7 @@
 
 如果您拥有Java环境，直接下载`QsBeanfun.exe`即可。
 
-如果您是想简单的使用，请下载`QsBeanfun-install.exe`进行安装即可。
+如果您是想简单的使用(没有Java环境)，请下载`QsBeanfun-install.exe`进行安装即可。
 
 ## 工具更新
 
