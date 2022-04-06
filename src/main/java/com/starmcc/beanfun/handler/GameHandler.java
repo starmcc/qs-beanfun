@@ -5,6 +5,8 @@ import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.BooleanUtils;
 import org.apache.commons.lang3.StringUtils;
 
+import java.io.File;
+
 /**
  * 游戏处理程序
  *
@@ -27,7 +29,7 @@ public class GameHandler {
         log.info("执行命令 runGame = {}", cmd[2]);
 
         try {
-            Runtime.getRuntime().exec(cmd);
+            Runtime.getRuntime().exec(cmd, null, new File(gamePath).getParentFile());
         } catch (Exception e) {
             log.error("运行异常 e={}", e.getMessage(), e);
         }
