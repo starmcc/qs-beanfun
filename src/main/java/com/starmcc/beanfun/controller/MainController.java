@@ -449,6 +449,7 @@ public class MainController implements Initializable {
      * @return {@link String}
      */
     private String getPointsText() {
+        log.debug("正在获取游戏点数...");
         String template = "{0}点[游戏内:{1}]";
         int gamePoints = 0;
         try {
@@ -485,6 +486,12 @@ public class MainController implements Initializable {
         updatePointsBtn.setDisable(true);
         // 获取游戏点数
         FrameUtils.executeThread(() -> {
+            try {
+                // 2秒后再执行
+                Thread.sleep(2000);
+            } catch (InterruptedException e) {
+                log.error("线程异常 e={}", e.getMessage(), e);
+            }
             String pointsText = getPointsText();
             Platform.runLater(() -> {
                 actPoints.setText(pointsText);
