@@ -85,7 +85,7 @@ public class FrameUtils {
 
     public static void executeThread(Runnable runnable) {
         if (Objects.isNull(THREAD_POOL) || THREAD_POOL.isShutdown()) {
-            THREAD_POOL = new ThreadPoolExecutor(1, 6,
+            THREAD_POOL = new ThreadPoolExecutor(3, 6,
                     0L, TimeUnit.MILLISECONDS,
                     new LinkedBlockingQueue<Runnable>(1024),
                     new BasicThreadFactory.Builder().namingPattern("FrameUtils-schedule-pool-%d").daemon(true).build(),
