@@ -121,7 +121,7 @@ public class LoginController implements Initializable {
             } catch (BFServiceNotFondException e) {
                 // 没安装beanfun插件 提示一下，并前往下载
                 Platform.runLater(() -> {
-                    if (QsConstant.confirmDialog("初始化失败!没有安装Beanfun插件!是否前往下载?")) {
+                    if (QsConstant.confirmDialog("初始化失败", "初始化失败!没有安装Beanfun插件!是否前往下载?")) {
                         SwtWebBrowser.getInstance("https://hk.beanfun.com/locales/HK/contents/beanfun_block/help/plugin_install.html").open();
                     }
                 });

@@ -3,11 +3,13 @@ package com.starmcc.beanfun;
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.TypeReference;
 import com.starmcc.beanfun.client.BeanfunClient;
+import com.starmcc.beanfun.client.UpdateClient;
 import com.starmcc.beanfun.constant.QsConstant;
 import com.starmcc.beanfun.model.ConfigJson;
+import com.starmcc.beanfun.model.UpdateModel;
+import com.starmcc.beanfun.utils.ConfigFileUtils;
 import com.starmcc.beanfun.utils.DataTools;
 import com.starmcc.beanfun.utils.FrameUtils;
-import com.starmcc.beanfun.utils.ConfigFileUtils;
 import javafx.application.Application;
 import javafx.application.Platform;
 import javafx.stage.Stage;
@@ -72,6 +74,16 @@ public class QsBeanfunApplication extends Application {
             QsConstant.loginJFXStage = jfxStage;
         });
         log.info("QsBeanfun 启动成功..");
+        FrameUtils.executeThread(() -> {
+            UpdateModel versionModel = UpdateClient.getInstance().getVersionModel();
+            Platform.runLater(() -> {
+                if (versionModel.getState() == UpdateModel.State.有新版本) {
+                    if (QsConstant.confirmDialog("是否前往更新？", versionModel.getTips())) {
+                        FrameUtils.openWebUrl("https://github.com/starmcc/qs-beanfun/releases");
+                    }
+                }
+            });
+        });
     }
 
 

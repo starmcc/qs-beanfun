@@ -34,7 +34,7 @@ public class AutoLunShaoHandler {
      * 开始
      */
     public static boolean start() {
-        if (!QsConstant.confirmDialog(RUN_TIPS)) {
+        if (!QsConstant.confirmDialog("自动轮烧", RUN_TIPS)) {
             return false;
         }
         // 启动轮烧
@@ -73,7 +73,7 @@ public class AutoLunShaoHandler {
         long time = System.currentTimeMillis() - runTime.getTime();
         String dateStr = getDateDHMS(time);
 
-        if (!QsConstant.confirmDialog("当前已运行\n" + dateStr + "\n是否停止自动轮烧?")) {
+        if (!QsConstant.confirmDialog("自动轮烧", "当前已运行\n" + dateStr + "\n是否停止自动轮烧?")) {
             return false;
         }
         // 停止轮烧

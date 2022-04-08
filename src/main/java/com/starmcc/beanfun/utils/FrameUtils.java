@@ -63,7 +63,7 @@ public class FrameUtils {
             build.accept(jfxStage);
         }
         jfxStage.build(() -> {
-            log.info("点击了关闭按钮");
+            log.info("关闭");
             if (Objects.nonNull(THREAD_POOL)) {
                 THREAD_POOL.shutdownNow();
                 THREAD_POOL = null;
@@ -87,7 +87,7 @@ public class FrameUtils {
         if (Objects.isNull(THREAD_POOL) || THREAD_POOL.isShutdown()) {
             THREAD_POOL = new ThreadPoolExecutor(1, 6,
                     0L, TimeUnit.MILLISECONDS,
-                    new LinkedBlockingQueue<Runnable>(1024),
+                    new LinkedBlockingQueue<Runnable>(2048),
                     new BasicThreadFactory.Builder().namingPattern("FrameUtils-schedule-pool-%d").daemon(true).build(),
                     new ThreadPoolExecutor.AbortPolicy());
         }

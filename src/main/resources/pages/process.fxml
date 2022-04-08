@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import java.lang.*?>
+<?import java.util.*?>
+<?import javafx.scene.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+
+<AnchorPane fx:controller="com.starmcc.beanfun.controller.ProcessController" prefHeight="70.0" prefWidth="300.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1">
+   <children>
+      <ProgressBar fx:id="progress" layoutX="17.0" layoutY="35.0" prefHeight="29.0" prefWidth="267.0" progress="0.0" />
+      <Label fx:id="percentLabel" alignment="CENTER_RIGHT" layoutX="247.0" layoutY="16.0" prefHeight="15.0" prefWidth="38.0" text="0%" />
+      <Label fx:id="tipsLabel" layoutX="18.0" layoutY="16.0" prefHeight="15.0" prefWidth="189.0" />
+   </children>
+</AnchorPane>

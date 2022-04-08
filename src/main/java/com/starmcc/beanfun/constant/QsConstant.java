@@ -82,6 +82,7 @@ public class QsConstant {
         主界面("main", "QsBeanfun"),
         关于我("about", "QsBeanfun"),
         装备计算器("equipment", "装备计算器"),
+        更新页面("process", "正在更新"),
 
         ;
 
@@ -144,10 +145,11 @@ public class QsConstant {
      * @param tips 提示
      * @return boolean
      */
-    public static boolean confirmDialog(String tips) {
+    public static boolean confirmDialog(String title, String tips) {
         Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
-        alert.setTitle("");
-        alert.setHeaderText(tips);
+        alert.setTitle(title);
+        alert.setHeaderText("");
+        alert.setContentText(tips);
         return alert.showAndWait().get() == ButtonType.OK;
     }
 
