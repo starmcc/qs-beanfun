@@ -28,7 +28,11 @@ public class AutoLunShaoHandler {
 
     private static Date runTime;
 
-    private static final String RUN_TIPS = "是否启动自动轮烧？\n请将轮回放置在B键，燃烧放置在N键\n点击确定，将在5秒后启动...";
+    private static final String RUN_TIPS = "是否启动自动轮烧？\n禁止商业用途\n" +
+            "轮回技能放置在[B]键\n" +
+            "燃烧技能放置在[N]键\n" +
+            "点击确定后，将在5秒后启动...\n" +
+            "再次点击会停止,会显示使用时长";
 
     /**
      * 开始
@@ -72,8 +76,9 @@ public class AutoLunShaoHandler {
         }
         long time = System.currentTimeMillis() - runTime.getTime();
         String dateStr = getDateDHMS(time);
-
-        if (!QsConstant.confirmDialog("自动轮烧", "当前已运行\n" + dateStr + "\n是否停止自动轮烧?")) {
+        StringBuffer tips = new StringBuffer();
+        tips.append("当前已运行\n").append(dateStr).append("\n是否现在停止？");
+        if (!QsConstant.confirmDialog("自动轮烧", tips.toString())) {
             return false;
         }
         // 停止轮烧
