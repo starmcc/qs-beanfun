@@ -14,6 +14,7 @@ import com.starmcc.beanfun.utils.RegexUtils;
 import com.starmcc.beanfun.windows.SwtWebBrowser;
 import javafx.application.Platform;
 import javafx.beans.value.ObservableValue;
+import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
@@ -103,11 +104,12 @@ public class MainController implements Initializable {
         gamePath.setText(QsConstant.config.getGamePath());
         addActBtn.setVisible(BeanfunClient.isNewAccount);
         addActMenu.setVisible(BeanfunClient.isNewAccount);
-        if (!BeanfunClient.isNewAccount) {
-            ObservableList<Account> accounts = actList.getItems();
-            BeanfunClient.accountList.forEach(account -> accounts.add(account));
-            actList.getSelectionModel().selectFirst();
-            selectAccount();
+        if (BeanfunClient.isNewAccount) {
+            // 新用户
+            QsConstant.alert("新账号请点击创建账号!", Alert.AlertType.INFORMATION);
+        } else {
+            // 旧用户
+            initAccountComboBox(null);
         }
         this.initEvent();
     }
@@ -243,26 +245,28 @@ public class MainController implements Initializable {
     public void addActAction(ActionEvent actionEvent) {
         String name = QsConstant.textDialog("添加账号", "");
         if (StringUtils.isBlank(name)) {
-            QsConstant.alert("不能是空的哦", Alert.AlertType.WARNING);
             return;
         }
         addActBtn.setDisable(true);
-        try {
-            if (BeanfunClient.addAccount(name)) {
-                BeanfunClient.getAccountList();
-                ObservableList<Account> accounts = actList.getItems();
-                BeanfunClient.accountList.forEach(account -> accounts.add(account));
-                actList.getSelectionModel().selectFirst();
-                selectAccount();
-                QsConstant.alert("添加成功!", Alert.AlertType.INFORMATION);
-                addActBtn.setVisible(false);
-            } else {
-                QsConstant.alert("添加失败!", Alert.AlertType.WARNING);
+        FrameUtils.executeThread(() -> {
+            try {
+                if (BeanfunClient.addAccount(name)) {
+                    BeanfunClient.getAccountList();
+                    initAccountComboBox(() -> {
+                        QsConstant.alert("创建成功!", Alert.AlertType.INFORMATION);
+                        addActBtn.setVisible(false);
+                    });
+                    return;
+                }
+            } catch (Exception e) {
+                log.error("添加账号异常 e={}", e.getMessage(), e);
             }
-        } catch (Exception e) {
-            log.error("添加账号异常 e={}", e.getMessage(), e);
-        }
-        addActBtn.setDisable(false);
+            Platform.runLater(() -> QsConstant.alert("创建失败!", Alert.AlertType.WARNING));
+
+            addActBtn.setDisable(false);
+        });
+
+
     }
 
     /**
@@ -272,11 +276,21 @@ public class MainController implements Initializable {
     public void editActAction(ActionEvent actionEvent) {
         String newName = QsConstant.textDialog("编辑账号", this.nowAccount.getName());
         if (StringUtils.isBlank(newName)) {
-            QsConstant.alert("不能是空的哦", Alert.AlertType.WARNING);
             return;
         }
         String id = this.nowAccount.getId();
-        FrameUtils.executeThread(() -> editAccountThreadRun(id, newName));
+        FrameUtils.executeThread(() -> {
+            try {
+                if (BeanfunClient.changeAccountName(id, newName)) {
+                    BeanfunClient.getAccountList();
+                    initAccountComboBox(() -> QsConstant.alert("编辑成功!", Alert.AlertType.INFORMATION));
+                    return;
+                }
+            } catch (Exception e) {
+                log.error("编辑账号异常 e={}", e.getMessage(), e);
+            }
+            Platform.runLater(() -> QsConstant.alert("编辑失败!", Alert.AlertType.WARNING));
+        });
     }
 
     @FXML
@@ -417,29 +431,18 @@ public class MainController implements Initializable {
     // =============================================== 私有方法 =================================
 
     /**
-     * 编辑帐户线程运行
-     *
-     * @param newName 新名字
+     * 初始化账户组合框
      */
-    private void editAccountThreadRun(String id, String newName) {
-        try {
-            if (BeanfunClient.changeAccountName(id, newName)) {
-                Platform.runLater(() -> {
-                    QsConstant.alert("编辑成功!", Alert.AlertType.INFORMATION);
-                    SingleSelectionModel<Account> selectionModel = actList.getSelectionModel();
-                    Account account = selectionModel.getSelectedItem();
-                    account.setName(newName);
-                    selectionModel.clearSelection();
-                    selectionModel.select(account);
-                    this.nowAccount.setName(newName);
-                });
-                BeanfunClient.getAccountList();
-            } else {
-                Platform.runLater(() -> QsConstant.alert("编辑失败!", Alert.AlertType.WARNING));
+    private void initAccountComboBox(Runnable runnable) {
+        Platform.runLater(() -> {
+            ObservableList<Account> options = FXCollections.observableArrayList();
+            BeanfunClient.accountList.forEach(account -> options.add(account));
+            actList.setItems(options);
+            actList.getSelectionModel().selectFirst();
+            if (Objects.nonNull(runnable)) {
+                runnable.run();
             }
-        } catch (Exception e) {
-            log.error("编辑账号异常 e={}", e.getMessage(), e);
-        }
+        });
     }
 
 
@@ -473,6 +476,9 @@ public class MainController implements Initializable {
         SingleSelectionModel<Account> selectionModel = actList.getSelectionModel();
         // 保存当前账号
         this.nowAccount = selectionModel.getSelectedItem();
+        if (Objects.isNull(this.nowAccount)) {
+            return;
+        }
         // 设置账号状态
         String statusText = BooleanUtils.isTrue(this.nowAccount.getStatus()) ? "正常" : "禁止";
         Color statusColor = BooleanUtils.isTrue(this.nowAccount.getStatus()) ? Color.GREEN : Color.RED;

@@ -287,6 +287,7 @@ public class BeanfunClient {
         params.put("sc", "610074");
         params.put("sr", "T9");
         params.put("sadn", newName);
+        params.put("sag", "");
         String json = HttpUtils.post("https://hk.beanfun.com/beanfun_block/generic_handlers/gamezone.ashx", params);
         JSONObject jsonObject = JSON.parseObject(json);
         return StringUtils.equals(jsonObject.getString("intResult"), "1");
