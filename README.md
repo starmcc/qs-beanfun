@@ -73,8 +73,6 @@
    - `level=requireAdministrator`
 4. inno Setup 打包安装 install.exe 安装包
 
-
-
 ## 结语
 
 1. 所有不怀好意的指责，都需要时间去验证。
