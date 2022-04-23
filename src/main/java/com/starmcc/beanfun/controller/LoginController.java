@@ -113,7 +113,8 @@ public class LoginController implements Initializable {
         // 执行登录方法
         FrameUtils.executeThread(() -> {
             try {
-                if (BeanfunClient.login(account.getValue(), password.getText()) && BeanfunClient.getAccountList()) {
+                if (BeanfunClient.getInstance().login(account.getValue(), password.getText())
+                        && BeanfunClient.getInstance().getAccountList()) {
                     Platform.runLater(() -> loginSuccessGoMain());
                     return;
                 }
@@ -135,13 +136,13 @@ public class LoginController implements Initializable {
 
     @FXML
     public void registerAction() {
-        FrameUtils.executeThread(() -> SwtWebBrowser.getInstance(BeanfunClient.getWebUrlRegister()).open());
+        FrameUtils.executeThread(() -> SwtWebBrowser.getInstance(BeanfunClient.getInstance().getWebUrlRegister()).open());
     }
 
 
     @FXML
     public void forgotPwdAction() {
-        FrameUtils.executeThread(() -> SwtWebBrowser.getInstance(BeanfunClient.getWebUrlForgotPwd()).open());
+        FrameUtils.executeThread(() -> SwtWebBrowser.getInstance(BeanfunClient.getInstance().getWebUrlForgotPwd()).open());
     }
 
     /**
@@ -168,7 +169,7 @@ public class LoginController implements Initializable {
             QsConstant.heartExecutorService = new ScheduledThreadPoolExecutor(1,
                     new BasicThreadFactory.Builder().namingPattern("MainController-heartbeat-schedule-pool-%d").daemon(true).build());
             QsConstant.heartExecutorService.scheduleAtFixedRate(() -> {
-                boolean heartbeat = BeanfunClient.heartbeat();
+                boolean heartbeat = BeanfunClient.getInstance().heartbeat();
                 log.info("心跳 heart={}", heartbeat);
             }, 0, 5, TimeUnit.MINUTES);
             // 窗口显示

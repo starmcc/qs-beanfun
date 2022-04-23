@@ -150,7 +150,7 @@ public class MainController implements Initializable {
     public void exitLoginAction() {
         Platform.runLater(() -> {
             try {
-                BeanfunClient.loginOut();
+                BeanfunClient.getInstance().loginOut();
                 FrameUtils.openWindow(QsConstant.Page.登录页面, (jfxStage) -> {
                     jfxStage.setCloseEvent(() -> {
                         Platform.exit();
@@ -250,8 +250,8 @@ public class MainController implements Initializable {
         addActBtn.setDisable(true);
         FrameUtils.executeThread(() -> {
             try {
-                if (BeanfunClient.addAccount(name)) {
-                    BeanfunClient.getAccountList();
+                if (BeanfunClient.getInstance().addAccount(name)) {
+                    BeanfunClient.getInstance().getAccountList();
                     initAccountComboBox(() -> {
                         QsConstant.alert("创建成功!", Alert.AlertType.INFORMATION);
                         addActBtn.setVisible(false);
@@ -281,8 +281,8 @@ public class MainController implements Initializable {
         String id = this.nowAccount.getId();
         FrameUtils.executeThread(() -> {
             try {
-                if (BeanfunClient.changeAccountName(id, newName)) {
-                    BeanfunClient.getAccountList();
+                if (BeanfunClient.getInstance().changeAccountName(id, newName)) {
+                    BeanfunClient.getInstance().getAccountList();
                     initAccountComboBox(() -> QsConstant.alert("编辑成功!", Alert.AlertType.INFORMATION));
                     return;
                 }
@@ -295,18 +295,18 @@ public class MainController implements Initializable {
 
     @FXML
     public void memberTopUpAction(ActionEvent actionEvent) {
-        FrameUtils.executeThread(() -> SwtWebBrowser.getInstance(BeanfunClient.getWebUrlMemberTopUp()).open());
+        FrameUtils.executeThread(() -> SwtWebBrowser.getInstance(BeanfunClient.getInstance().getWebUrlMemberTopUp()).open());
     }
 
 
     @FXML
     public void memberCenterAction(ActionEvent actionEvent) {
-        FrameUtils.executeThread(() -> SwtWebBrowser.getInstance(BeanfunClient.getWebUrlMemberCenter()).open());
+        FrameUtils.executeThread(() -> SwtWebBrowser.getInstance(BeanfunClient.getInstance().getWebUrlMemberCenter()).open());
     }
 
     @FXML
     public void serviceCenterAction(ActionEvent actionEvent) {
-        FrameUtils.executeThread(() -> SwtWebBrowser.getInstance(BeanfunClient.getWebUrlServiceCenter()).open());
+        FrameUtils.executeThread(() -> SwtWebBrowser.getInstance(BeanfunClient.getInstance().getWebUrlServiceCenter()).open());
     }
 
     /**
@@ -317,7 +317,7 @@ public class MainController implements Initializable {
     @FXML
     public void exitApplicationAction(ActionEvent actionEvent) {
         try {
-            BeanfunClient.loginOut();
+            BeanfunClient.getInstance().loginOut();
         } catch (Exception e) {
             log.error("退出登录异常 e={}", e.getMessage(), e);
         }
@@ -456,7 +456,7 @@ public class MainController implements Initializable {
         String template = "{0}点[游戏内:{1}]";
         int gamePoints = 0;
         try {
-            gamePoints = BeanfunClient.getGamePoints();
+            gamePoints = BeanfunClient.getInstance().getGamePoints();
         } catch (Exception e) {
             log.error("获取游戏点数异常 e={}", e.getMessage(), e);
         }
@@ -516,7 +516,7 @@ public class MainController implements Initializable {
         getPassword.setDisable(true);
         FrameUtils.executeThread(() -> {
             try {
-                String dynamicPassword = BeanfunClient.getDynamicPassword(this.nowAccount);
+                String dynamicPassword = BeanfunClient.getInstance().getDynamicPassword(this.nowAccount);
                 if (StringUtils.isBlank(dynamicPassword)) {
                     Platform.runLater(() -> QsConstant.alert(BeanfunClient.errorMsg, Alert.AlertType.ERROR));
                     return;
