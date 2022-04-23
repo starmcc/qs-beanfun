@@ -1,6 +1,6 @@
 package com.starmcc.beanfun.client;
 
-import com.starmcc.beanfun.client.impl.HkBeanfunClientImpl;
+import com.starmcc.beanfun.client.impl.HkBeanfunClient;
 import com.starmcc.beanfun.model.Account;
 import com.starmcc.beanfun.utils.DesUtils;
 import lombok.extern.slf4j.Slf4j;
@@ -31,7 +31,7 @@ public abstract class BeanfunClient {
         if (Objects.nonNull(beanfunClient)) {
             return beanfunClient;
         }
-        beanfunClient = new HkBeanfunClientImpl();
+        beanfunClient = new HkBeanfunClient();
         return beanfunClient;
     }
 

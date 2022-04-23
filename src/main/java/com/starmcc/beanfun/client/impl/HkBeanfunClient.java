@@ -16,8 +16,14 @@ import org.apache.commons.lang3.StringUtils;
 import java.text.SimpleDateFormat;
 import java.util.*;
 
+/**
+ * 香港beanfun客户
+ *
+ * @author starmcc
+ * @date 2022/04/23
+ */
 @Slf4j
-public class HkBeanfunClientImpl extends BeanfunClient {
+public class HkBeanfunClient extends BeanfunClient {
 
     /**
      * 登录
