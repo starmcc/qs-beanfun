@@ -27,6 +27,10 @@ public class RegexUtils {
     public static final Pattern PTN_RATE_POINTS = Pattern.compile("<p></td><td><p>(.*?)</p></td><td><p>");
 
 
+    public static final Pattern PTN_TW_OPT = Pattern.compile("skey=(.*)&display");
+
+
+
     public static String getIndex(int group, int children, List<List<String>> list) {
 
         if (DataTools.collectionIsEmpty(list) || DataTools.collectionIsEmpty(list.get(0))) {

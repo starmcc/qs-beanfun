@@ -1,7 +1,8 @@
 package com.starmcc.beanfun.api;
 
+import com.starmcc.beanfun.client.HttpClient;
+import com.starmcc.beanfun.model.QsHttpResponse;
 import com.starmcc.beanfun.model.ReqParams;
-import com.starmcc.beanfun.utils.HttpUtils;
 import com.starmcc.beanfun.utils.RegexUtils;
 import lombok.extern.slf4j.Slf4j;
 
@@ -27,8 +28,8 @@ public class ThirdPartyApiClient {
         try {
             ReqParams reqParams = ReqParams.getInstance()
                     .addParam("from", "CNY").addParam("to", "TWD").addParam("q", "1");
-            String html = HttpUtils.get("https://qq.ip138.com/hl.asp", reqParams);
-            List<List<String>> regex = RegexUtils.regex(RegexUtils.PTN_RATE_POINTS, html);
+            QsHttpResponse response = HttpClient.get("https://qq.ip138.com/hl.asp", reqParams);
+            List<List<String>> regex = RegexUtils.regex(RegexUtils.PTN_RATE_POINTS, response.getContent());
             String current = RegexUtils.getIndex(0, 1, regex);
             return new BigDecimal(current);
         } catch (Exception e) {

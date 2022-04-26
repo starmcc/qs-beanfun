@@ -4,9 +4,9 @@ import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.starmcc.beanfun.constant.QsConstant;
+import com.starmcc.beanfun.model.QsHttpResponse;
 import com.starmcc.beanfun.model.UpdateModel;
 import com.starmcc.beanfun.utils.DownloadTools;
-import com.starmcc.beanfun.utils.HttpUtils;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 
@@ -41,19 +41,19 @@ public class UpdateClient {
      * @throws Exception 异常
      */
     public UpdateModel getVersionModel() {
-        String json = null;
+        QsHttpResponse response = null;
         try {
-            json = HttpUtils.get(GITHUB_URL, null);
+            response = HttpClient.get(GITHUB_URL, null);
         } catch (Exception e) {
             log.error("获取版本异常 e={}", e.getMessage(), e);
             return UpdateModel.builder().state(UpdateModel.State.获取失败).build();
         }
-        if (StringUtils.isBlank(json)) {
+        if (StringUtils.isBlank(response.getContent())) {
             return UpdateModel.builder().state(UpdateModel.State.获取失败).build();
         }
 
-        log.debug("获取版本信息 json={}", json);
-        JSONObject jsonObj = JSON.parseObject(json);
+        log.debug("获取版本信息 json={}", response.getContent());
+        JSONObject jsonObj = JSON.parseObject(response.getContent());
         String githubVersion = jsonObj.getString("tag_name");
 
 

@@ -1,7 +1,9 @@
-package com.starmcc.beanfun.utils;
+package com.starmcc.beanfun.client;
 
 import com.starmcc.beanfun.constant.QsConstant;
+import com.starmcc.beanfun.model.QsHttpResponse;
 import com.starmcc.beanfun.model.ReqParams;
+import com.starmcc.beanfun.utils.DataTools;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.http.Header;
 import org.apache.http.HttpEntity;
@@ -11,6 +13,7 @@ import org.apache.http.client.methods.CloseableHttpResponse;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.client.methods.HttpUriRequest;
+import org.apache.http.client.protocol.HttpClientContext;
 import org.apache.http.impl.client.BasicCookieStore;
 import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClientBuilder;
@@ -19,7 +22,6 @@ import org.apache.http.message.BasicHeader;
 import org.apache.http.message.BasicNameValuePair;
 import org.apache.http.util.EntityUtils;
 
-import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
 import java.nio.charset.Charset;
 import java.util.ArrayList;
@@ -37,7 +39,7 @@ import java.util.Objects;
  * @date 2022/03/19
  */
 @Slf4j
-public class HttpUtils {
+public class HttpClient {
 
     private static final String USER_AGENT = "Mozilla/5.0 (Windows NT 10.0; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/55.0.2883.87 Safari/537.36";
     public static final CookieStore COOKIE_STORE = new BasicCookieStore();
@@ -49,7 +51,7 @@ public class HttpUtils {
      * @param reqParams 要求参数
      * @return {@link String}
      */
-    public static String get(String url, ReqParams reqParams) throws Exception {
+    public static QsHttpResponse get(String url, ReqParams reqParams) throws Exception {
         return request(() -> {
             // 参数
             StringBuilder params = new StringBuilder(url.replace("?", ""));
@@ -78,7 +80,7 @@ public class HttpUtils {
      * @return {@link String}
      * @throws Exception 异常
      */
-    public static String post(String url, Map<String, String> params) throws Exception {
+    public static QsHttpResponse post(String url, Map<String, String> params) throws Exception {
         return request(() -> {
             HttpPost post = new HttpPost(url);
             post.setHeader("Accept-Encoding", "identity");
@@ -97,7 +99,9 @@ public class HttpUtils {
      * @param supplier 供应
      * @return {@link String}
      */
-    private static <T> String request(SupplierCustom supplier) throws Exception {
+    private static QsHttpResponse request(SupplierCustom supplier) throws Exception {
+        QsHttpResponse qsHttpResponse = new QsHttpResponse();
+
         List<Header> headers = new ArrayList<>();
         headers.add(new BasicHeader("Accept-Encoding", "identity"));
 
@@ -113,17 +117,18 @@ public class HttpUtils {
         try {
             // 由客户端执行(发送)Get请求
             HttpUriRequest httpUriRequest = supplier.build();
-            response = httpClient.execute(httpUriRequest);
+            HttpClientContext context = HttpClientContext.create();
+            response = httpClient.execute(httpUriRequest, context);
             // 从响应模型中获取响应实体
-            HttpEntity responseEntity = response.getEntity();
+            qsHttpResponse.setRedirectLocations(context.getRedirectLocations());
+            qsHttpResponse.setCode(response.getStatusLine().getStatusCode());
 
-            log.debug("响应状态为: {}", response.getStatusLine());
+            HttpEntity responseEntity = response.getEntity();
             if (Objects.isNull(responseEntity)) {
-                return result;
+                return qsHttpResponse.build();
             }
-            log.debug("响应内容长度为: {}", responseEntity.getContentLength());
-            result = EntityUtils.toString(responseEntity, Charset.forName("UTF-8"));
-            log.debug("响应结果: {}", result);
+            qsHttpResponse.setContentLength(responseEntity.getContentLength());
+            qsHttpResponse.setContent(EntityUtils.toString(responseEntity, Charset.forName("UTF-8")));
         } catch (Exception e) {
             throw new RuntimeException(e);
         } finally {
@@ -139,7 +144,7 @@ public class HttpUtils {
                 throw new Exception(e);
             }
         }
-        return result;
+        return qsHttpResponse.build();
     }
 
 
