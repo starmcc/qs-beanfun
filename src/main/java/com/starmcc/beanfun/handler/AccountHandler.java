@@ -41,7 +41,7 @@ public class AccountHandler {
         actPwd.setPwd(password);
         actPwds.add(0, actPwd);
         QsConstant.config.setActPwds(actPwds);
-        ConfigFileUtils.writeJsonFile(QsConstant.config, QsConstant.APP_CONFIG);
+        ConfigFileUtils.writeConfig(QsConstant.config);
     }
 
 

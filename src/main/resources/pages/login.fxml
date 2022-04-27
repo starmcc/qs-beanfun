@@ -21,9 +21,9 @@
                 <Font size="15.0" />
             </font>
         </Label>
-        <Hyperlink fx:id="register" layoutX="19.0" layoutY="147.0" onAction="#registerAction" text="注册账号" />
-        <Hyperlink fx:id="forgetPwd" layoutX="204.0" layoutY="147.0" onAction="#forgotPwdAction" text="忘记密码" />
-        <CheckBox fx:id="remember" layoutX="104.0" layoutY="150.0" mnemonicParsing="false" onAction="#rememberClickAction" text="记住账号" />
+        <Hyperlink fx:id="register" layoutX="19.0" layoutY="144.0" onAction="#registerAction" text="注册账号" />
+        <Hyperlink fx:id="forgetPwd" layoutX="204.0" layoutY="144.0" onAction="#forgotPwdAction" text="忘记密码" />
+        <CheckBox fx:id="remember" layoutX="104.0" layoutY="147.0" mnemonicParsing="false" onAction="#rememberClickAction" text="记住账号" />
         <ComboBox fx:id="account" editable="true" layoutX="61.0" layoutY="68.0" onAction="#selectAccountAction" prefHeight="30.0" prefWidth="202.0" />
         <PasswordField fx:id="password" layoutX="61.0" layoutY="107.0" prefHeight="30.0" prefWidth="202.0" />
         <Button fx:id="loginBtn" layoutX="18.0" layoutY="171.0" mnemonicParsing="false" onAction="#login" prefHeight="40.0" prefWidth="253.0" text="登录" />

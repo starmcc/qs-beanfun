@@ -166,7 +166,7 @@
                                 </AnchorPane>
                             </content>
                         </Tab>
-                        <Tab text="设置">
+                        <Tab text="工具设置">
                             <content>
                                 <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0">
                                     <children>
@@ -190,6 +190,11 @@
                                                 <Font size="15.0" />
                                             </font>
                                         </Button>
+                              <Separator layoutY="129.0" prefHeight="0.0" prefWidth="353.0" />
+                              <TextField fx:id="lunHuiText" editable="false" layoutX="68.0" layoutY="149.0" prefHeight="23.0" prefWidth="51.0" />
+                              <Label layoutX="14.0" layoutY="153.0" text="轮回热键" />
+                              <Label layoutX="14.0" layoutY="187.0" text="燃烧热键" />
+                              <TextField fx:id="ranShaoText" editable="false" layoutX="68.0" layoutY="183.0" prefHeight="23.0" prefWidth="51.0" />
                                     </children>
                                 </AnchorPane>
                             </content>

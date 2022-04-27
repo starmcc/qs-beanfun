@@ -108,7 +108,7 @@ public class QsBeanfunApplication extends Application {
      * @return {@link ConfigJson}
      */
     private static ConfigJson loadConfig() {
-        String dbJson = ConfigFileUtils.readJsonFile(QsConstant.APP_CONFIG);
+        String dbJson = ConfigFileUtils.readConfig();
         ConfigJson configJson = new ConfigJson();
         if (StringUtils.isNotEmpty(dbJson)) {
             configJson = JSON.parseObject(dbJson, new TypeReference<ConfigJson>() {
@@ -117,6 +117,7 @@ public class QsBeanfunApplication extends Application {
         if (DataTools.collectionIsEmpty(configJson.getActPwds())) {
             configJson.setActPwds(new ArrayList<>());
         }
+        ConfigFileUtils.writeConfig(configJson);
         return configJson;
     }
 

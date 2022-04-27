@@ -11,6 +11,8 @@ public class ConfigJson {
     private Boolean recordActPwd;
     private Boolean passInput;
     private String gamePath;
+    private Integer lunHuiKey;
+    private Integer ranShaoKey;
 
     private List<ActPwd> actPwds;
 
@@ -19,6 +21,10 @@ public class ConfigJson {
         this.passInput = false;
         this.gamePath = "";
         this.actPwds = new ArrayList<>();
+        // 默认 B
+        this.lunHuiKey = 66;
+        // 默认 N
+        this.ranShaoKey = 78;
     }
 
     @Data

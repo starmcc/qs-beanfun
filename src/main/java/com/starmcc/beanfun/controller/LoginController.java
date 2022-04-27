@@ -20,6 +20,7 @@ import javafx.scene.image.ImageView;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.concurrent.BasicThreadFactory;
+import org.apache.http.conn.HttpHostConnectException;
 
 import java.net.URL;
 import java.util.List;
@@ -125,6 +126,9 @@ public class LoginController implements Initializable {
                         SwtWebBrowser.getInstance("https://hk.beanfun.com/locales/HK/contents/beanfun_block/help/plugin_install.html").open();
                     }
                 });
+            } catch (HttpHostConnectException e) {
+                log.info("login error e={}", e.getMessage(), e);
+                Platform.runLater(() -> QsConstant.alert("连接超时,请检查网络环境", Alert.AlertType.ERROR));
             } catch (Exception e) {
                 log.info("login error e={}", e.getMessage(), e);
                 Platform.runLater(() -> QsConstant.alert("异常:" + e.getMessage(), Alert.AlertType.ERROR));
@@ -150,7 +154,7 @@ public class LoginController implements Initializable {
     @FXML
     public void rememberClickAction() {
         QsConstant.config.setRecordActPwd(remember.isSelected());
-        ConfigFileUtils.writeJsonFile(QsConstant.config, QsConstant.APP_CONFIG);
+        ConfigFileUtils.writeConfig(QsConstant.config);
     }
 
 

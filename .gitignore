@@ -7,3 +7,4 @@ target/
 .idea
 qs-beanfun-logs/
 *.bak
+/build/jre/

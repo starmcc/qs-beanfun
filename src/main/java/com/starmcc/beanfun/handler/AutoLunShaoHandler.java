@@ -1,11 +1,13 @@
 package com.starmcc.beanfun.handler;
 
 import com.starmcc.beanfun.constant.QsConstant;
+import javafx.scene.control.Alert;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.concurrent.BasicThreadFactory;
 
 import java.awt.*;
 import java.awt.event.KeyEvent;
+import java.text.MessageFormat;
 import java.util.Date;
 import java.util.Objects;
 import java.util.concurrent.ScheduledExecutorService;
@@ -29,8 +31,8 @@ public class AutoLunShaoHandler {
     private static Date runTime;
 
     private static final String RUN_TIPS = "是否启动自动轮烧？\n禁止商业用途\n" +
-            "轮回技能放置在[B]键\n" +
-            "燃烧技能放置在[N]键\n" +
+            "轮回技能放置在[{0}]键\n" +
+            "燃烧技能放置在[{1}]键\n" +
             "点击确定后，将在5秒后启动...\n" +
             "再次点击会停止,会显示使用时长";
 
@@ -38,19 +40,29 @@ public class AutoLunShaoHandler {
      * 开始
      */
     public static boolean start() {
-        if (!QsConstant.confirmDialog("自动轮烧", RUN_TIPS)) {
+        Integer lunHuiKey = QsConstant.config.getLunHuiKey();
+        Integer ranShaoKey = QsConstant.config.getRanShaoKey();
+        if (Objects.isNull(lunHuiKey) || Objects.isNull(ranShaoKey)) {
+            // 没有设置键位
+            QsConstant.alert("没有设置自动轮烧键位", Alert.AlertType.WARNING);
+            return false;
+        }
+        String lunHuiKeyStr = KeyEvent.getKeyText(lunHuiKey);
+        String ranShaoKeyStr = KeyEvent.getKeyText(ranShaoKey);
+        String tips = MessageFormat.format(RUN_TIPS, lunHuiKeyStr, ranShaoKeyStr);
+        if (!QsConstant.confirmDialog("自动轮烧", tips)) {
             return false;
         }
         // 启动轮烧
-        log.info("正在启动自动轮烧 键位B轮回，N燃烧");
+        log.info("正在启动自动轮烧 键位{}轮回，{}燃烧", lunHuiKeyStr, ranShaoKeyStr);
         runTime = new Date();
         createThreadPool();
         // 5秒后开始
         EXECUTOR_SERVICE.scheduleAtFixedRate(() -> {
             // 开始按键轮回
             try {
-                new Robot().keyPress(KeyEvent.VK_B);
-                log.info("自动轮烧按下了[B]键");
+                new Robot().keyPress(lunHuiKey);
+                log.info("自动轮烧按下了[{}]键", lunHuiKeyStr);
             } catch (Exception e) {
                 log.error("按键B异常 e={}", e.getMessage(), e);
             }
@@ -58,8 +70,8 @@ public class AutoLunShaoHandler {
         EXECUTOR_SERVICE.scheduleAtFixedRate(() -> {
             // 开始按键燃烧
             try {
-                new Robot().keyPress(KeyEvent.VK_N);
-                log.info("自动轮烧按下了[N]键");
+                new Robot().keyPress(ranShaoKey);
+                log.info("自动轮烧按下了[{}]键", ranShaoKeyStr);
             } catch (Exception e) {
                 log.error("按键B异常 e={}", e.getMessage(), e);
             }

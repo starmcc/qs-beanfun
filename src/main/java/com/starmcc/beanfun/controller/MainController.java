@@ -26,6 +26,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.BooleanUtils;
 import org.apache.commons.lang3.StringUtils;
 
+import java.awt.event.KeyEvent;
 import java.io.File;
 import java.math.BigDecimal;
 import java.net.URL;
@@ -95,6 +96,10 @@ public class MainController implements Initializable {
     private MenuItem tmsTieBaUrlMenu;
     @FXML
     private MenuItem qsbiliUrlMenu;
+    @FXML
+    private TextField lunHuiText;
+    @FXML
+    private TextField ranShaoText;
 
     private Account nowAccount;
 
@@ -143,6 +148,38 @@ public class MainController implements Initializable {
             QsConstant.currentRateChinaToTw = ThirdPartyApiClient.getCurrentRateChinaToTw();
             Platform.runLater(() -> exchangeNow.setText(QsConstant.currentRateChinaToTw.toString()));
         });
+
+        // =================== 初始化轮烧按键 =====================
+
+        lunHuiText.setOnKeyPressed((keyEvent) -> {
+            int code = keyEvent.getCode().impl_getCode();
+            if (code == 0) {
+                lunHuiText.setText("");
+                return;
+            }
+            lunHuiText.setText(KeyEvent.getKeyText(code));
+            // 记录设置
+            QsConstant.config.setLunHuiKey(code);
+            ConfigFileUtils.writeConfig(QsConstant.config);
+        });
+        ranShaoText.setOnKeyPressed((keyEvent) -> {
+            int code = keyEvent.getCode().impl_getCode();
+            if (code == 0) {
+                lunHuiText.setText("");
+                return;
+            }
+            ranShaoText.setText(KeyEvent.getKeyText(code));
+            // 记录设置
+            QsConstant.config.setRanShaoKey(code);
+            ConfigFileUtils.writeConfig(QsConstant.config);
+        });
+
+        // 读取配置
+        Integer lunHuiKey = QsConstant.config.getLunHuiKey();
+        Integer ranShaoKey = QsConstant.config.getRanShaoKey();
+        lunHuiText.setText(KeyEvent.getKeyText(lunHuiKey));
+        ranShaoText.setText(KeyEvent.getKeyText(ranShaoKey));
+
     }
 
 
@@ -217,7 +254,7 @@ public class MainController implements Initializable {
 
         gamePath.setText(path);
         QsConstant.config.setGamePath(path);
-        ConfigFileUtils.writeJsonFile(QsConstant.config, QsConstant.APP_CONFIG);
+        ConfigFileUtils.writeConfig(QsConstant.config);
     }
 
 
@@ -352,7 +389,7 @@ public class MainController implements Initializable {
     @FXML
     public void passInputAction(ActionEvent actionEvent) {
         QsConstant.config.setPassInput(passInput.isSelected());
-        ConfigFileUtils.writeJsonFile(QsConstant.config, QsConstant.APP_CONFIG);
+        ConfigFileUtils.writeConfig(QsConstant.config);
     }
 
 
