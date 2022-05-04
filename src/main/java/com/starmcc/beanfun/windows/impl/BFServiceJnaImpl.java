@@ -1,5 +1,6 @@
-package com.starmcc.beanfun.windows;
+package com.starmcc.beanfun.windows.impl;
 
+import com.starmcc.beanfun.windows.BaseBFService;
 import com.sun.jna.Library;
 import com.sun.jna.Native;
 

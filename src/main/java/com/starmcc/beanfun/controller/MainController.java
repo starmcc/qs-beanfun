@@ -61,6 +61,8 @@ public class MainController implements Initializable {
     @FXML
     private CheckBox passInput;
     @FXML
+    private CheckBox killPlayStartWindow;
+    @FXML
     private TextField gamePath;
     @FXML
     private TextField rmbInput;
@@ -106,6 +108,7 @@ public class MainController implements Initializable {
     @Override
     public void initialize(URL location, ResourceBundle resources) {
         passInput.setSelected(QsConstant.config.getPassInput());
+        killPlayStartWindow.setSelected(QsConstant.config.getKillStartPalyWindow());
         gamePath.setText(QsConstant.config.getGamePath());
         addActBtn.setVisible(BeanfunClient.isNewAccount);
         addActMenu.setVisible(BeanfunClient.isNewAccount);
@@ -222,19 +225,21 @@ public class MainController implements Initializable {
     public void startGameAction(ActionEvent actionEvent) {
         if (StringUtils.isBlank(gamePath.getText())) {
             QsConstant.alert("请配置游戏路径!", Alert.AlertType.INFORMATION);
-            gamePathOpen(actionEvent);
+            gamePathOpenAction(actionEvent);
             return;
         }
         // 启动游戏 如果免输入模式，组装账密
+        boolean killStartPalyWindow = BooleanUtils.isTrue(QsConstant.config.getKillStartPalyWindow());
         if (BooleanUtils.isTrue(QsConstant.config.getPassInput())) {
-            getDynamicPassword(() -> GameHandler.runGame(gamePath.getText(), this.nowAccount.getId(), actDynamicPwd.getText()));
+            getDynamicPassword(() -> GameHandler.runGame(
+                    gamePath.getText(), this.nowAccount.getId(), actDynamicPwd.getText(), killStartPalyWindow));
         } else {
-            GameHandler.runGame(gamePath.getText(), null, null);
+            GameHandler.runGame(gamePath.getText(), null, null, killStartPalyWindow);
         }
     }
 
     @FXML
-    public void gamePathOpen(ActionEvent actionEvent) {
+    public void gamePathOpenAction(ActionEvent actionEvent) {
         FileChooser fileChooser = new FileChooser();
         FileChooser.ExtensionFilter extFilter = new FileChooser.ExtensionFilter("新枫之谷启动程序(MapleStory.exe)", "MapleStory.exe");
         fileChooser.getExtensionFilters().add(extFilter);
@@ -451,12 +456,18 @@ public class MainController implements Initializable {
         }
     }
 
+    @FXML
+    public void killPlayWindowAction(ActionEvent actionEvent) {
+        QsConstant.config.setKillStartPalyWindow(killPlayStartWindow.isSelected());
+        ConfigFileUtils.writeConfig(QsConstant.config);
+    }
 
     /**
      * 打开工具窗口操作
      *
      * @param actionEvent 行动事件
      */
+    @FXML
     public void openToolsWindowAction(ActionEvent actionEvent) throws Exception {
         FrameUtils.openWindow(QsConstant.Page.关于我, QsConstant.mainJFXStage.getStage(), jfxStage -> {
             jfxStage.setCloseEvent(() -> FrameUtils.closeWindow(jfxStage));

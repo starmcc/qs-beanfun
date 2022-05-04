@@ -13,6 +13,7 @@ public class ConfigJson {
     private String gamePath;
     private Integer lunHuiKey;
     private Integer ranShaoKey;
+    private Boolean killStartPalyWindow;
 
     private List<ActPwd> actPwds;
 
@@ -25,6 +26,8 @@ public class ConfigJson {
         this.lunHuiKey = 66;
         // 默认 N
         this.ranShaoKey = 78;
+        // 默认 不关闭
+        this.killStartPalyWindow = false;
     }
 
     @Data

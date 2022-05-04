@@ -1,5 +1,7 @@
 package com.starmcc.beanfun.windows;
 
+import com.starmcc.beanfun.windows.impl.BFServiceJnaImpl;
+
 public interface BaseBFService {
 
     /**

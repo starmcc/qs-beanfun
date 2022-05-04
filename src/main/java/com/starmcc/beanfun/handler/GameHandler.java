@@ -1,6 +1,7 @@
 package com.starmcc.beanfun.handler;
 
 import com.starmcc.beanfun.constant.QsConstant;
+import com.starmcc.beanfun.windows.WindowService;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.BooleanUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -17,7 +18,7 @@ import java.io.File;
 public class GameHandler {
 
 
-    public static void runGame(String gamePath, String accountId, String password) {
+    public static void runGame(String gamePath, String accountId, String password, boolean killStartPalyWindow) {
         if (BooleanUtils.isTrue(QsConstant.config.getPassInput())
                 && StringUtils.isNotBlank(accountId)
                 && StringUtils.isNotBlank(password)) {
@@ -30,6 +31,9 @@ public class GameHandler {
 
         try {
             Runtime.getRuntime().exec(cmd, null, new File(gamePath).getParentFile());
+            if (killStartPalyWindow) {
+                WindowService.getInstance().closeMapleStoryStart();
+            }
         } catch (Exception e) {
             log.error("运行异常 e={}", e.getMessage(), e);
         }

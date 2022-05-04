@@ -175,7 +175,7 @@
                                                 <Font size="15.0" />
                                             </font>
                                         </TextField>
-                                        <CheckBox fx:id="passInput" layoutX="225.0" layoutY="94.0" mnemonicParsing="false" onAction="#passInputAction" prefHeight="21.0" prefWidth="114.0" text="免输入模式">
+                                        <CheckBox fx:id="passInput" layoutX="201.0" layoutY="94.0" mnemonicParsing="false" onAction="#passInputAction" prefHeight="21.0" prefWidth="138.0" text="启动免输入模式">
                                             <font>
                                                 <Font size="15.0" />
                                             </font>
@@ -185,16 +185,21 @@
                                                 <Font size="15.0" />
                                             </font>
                                         </Text>
-                                        <Button fx:id="gamePathOpenBtn" layoutX="273.0" layoutY="14.0" mnemonicParsing="false" onAction="#gamePathOpen" prefHeight="30.0" prefWidth="66.0" text="打开">
+                                        <Button fx:id="gamePathOpenBtn" layoutX="273.0" layoutY="14.0" mnemonicParsing="false" onAction="#gamePathOpenAction" prefHeight="30.0" prefWidth="66.0" text="打开">
                                             <font>
                                                 <Font size="15.0" />
                                             </font>
                                         </Button>
                               <Separator layoutY="129.0" prefHeight="0.0" prefWidth="353.0" />
-                              <TextField fx:id="lunHuiText" editable="false" layoutX="68.0" layoutY="149.0" prefHeight="23.0" prefWidth="51.0" />
-                              <Label layoutX="14.0" layoutY="153.0" text="轮回热键" />
-                              <Label layoutX="14.0" layoutY="187.0" text="燃烧热键" />
-                              <TextField fx:id="ranShaoText" editable="false" layoutX="68.0" layoutY="183.0" prefHeight="23.0" prefWidth="51.0" />
+                              <TextField fx:id="lunHuiText" editable="false" layoutX="68.0" layoutY="153.0" prefHeight="23.0" prefWidth="51.0" />
+                              <Label layoutX="14.0" layoutY="157.0" text="轮回热键" />
+                              <Label layoutX="14.0" layoutY="191.0" text="燃烧热键" />
+                              <TextField fx:id="ranShaoText" editable="false" layoutX="68.0" layoutY="187.0" prefHeight="23.0" prefWidth="51.0" />
+                              <CheckBox fx:id="killPlayStartWindow" layoutX="211.0" layoutY="143.0" mnemonicParsing="false" onAction="#killPlayWindowAction" prefHeight="21.0" prefWidth="124.0" text="关闭Play窗口">
+                                 <font>
+                                    <Font size="15.0" />
+                                 </font>
+                              </CheckBox>
                                     </children>
                                 </AnchorPane>
                             </content>
