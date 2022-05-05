@@ -5,12 +5,17 @@ import com.starmcc.beanfun.windows.JFXStage;
 import javafx.scene.control.Alert;
 import javafx.scene.control.ButtonType;
 import javafx.scene.control.TextInputDialog;
+import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.http.HttpHost;
 
 import java.awt.*;
 import java.math.BigDecimal;
+import java.util.Arrays;
+import java.util.List;
 import java.util.Optional;
 import java.util.concurrent.ScheduledExecutorService;
+import java.util.stream.Collectors;
 
 
 /**
@@ -19,8 +24,10 @@ import java.util.concurrent.ScheduledExecutorService;
  * @author starmcc
  * @date 2022/03/19
  */
+@Slf4j
 public class QsConstant {
     public static final String APP_VERSION = "2.3";
+    public static final boolean APP_DEV = true;
     public static final String APP_PATH = System.getProperties().getProperty("user.home") + "\\QsBeanfun\\";
     public static final String APP_CONFIG = APP_PATH + "config.json";
     public static final String APP_NAME = "QsBeanfun";
@@ -153,4 +160,46 @@ public class QsConstant {
         return alert.showAndWait().get() == ButtonType.OK;
     }
 
+    /**
+     * 获得数字版本
+     *
+     * @param name 名字
+     * @return {@link Long}
+     */
+    private static Long getNumberVersion(String name) {
+        if (StringUtils.isBlank(name)) {
+            return 0L;
+        }
+        String[] split = name.split(".");
+        List<String> versionList = Arrays.stream(split).collect(Collectors.toList());
+        while (versionList.size() < 3) {
+            versionList.add("0");
+        }
+        StringBuilder version = new StringBuilder();
+        for (String s : split) {
+            version.append(s);
+        }
+        return Long.parseLong(version.toString());
+    }
+
+
+    /**
+     * 检查新版本
+     *
+     * @param targetVersion 目标版本
+     * @return boolean 有新版本，返回true，否则false
+     */
+    public static boolean checkNewVersion(String targetVersion) {
+        if (APP_DEV) {
+            log.debug("开发环境 不进行版本校验");
+            return false;
+        }
+        Long numberVersion = getNumberVersion(APP_VERSION);
+        Long numberVersionTarget = getNumberVersion(targetVersion);
+        if (numberVersionTarget == 0) {
+            log.error("版本解析为0，解析失败 targetVersion={}", targetVersion);
+            return false;
+        }
+        return numberVersion.compareTo(numberVersionTarget) == -1;
+    }
 }

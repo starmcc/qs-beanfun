@@ -61,7 +61,7 @@ public class UpdateClient {
             return UpdateModel.builder().state(UpdateModel.State.获取失败).build();
         }
 
-        if (StringUtils.equals(githubVersion, QsConstant.APP_VERSION)) {
+        if (!QsConstant.checkNewVersion(githubVersion)) {
             return UpdateModel.builder().state(UpdateModel.State.已是最新版本).build();
         }
 
