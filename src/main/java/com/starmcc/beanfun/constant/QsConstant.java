@@ -27,7 +27,6 @@ import java.util.stream.Collectors;
 @Slf4j
 public class QsConstant {
     public static final String APP_VERSION = "2.3";
-    public static final boolean APP_DEV = true;
     public static final String APP_PATH = System.getProperties().getProperty("user.home") + "\\QsBeanfun\\";
     public static final String APP_CONFIG = APP_PATH + "config.json";
     public static final String APP_NAME = "QsBeanfun";
@@ -170,13 +169,13 @@ public class QsConstant {
         if (StringUtils.isBlank(name)) {
             return 0L;
         }
-        String[] split = name.split(".");
+        String[] split = name.split("\\.");
         List<String> versionList = Arrays.stream(split).collect(Collectors.toList());
         while (versionList.size() < 3) {
             versionList.add("0");
         }
         StringBuilder version = new StringBuilder();
-        for (String s : split) {
+        for (String s : versionList) {
             version.append(s);
         }
         return Long.parseLong(version.toString());
@@ -190,10 +189,6 @@ public class QsConstant {
      * @return boolean 有新版本，返回true，否则false
      */
     public static boolean checkNewVersion(String targetVersion) {
-        if (APP_DEV) {
-            log.debug("开发环境 不进行版本校验");
-            return false;
-        }
         Long numberVersion = getNumberVersion(APP_VERSION);
         Long numberVersionTarget = getNumberVersion(targetVersion);
         if (numberVersionTarget == 0) {
