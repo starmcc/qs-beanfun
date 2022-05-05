@@ -20,7 +20,7 @@ import java.util.concurrent.ScheduledExecutorService;
  * @date 2022/03/19
  */
 public class QsConstant {
-    public static final String APP_VERSION = "2.2";
+    public static final String APP_VERSION = "2.3";
     public static final String APP_PATH = System.getProperties().getProperty("user.home") + "\\QsBeanfun\\";
     public static final String APP_CONFIG = APP_PATH + "config.json";
     public static final String APP_NAME = "QsBeanfun";

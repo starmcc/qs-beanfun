@@ -12,6 +12,7 @@ import com.starmcc.beanfun.utils.FrameUtils;
 import com.starmcc.beanfun.windows.SwtWebBrowser;
 import javafx.application.Platform;
 import javafx.collections.ObservableList;
+import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.*;
@@ -58,6 +59,8 @@ public class LoginController implements Initializable {
     private Hyperlink forgetPwd;
     @FXML
     private ProgressBar progressBar;
+    @FXML
+    private Button resetBtn;
 
 
     private boolean loginTask = false;
@@ -78,6 +81,15 @@ public class LoginController implements Initializable {
         register.setFocusTraversable(false);
         forgetPwd.setFocusTraversable(false);
         remember.setFocusTraversable(false);
+    }
+
+    @FXML
+    public void resetAction(ActionEvent actionEvent) {
+        QsConstant.config = new ConfigJson();
+        ConfigFileUtils.writeConfig(QsConstant.config);
+        account.getItems().clear();
+        password.setText("");
+        remember.setSelected(false);
     }
 
     @FXML
@@ -179,7 +191,7 @@ public class LoginController implements Initializable {
             FrameUtils.openWindow(QsConstant.Page.主界面, jfxStage -> {
                 jfxStage.setCloseEvent(() -> {
                     if (Objects.nonNull(QsConstant.heartExecutorService)) {
-                        QsConstant.heartExecutorService.shutdown();
+                        QsConstant.heartExecutorService.shutdownNow();
                     }
                     Platform.exit();
                     QsTray.remove(QsConstant.trayIcon);
@@ -218,7 +230,7 @@ public class LoginController implements Initializable {
             progressBar.setProgress(0);
         }
         loginTask = state;
-
+        resetBtn.setDisable(state);
     }
 
 
