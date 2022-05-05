@@ -12,12 +12,11 @@ public interface WindowService {
     void closeMapleStoryStart();
 
     /**
-     * 窗口设置焦点
+     * 新枫之谷前景窗口
      *
-     * @param hwnd 窗口句柄
      * @return boolean
      */
-    boolean setForegroundWindow(int hwnd);
+    boolean setMapleStoryForegroundWindow();
 
 
     /**

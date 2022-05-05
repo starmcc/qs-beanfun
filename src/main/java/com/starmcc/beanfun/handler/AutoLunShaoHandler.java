@@ -1,6 +1,7 @@
 package com.starmcc.beanfun.handler;
 
 import com.starmcc.beanfun.constant.QsConstant;
+import com.starmcc.beanfun.windows.WindowService;
 import javafx.scene.control.Alert;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.concurrent.BasicThreadFactory;
@@ -8,6 +9,7 @@ import org.apache.commons.lang3.concurrent.BasicThreadFactory;
 import java.awt.*;
 import java.awt.event.KeyEvent;
 import java.text.MessageFormat;
+import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Objects;
 import java.util.concurrent.ScheduledExecutorService;
@@ -61,6 +63,8 @@ public class AutoLunShaoHandler {
         EXECUTOR_SERVICE.scheduleAtFixedRate(() -> {
             // 开始按键轮回
             try {
+                // 自动聚焦游戏
+                WindowService.getInstance().setMapleStoryForegroundWindow();
                 new Robot().keyPress(lunHuiKey);
                 log.info("自动轮烧按下了[{}]键", lunHuiKeyStr);
             } catch (Exception e) {
@@ -70,6 +74,8 @@ public class AutoLunShaoHandler {
         EXECUTOR_SERVICE.scheduleAtFixedRate(() -> {
             // 开始按键燃烧
             try {
+                // 自动聚焦游戏
+                WindowService.getInstance().setMapleStoryForegroundWindow();
                 new Robot().keyPress(ranShaoKey);
                 log.info("自动轮烧按下了[{}]键", ranShaoKeyStr);
             } catch (Exception e) {
@@ -87,10 +93,16 @@ public class AutoLunShaoHandler {
             return false;
         }
         long time = System.currentTimeMillis() - runTime.getTime();
-        String dateStr = getDateDHMS(time);
+
+        // 构建开始时间
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+        String startTime = sdf.format(runTime.getTime());
         StringBuffer tips = new StringBuffer();
-        tips.append("当前已运行\n").append(dateStr).append("\n是否现在停止？");
-        if (!QsConstant.confirmDialog("自动轮烧", tips.toString())) {
+        tips.append("开始时间:").append(startTime).append("\n");
+        tips.append("当前已运行:").append(getDateDHMS(time)).append("\n");
+        tips.append("是否现在停止？");
+        String title = "自动轮烧";
+        if (!QsConstant.confirmDialog(title, tips.toString())) {
             return false;
         }
         // 停止轮烧

@@ -47,7 +47,11 @@ public class WindowServiceImpl implements WindowService {
     }
 
     @Override
-    public boolean setForegroundWindow(int hwnd) {
+    public boolean setMapleStoryForegroundWindow() {
+        int hwnd = User32.RUN.FindWindowA(null, "MapleStory");
+        if (hwnd == 0) {
+            return false;
+        }
         return User32.RUN.SetForegroundWindow(hwnd);
     }
 
