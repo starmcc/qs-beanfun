@@ -345,11 +345,7 @@ public class MainController implements Initializable {
             return;
         }
         WebController.jumpUrl = jumpUrl;
-        FrameUtils.openWindow(QsConstant.Page.网页客户端, jfxStage -> {
-            jfxStage.setMiniSupport(false);
-            jfxStage.setCloseEvent(() -> FrameUtils.closeWindow(jfxStage));
-            QsConstant.webJFXStage = jfxStage;
-        });
+        FrameUtils.openWindow(QsConstant.Page.网页客户端);
     }
 
 
@@ -361,11 +357,7 @@ public class MainController implements Initializable {
             return;
         }
         WebController.jumpUrl = jumpUrl;
-        FrameUtils.openWindow(QsConstant.Page.网页客户端, jfxStage -> {
-            jfxStage.setMiniSupport(false);
-            jfxStage.setCloseEvent(() -> FrameUtils.closeWindow(jfxStage));
-            QsConstant.webJFXStage = jfxStage;
-        });
+        FrameUtils.openWindow(QsConstant.Page.网页客户端);
     }
 
     @FXML
@@ -376,11 +368,7 @@ public class MainController implements Initializable {
             return;
         }
         WebController.jumpUrl = jumpUrl;
-        FrameUtils.openWindow(QsConstant.Page.网页客户端, jfxStage -> {
-            jfxStage.setMiniSupport(false);
-            jfxStage.setCloseEvent(() -> FrameUtils.closeWindow(jfxStage));
-            QsConstant.webJFXStage = jfxStage;
-        });
+        FrameUtils.openWindow(QsConstant.Page.网页客户端);
     }
 
     /**
@@ -416,11 +404,7 @@ public class MainController implements Initializable {
      */
     @FXML
     public void openEquipmentCalcWindowMenu(ActionEvent actionEvent) throws Exception {
-        FrameUtils.openWindow(QsConstant.Page.装备计算器, jfxStage -> {
-            jfxStage.setMiniSupport(false);
-            jfxStage.setCloseEvent(() -> FrameUtils.closeWindow(jfxStage));
-            QsConstant.equippingJFXStage = jfxStage;
-        });
+        FrameUtils.openWindow(QsConstant.Page.装备计算器);
     }
 
     @FXML
@@ -501,11 +485,7 @@ public class MainController implements Initializable {
      */
     @FXML
     public void openToolsWindowAction(ActionEvent actionEvent) throws Exception {
-        FrameUtils.openWindow(QsConstant.Page.关于我, QsConstant.mainJFXStage.getStage(), jfxStage -> {
-            jfxStage.setCloseEvent(() -> FrameUtils.closeWindow(jfxStage));
-            jfxStage.setMiniSupport(false);
-            QsConstant.aboutJFXStage = jfxStage;
-        });
+        FrameUtils.openWindow(QsConstant.Page.关于我, QsConstant.mainJFXStage.getStage());
     }
 
     // =============================================== 私有方法 =================================

@@ -68,11 +68,7 @@ public class QsBeanfunApplication extends Application {
         initApp();
         // 加载界面
         Platform.setImplicitExit(false);
-        FrameUtils.openWindow(QsConstant.Page.登录页面, (jfxStage) -> {
-            jfxStage.setCloseEvent(() -> Platform.exit());
-            jfxStage.setMiniSupport(false);
-            QsConstant.loginJFXStage = jfxStage;
-        });
+        FrameUtils.openWindow(QsConstant.Page.登录页面);
         log.info("QsBeanfun 启动成功..");
         FrameUtils.executeThread(() -> {
             UpdateModel versionModel = UpdateClient.getInstance().getVersionModel();

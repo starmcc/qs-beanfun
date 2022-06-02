@@ -34,6 +34,16 @@ public class FrameUtils {
     /**
      * 打开页面
      *
+     * @param page 页面
+     * @throws Exception 异常
+     */
+    public static void openWindow(QsConstant.Page page) throws Exception {
+        openWindow(page, null, page.getBuildMethod());
+    }
+
+    /**
+     * 打开页面
+     *
      * @param page  页面
      * @param build 构建
      * @throws Exception 异常
@@ -42,6 +52,17 @@ public class FrameUtils {
         openWindow(page, null, build);
     }
 
+
+    /**
+     * 打开页面
+     *
+     * @param page  页面
+     * @param build 构建
+     * @throws Exception 异常
+     */
+    public static void openWindow(QsConstant.Page page, Stage parentStage) throws Exception {
+        openWindow(page, parentStage, page.getBuildMethod());
+    }
 
     /**
      * 打开页面
@@ -63,7 +84,7 @@ public class FrameUtils {
             build.accept(jfxStage);
         }
         jfxStage.build(() -> {
-            log.info("关闭");
+            log.debug("关闭");
             if (Objects.nonNull(THREAD_POOL)) {
                 THREAD_POOL.shutdownNow();
                 THREAD_POOL = null;

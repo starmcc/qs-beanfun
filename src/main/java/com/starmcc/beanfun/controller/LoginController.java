@@ -194,11 +194,7 @@ public class LoginController implements Initializable {
             return;
         }
         WebController.jumpUrl = jumpUrl;
-        FrameUtils.openWindow(QsConstant.Page.网页客户端, jfxStage -> {
-            jfxStage.setMiniSupport(false);
-            jfxStage.setCloseEvent(() -> FrameUtils.closeWindow(jfxStage));
-            QsConstant.webJFXStage = jfxStage;
-        });
+        FrameUtils.openWindow(QsConstant.Page.网页客户端);
     }
 
 
@@ -210,11 +206,7 @@ public class LoginController implements Initializable {
             return;
         }
         WebController.jumpUrl = jumpUrl;
-        FrameUtils.openWindow(QsConstant.Page.网页客户端, jfxStage -> {
-            jfxStage.setMiniSupport(false);
-            jfxStage.setCloseEvent(() -> FrameUtils.closeWindow(jfxStage));
-            QsConstant.webJFXStage = jfxStage;
-        });
+        FrameUtils.openWindow(QsConstant.Page.网页客户端);
     }
 
     /**
@@ -253,22 +245,7 @@ public class LoginController implements Initializable {
                 log.info("心跳 heart={}", heartbeat);
             }, 0, 5, TimeUnit.MINUTES);
             // 窗口显示
-            FrameUtils.openWindow(QsConstant.Page.主界面, jfxStage -> {
-                jfxStage.setCloseEvent(() -> {
-                    if (Objects.nonNull(QsConstant.heartExecutorService)) {
-                        QsConstant.heartExecutorService.shutdownNow();
-                    }
-                    Platform.exit();
-                    QsTray.remove(QsConstant.trayIcon);
-                });
-                jfxStage.setMinEvent(() -> {
-                    if (jfxStage.getStage().isIconified()) {
-                        jfxStage.getStage().setIconified(false);
-                    }
-                    jfxStage.getStage().hide();
-                });
-                QsConstant.mainJFXStage = jfxStage;
-            });
+            FrameUtils.openWindow(QsConstant.Page.主界面);
             QsConstant.trayIcon = QsTray.init(QsConstant.mainJFXStage.getStage());
             QsTray.show(QsConstant.trayIcon);
             FrameUtils.closeWindow(QsConstant.loginJFXStage);

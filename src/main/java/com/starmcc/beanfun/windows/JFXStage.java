@@ -46,8 +46,7 @@ public class JFXStage implements EventHandler<MouseEvent> {
     }
 
     public static JFXStage of(Stage stage, Parent root) {
-        JFXStage builder = new JFXStage(stage, root);
-        return builder;
+        return new JFXStage(stage, root);
     }
 
 
@@ -82,6 +81,7 @@ public class JFXStage implements EventHandler<MouseEvent> {
         hbox.getChildren().add(logo);
         // TITLE
         Label titleLbl = new Label(title);
+        titleLbl.setId("customTitle");
         titleLbl.setPadding(insets);
         titleLbl.setPrefHeight(16);
         titleLbl.setFont(Font.font(12));

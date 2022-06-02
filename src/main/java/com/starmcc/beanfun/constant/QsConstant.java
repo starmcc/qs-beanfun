@@ -1,11 +1,15 @@
 package com.starmcc.beanfun.constant;
 
 import com.starmcc.beanfun.model.ConfigJson;
+import com.starmcc.beanfun.model.QsTray;
 import com.starmcc.beanfun.model.client.BeanfunModel;
+import com.starmcc.beanfun.utils.FrameUtils;
 import com.starmcc.beanfun.windows.JFXStage;
+import javafx.application.Platform;
 import javafx.scene.control.Alert;
 import javafx.scene.control.ButtonType;
 import javafx.scene.control.TextInputDialog;
+import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.http.HttpHost;
@@ -14,8 +18,10 @@ import java.awt.*;
 import java.math.BigDecimal;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
 import java.util.concurrent.ScheduledExecutorService;
+import java.util.function.Consumer;
 import java.util.stream.Collectors;
 
 
@@ -86,35 +92,67 @@ public class QsConstant {
      * @author starmcc
      * @date 2022/03/17
      */
+    @Getter
     public static enum Page {
-        登录页面("login", "QsBeanfun"),
-        主界面("main", "QsBeanfun"),
-        关于我("about", "QsBeanfun"),
-        装备计算器("equipment", "装备计算器"),
-        网页客户端("web", "网页客户端"),
+        登录页面("login", "QsBeanfun", jfxStage -> {
+            jfxStage.setCloseEvent(() -> Platform.exit());
+            jfxStage.setMiniSupport(false);
+            QsConstant.loginJFXStage = jfxStage;
+        }),
+        主界面("main", "QsBeanfun", jfxStage -> {
+            jfxStage.setCloseEvent(() -> {
+                if (Objects.nonNull(QsConstant.heartExecutorService)) {
+                    QsConstant.heartExecutorService.shutdownNow();
+                }
+                Platform.exit();
+                QsTray.remove(QsConstant.trayIcon);
+            });
+            jfxStage.setMinEvent(() -> {
+                if (jfxStage.getStage().isIconified()) {
+                    jfxStage.getStage().setIconified(false);
+                }
+                jfxStage.getStage().hide();
+            });
+            QsConstant.mainJFXStage = jfxStage;
+        }),
+        关于我("about", "QsBeanfun", jfxStage -> {
+            jfxStage.setCloseEvent(() -> FrameUtils.closeWindow(jfxStage));
+            jfxStage.setMiniSupport(false);
+            QsConstant.aboutJFXStage = jfxStage;
+        }),
+        装备计算器("equipment", "Equipment", jfxStage -> {
+            jfxStage.setMiniSupport(false);
+            jfxStage.setCloseEvent(() -> FrameUtils.closeWindow(jfxStage));
+            QsConstant.equippingJFXStage = jfxStage;
+        }),
+        网页客户端("web", "WebKit", jfxStage -> {
+            jfxStage.setMiniSupport(true);
+//            Rectangle2D screenRectangle = Screen.getPrimary().getBounds();
+//            double width = screenRectangle.getWidth();
+//            double height = screenRectangle.getHeight();
+//            Stage stage = jfxStage.getStage();
+//            stage.setWidth(width * 0.7);
+//            stage.setHeight(height * 0.7);
+            jfxStage.setCloseEvent(() -> FrameUtils.closeWindow(jfxStage));
+            QsConstant.webJFXStage = jfxStage;
+        }),
 
         ;
 
         private final String url;
         private final String title;
+        private final Consumer<JFXStage> buildMethod;
 
-        Page(String url) {
-            this.url = url;
-            this.title = "";
-        }
-
-        Page(String url, String title) {
+        Page(String url, String title, Consumer<JFXStage> buildMethod) {
             this.url = url;
             this.title = title;
+            this.buildMethod = buildMethod;
         }
 
         public String getUrl() {
             return "/pages/" + url + ".fxml";
         }
 
-        public String getTitle() {
-            return title;
-        }
     }
 
 
