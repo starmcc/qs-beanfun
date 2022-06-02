@@ -12,6 +12,7 @@ import com.starmcc.beanfun.utils.DataTools;
 import com.starmcc.beanfun.utils.FrameUtils;
 import javafx.application.Application;
 import javafx.application.Platform;
+import javafx.scene.control.Alert;
 import javafx.stage.Stage;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
@@ -70,15 +71,16 @@ public class QsBeanfunApplication extends Application {
         Platform.setImplicitExit(false);
         FrameUtils.openWindow(QsConstant.Page.登录页面);
         log.info("QsBeanfun 启动成功..");
+        Platform.runLater(() -> QsConstant.alert("该版本为测试版本!", Alert.AlertType.WARNING));
         FrameUtils.executeThread(() -> {
             UpdateModel versionModel = UpdateClient.getInstance().getVersionModel();
-            Platform.runLater(() -> {
-                if (versionModel.getState() == UpdateModel.State.有新版本) {
+            if (versionModel.getState() == UpdateModel.State.有新版本) {
+                Platform.runLater(() -> {
                     if (QsConstant.confirmDialog("是否前往更新？", versionModel.getTips())) {
                         FrameUtils.openWebUrl("https://github.com/starmcc/qs-beanfun/releases");
                     }
-                }
-            });
+                });
+            }
         });
     }
 
