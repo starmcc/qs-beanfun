@@ -2,13 +2,14 @@ package com.starmcc.beanfun.controller;
 
 import com.starmcc.beanfun.api.ThirdPartyApiClient;
 import com.starmcc.beanfun.client.BeanfunClient;
-import com.starmcc.beanfun.model.client.Account;
-import com.starmcc.beanfun.model.client.BeanfunStringResult;
 import com.starmcc.beanfun.constant.QsConstant;
 import com.starmcc.beanfun.handler.AutoLunShaoHandler;
 import com.starmcc.beanfun.handler.CellHandler;
 import com.starmcc.beanfun.handler.GameHandler;
+import com.starmcc.beanfun.model.LoginType;
 import com.starmcc.beanfun.model.QsTray;
+import com.starmcc.beanfun.model.client.Account;
+import com.starmcc.beanfun.model.client.BeanfunStringResult;
 import com.starmcc.beanfun.utils.ConfigFileUtils;
 import com.starmcc.beanfun.utils.FrameUtils;
 import com.starmcc.beanfun.utils.RegexUtils;
@@ -337,19 +338,49 @@ public class MainController implements Initializable {
     }
 
     @FXML
-    public void memberTopUpAction(ActionEvent actionEvent) {
-        FrameUtils.executeThread(() -> SwtWebBrowser.getInstance(BeanfunClient.run().getWebUrlMemberTopUp(QsConstant.beanfunModel.getToken())).open());
+    public void memberTopUpAction(ActionEvent actionEvent) throws Exception {
+        String jumpUrl = BeanfunClient.run().getWebUrlMemberTopUp(QsConstant.beanfunModel.getToken());
+        if (Integer.compare(QsConstant.config.getLoginType(), LoginType.TypeEnum.旧香港登录.getType()) == 0) {
+            FrameUtils.executeThread(() -> SwtWebBrowser.getInstance(jumpUrl).open());
+            return;
+        }
+        WebController.jumpUrl = jumpUrl;
+        FrameUtils.openWindow(QsConstant.Page.网页客户端, jfxStage -> {
+            jfxStage.setMiniSupport(false);
+            jfxStage.setCloseEvent(() -> FrameUtils.closeWindow(jfxStage));
+            QsConstant.webJFXStage = jfxStage;
+        });
     }
 
 
     @FXML
-    public void memberCenterAction(ActionEvent actionEvent) {
-        FrameUtils.executeThread(() -> SwtWebBrowser.getInstance(BeanfunClient.run().getWebUrlMemberCenter(QsConstant.beanfunModel.getToken())).open());
+    public void memberCenterAction(ActionEvent actionEvent) throws Exception {
+        String jumpUrl = BeanfunClient.run().getWebUrlMemberCenter(QsConstant.beanfunModel.getToken());
+        if (Integer.compare(QsConstant.config.getLoginType(), LoginType.TypeEnum.旧香港登录.getType()) == 0) {
+            FrameUtils.executeThread(() -> SwtWebBrowser.getInstance(jumpUrl).open());
+            return;
+        }
+        WebController.jumpUrl = jumpUrl;
+        FrameUtils.openWindow(QsConstant.Page.网页客户端, jfxStage -> {
+            jfxStage.setMiniSupport(false);
+            jfxStage.setCloseEvent(() -> FrameUtils.closeWindow(jfxStage));
+            QsConstant.webJFXStage = jfxStage;
+        });
     }
 
     @FXML
-    public void serviceCenterAction(ActionEvent actionEvent) {
-        FrameUtils.executeThread(() -> SwtWebBrowser.getInstance(BeanfunClient.run().getWebUrlServiceCenter()).open());
+    public void serviceCenterAction(ActionEvent actionEvent) throws Exception {
+        String jumpUrl = BeanfunClient.run().getWebUrlServiceCenter();
+        if (Integer.compare(QsConstant.config.getLoginType(), LoginType.TypeEnum.旧香港登录.getType()) == 0) {
+            FrameUtils.executeThread(() -> SwtWebBrowser.getInstance(jumpUrl).open());
+            return;
+        }
+        WebController.jumpUrl = jumpUrl;
+        FrameUtils.openWindow(QsConstant.Page.网页客户端, jfxStage -> {
+            jfxStage.setMiniSupport(false);
+            jfxStage.setCloseEvent(() -> FrameUtils.closeWindow(jfxStage));
+            QsConstant.webJFXStage = jfxStage;
+        });
     }
 
     /**

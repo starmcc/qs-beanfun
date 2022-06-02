@@ -1,7 +1,7 @@
 package com.starmcc.beanfun.constant;
 
-import com.starmcc.beanfun.model.client.BeanfunModel;
 import com.starmcc.beanfun.model.ConfigJson;
+import com.starmcc.beanfun.model.client.BeanfunModel;
 import com.starmcc.beanfun.windows.JFXStage;
 import javafx.scene.control.Alert;
 import javafx.scene.control.ButtonType;
@@ -35,6 +35,7 @@ public class QsConstant {
     public static JFXStage mainJFXStage;
     public static JFXStage aboutJFXStage;
     public static JFXStage equippingJFXStage;
+    public static JFXStage webJFXStage;
     public static ConfigJson config;
     public static HttpHost proxy = null;
     public static BigDecimal currentRateChinaToTw = new BigDecimal("4.7");
@@ -90,7 +91,7 @@ public class QsConstant {
         主界面("main", "QsBeanfun"),
         关于我("about", "QsBeanfun"),
         装备计算器("equipment", "装备计算器"),
-        更新页面("process", "正在更新"),
+        网页客户端("web", "网页客户端"),
 
         ;
 

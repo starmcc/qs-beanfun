@@ -4,6 +4,7 @@ import com.starmcc.beanfun.client.BeanfunClient;
 import com.starmcc.beanfun.constant.QsConstant;
 import com.starmcc.beanfun.handler.AccountHandler;
 import com.starmcc.beanfun.model.ConfigJson;
+import com.starmcc.beanfun.model.LoginType;
 import com.starmcc.beanfun.model.QsTray;
 import com.starmcc.beanfun.model.client.AbstractBeanfunResult;
 import com.starmcc.beanfun.model.client.BeanfunAccountResult;
@@ -45,7 +46,8 @@ import java.util.concurrent.TimeUnit;
 @Slf4j
 public class LoginController implements Initializable {
 
-
+    @FXML
+    private ChoiceBox<LoginType> loginTypeBox;
     @FXML
     private ComboBox<String> account;
     @FXML
@@ -85,6 +87,19 @@ public class LoginController implements Initializable {
         register.setFocusTraversable(false);
         forgetPwd.setFocusTraversable(false);
         remember.setFocusTraversable(false);
+
+        Integer configLoginType = QsConstant.config.getLoginType();
+        LoginType selectLoginType = new LoginType(LoginType.TypeEnum.新香港登录);
+        ObservableList<LoginType> loginTypeItems = loginTypeBox.getItems();
+        for (LoginType.TypeEnum typeEnum : LoginType.TypeEnum.values()) {
+            LoginType loginType = new LoginType(typeEnum);
+            loginTypeItems.add(loginType);
+            if (Integer.compare(configLoginType, loginType.getType()) == 0) {
+                selectLoginType = loginType;
+            }
+        }
+        loginTypeBox.getSelectionModel().select(selectLoginType);
+
     }
 
     @FXML
@@ -172,14 +187,34 @@ public class LoginController implements Initializable {
     }
 
     @FXML
-    public void registerAction() {
-        FrameUtils.executeThread(() -> SwtWebBrowser.getInstance(BeanfunClient.run().getWebUrlRegister()).open());
+    public void registerAction() throws Exception {
+        String jumpUrl = BeanfunClient.run().getWebUrlRegister();
+        if (Integer.compare(QsConstant.config.getLoginType(), LoginType.TypeEnum.旧香港登录.getType()) == 0) {
+            FrameUtils.executeThread(() -> SwtWebBrowser.getInstance(jumpUrl).open());
+            return;
+        }
+        WebController.jumpUrl = jumpUrl;
+        FrameUtils.openWindow(QsConstant.Page.网页客户端, jfxStage -> {
+            jfxStage.setMiniSupport(false);
+            jfxStage.setCloseEvent(() -> FrameUtils.closeWindow(jfxStage));
+            QsConstant.webJFXStage = jfxStage;
+        });
     }
 
 
     @FXML
-    public void forgotPwdAction() {
-        FrameUtils.executeThread(() -> SwtWebBrowser.getInstance(BeanfunClient.run().getWebUrlForgotPwd()).open());
+    public void forgotPwdAction() throws Exception {
+        String jumpUrl = BeanfunClient.run().getWebUrlForgotPwd();
+        if (Integer.compare(QsConstant.config.getLoginType(), LoginType.TypeEnum.旧香港登录.getType()) == 0) {
+            FrameUtils.executeThread(() -> SwtWebBrowser.getInstance(jumpUrl).open());
+            return;
+        }
+        WebController.jumpUrl = jumpUrl;
+        FrameUtils.openWindow(QsConstant.Page.网页客户端, jfxStage -> {
+            jfxStage.setMiniSupport(false);
+            jfxStage.setCloseEvent(() -> FrameUtils.closeWindow(jfxStage));
+            QsConstant.webJFXStage = jfxStage;
+        });
     }
 
     /**
@@ -188,6 +223,14 @@ public class LoginController implements Initializable {
     @FXML
     public void rememberClickAction() {
         QsConstant.config.setRecordActPwd(remember.isSelected());
+        ConfigFileUtils.writeConfig(QsConstant.config);
+    }
+
+
+    @FXML
+    public void selectLoginTypeAction(ActionEvent actionEvent) {
+        LoginType selectedItem = loginTypeBox.getSelectionModel().getSelectedItem();
+        QsConstant.config.setLoginType(selectedItem.getType());
         ConfigFileUtils.writeConfig(QsConstant.config);
     }
 
@@ -253,6 +296,7 @@ public class LoginController implements Initializable {
         }
         loginTask = state;
         resetBtn.setDisable(state);
+        loginTypeBox.setDisable(state);
     }
 
 

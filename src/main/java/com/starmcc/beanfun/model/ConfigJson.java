@@ -14,6 +14,7 @@ public class ConfigJson {
     private Integer lunHuiKey;
     private Integer ranShaoKey;
     private Boolean killStartPalyWindow;
+    private Integer loginType;
 
     private List<ActPwd> actPwds;
 
@@ -28,6 +29,8 @@ public class ConfigJson {
         this.ranShaoKey = 78;
         // 默认 不关闭
         this.killStartPalyWindow = false;
+        // 默认 新港号登录
+        this.loginType = LoginType.TypeEnum.新香港登录.getType();
     }
 
     @Data

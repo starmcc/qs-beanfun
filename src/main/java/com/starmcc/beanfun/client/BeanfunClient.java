@@ -1,6 +1,9 @@
 package com.starmcc.beanfun.client;
 
 import com.starmcc.beanfun.client.impl.BeanfunNewHongKongClientImpl;
+import com.starmcc.beanfun.client.impl.BeanfunOldHongKongClientImpl;
+import com.starmcc.beanfun.constant.QsConstant;
+import com.starmcc.beanfun.model.LoginType;
 import com.starmcc.beanfun.model.client.Account;
 import com.starmcc.beanfun.model.client.BeanfunAccountResult;
 import com.starmcc.beanfun.model.client.BeanfunStringResult;
@@ -22,7 +25,10 @@ import java.util.function.Consumer;
 @Slf4j
 public abstract class BeanfunClient {
 
-    public static BeanfunClient run(){
+    public static BeanfunClient run() {
+        if (Integer.compare(QsConstant.config.getLoginType(), LoginType.TypeEnum.旧香港登录.getType()) == 0) {
+            return new BeanfunOldHongKongClientImpl();
+        }
         return new BeanfunNewHongKongClientImpl();
     }
 

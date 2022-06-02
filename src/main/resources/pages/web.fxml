@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.*?>
+<?import javafx.scene.web.*?>
+<?import java.lang.*?>
+<?import javafx.scene.layout.*?>
+
+
+<AnchorPane fx:controller="com.starmcc.beanfun.controller.WebController" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="400.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1">
+   <children>
+      <WebView fx:id="webView" layoutX="14.0" layoutY="47.0" prefHeight="332.0" prefWidth="579.0" />
+      <TextField fx:id="urlText" editable="false" layoutX="14.0" layoutY="14.0" prefHeight="23.0" prefWidth="579.0" />
+   </children>
+</AnchorPane>

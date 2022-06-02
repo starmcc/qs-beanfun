@@ -43,6 +43,16 @@ public class HttpClient {
     private static final String USER_AGENT = "Mozilla/5.0 (Windows NT 10.0; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/55.0.2883.87 Safari/537.36";
     private static final CookieStore COOKIE_STORE = new BasicCookieStore();
 
+    public static Map<String, String> getCookies() {
+        Map<String, String> cookieMap = new HashMap<>();
+        List<Cookie> cookies = COOKIE_STORE.getCookies();
+        for (Cookie cookie : cookies) {
+            cookieMap.put(cookie.getName(), cookie.getValue());
+        }
+        return cookieMap;
+    }
+
+
     /**
      * GET
      *
@@ -65,36 +75,6 @@ public class HttpClient {
             }
             log.info("请求URL = {}", params.toString());
             HttpGet get = new HttpGet(params.toString());
-            return get;
-        });
-    }
-    /**
-     * GET
-     *
-     * @param url       url
-     * @param reqParams 要求参数
-     * @return {@link String}
-     */
-    public static QsHttpResponse get(String url, ReqParams reqParams, Map<String,String> headers) throws Exception {
-
-        return request(() -> {
-            // 参数
-            StringBuilder params = new StringBuilder(url.replace("?", ""));
-            if (Objects.nonNull(reqParams) && DataTools.collectionIsNotEmpty(reqParams.getParams())) {
-                for (int i = 0; i < reqParams.getParams().size(); i++) {
-                    ReqParams.Param param = reqParams.getParams().get(i);
-                    StringBuilder valParam = new StringBuilder();
-                    valParam = i < 1 ? valParam.append("?") : valParam.append("&");
-                    valParam.append(param.getKey()).append("=").append(URLEncoder.encode(param.getVal(), "utf-8"));
-                    params.append(valParam.toString());
-                }
-            }
-            log.info("请求URL = {}", params.toString());
-            HttpGet get = new HttpGet(params.toString());
-            for (String key : headers.keySet()) {
-                get.setHeader(key, headers.get(key));
-            }
-
             return get;
         });
     }
@@ -154,7 +134,7 @@ public class HttpClient {
             if (DataTools.collectionIsNotEmpty(cookies)) {
                 Map<String, String> cookieMap = cookies.stream().collect(Collectors.toMap(Cookie::getName, Cookie::getValue, (x, y) -> x));
                 qsHttpResponse.setCookieMap(cookieMap);
-            }else {
+            } else {
                 qsHttpResponse.setCookieMap(new HashMap<>(1));
             }
             HttpEntity responseEntity = response.getEntity();
