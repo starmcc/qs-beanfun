@@ -1,10 +1,12 @@
-package com.starmcc.beanfun.client;
+package com.starmcc.beanfun.client.impl;
 
-import com.starmcc.beanfun.client.model.Account;
-import com.starmcc.beanfun.client.model.BeanfunAccountResult;
-import com.starmcc.beanfun.client.model.BeanfunStringResult;
+import com.starmcc.beanfun.client.BeanfunClient;
+import com.starmcc.beanfun.client.HttpClient;
 import com.starmcc.beanfun.model.ReqParams;
-import com.starmcc.beanfun.utils.HttpUtils;
+import com.starmcc.beanfun.model.client.Account;
+import com.starmcc.beanfun.model.client.BeanfunAccountResult;
+import com.starmcc.beanfun.model.client.BeanfunStringResult;
+import com.starmcc.beanfun.model.client.QsHttpResponse;
 import com.starmcc.beanfun.windows.BaseBFService;
 import org.apache.commons.lang3.StringUtils;
 
@@ -30,7 +32,8 @@ public class BeanfunNewHongKongClientImpl extends BeanfunClient {
         String url = "";
         ReqParams params = ReqParams.getInstance().addParam("service", "999999_T0");
         url = "https://bfweb.hk.beanfun.com/beanfun_block/bflogin/default.aspx";
-        String html = HttpUtils.get(url, params);
+        QsHttpResponse qsHttpResponse = HttpClient.get(url, params);
+
         return null;
     }
 

@@ -1,4 +1,4 @@
-package com.starmcc.beanfun.client.model;
+package com.starmcc.beanfun.model.client;
 
 import lombok.Data;
 import lombok.Getter;
@@ -41,6 +41,7 @@ public abstract class AbstractBeanfunResult {
      */
     @Getter
     public static enum CodeEnum {
+        REQUEST_ERROR(-2, "网络请求失败!"),
         /**
          * 错误
          */

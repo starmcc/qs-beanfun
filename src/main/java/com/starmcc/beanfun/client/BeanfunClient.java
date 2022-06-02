@@ -1,8 +1,9 @@
 package com.starmcc.beanfun.client;
 
-import com.starmcc.beanfun.client.model.BeanfunAccountResult;
-import com.starmcc.beanfun.client.model.BeanfunStringResult;
-import com.starmcc.beanfun.client.model.Account;
+import com.starmcc.beanfun.client.impl.BeanfunOldHongKongClientImpl;
+import com.starmcc.beanfun.model.client.BeanfunAccountResult;
+import com.starmcc.beanfun.model.client.BeanfunStringResult;
+import com.starmcc.beanfun.model.client.Account;
 import com.starmcc.beanfun.utils.DesUtils;
 import com.starmcc.beanfun.windows.BaseBFService;
 import lombok.extern.slf4j.Slf4j;

@@ -1,6 +1,6 @@
 package com.starmcc.beanfun.constant;
 
-import com.starmcc.beanfun.client.model.BeanfunModel;
+import com.starmcc.beanfun.model.client.BeanfunModel;
 import com.starmcc.beanfun.model.ConfigJson;
 import com.starmcc.beanfun.windows.JFXStage;
 import javafx.scene.control.Alert;

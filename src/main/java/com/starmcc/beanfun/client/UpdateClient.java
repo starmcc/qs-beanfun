@@ -5,8 +5,8 @@ import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.starmcc.beanfun.constant.QsConstant;
 import com.starmcc.beanfun.model.UpdateModel;
+import com.starmcc.beanfun.model.client.QsHttpResponse;
 import com.starmcc.beanfun.utils.DownloadTools;
-import com.starmcc.beanfun.utils.HttpUtils;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 
@@ -43,7 +43,11 @@ public class UpdateClient {
     public UpdateModel getVersionModel() {
         String json = null;
         try {
-            json = HttpUtils.get(GITHUB_URL, null);
+            QsHttpResponse qsHttpResponse = HttpClient.get(GITHUB_URL, null);
+            if (!qsHttpResponse.getSuccess()) {
+                return UpdateModel.builder().state(UpdateModel.State.获取失败).build();
+            }
+            json = qsHttpResponse.getContent();
         } catch (Exception e) {
             log.error("获取版本异常 e={}", e.getMessage(), e);
             return UpdateModel.builder().state(UpdateModel.State.获取失败).build();

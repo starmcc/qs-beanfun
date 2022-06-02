@@ -1,4 +1,4 @@
-package com.starmcc.beanfun.client.model;
+package com.starmcc.beanfun.model.client;
 
 import lombok.Data;
 import lombok.EqualsAndHashCode;

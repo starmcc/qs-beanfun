@@ -1,10 +1,10 @@
 package com.starmcc.beanfun.controller;
 
 import com.starmcc.beanfun.client.BeanfunClient;
-import com.starmcc.beanfun.client.model.AbstractBeanfunResult;
-import com.starmcc.beanfun.client.model.BeanfunAccountResult;
-import com.starmcc.beanfun.client.model.BeanfunModel;
-import com.starmcc.beanfun.client.model.BeanfunStringResult;
+import com.starmcc.beanfun.model.client.AbstractBeanfunResult;
+import com.starmcc.beanfun.model.client.BeanfunAccountResult;
+import com.starmcc.beanfun.model.client.BeanfunModel;
+import com.starmcc.beanfun.model.client.BeanfunStringResult;
 import com.starmcc.beanfun.constant.QsConstant;
 import com.starmcc.beanfun.handler.AccountHandler;
 import com.starmcc.beanfun.model.ConfigJson;

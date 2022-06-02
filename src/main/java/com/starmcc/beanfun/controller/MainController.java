@@ -2,8 +2,8 @@ package com.starmcc.beanfun.controller;
 
 import com.starmcc.beanfun.api.ThirdPartyApiClient;
 import com.starmcc.beanfun.client.BeanfunClient;
-import com.starmcc.beanfun.client.model.Account;
-import com.starmcc.beanfun.client.model.BeanfunStringResult;
+import com.starmcc.beanfun.model.client.Account;
+import com.starmcc.beanfun.model.client.BeanfunStringResult;
 import com.starmcc.beanfun.constant.QsConstant;
 import com.starmcc.beanfun.handler.AutoLunShaoHandler;
 import com.starmcc.beanfun.handler.CellHandler;
