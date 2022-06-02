@@ -340,7 +340,7 @@ public class MainController implements Initializable {
     @FXML
     public void memberTopUpAction(ActionEvent actionEvent) throws Exception {
         String jumpUrl = BeanfunClient.run().getWebUrlMemberTopUp(QsConstant.beanfunModel.getToken());
-        if (Integer.compare(QsConstant.config.getLoginType(), LoginType.TypeEnum.旧香港登录.getType()) == 0) {
+        if (Integer.compare(QsConstant.config.getLoginType(), LoginType.TypeEnum.HK_OLD.getType()) == 0) {
             FrameUtils.executeThread(() -> SwtWebBrowser.getInstance(jumpUrl).open());
             return;
         }
@@ -352,7 +352,7 @@ public class MainController implements Initializable {
     @FXML
     public void memberCenterAction(ActionEvent actionEvent) throws Exception {
         String jumpUrl = BeanfunClient.run().getWebUrlMemberCenter(QsConstant.beanfunModel.getToken());
-        if (Integer.compare(QsConstant.config.getLoginType(), LoginType.TypeEnum.旧香港登录.getType()) == 0) {
+        if (Integer.compare(QsConstant.config.getLoginType(), LoginType.TypeEnum.HK_OLD.getType()) == 0) {
             FrameUtils.executeThread(() -> SwtWebBrowser.getInstance(jumpUrl).open());
             return;
         }
@@ -363,7 +363,7 @@ public class MainController implements Initializable {
     @FXML
     public void serviceCenterAction(ActionEvent actionEvent) throws Exception {
         String jumpUrl = BeanfunClient.run().getWebUrlServiceCenter();
-        if (Integer.compare(QsConstant.config.getLoginType(), LoginType.TypeEnum.旧香港登录.getType()) == 0) {
+        if (Integer.compare(QsConstant.config.getLoginType(), LoginType.TypeEnum.HK_OLD.getType()) == 0) {
             FrameUtils.executeThread(() -> SwtWebBrowser.getInstance(jumpUrl).open());
             return;
         }

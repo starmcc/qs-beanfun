@@ -30,7 +30,7 @@ public class ConfigJson {
         // 默认 不关闭
         this.killStartPalyWindow = false;
         // 默认 新港号登录
-        this.loginType = LoginType.TypeEnum.新香港登录.getType();
+        this.loginType = LoginType.TypeEnum.HK_NEW.getType();
     }
 
     @Data

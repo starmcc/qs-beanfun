@@ -26,7 +26,7 @@ import java.util.function.Consumer;
 public abstract class BeanfunClient {
 
     public static BeanfunClient run() {
-        if (Integer.compare(QsConstant.config.getLoginType(), LoginType.TypeEnum.旧香港登录.getType()) == 0) {
+        if (Integer.compare(QsConstant.config.getLoginType(), LoginType.TypeEnum.HK_OLD.getType()) == 0) {
             return new BeanfunOldHongKongClientImpl();
         }
         return new BeanfunNewHongKongClientImpl();

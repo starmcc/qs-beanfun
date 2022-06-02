@@ -89,7 +89,7 @@ public class LoginController implements Initializable {
         remember.setFocusTraversable(false);
 
         Integer configLoginType = QsConstant.config.getLoginType();
-        LoginType selectLoginType = new LoginType(LoginType.TypeEnum.新香港登录);
+        LoginType selectLoginType = new LoginType(LoginType.TypeEnum.HK_NEW);
         ObservableList<LoginType> loginTypeItems = loginTypeBox.getItems();
         for (LoginType.TypeEnum typeEnum : LoginType.TypeEnum.values()) {
             LoginType loginType = new LoginType(typeEnum);
@@ -189,7 +189,7 @@ public class LoginController implements Initializable {
     @FXML
     public void registerAction() throws Exception {
         String jumpUrl = BeanfunClient.run().getWebUrlRegister();
-        if (Integer.compare(QsConstant.config.getLoginType(), LoginType.TypeEnum.旧香港登录.getType()) == 0) {
+        if (Integer.compare(QsConstant.config.getLoginType(), LoginType.TypeEnum.HK_OLD.getType()) == 0) {
             FrameUtils.executeThread(() -> SwtWebBrowser.getInstance(jumpUrl).open());
             return;
         }
@@ -201,7 +201,7 @@ public class LoginController implements Initializable {
     @FXML
     public void forgotPwdAction() throws Exception {
         String jumpUrl = BeanfunClient.run().getWebUrlForgotPwd();
-        if (Integer.compare(QsConstant.config.getLoginType(), LoginType.TypeEnum.旧香港登录.getType()) == 0) {
+        if (Integer.compare(QsConstant.config.getLoginType(), LoginType.TypeEnum.HK_OLD.getType()) == 0) {
             FrameUtils.executeThread(() -> SwtWebBrowser.getInstance(jumpUrl).open());
             return;
         }

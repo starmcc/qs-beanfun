@@ -26,9 +26,9 @@ public class LoginType {
 
     @Getter
     public static enum TypeEnum {
-        新香港登录("新香港登录", 1),
-        旧香港登录("旧香港登录", 2),
-        台号登录("台号登录", 3),
+        HK_NEW("新香港网页接口", 1),
+        HK_OLD("旧香港网页接口", 2),
+//        TW("台号网页接口", 3),
         ;
 
         private final String name;
