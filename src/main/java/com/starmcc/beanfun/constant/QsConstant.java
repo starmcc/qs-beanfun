@@ -1,5 +1,6 @@
 package com.starmcc.beanfun.constant;
 
+import com.starmcc.beanfun.client.model.BeanfunModel;
 import com.starmcc.beanfun.model.ConfigJson;
 import com.starmcc.beanfun.windows.JFXStage;
 import javafx.scene.control.Alert;
@@ -26,7 +27,7 @@ import java.util.stream.Collectors;
  */
 @Slf4j
 public class QsConstant {
-    public static final String APP_VERSION = "2.3";
+    public static final String APP_VERSION = "3.0";
     public static final String APP_PATH = System.getProperties().getProperty("user.home") + "\\QsBeanfun\\";
     public static final String APP_CONFIG = APP_PATH + "config.json";
     public static final String APP_NAME = "QsBeanfun";
@@ -39,6 +40,7 @@ public class QsConstant {
     public static BigDecimal currentRateChinaToTw = new BigDecimal("4.7");
     public static TrayIcon trayIcon;
     public static ScheduledExecutorService heartExecutorService;
+    public static BeanfunModel beanfunModel;
 
     public static void buildProxy(String host, int port) {
         QsConstant.proxy = new HttpHost(host, port);

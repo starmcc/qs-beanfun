@@ -23,8 +23,17 @@ public class UpdateModel implements Serializable {
 
 
     public static enum State {
+        /**
+         * 获取失败
+         */
         获取失败,
+        /**
+         * 已是最新版本
+         */
         已是最新版本,
+        /**
+         * 有新版本
+         */
         有新版本,
         ;
     }

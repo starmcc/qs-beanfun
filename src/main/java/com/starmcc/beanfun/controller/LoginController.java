@@ -1,8 +1,11 @@
 package com.starmcc.beanfun.controller;
 
 import com.starmcc.beanfun.client.BeanfunClient;
+import com.starmcc.beanfun.client.model.AbstractBeanfunResult;
+import com.starmcc.beanfun.client.model.BeanfunAccountResult;
+import com.starmcc.beanfun.client.model.BeanfunModel;
+import com.starmcc.beanfun.client.model.BeanfunStringResult;
 import com.starmcc.beanfun.constant.QsConstant;
-import com.starmcc.beanfun.exception.BFServiceNotFondException;
 import com.starmcc.beanfun.handler.AccountHandler;
 import com.starmcc.beanfun.model.ConfigJson;
 import com.starmcc.beanfun.model.QsTray;
@@ -64,6 +67,7 @@ public class LoginController implements Initializable {
 
 
     private boolean loginTask = false;
+    private double loginProcess = 0D;
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
@@ -111,10 +115,12 @@ public class LoginController implements Initializable {
     @FXML
     public void login() {
         loginning(true);
+
+
         ScheduledExecutorService executorService = new ScheduledThreadPoolExecutor(1,
                 new BasicThreadFactory.Builder().namingPattern("LoginController-schedule-pool-%d").daemon(true).build());
         executorService.scheduleAtFixedRate(() -> {
-            if (progressBar.getProgress() < 1 && progressBar.getProgress() < BeanfunClient.loginProcess) {
+            if (progressBar.getProgress() < 1 && progressBar.getProgress() < loginProcess) {
                 progressBar.setProgress(progressBar.getProgress() + 0.01D);
             }
             if (loginTask) {
@@ -123,21 +129,39 @@ public class LoginController implements Initializable {
             executorService.shutdown();
         }, 0, 50, TimeUnit.MILLISECONDS);
 
+
         // 执行登录方法
         FrameUtils.executeThread(() -> {
             try {
-                if (BeanfunClient.login(account.getValue(), password.getText()) && BeanfunClient.getAccountList()) {
-                    Platform.runLater(() -> loginSuccessGoMain());
+                BeanfunStringResult loginResult = BeanfunClient.run().login(account.getValue(), password.getText(), process -> loginProcess = process);
+                if (!loginResult.isSuccess()) {
+                    if (Objects.equals(loginResult.getCode(), AbstractBeanfunResult.CodeEnum.PLUGIN_NOT_INSTALL.getCode())) {
+                        // 没安装beanfun插件 提示一下，并前往下载
+                        Platform.runLater(() -> {
+                            if (!QsConstant.confirmDialog("初始化失败", "初始化失败!没有安装Beanfun插件!是否前往下载?")) {
+                                return;
+                            }
+                            SwtWebBrowser.getInstance("https://hk.beanfun.com/locales/HK/contents/beanfun_block/help/plugin_install.html").open();
+                        });
+                        return;
+                    }
+
+                    Platform.runLater(() -> QsConstant.alert(loginResult.getMsg(), Alert.AlertType.ERROR));
                     return;
                 }
-                Platform.runLater(() -> QsConstant.alert(BeanfunClient.errorMsg, Alert.AlertType.ERROR));
-            } catch (BFServiceNotFondException e) {
-                // 没安装beanfun插件 提示一下，并前往下载
-                Platform.runLater(() -> {
-                    if (QsConstant.confirmDialog("初始化失败", "初始化失败!没有安装Beanfun插件!是否前往下载?")) {
-                        SwtWebBrowser.getInstance("https://hk.beanfun.com/locales/HK/contents/beanfun_block/help/plugin_install.html").open();
-                    }
-                });
+                BeanfunModel beanfunModel = new BeanfunModel();
+                beanfunModel.setToken(loginResult.getData());
+                BeanfunAccountResult actResult = BeanfunClient.run().getAccountList(loginResult.getData());
+                if (!actResult.isSuccess()) {
+                    Platform.runLater(() -> QsConstant.alert(actResult.getMsg(), Alert.AlertType.ERROR));
+                    return;
+                }
+                beanfunModel.setAccountList(actResult.getAccountList());
+                beanfunModel.setNewAccount(actResult.getNewAccount());
+                // 登录成功后操作
+                Platform.runLater(() -> loginSuccessGoMain());
+                loginning(false);
+                QsConstant.beanfunModel = beanfunModel;
             } catch (HttpHostConnectException e) {
                 log.info("login error e={}", e.getMessage(), e);
                 Platform.runLater(() -> QsConstant.alert("连接超时,请检查网络环境", Alert.AlertType.ERROR));
@@ -145,19 +169,18 @@ public class LoginController implements Initializable {
                 log.info("login error e={}", e.getMessage(), e);
                 Platform.runLater(() -> QsConstant.alert("异常:" + e.getMessage(), Alert.AlertType.ERROR));
             }
-            loginning(false);
         });
     }
 
     @FXML
     public void registerAction() {
-        FrameUtils.executeThread(() -> SwtWebBrowser.getInstance(BeanfunClient.getWebUrlRegister()).open());
+        FrameUtils.executeThread(() -> SwtWebBrowser.getInstance(BeanfunClient.run().getWebUrlRegister()).open());
     }
 
 
     @FXML
     public void forgotPwdAction() {
-        FrameUtils.executeThread(() -> SwtWebBrowser.getInstance(BeanfunClient.getWebUrlForgotPwd()).open());
+        FrameUtils.executeThread(() -> SwtWebBrowser.getInstance(BeanfunClient.run().getWebUrlForgotPwd()).open());
     }
 
     /**
@@ -184,7 +207,7 @@ public class LoginController implements Initializable {
             QsConstant.heartExecutorService = new ScheduledThreadPoolExecutor(1,
                     new BasicThreadFactory.Builder().namingPattern("MainController-heartbeat-schedule-pool-%d").daemon(true).build());
             QsConstant.heartExecutorService.scheduleAtFixedRate(() -> {
-                boolean heartbeat = BeanfunClient.heartbeat();
+                boolean heartbeat = BeanfunClient.run().heartbeat(QsConstant.beanfunModel.getToken());
                 log.info("心跳 heart={}", heartbeat);
             }, 0, 5, TimeUnit.MINUTES);
             // 窗口显示

@@ -44,7 +44,7 @@ public class QsBeanfunApplication extends Application {
 
     static void closeWin() {
         try {
-            BeanfunClient.uninitialize();
+            BeanfunClient.run().uninitialize();
         } catch (Exception e) {
             log.error("退出时发生异常 e={}", e.getMessage(), e);
         }

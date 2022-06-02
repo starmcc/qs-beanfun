@@ -2,11 +2,12 @@ package com.starmcc.beanfun.controller;
 
 import com.starmcc.beanfun.api.ThirdPartyApiClient;
 import com.starmcc.beanfun.client.BeanfunClient;
+import com.starmcc.beanfun.client.model.Account;
+import com.starmcc.beanfun.client.model.BeanfunStringResult;
 import com.starmcc.beanfun.constant.QsConstant;
 import com.starmcc.beanfun.handler.AutoLunShaoHandler;
 import com.starmcc.beanfun.handler.CellHandler;
 import com.starmcc.beanfun.handler.GameHandler;
-import com.starmcc.beanfun.model.Account;
 import com.starmcc.beanfun.model.QsTray;
 import com.starmcc.beanfun.utils.ConfigFileUtils;
 import com.starmcc.beanfun.utils.FrameUtils;
@@ -110,9 +111,9 @@ public class MainController implements Initializable {
         passInput.setSelected(QsConstant.config.getPassInput());
         killPlayStartWindow.setSelected(QsConstant.config.getKillStartPalyWindow());
         gamePath.setText(QsConstant.config.getGamePath());
-        addActBtn.setVisible(BeanfunClient.isNewAccount);
-        addActMenu.setVisible(BeanfunClient.isNewAccount);
-        if (BeanfunClient.isNewAccount) {
+        addActBtn.setVisible(QsConstant.beanfunModel.isNewAccount());
+        addActMenu.setVisible(QsConstant.beanfunModel.isNewAccount());
+        if (QsConstant.beanfunModel.isNewAccount()) {
             // 新用户
             QsConstant.alert("新账号请点击创建账号!", Alert.AlertType.INFORMATION);
         } else {
@@ -190,7 +191,7 @@ public class MainController implements Initializable {
     public void exitLoginAction() {
         Platform.runLater(() -> {
             try {
-                BeanfunClient.loginOut();
+                BeanfunClient.run().loginOut(QsConstant.beanfunModel.getToken());
                 FrameUtils.openWindow(QsConstant.Page.登录页面, (jfxStage) -> {
                     jfxStage.setCloseEvent(() -> {
                         Platform.exit();
@@ -292,8 +293,8 @@ public class MainController implements Initializable {
         addActBtn.setDisable(true);
         FrameUtils.executeThread(() -> {
             try {
-                if (BeanfunClient.addAccount(name)) {
-                    BeanfunClient.getAccountList();
+                if (BeanfunClient.run().addAccount(name)) {
+                    BeanfunClient.run().getAccountList(QsConstant.beanfunModel.getToken());
                     initAccountComboBox(() -> {
                         QsConstant.alert("创建成功!", Alert.AlertType.INFORMATION);
                         addActBtn.setVisible(false);
@@ -323,8 +324,8 @@ public class MainController implements Initializable {
         String id = this.nowAccount.getId();
         FrameUtils.executeThread(() -> {
             try {
-                if (BeanfunClient.changeAccountName(id, newName)) {
-                    BeanfunClient.getAccountList();
+                if (BeanfunClient.run().changeAccountName(id, newName)) {
+                    BeanfunClient.run().getAccountList(QsConstant.beanfunModel.getToken());
                     initAccountComboBox(() -> QsConstant.alert("编辑成功!", Alert.AlertType.INFORMATION));
                     return;
                 }
@@ -337,18 +338,18 @@ public class MainController implements Initializable {
 
     @FXML
     public void memberTopUpAction(ActionEvent actionEvent) {
-        FrameUtils.executeThread(() -> SwtWebBrowser.getInstance(BeanfunClient.getWebUrlMemberTopUp()).open());
+        FrameUtils.executeThread(() -> SwtWebBrowser.getInstance(BeanfunClient.run().getWebUrlMemberTopUp(QsConstant.beanfunModel.getToken())).open());
     }
 
 
     @FXML
     public void memberCenterAction(ActionEvent actionEvent) {
-        FrameUtils.executeThread(() -> SwtWebBrowser.getInstance(BeanfunClient.getWebUrlMemberCenter()).open());
+        FrameUtils.executeThread(() -> SwtWebBrowser.getInstance(BeanfunClient.run().getWebUrlMemberCenter(QsConstant.beanfunModel.getToken())).open());
     }
 
     @FXML
     public void serviceCenterAction(ActionEvent actionEvent) {
-        FrameUtils.executeThread(() -> SwtWebBrowser.getInstance(BeanfunClient.getWebUrlServiceCenter()).open());
+        FrameUtils.executeThread(() -> SwtWebBrowser.getInstance(BeanfunClient.run().getWebUrlServiceCenter()).open());
     }
 
     /**
@@ -359,7 +360,7 @@ public class MainController implements Initializable {
     @FXML
     public void exitApplicationAction(ActionEvent actionEvent) {
         try {
-            BeanfunClient.loginOut();
+            BeanfunClient.run().loginOut(QsConstant.beanfunModel.getToken());
         } catch (Exception e) {
             log.error("退出登录异常 e={}", e.getMessage(), e);
         }
@@ -484,7 +485,7 @@ public class MainController implements Initializable {
     private void initAccountComboBox(Runnable runnable) {
         Platform.runLater(() -> {
             ObservableList<Account> options = FXCollections.observableArrayList();
-            BeanfunClient.accountList.forEach(account -> options.add(account));
+            QsConstant.beanfunModel.getAccountList().forEach(account -> options.add(account));
             actList.setItems(options);
             actList.getSelectionModel().selectFirst();
             if (Objects.nonNull(runnable)) {
@@ -504,7 +505,7 @@ public class MainController implements Initializable {
         String template = "{0}点[游戏内:{1}]";
         int gamePoints = 0;
         try {
-            gamePoints = BeanfunClient.getGamePoints();
+            gamePoints = BeanfunClient.run().getGamePoints(QsConstant.beanfunModel.getToken());
         } catch (Exception e) {
             log.error("获取游戏点数异常 e={}", e.getMessage(), e);
         }
@@ -564,13 +565,13 @@ public class MainController implements Initializable {
         getPassword.setDisable(true);
         FrameUtils.executeThread(() -> {
             try {
-                String dynamicPassword = BeanfunClient.getDynamicPassword(this.nowAccount);
-                if (StringUtils.isBlank(dynamicPassword)) {
-                    Platform.runLater(() -> QsConstant.alert(BeanfunClient.errorMsg, Alert.AlertType.ERROR));
+                BeanfunStringResult pwdResult = BeanfunClient.run().getDynamicPassword(this.nowAccount, QsConstant.beanfunModel.getToken());
+                if (!pwdResult.isSuccess()) {
+                    Platform.runLater(() -> QsConstant.alert(pwdResult.getMsg(), Alert.AlertType.ERROR));
                     return;
                 }
-                actDynamicPwd.setText(dynamicPassword);
-                log.debug("动态密码 ={}", dynamicPassword);
+                actDynamicPwd.setText(pwdResult.getData());
+                log.debug("动态密码 ={}", pwdResult.getData());
                 Platform.runLater(() -> getPassword.setDisable(false));
                 if (Objects.nonNull(runnable)) {
                     runnable.run();
