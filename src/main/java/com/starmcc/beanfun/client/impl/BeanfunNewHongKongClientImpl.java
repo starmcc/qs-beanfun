@@ -167,7 +167,8 @@ public class BeanfunNewHongKongClientImpl extends BeanfunClient {
             account.setSn(RegexUtils.getIndex(i, 2, dataList));
             account.setName(RegexUtils.getIndex(i, 3, dataList));
             // 新港号需要手动查询创建时间
-            account.setCreateTime();
+            Date accountCreateTime = this.getAccountCreateTime(account.getSn());
+            account.setCreateTime(accountCreateTime);
             accountList.add(account);
         }
         return BeanfunAccountResult.success(accountList, false);
@@ -253,16 +254,36 @@ public class BeanfunNewHongKongClientImpl extends BeanfunClient {
 
     @Override
     public void loginOut(String token) throws Exception {
-
+        String url = "https://bfweb.hk.beanfun.com/generic_handlers/remove_bflogin_session.ashx";
+        ReqParams params = ReqParams.getInstance().addParam("d", String.valueOf(System.currentTimeMillis()));
+        HttpClient.get(url, params);
     }
 
     @Override
     public void uninitialize() {
-
+        // 退出beanfun插件，不需要
     }
 
     @Override
     public int getGamePoints(String token) throws Exception {
+        String url = "https://bfweb.hk.beanfun.com/beanfun_block/generic_handlers/get_remain_point.ashx";
+        String time = new SimpleDateFormat("yyyyMMddHHmmss.SSS").format(new Date());
+        ReqParams params = ReqParams.getInstance().addParam("webtoken", "1").addParam("noCacheIE", time);
+        QsHttpResponse qsHttpResponse = HttpClient.get(url, params);
+        if (!qsHttpResponse.getSuccess()) {
+            return 0;
+        }
+        String content = qsHttpResponse.getContent();
+        List<List<String>> dataList = RegexUtils.regex(RegexUtils.PatternHongKong.GAME_POINTS.getPattern(), content);
+        String point = RegexUtils.getIndex(0, 1, dataList);
+        if (StringUtils.isBlank(point)) {
+            return 0;
+        }
+        try {
+            return Integer.parseInt(point);
+        } catch (NumberFormatException e) {
+            log.error("点数转换异常! e={}", e.getMessage());
+        }
         return 0;
     }
 
@@ -278,27 +299,28 @@ public class BeanfunNewHongKongClientImpl extends BeanfunClient {
 
     @Override
     public String getWebUrlMemberTopUp(String token) {
-        return null;
+        return "https://bfweb.hk.beanfun.com/HK/auth.aspx?channel=gash&page_and_query=default.aspx%3Fservice_code%3D999999%26service_region%3DT0&web_token=" + token;
     }
 
     @Override
     public String getWebUrlMemberCenter(String token) {
-        return null;
+        return "https://bfweb.hk.beanfun.com/HK/auth.aspx?channel=member&page_and_query=default.aspx%3Fservice_code%3D999999%26service_region%3DT0&web_token=" + token;
     }
 
     @Override
     public String getWebUrlServiceCenter() {
-        return null;
+        return "https://bfweb.hk.beanfun.com/newfaq/service_newBF.aspx";
     }
 
     @Override
     public String getWebUrlRegister() {
-        return null;
+        String time = new SimpleDateFormat("yyyyMMddHHmmss.SSS").format(new Date());
+        return "https://bfweb.hk.beanfun.com/beanfun_web_ap/signup/preregistration.aspx?service=999999_T0&dt=" + time;
     }
 
     @Override
     public String getWebUrlForgotPwd() {
-        return null;
+        return "https://bfweb.hk.beanfun.com/member/forgot_pwd.aspx";
     }
 
     @Override

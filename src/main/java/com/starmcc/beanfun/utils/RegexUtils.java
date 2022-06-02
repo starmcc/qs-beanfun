@@ -23,6 +23,7 @@ public class RegexUtils {
         GET_PWD_OTP_KEY(Pattern.compile("GetResultByLongPolling&key=(.*?)\"")),
         GET_SERVICE_CREATE_TIME(Pattern.compile("ServiceAccountCreateTime: \\\"([^\\\"]+)\\\"")),
         GET_PWD_OTP_SECRET(Pattern.compile("var m_strSecretCode = '(.*)'")),
+        GAME_POINTS(Pattern.compile("\"RemainPoint\"\\s:\\s\"(\\d+)\"")),
         ;
         private final Pattern pattern;
 
