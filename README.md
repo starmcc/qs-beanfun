@@ -8,6 +8,9 @@
 
 **遵循MIT开源协议**，如遇到问题或 Bug 欢迎提交 Issues。
 
+![image](./info.png)
+
+
 ## 下载安装使用
 
 [**Releases-点击进入下载页面**](https://github.com/starmcc/qs-beanfun/releases)
