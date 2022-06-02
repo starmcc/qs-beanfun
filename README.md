@@ -49,13 +49,15 @@
 7. 自动轮烧（使用Java虚拟机模拟按键）
 8. 新枫之谷相关网站快捷访问
 9. 香港橘子IE一键优化功能
+10. 已加入新港号接口 **NEW**
+11. 新港号接口免beanfun插件 **NEW**
 
 ## 运行环境
 
 - Windows7 以上
 - [**JRE1.8 x86 Offline Installer**](https://www.oracle.com/java/technologies/downloads/#jre8-windows)
 - [Microsoft Visual C++ Redistributable VC环境](https://aka.ms/vs/17/release/vc_redist.x64.exe)
-- [橘子官方Beanfun插件](http://hk.download.beanfun.com/beanfun20/beanfun_2_0_93_170_hk.exe)
+- [橘子官方Beanfun插件(新网页接口不需要)](http://hk.download.beanfun.com/beanfun20/beanfun_2_0_93_170_hk.exe)
 
 ## 依赖
 
@@ -71,8 +73,8 @@
 
 1. maven 打包 Jar
 2. exe4j 打包 exe
-3. Resource Hacker 修改 exe 清单管理员模式 
-   - `level=requireAdministrator`
+3. Resource Hacker 修改 exe 清单管理员模式
+    - `level=requireAdministrator`
 4. inno Setup 打包安装 install.exe 安装包
 
 详见 [详细打包安装教程](./build/README.md)
