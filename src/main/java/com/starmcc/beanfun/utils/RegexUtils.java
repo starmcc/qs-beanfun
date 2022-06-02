@@ -13,16 +13,53 @@ import java.util.regex.Pattern;
  */
 public class RegexUtils {
 
-    public static final Pattern PTN_OPT = Pattern.compile("var\\sotp1\\s=\\s\"(.*?)\";");
-    public static final Pattern PTN_VIEWSTATE = Pattern.compile("id=\"__VIEWSTATE\"\\svalue=\"(.*?)\"\\s/>");
-    public static final Pattern PTN_EVENTVALIDATION = Pattern.compile("id=\"__EVENTVALIDATION\"\\svalue=\"(.*?)\"\\s/>");
-    public static final Pattern PTN_VIEWSTATEGENERATOR = Pattern.compile("id=\"__VIEWSTATEGENERATOR\"\\svalue=\"(.*?)\"\\s/>");
-    public static final Pattern PTN_LOGIN_TOKEN = Pattern.compile("ProcessLoginV2\\(\\{token:\\\\\"(.*?)\\\\\",");
-    public static final Pattern PTN_LOGIN_ERRMSG = Pattern.compile("<div\\sid=\"divMsg\"\\sclass=\"divMsg\">(.*?)\\</div\\>");
-    public static final Pattern PTN_LOGIN_ACCOUNT_LOCATION = Pattern.compile("document.location\\s=\\s\"(.*?)\";");
-    public static final Pattern PTN_LOGIN_ACCOUNT_LIST = Pattern.compile("<li class=\\\"(.*?)\\\"\\stitle=\\\".*\\\"\\sonclick=\\\"StartGame\\('(.*?)',\\s'(.*?)',\\s'(.*?)',\\s'(.*?)',\\s'(.*?)',\\s'(.*?)',\\s'(.*?)'\\)");
-    public static final Pattern PTN_LOGIN_CREATE_ACCOUNT = Pattern.compile("<div\\sid\\=\"divServiceInstruction\">請先創立新帳戶</div>");
-    public static final Pattern PTN_LOGIN_GAME_POINTS = Pattern.compile("\"RemainPoint\"\\s:\\s\"(.*?)\"");
+
+    public static enum PatternHongKong {
+        OTP(Pattern.compile("otp1=(.*)&p")),
+        VIEWSTATE(Pattern.compile("id=\"__VIEWSTATE\"\\svalue=\"(.*?)\"\\s/>")),
+        EVENTVALIDATION(Pattern.compile("id=\"__EVENTVALIDATION\"\\svalue=\"(.*?)\"\\s/>")),
+        VIEWSTATEGENERATOR(Pattern.compile("id=\"__VIEWSTATEGENERATOR\"\\svalue=\"(.*?)\"\\s/>")),
+        LOGIN_ACCOUNT_LIST(Pattern.compile("<div\\sid=\"(.*?)\"\\ssn=\"(\\d+)\"\\sname=\"(.*?)\"\\sinherited=\".*\"\\svisible=\"\\d\"")),
+        GET_PWD_OTP_KEY(Pattern.compile("GetResultByLongPolling&key=(.*?)\"")),
+        GET_SERVICE_CREATE_TIME(Pattern.compile("ServiceAccountCreateTime: \\\"([^\\\"]+)\\\"")),
+        GET_PWD_OTP_SECRET(Pattern.compile("var m_strSecretCode = '(.*)'")),
+        ;
+        private final Pattern pattern;
+
+        PatternHongKong(Pattern pattern){
+            this.pattern = pattern;
+        }
+
+        public Pattern getPattern() {
+            return pattern;
+        }
+
+    }
+
+    public static enum PatternOldHongKong {
+        OTP(Pattern.compile("var\\sotp1\\s=\\s\"(.*?)\";")),
+        VIEWSTATE(Pattern.compile("id=\"__VIEWSTATE\"\\svalue=\"(.*?)\"\\s/>")),
+        EVENTVALIDATION(Pattern.compile("id=\"__EVENTVALIDATION\"\\svalue=\"(.*?)\"\\s/>")),
+        VIEWSTATEGENERATOR(Pattern.compile("id=\"__VIEWSTATEGENERATOR\"\\svalue=\"(.*?)\"\\s/>")),
+        TOKEN(Pattern.compile("ProcessLoginV2\\(\\{token:\\\\\"(.*?)\\\\\",")),
+        LOGIN_ERRMSG(Pattern.compile("<div\\sid=\"divMsg\"\\sclass=\"divMsg\">(.*?)\\</div\\>")),
+        LOGIN_ACCOUNT_LIST(Pattern.compile("<li class=\\\"(.*?)\\\"\\stitle=\\\".*\\\"\\sonclick=\\\"StartGame\\('(.*?)',\\s'(.*?)',\\s'(.*?)',\\s'(.*?)',\\s'(.*?)',\\s'(.*?)',\\s'(.*?)'\\)")),
+        LOGIN_CREATE_ACCOUNT(Pattern.compile("<div\\sid\\=\"divServiceInstruction\">請先創立新帳戶</div>")),
+        GAME_POINTS(Pattern.compile("\"RemainPoint\"\\s:\\s\"(.*?)\"")),
+        ;
+
+        private final Pattern pattern;
+
+        PatternOldHongKong(Pattern pattern){
+            this.pattern = pattern;
+        }
+
+        public Pattern getPattern() {
+            return pattern;
+        }
+    }
+
+
     public static final Pattern PTN_CHINA_PATH = Pattern.compile("[\u4E00-\u9FFF]+");
     public static final Pattern PTN_RATE_POINTS = Pattern.compile("<p></td><td><p>(.*?)</p></td><td><p>");
 

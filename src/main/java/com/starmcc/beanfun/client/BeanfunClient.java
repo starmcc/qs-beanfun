@@ -1,9 +1,9 @@
 package com.starmcc.beanfun.client;
 
-import com.starmcc.beanfun.client.impl.BeanfunOldHongKongClientImpl;
+import com.starmcc.beanfun.client.impl.BeanfunNewHongKongClientImpl;
+import com.starmcc.beanfun.model.client.Account;
 import com.starmcc.beanfun.model.client.BeanfunAccountResult;
 import com.starmcc.beanfun.model.client.BeanfunStringResult;
-import com.starmcc.beanfun.model.client.Account;
 import com.starmcc.beanfun.utils.DesUtils;
 import com.starmcc.beanfun.windows.BaseBFService;
 import lombok.extern.slf4j.Slf4j;
@@ -23,7 +23,7 @@ import java.util.function.Consumer;
 public abstract class BeanfunClient {
 
     public static BeanfunClient run(){
-        return new BeanfunOldHongKongClientImpl();
+        return new BeanfunNewHongKongClientImpl();
     }
 
     /**

@@ -48,47 +48,47 @@ public class UpdateClient {
                 return UpdateModel.builder().state(UpdateModel.State.获取失败).build();
             }
             json = qsHttpResponse.getContent();
+            if (StringUtils.isBlank(json)) {
+                return UpdateModel.builder().state(UpdateModel.State.获取失败).build();
+            }
+
+            log.debug("获取版本信息 json={}", json);
+            JSONObject jsonObj = JSON.parseObject(json);
+            String githubVersion = jsonObj.getString("tag_name");
+
+            if (StringUtils.isBlank(githubVersion)) {
+                return UpdateModel.builder().state(UpdateModel.State.获取失败).build();
+            }
+
+            if (!QsConstant.checkNewVersion(githubVersion)) {
+                return UpdateModel.builder().state(UpdateModel.State.已是最新版本).build();
+            }
+
+            StringBuffer tipsBf = new StringBuffer();
+            tipsBf.append("最新版本:").append(githubVersion).append("\n");
+            tipsBf.append("--------------------\n");
+            tipsBf.append(jsonObj.getString("body"));
+            JSONArray assets = jsonObj.getJSONArray("assets");
+            String downloadUrl = "";
+            for (int i = 0; i < assets.size(); i++) {
+                JSONObject obj = assets.getJSONObject(i);
+                if (StringUtils.equals(obj.getString("name"), QsConstant.APP_NAME + ".exe")) {
+                    downloadUrl = obj.getString("browser_download_url");
+                    break;
+                }
+            }
+            log.info("新版本下载地址: {}", downloadUrl);
+            return UpdateModel.builder()
+                    .state(UpdateModel.State.有新版本)
+                    .nowVersion(githubVersion)
+                    .downloadUrl(downloadUrl)
+                    .tips(tipsBf.toString())
+                    .build();
         } catch (Exception e) {
             log.error("获取版本异常 e={}", e.getMessage(), e);
             return UpdateModel.builder().state(UpdateModel.State.获取失败).build();
         }
-        if (StringUtils.isBlank(json)) {
-            return UpdateModel.builder().state(UpdateModel.State.获取失败).build();
-        }
 
-        log.debug("获取版本信息 json={}", json);
-        JSONObject jsonObj = JSON.parseObject(json);
-        String githubVersion = jsonObj.getString("tag_name");
-
-
-        if (StringUtils.isBlank(githubVersion)) {
-            return UpdateModel.builder().state(UpdateModel.State.获取失败).build();
-        }
-
-        if (!QsConstant.checkNewVersion(githubVersion)) {
-            return UpdateModel.builder().state(UpdateModel.State.已是最新版本).build();
-        }
-
-        StringBuffer tipsBf = new StringBuffer();
-        tipsBf.append("最新版本:").append(githubVersion).append("\n");
-        tipsBf.append("--------------------\n");
-        tipsBf.append(jsonObj.getString("body"));
-        JSONArray assets = jsonObj.getJSONArray("assets");
-        String downloadUrl = "";
-        for (int i = 0; i < assets.size(); i++) {
-            JSONObject obj = assets.getJSONObject(i);
-            if (StringUtils.equals(obj.getString("name"), QsConstant.APP_NAME + ".exe")) {
-                downloadUrl = obj.getString("browser_download_url");
-                break;
-            }
-        }
-        log.info("新版本下载地址: {}", downloadUrl);
-        return UpdateModel.builder()
-                .state(UpdateModel.State.有新版本)
-                .nowVersion(githubVersion)
-                .downloadUrl(downloadUrl)
-                .tips(tipsBf.toString())
-                .build();
     }
 
 

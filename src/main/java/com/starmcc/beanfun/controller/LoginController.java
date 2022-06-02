@@ -1,14 +1,14 @@
 package com.starmcc.beanfun.controller;
 
 import com.starmcc.beanfun.client.BeanfunClient;
-import com.starmcc.beanfun.model.client.AbstractBeanfunResult;
-import com.starmcc.beanfun.model.client.BeanfunAccountResult;
-import com.starmcc.beanfun.model.client.BeanfunModel;
-import com.starmcc.beanfun.model.client.BeanfunStringResult;
 import com.starmcc.beanfun.constant.QsConstant;
 import com.starmcc.beanfun.handler.AccountHandler;
 import com.starmcc.beanfun.model.ConfigJson;
 import com.starmcc.beanfun.model.QsTray;
+import com.starmcc.beanfun.model.client.AbstractBeanfunResult;
+import com.starmcc.beanfun.model.client.BeanfunAccountResult;
+import com.starmcc.beanfun.model.client.BeanfunModel;
+import com.starmcc.beanfun.model.client.BeanfunStringResult;
 import com.starmcc.beanfun.utils.ConfigFileUtils;
 import com.starmcc.beanfun.utils.DataTools;
 import com.starmcc.beanfun.utils.FrameUtils;
@@ -116,7 +116,6 @@ public class LoginController implements Initializable {
     public void login() {
         loginning(true);
 
-
         ScheduledExecutorService executorService = new ScheduledThreadPoolExecutor(1,
                 new BasicThreadFactory.Builder().namingPattern("LoginController-schedule-pool-%d").daemon(true).build());
         executorService.scheduleAtFixedRate(() -> {
@@ -128,7 +127,6 @@ public class LoginController implements Initializable {
             }
             executorService.shutdown();
         }, 0, 50, TimeUnit.MILLISECONDS);
-
 
         // 执行登录方法
         FrameUtils.executeThread(() -> {
@@ -145,7 +143,6 @@ public class LoginController implements Initializable {
                         });
                         return;
                     }
-
                     Platform.runLater(() -> QsConstant.alert(loginResult.getMsg(), Alert.AlertType.ERROR));
                     return;
                 }
@@ -159,16 +156,18 @@ public class LoginController implements Initializable {
                 beanfunModel.setAccountList(actResult.getAccountList());
                 beanfunModel.setNewAccount(actResult.getNewAccount());
                 // 登录成功后操作
-                Platform.runLater(() -> loginSuccessGoMain());
-                loginning(false);
                 QsConstant.beanfunModel = beanfunModel;
+                Platform.runLater(() -> loginSuccessGoMain());
             } catch (HttpHostConnectException e) {
                 log.info("login error e={}", e.getMessage(), e);
                 Platform.runLater(() -> QsConstant.alert("连接超时,请检查网络环境", Alert.AlertType.ERROR));
             } catch (Exception e) {
                 log.info("login error e={}", e.getMessage(), e);
                 Platform.runLater(() -> QsConstant.alert("异常:" + e.getMessage(), Alert.AlertType.ERROR));
+            } finally {
+                loginning(false);
             }
+
         });
     }
 

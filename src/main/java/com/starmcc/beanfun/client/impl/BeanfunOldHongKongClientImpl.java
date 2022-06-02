@@ -45,7 +45,7 @@ public class BeanfunOldHongKongClientImpl extends BeanfunClient {
             return BeanfunStringResult.error(AbstractBeanfunResult.CodeEnum.REQUEST_ERROR);
         }
         String html = httpResponse.getContent();
-        List<List<String>> dataList = RegexUtils.regex(RegexUtils.PTN_OPT, html);
+        List<List<String>> dataList = RegexUtils.regex(RegexUtils.PatternOldHongKong.OTP.getPattern(), html);
         String otp1 = DataTools.collectionIsEmpty(dataList) ? "" : dataList.get(0).get(1);
         if (StringUtils.isEmpty(otp1)) {
             return BeanfunStringResult.error(AbstractBeanfunResult.CodeEnum.OTP_GET_EMPTY);
@@ -55,16 +55,16 @@ public class BeanfunOldHongKongClientImpl extends BeanfunClient {
         // 2. 获取签名 viewstate eventvalidation viewstateGenerator
         params = ReqParams.getInstance().addParam("otp1", otp1).addParam("seed", "0");
         url = "http://hk.beanfun.com/beanfun_block/login/id-pass_form.aspx";
-        httpResponse = httpResponse = HttpClient.get(url, params);
+        httpResponse = HttpClient.get(url, params);
         if (!httpResponse.getSuccess()) {
             return BeanfunStringResult.error(AbstractBeanfunResult.CodeEnum.REQUEST_ERROR);
         }
         html = httpResponse.getContent();
-        dataList = RegexUtils.regex(RegexUtils.PTN_VIEWSTATE, html);
+        dataList = RegexUtils.regex(RegexUtils.PatternOldHongKong.VIEWSTATE.getPattern(), html);
         String viewstate = RegexUtils.getIndex(0, 1, dataList);
-        dataList = RegexUtils.regex(RegexUtils.PTN_EVENTVALIDATION, html);
+        dataList = RegexUtils.regex(RegexUtils.PatternOldHongKong.EVENTVALIDATION.getPattern(), html);
         String eventvalidation = RegexUtils.getIndex(0, 1, dataList);
-        dataList = RegexUtils.regex(RegexUtils.PTN_VIEWSTATEGENERATOR, html);
+        dataList = RegexUtils.regex(RegexUtils.PatternOldHongKong.VIEWSTATEGENERATOR.getPattern(), html);
         String viewstateGenerator = RegexUtils.getIndex(0, 1, dataList);
         log.info("BeanfunClient.login viewstate={} eventvalidation={} viewstateGenerator={}",
                 viewstate, eventvalidation, viewstateGenerator);
@@ -86,16 +86,16 @@ public class BeanfunOldHongKongClientImpl extends BeanfunClient {
         param.put("btn_login.y", "0");
         param.put("recaptcha_response_field", "manual_challenge");
         url = "http://hk.beanfun.com/beanfun_block/login/id-pass_form.aspx?otp1=" + otp1 + "&seed=0";
-        httpResponse = httpResponse = HttpClient.post(url, param);
+        httpResponse = HttpClient.post(url, param);
         if (!httpResponse.getSuccess()) {
             return BeanfunStringResult.error(AbstractBeanfunResult.CodeEnum.REQUEST_ERROR);
         }
         html = httpResponse.getContent();
-        dataList = RegexUtils.regex(RegexUtils.PTN_LOGIN_TOKEN, html);
+        dataList = RegexUtils.regex(RegexUtils.PatternOldHongKong.TOKEN.getPattern(), html);
         String token = RegexUtils.getIndex(0, 1, dataList);
         log.info("BeanfunClient.login token = {}", token);
         if (StringUtils.isEmpty(token)) {
-            dataList = RegexUtils.regex(RegexUtils.PTN_LOGIN_ERRMSG, html);
+            dataList = RegexUtils.regex(RegexUtils.PatternOldHongKong.LOGIN_ERRMSG.getPattern(), html);
             // 信息框提示
             String errorMsg = RegexUtils.getIndex(0, 1, dataList);
             if (StringUtils.isNotBlank(errorMsg)) {
@@ -104,13 +104,13 @@ public class BeanfunOldHongKongClientImpl extends BeanfunClient {
             return BeanfunStringResult.error(AbstractBeanfunResult.CodeEnum.ACT_PWD_ERROR);
         }
         process.accept(0.8D);
-        // 这个请求.. 刷新登录状态吧..
+        // 请求权限
         url = "http://hk.beanfun.com/beanfun_block/auth.aspx";
         params = ReqParams.getInstance()
                 .addParam("channel", "game_zone")
                 .addParam("page_and_query", "game_start.aspx?service_code_and_region=610074_T9")
                 .addParam("token", getBfToken(token));
-        httpResponse = httpResponse = HttpClient.get(url, params);
+        httpResponse = HttpClient.get(url, params);
         if (!httpResponse.getSuccess()) {
             return BeanfunStringResult.error(AbstractBeanfunResult.CodeEnum.REQUEST_ERROR);
         }
@@ -127,7 +127,7 @@ public class BeanfunOldHongKongClientImpl extends BeanfunClient {
                 .addParam("channel", "game_zone")
                 .addParam("page_and_query", "game_start.aspx?service_code_and_region=610074_T9")
                 .addParam("token", getBfToken(token));
-        QsHttpResponse httpResponse = httpResponse = HttpClient.get(url, params);
+        QsHttpResponse httpResponse = HttpClient.get(url, params);
         if (!httpResponse.getSuccess()) {
             return BeanfunAccountResult.error(AbstractBeanfunResult.CodeEnum.REQUEST_ERROR);
         }
@@ -136,14 +136,14 @@ public class BeanfunOldHongKongClientImpl extends BeanfunClient {
         ReqParams reqParams = ReqParams.getInstance()
                 .addParam("service_code", "610074")
                 .addParam("service_region", "T9");
-        httpResponse = httpResponse = HttpClient.get(url, reqParams);
+        httpResponse = HttpClient.get(url, reqParams);
         if (!httpResponse.getSuccess()) {
             return BeanfunAccountResult.error(AbstractBeanfunResult.CodeEnum.REQUEST_ERROR);
         }
         html = httpResponse.getContent();
-        List<List<String>> dataList = RegexUtils.regex(RegexUtils.PTN_LOGIN_ACCOUNT_LIST, html);
+        List<List<String>> dataList = RegexUtils.regex(RegexUtils.PatternOldHongKong.LOGIN_ACCOUNT_LIST.getPattern(), html);
         if (DataTools.collectionIsEmpty(dataList)) {
-            if (RegexUtils.test(RegexUtils.PTN_LOGIN_CREATE_ACCOUNT, html)) {
+            if (RegexUtils.test(RegexUtils.PatternOldHongKong.LOGIN_CREATE_ACCOUNT.getPattern(), html)) {
                 // 新账号，没有账号
                 return BeanfunAccountResult.success(new ArrayList<>(), true);
             }
@@ -192,7 +192,7 @@ public class BeanfunOldHongKongClientImpl extends BeanfunClient {
                 .addParam("service_account_id", account.getId())
                 .addParam("create_time", createTime)
                 .addParam("d", String.valueOf(System.currentTimeMillis()));
-        QsHttpResponse httpResponse = httpResponse = HttpClient.get(url, params);
+        QsHttpResponse httpResponse = HttpClient.get(url, params);
         if (!httpResponse.getSuccess()) {
             return BeanfunStringResult.error(AbstractBeanfunResult.CodeEnum.REQUEST_ERROR);
         }
@@ -231,7 +231,7 @@ public class BeanfunOldHongKongClientImpl extends BeanfunClient {
             return 0;
         }
         String html = httpResponse.getContent();
-        List<List<String>> regex = RegexUtils.regex(RegexUtils.PTN_LOGIN_GAME_POINTS, html);
+        List<List<String>> regex = RegexUtils.regex(RegexUtils.PatternOldHongKong.GAME_POINTS.getPattern(), html);
         String result = RegexUtils.getIndex(0, 1, regex);
         if (StringUtils.isBlank(result)) {
             return 0;
@@ -259,7 +259,7 @@ public class BeanfunOldHongKongClientImpl extends BeanfunClient {
         params.put("sadn", newName);
         params.put("sag", "");
         String url = "https://hk.beanfun.com/beanfun_block/generic_handlers/gamezone.ashx";
-        QsHttpResponse httpResponse = httpResponse = HttpClient.post(url, params);
+        QsHttpResponse httpResponse = HttpClient.post(url, params);
         if (!httpResponse.getSuccess()) {
             return false;
         }
@@ -284,7 +284,7 @@ public class BeanfunOldHongKongClientImpl extends BeanfunClient {
         params.put("said", accountId);
         params.put("nsadn", newName);
         String url = "https://hk.beanfun.com/beanfun_block/generic_handlers/gamezone.ashx";
-        QsHttpResponse httpResponse = httpResponse = HttpClient.post(url, params);
+        QsHttpResponse httpResponse = HttpClient.post(url, params);
         if (!httpResponse.getSuccess()) {
             return false;
         }
@@ -355,7 +355,7 @@ public class BeanfunOldHongKongClientImpl extends BeanfunClient {
         try {
             ReqParams reqParams = ReqParams.getInstance().addParam("token", getBfToken(token));
             String url = "http://hk.beanfun.com/beanfun_block/generic_handlers/echo_token.ashx";
-            QsHttpResponse httpResponse = httpResponse = HttpClient.get(url, reqParams);
+            QsHttpResponse httpResponse = HttpClient.get(url, reqParams);
             if (!httpResponse.getSuccess()) {
                 return false;
             }
