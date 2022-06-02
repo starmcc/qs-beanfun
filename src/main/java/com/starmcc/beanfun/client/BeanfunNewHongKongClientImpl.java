@@ -3,6 +3,10 @@ package com.starmcc.beanfun.client;
 import com.starmcc.beanfun.client.model.Account;
 import com.starmcc.beanfun.client.model.BeanfunAccountResult;
 import com.starmcc.beanfun.client.model.BeanfunStringResult;
+import com.starmcc.beanfun.model.ReqParams;
+import com.starmcc.beanfun.utils.HttpUtils;
+import com.starmcc.beanfun.windows.BaseBFService;
+import org.apache.commons.lang3.StringUtils;
 
 import java.util.function.Consumer;
 
@@ -13,8 +17,20 @@ import java.util.function.Consumer;
 public class BeanfunNewHongKongClientImpl extends BeanfunClient {
     @Override
     public BeanfunStringResult login(String account, String password, Consumer<Double> process) throws Exception {
-
-
+        if (StringUtils.isEmpty(account) || StringUtils.isEmpty(password)) {
+            return BeanfunStringResult.error(BeanfunStringResult.CodeEnum.ACT_PWD_IS_NULL);
+        }
+        process.accept(0D);
+        boolean load = BaseBFService.getInstance().initialize2();
+        if (!load) {
+            return BeanfunStringResult.error(BeanfunStringResult.CodeEnum.PLUGIN_NOT_INSTALL);
+        }
+        process.accept(0.2D);
+        // 1. 请求获取OTP
+        String url = "";
+        ReqParams params = ReqParams.getInstance().addParam("service", "999999_T0");
+        url = "https://bfweb.hk.beanfun.com/beanfun_block/bflogin/default.aspx";
+        String html = HttpUtils.get(url, params);
         return null;
     }
 
