@@ -1,5 +1,7 @@
 package com.starmcc.beanfun.client.impl;
 
+import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson.JSONObject;
 import com.starmcc.beanfun.client.BeanfunClient;
 import com.starmcc.beanfun.client.HttpClient;
 import com.starmcc.beanfun.model.ReqParams;
@@ -288,13 +290,53 @@ public class BeanfunNewHongKongClientImpl extends BeanfunClient {
     }
 
     @Override
-    public boolean addAccount(String newName) throws Exception {
-        return false;
+    public BeanfunStringResult addAccount(String newName) throws Exception {
+        String url = "https://bfweb.hk.beanfun.com/generic_handlers/gamezone.ashx";
+        Map<String, String> payload = new HashMap<>();
+        payload.put("strFunction", "AddServiceAccount");
+        payload.put("npsc", "");
+        payload.put("npsr", "");
+        payload.put("sc", "610074");
+        payload.put("sr", "T9");
+        payload.put("sadn", newName.trim());
+        payload.put("sag", "");
+        QsHttpResponse httpResponse = HttpClient.post(url, payload);
+        if (!httpResponse.getSuccess()) {
+            log.error("添加账号失败");
+            return BeanfunStringResult.error(AbstractBeanfunResult.CodeEnum.REQUEST_ERROR);
+        }
+        String json = httpResponse.getContent();
+        JSONObject jsonObject = JSON.parseObject(json);
+        Integer intResult = jsonObject.getInteger("intResult");
+        if (intResult == 0) {
+            String msg = jsonObject.getString("strOutstring");
+            return BeanfunStringResult.error(AbstractBeanfunResult.CodeEnum.ACCOUNT_OPT_EXCEPTION, msg);
+        }
+        JSONObject objResult = jsonObject.getJSONObject("objResult");
+        return BeanfunStringResult.success(objResult.toJSONString());
     }
 
     @Override
-    public boolean changeAccountName(String accountId, String newName) throws Exception {
-        return false;
+    public BeanfunStringResult changeAccountName(String accountId, String newName) throws Exception {
+        String url = "https://bfweb.hk.beanfun.com/generic_handlers/gamezone.ashx";
+        Map<String, String> payload = new HashMap<>();
+        payload.put("strFunction", "ChangeServiceAccountDisplayName");
+        payload.put("sl", "610074_T9");
+        payload.put("said", accountId);
+        payload.put("nsadn", newName.trim());
+        QsHttpResponse httpResponse = HttpClient.post(url, payload);
+        if (!httpResponse.getSuccess()) {
+            log.error("修改账号名称失败");
+            return BeanfunStringResult.error(AbstractBeanfunResult.CodeEnum.REQUEST_ERROR);
+        }
+        String json = httpResponse.getContent();
+        JSONObject jsonObject = JSON.parseObject(json);
+        Integer intResult = jsonObject.getInteger("intResult");
+        String strOutstring = jsonObject.getString("strOutstring");
+        if (Objects.isNull(intResult) || intResult != 1) {
+            return BeanfunStringResult.error(AbstractBeanfunResult.CodeEnum.ACCOUNT_OPT_EXCEPTION, strOutstring);
+        }
+        return BeanfunStringResult.success(strOutstring);
     }
 
     @Override
@@ -325,7 +367,8 @@ public class BeanfunNewHongKongClientImpl extends BeanfunClient {
 
     @Override
     public boolean heartbeat(String token) {
-        return false;
+        // 新版无需心跳
+        return true;
     }
 
 

@@ -41,6 +41,9 @@ public abstract class AbstractBeanfunResult {
      */
     @Getter
     public static enum CodeEnum {
+        /**
+         * 请求错误
+         */
         REQUEST_ERROR(-2, "网络请求失败!"),
         /**
          * 错误
@@ -81,7 +84,11 @@ public abstract class AbstractBeanfunResult {
         /**
          * 获取动态密码失败!账号信息不存在
          */
-        GET_DYNAMIC_PWD_ACT_INFO_EMPTY(8, "获取动态密码失败!账号信息不存在"),
+        GET_DYNAMIC_PWD_ACT_INFO_EMPTY(8, "获取动态密码失败,账号信息不存在!"),
+        /**
+         * 账号操作异常
+         */
+        ACCOUNT_OPT_EXCEPTION(9, "账号操作异常!"),
         ;
 
         private final int code;

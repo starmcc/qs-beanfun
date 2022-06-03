@@ -26,6 +26,12 @@ public class BeanfunStringResult extends AbstractBeanfunResult implements Serial
         super(codeEnum, errorMsg);
     }
 
+    public static BeanfunStringResult success() {
+        BeanfunStringResult result = new BeanfunStringResult(CodeEnum.SUCCESS);
+        result.setData("");
+        return result;
+    }
+
     public static BeanfunStringResult success(String data) {
         BeanfunStringResult result = new BeanfunStringResult(CodeEnum.SUCCESS);
         result.setData(data);

@@ -91,7 +91,7 @@ public abstract class BeanfunClient {
      * @return boolean
      * @throws Exception 异常
      */
-    public abstract boolean addAccount(String newName) throws Exception;
+    public abstract BeanfunStringResult addAccount(String newName) throws Exception;
 
     /**
      * 更改账户名称
@@ -101,7 +101,7 @@ public abstract class BeanfunClient {
      * @return boolean
      * @throws Exception 异常
      */
-    public abstract boolean changeAccountName(String accountId, String newName) throws Exception;
+    public abstract BeanfunStringResult changeAccountName(String accountId, String newName) throws Exception;
 
     /**
      * 获取web url会员充值

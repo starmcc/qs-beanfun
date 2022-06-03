@@ -294,20 +294,22 @@ public class MainController implements Initializable {
         addActBtn.setDisable(true);
         FrameUtils.executeThread(() -> {
             try {
-                if (BeanfunClient.run().addAccount(name)) {
-                    BeanfunClient.run().getAccountList(QsConstant.beanfunModel.getToken());
-                    initAccountComboBox(() -> {
-                        QsConstant.alert("创建成功!", Alert.AlertType.INFORMATION);
-                        addActBtn.setVisible(false);
-                    });
+                BeanfunStringResult result = BeanfunClient.run().addAccount(name);
+                if (!result.isSuccess()) {
+                    Platform.runLater(() -> QsConstant.alert(result.getMsg(), Alert.AlertType.WARNING));
                     return;
                 }
+                BeanfunClient.run().getAccountList(QsConstant.beanfunModel.getToken());
+                initAccountComboBox(() -> {
+                    QsConstant.alert("创建成功!", Alert.AlertType.INFORMATION);
+                    addActBtn.setVisible(false);
+                });
             } catch (Exception e) {
                 log.error("添加账号异常 e={}", e.getMessage(), e);
+                Platform.runLater(() -> QsConstant.alert("创建失败!", Alert.AlertType.WARNING));
+            } finally {
+                addActBtn.setDisable(false);
             }
-            Platform.runLater(() -> QsConstant.alert("创建失败!", Alert.AlertType.WARNING));
-
-            addActBtn.setDisable(false);
         });
 
 
@@ -325,15 +327,16 @@ public class MainController implements Initializable {
         String id = this.nowAccount.getId();
         FrameUtils.executeThread(() -> {
             try {
-                if (BeanfunClient.run().changeAccountName(id, newName)) {
-                    BeanfunClient.run().getAccountList(QsConstant.beanfunModel.getToken());
-                    initAccountComboBox(() -> QsConstant.alert("编辑成功!", Alert.AlertType.INFORMATION));
+                BeanfunStringResult result = BeanfunClient.run().changeAccountName(id, newName);
+                if (!result.isSuccess()) {
+                    Platform.runLater(() -> QsConstant.alert(result.getMsg(), Alert.AlertType.WARNING));
                     return;
                 }
+                BeanfunClient.run().getAccountList(QsConstant.beanfunModel.getToken());
+                initAccountComboBox(() -> QsConstant.alert("编辑成功!", Alert.AlertType.INFORMATION));
             } catch (Exception e) {
                 log.error("编辑账号异常 e={}", e.getMessage(), e);
             }
-            Platform.runLater(() -> QsConstant.alert("编辑失败!", Alert.AlertType.WARNING));
         });
     }
 

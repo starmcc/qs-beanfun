@@ -237,13 +237,15 @@ public class LoginController implements Initializable {
             AccountHandler.recordActPwd(account.getValue(), password.getText());
         }
         try {
-            // 定时心跳设置
-            QsConstant.heartExecutorService = new ScheduledThreadPoolExecutor(1,
-                    new BasicThreadFactory.Builder().namingPattern("MainController-heartbeat-schedule-pool-%d").daemon(true).build());
-            QsConstant.heartExecutorService.scheduleAtFixedRate(() -> {
-                boolean heartbeat = BeanfunClient.run().heartbeat(QsConstant.beanfunModel.getToken());
-                log.info("心跳 heart={}", heartbeat);
-            }, 0, 5, TimeUnit.MINUTES);
+            if (Integer.compare(QsConstant.config.getLoginType(), LoginType.TypeEnum.HK_OLD.getType()) == 0) {
+                // 定时心跳设置
+                QsConstant.heartExecutorService = new ScheduledThreadPoolExecutor(1,
+                        new BasicThreadFactory.Builder().namingPattern("MainController-heartbeat-schedule-pool-%d").daemon(true).build());
+                QsConstant.heartExecutorService.scheduleAtFixedRate(() -> {
+                    boolean heartbeat = BeanfunClient.run().heartbeat(QsConstant.beanfunModel.getToken());
+                    log.info("心跳 heart={}", heartbeat);
+                }, 0, 5, TimeUnit.MINUTES);
+            }
             // 窗口显示
             FrameUtils.openWindow(QsConstant.Page.主界面);
             QsConstant.trayIcon = QsTray.init(QsConstant.mainJFXStage.getStage());

@@ -249,7 +249,7 @@ public class BeanfunOldHongKongClientImpl extends BeanfunClient {
      * @throws Exception 异常
      */
     @Override
-    public boolean addAccount(String newName) throws Exception {
+    public BeanfunStringResult addAccount(String newName) throws Exception {
         Map<String, String> params = new LinkedHashMap<>();
         params.put("strFunction", "AddServiceAccount");
         params.put("npsc", "");
@@ -261,11 +261,15 @@ public class BeanfunOldHongKongClientImpl extends BeanfunClient {
         String url = "https://hk.beanfun.com/beanfun_block/generic_handlers/gamezone.ashx";
         QsHttpResponse httpResponse = HttpClient.post(url, params);
         if (!httpResponse.getSuccess()) {
-            return false;
+            return BeanfunStringResult.error(AbstractBeanfunResult.CodeEnum.REQUEST_ERROR);
         }
         String json = httpResponse.getContent();
         JSONObject jsonObject = JSON.parseObject(json);
-        return StringUtils.equals(jsonObject.getString("intResult"), "1");
+        Integer intResult = jsonObject.getInteger("intResult");
+        if (intResult == 0) {
+            return BeanfunStringResult.error(AbstractBeanfunResult.CodeEnum.ACCOUNT_OPT_EXCEPTION);
+        }
+        return BeanfunStringResult.success();
     }
 
     /**
@@ -277,7 +281,7 @@ public class BeanfunOldHongKongClientImpl extends BeanfunClient {
      * @throws Exception 异常
      */
     @Override
-    public boolean changeAccountName(String accountId, String newName) throws Exception {
+    public BeanfunStringResult changeAccountName(String accountId, String newName) throws Exception {
         Map<String, String> params = new LinkedHashMap<>();
         params.put("strFunction", "ChangeServiceAccountDisplayName");
         params.put("sl", "610074_T9");
@@ -286,11 +290,15 @@ public class BeanfunOldHongKongClientImpl extends BeanfunClient {
         String url = "https://hk.beanfun.com/beanfun_block/generic_handlers/gamezone.ashx";
         QsHttpResponse httpResponse = HttpClient.post(url, params);
         if (!httpResponse.getSuccess()) {
-            return false;
+            return BeanfunStringResult.error(AbstractBeanfunResult.CodeEnum.REQUEST_ERROR);
         }
         String json = httpResponse.getContent();
         JSONObject jsonObject = JSON.parseObject(json);
-        return StringUtils.equals(jsonObject.getString("intResult"), "1");
+        Integer intResult = jsonObject.getInteger("intResult");
+        if (Objects.isNull(intResult) || intResult != 1) {
+            return BeanfunStringResult.error(AbstractBeanfunResult.CodeEnum.ACCOUNT_OPT_EXCEPTION);
+        }
+        return BeanfunStringResult.success();
     }
 
     /**
