@@ -41,13 +41,12 @@ public class UpdateClient {
      * @throws Exception 异常
      */
     public UpdateModel getVersionModel() {
-        String json = null;
         try {
             QsHttpResponse qsHttpResponse = HttpClient.get(GITHUB_URL, null);
             if (!qsHttpResponse.getSuccess()) {
                 return UpdateModel.builder().state(UpdateModel.State.获取失败).build();
             }
-            json = qsHttpResponse.getContent();
+            String json = qsHttpResponse.getContent();
             if (StringUtils.isBlank(json)) {
                 return UpdateModel.builder().state(UpdateModel.State.获取失败).build();
             }
