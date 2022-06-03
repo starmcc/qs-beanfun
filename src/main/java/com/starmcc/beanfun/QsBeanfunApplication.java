@@ -89,7 +89,18 @@ public class QsBeanfunApplication extends Application {
 
 
     private static void initApp() {
-        QsConstant.config = loadConfig();
+        try {
+            QsConstant.config = loadConfig();
+        } catch (Exception e) {
+            log.error("读取配置异常 e={}", e.getMessage(), e);
+            StringBuilder msg = new StringBuilder();
+            msg.append("读取配置异常,请检查以下路径文件,尝试删除该文件重新打开!\n");
+            msg.append(QsConstant.APP_CONFIG);
+            Platform.runLater(() -> QsConstant.alert(msg.toString(), Alert.AlertType.ERROR));
+            Platform.exit();
+            System.exit(0);
+            return;
+        }
         // 释放LR所需文件
         copyResourceFile(QsConstant.Resources.LR_PROC_EXE);
         copyResourceFile(QsConstant.Resources.LR_HOOKX64_DLL);
