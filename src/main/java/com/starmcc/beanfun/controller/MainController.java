@@ -87,6 +87,8 @@ public class MainController implements Initializable {
     @FXML
     private MenuItem officialTmsUrlMenu;
     @FXML
+    private MenuItem hkNewBeanfunUrlMenu;
+    @FXML
     private MenuItem hkBeanfunUrlMenu;
     @FXML
     private MenuItem twBeanfunUrlMenu;
@@ -127,6 +129,7 @@ public class MainController implements Initializable {
 
     private void initEvent() {
         officialTmsUrlMenu.setOnAction(event -> FrameUtils.openWebUrl("https://maplestory.beanfun.com/main"));
+        hkNewBeanfunUrlMenu.setOnAction(event -> FrameUtils.openWebUrl("https://bfweb.hk.beanfun.com/"));
         hkBeanfunUrlMenu.setOnAction(event -> SwtWebBrowser.getInstance("hk.beanfun.com").open());
         twBeanfunUrlMenu.setOnAction(event -> FrameUtils.openWebUrl("https://tw.beanfun.com"));
         techbangUrlMenu.setOnAction(event -> FrameUtils.openWebUrl("http://gametsg.techbang.com/maplestory/"));
