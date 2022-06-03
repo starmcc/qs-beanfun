@@ -308,9 +308,9 @@ public class BeanfunNewHongKongClientImpl extends BeanfunClient {
         String json = httpResponse.getContent();
         JSONObject jsonObject = JSON.parseObject(json);
         Integer intResult = jsonObject.getInteger("intResult");
+        String strOutstring = jsonObject.getString("strOutstring");
         if (intResult == 0) {
-            String msg = jsonObject.getString("strOutstring");
-            return BeanfunStringResult.error(AbstractBeanfunResult.CodeEnum.ACCOUNT_OPT_EXCEPTION, msg);
+            return BeanfunStringResult.error(AbstractBeanfunResult.CodeEnum.ACCOUNT_OPT_EXCEPTION, strOutstring);
         }
         JSONObject objResult = jsonObject.getJSONObject("objResult");
         return BeanfunStringResult.success(objResult.toJSONString());
