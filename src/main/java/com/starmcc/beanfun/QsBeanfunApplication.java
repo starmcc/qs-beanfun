@@ -71,7 +71,7 @@ public class QsBeanfunApplication extends Application {
         Platform.setImplicitExit(false);
         FrameUtils.openWindow(QsConstant.Page.登录页面);
         log.info("QsBeanfun 启动成功..");
-        Platform.runLater(() -> QsConstant.alert("该版本为测试版本!", Alert.AlertType.WARNING));
+//        Platform.runLater(() -> QsConstant.alert("该版本为测试版本!", Alert.AlertType.WARNING));
         FrameUtils.executeThread(() -> {
             UpdateModel versionModel = UpdateClient.getInstance().getVersionModel();
             if (versionModel.getState() == UpdateModel.State.有新版本) {
