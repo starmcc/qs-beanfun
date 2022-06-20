@@ -9,6 +9,7 @@ import com.starmcc.beanfun.handler.GameHandler;
 import com.starmcc.beanfun.model.LoginType;
 import com.starmcc.beanfun.model.QsTray;
 import com.starmcc.beanfun.model.client.Account;
+import com.starmcc.beanfun.model.client.BeanfunAccountResult;
 import com.starmcc.beanfun.model.client.BeanfunStringResult;
 import com.starmcc.beanfun.utils.ConfigFileUtils;
 import com.starmcc.beanfun.utils.FrameUtils;
@@ -121,7 +122,7 @@ public class MainController implements Initializable {
             QsConstant.alert("新账号请点击创建账号!", Alert.AlertType.INFORMATION);
         } else {
             // 旧用户
-            initAccountComboBox(null);
+            refeshAccountComboBox(null);
         }
         this.initEvent();
     }
@@ -303,7 +304,7 @@ public class MainController implements Initializable {
                     return;
                 }
                 BeanfunClient.run().getAccountList(QsConstant.beanfunModel.getToken());
-                initAccountComboBox(() -> {
+                refeshAccountComboBox(() -> {
                     QsConstant.alert("创建成功!", Alert.AlertType.INFORMATION);
                     addActBtn.setVisible(false);
                 });
@@ -335,8 +336,13 @@ public class MainController implements Initializable {
                     Platform.runLater(() -> QsConstant.alert(result.getMsg(), Alert.AlertType.WARNING));
                     return;
                 }
-                BeanfunClient.run().getAccountList(QsConstant.beanfunModel.getToken());
-                initAccountComboBox(() -> QsConstant.alert("编辑成功!", Alert.AlertType.INFORMATION));
+                BeanfunAccountResult actResult = BeanfunClient.run().getAccountList(QsConstant.beanfunModel.getToken());
+                if (!actResult.isSuccess()) {
+                    Platform.runLater(() -> QsConstant.alert(result.getMsg(), Alert.AlertType.WARNING));
+                    return;
+                }
+                QsConstant.beanfunModel.setAccountList(actResult.getAccountList());
+                refeshAccountComboBox(() -> QsConstant.alert("编辑成功!", Alert.AlertType.INFORMATION));
             } catch (Exception e) {
                 log.error("编辑账号异常 e={}", e.getMessage(), e);
             }
@@ -499,9 +505,10 @@ public class MainController implements Initializable {
     /**
      * 初始化账户组合框
      */
-    private void initAccountComboBox(Runnable runnable) {
+    private void refeshAccountComboBox(Runnable runnable) {
         Platform.runLater(() -> {
             ObservableList<Account> options = FXCollections.observableArrayList();
+            options.clear();
             QsConstant.beanfunModel.getAccountList().forEach(account -> options.add(account));
             actList.setItems(options);
             actList.getSelectionModel().selectFirst();

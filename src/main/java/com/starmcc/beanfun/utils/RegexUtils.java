@@ -1,5 +1,7 @@
 package com.starmcc.beanfun.utils;
 
+import org.apache.commons.lang3.StringUtils;
+
 import java.util.ArrayList;
 import java.util.List;
 import java.util.regex.Matcher;
@@ -19,6 +21,7 @@ public class RegexUtils {
         VIEWSTATE(Pattern.compile("id=\"__VIEWSTATE\"\\svalue=\"(.*?)\"\\s/>")),
         EVENTVALIDATION(Pattern.compile("id=\"__EVENTVALIDATION\"\\svalue=\"(.*?)\"\\s/>")),
         VIEWSTATEGENERATOR(Pattern.compile("id=\"__VIEWSTATEGENERATOR\"\\svalue=\"(.*?)\"\\s/>")),
+        LOGIN_ERROR_MSG(Pattern.compile("<script>ShowMsgBox\\('(.*?)'\\);</script>")),
         LOGIN_ACCOUNT_LIST(Pattern.compile("<div\\sid=\"(.*?)\"\\ssn=\"(\\d+)\"\\sname=\"(.*?)\"\\sinherited=\".*\"\\svisible=\"\\d\"")),
         GET_PWD_OTP_KEY(Pattern.compile("GetResultByLongPolling&key=(.*?)\"")),
         GET_SERVICE_CREATE_TIME(Pattern.compile("ServiceAccountCreateTime: \\\"([^\\\"]+)\\\"")),
@@ -27,7 +30,7 @@ public class RegexUtils {
         ;
         private final Pattern pattern;
 
-        PatternHongKong(Pattern pattern){
+        PatternHongKong(Pattern pattern) {
             this.pattern = pattern;
         }
 
@@ -51,7 +54,7 @@ public class RegexUtils {
 
         private final Pattern pattern;
 
-        PatternOldHongKong(Pattern pattern){
+        PatternOldHongKong(Pattern pattern) {
             this.pattern = pattern;
         }
 
@@ -83,6 +86,9 @@ public class RegexUtils {
     }
 
     public static List<List<String>> regex(Pattern pattern, String content) {
+        if (StringUtils.isBlank(content)) {
+            return new ArrayList<>();
+        }
         Matcher matcher = pattern.matcher(content);
         List<List<String>> result = new ArrayList<>();
         while (matcher.find()) {

@@ -53,6 +53,10 @@ public class HttpClient {
         return cookieMap;
     }
 
+    public static void clearCookies() {
+        COOKIE_STORE.clear();
+    }
+
 
     /**
      * GET

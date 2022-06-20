@@ -32,6 +32,7 @@ public class BeanfunNewHongKongClientImpl extends BeanfunClient {
         String url = "";
         ReqParams params = ReqParams.getInstance().addParam("service", "999999_T0");
         url = "https://bfweb.hk.beanfun.com/beanfun_block/bflogin/default.aspx";
+        HttpClient.clearCookies();
         QsHttpResponse qsHttpResponse = HttpClient.get(url, params);
         if (!qsHttpResponse.getSuccess()) {
             return BeanfunStringResult.error(AbstractBeanfunResult.CodeEnum.REQUEST_ERROR);
@@ -91,7 +92,13 @@ public class BeanfunNewHongKongClientImpl extends BeanfunClient {
 
         uris = qsHttpResponse.getRedirectLocations();
         if (DataTools.collectionIsEmpty(uris)) {
-            return BeanfunStringResult.error(AbstractBeanfunResult.CodeEnum.OTP_SIGN_GET_ERROR);
+            // 如果是空的，则应该是有问题
+            dataList = RegexUtils.regex(RegexUtils.PatternHongKong.LOGIN_ERROR_MSG.getPattern(), qsHttpResponse.getContent());
+            String errorMsg = RegexUtils.getIndex(0, 1, dataList);
+            if (StringUtils.isBlank(errorMsg)) {
+                return BeanfunStringResult.error(AbstractBeanfunResult.CodeEnum.LOGIN_ERROR_MSG);
+            }
+            return BeanfunStringResult.error(AbstractBeanfunResult.CodeEnum.LOGIN_ERROR_MSG, errorMsg);
         }
         String aKey = uris.get(0).getRawQuery();
         aKey = aKey.split("=")[1];

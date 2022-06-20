@@ -89,6 +89,10 @@ public abstract class AbstractBeanfunResult {
          * 账号操作异常
          */
         ACCOUNT_OPT_EXCEPTION(9, "账号操作异常!"),
+        /**
+         * 登录错误
+         */
+        LOGIN_ERROR_MSG(10, "登录错误"),
         ;
 
         private final int code;
