@@ -6,7 +6,7 @@
 
     <groupId>com.starmcc.beanfun</groupId>
     <artifactId>qs-beanfun</artifactId>
-    <version>3.0</version>
+    <version>3.0.1</version>
 
     <properties>
         <maven.compiler.source>8</maven.compiler.source>

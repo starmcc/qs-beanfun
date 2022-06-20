@@ -33,7 +33,7 @@ import java.util.stream.Collectors;
  */
 @Slf4j
 public class QsConstant {
-    public static final String APP_VERSION = "3.0";
+    public static final String APP_VERSION = "3.0.1";
     public static final String APP_PATH = System.getProperties().getProperty("user.home") + "\\QsBeanfun\\";
     public static final String APP_CONFIG = APP_PATH + "config.json";
     public static final String APP_NAME = "QsBeanfun";

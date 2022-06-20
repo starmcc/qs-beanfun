@@ -5,6 +5,7 @@ import com.starmcc.beanfun.model.ReqParams;
 import com.starmcc.beanfun.model.client.QsHttpResponse;
 import com.starmcc.beanfun.utils.DataTools;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.text.StringEscapeUtils;
 import org.apache.http.Header;
 import org.apache.http.HttpEntity;
 import org.apache.http.client.CookieStore;
@@ -142,7 +143,8 @@ public class HttpClient {
                 return qsHttpResponse.build();
             }
             qsHttpResponse.setContentLength(responseEntity.getContentLength());
-            qsHttpResponse.setContent(EntityUtils.toString(responseEntity, Charset.forName("UTF-8")));
+            String content = EntityUtils.toString(responseEntity, Charset.forName("UTF-8"));
+            qsHttpResponse.setContent(StringEscapeUtils.unescapeHtml4(content));
         } catch (Exception e) {
             throw new RuntimeException(e);
         } finally {
