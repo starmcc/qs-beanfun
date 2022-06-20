@@ -18,9 +18,14 @@ import javafx.stage.Stage;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 
+import javax.net.ssl.HttpsURLConnection;
+import javax.net.ssl.SSLContext;
+import javax.net.ssl.TrustManager;
+import javax.net.ssl.X509TrustManager;
 import java.net.CookieHandler;
 import java.net.URI;
 import java.net.URL;
+import java.security.GeneralSecurityException;
 import java.util.*;
 
 @Slf4j
@@ -36,9 +41,12 @@ public class WebController implements Initializable {
     @Override
     public void initialize(URL location, ResourceBundle resources) {
         urlText.setText(jumpUrl);
+        // 禁用ssl证书
+        this.disableSslCertificate();
+
         WebEngine webEngine = webView.getEngine();
         if (Integer.compare(QsConstant.config.getLoginType(), LoginType.TypeEnum.HK_OLD.getType()) == 0) {
-            webEngine.setUserAgent("User-Agent : Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/46.0.2486.0 Safari/537.36Edge/13.10586");
+            webEngine.setUserAgent("Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/46.0.2486.0 Safari/537.36Edge/13.10586");
         }
         try {
             Map<String, String> cookies = HttpClient.getCookies();
@@ -58,7 +66,6 @@ public class WebController implements Initializable {
             if (StringUtils.equals(keyEvent.getCode().getName(), "Enter")) {
                 jumpUrl = urlText.getText();
                 jumpUrl = jumpUrl.startsWith("http") ? jumpUrl.trim() : "http://" + jumpUrl.trim();
-                webEngine.setUserAgent("User-Agent : Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/46.0.2486.0 Safari/537.36Edge/13.10586");
                 webEngine.load(jumpUrl);
             }
         });
@@ -74,6 +81,38 @@ public class WebController implements Initializable {
         });
 
         webEngine.load(jumpUrl);
+    }
+
+    /**
+     * 禁用ssl证书
+     */
+    private void disableSslCertificate() {
+        TrustManager[] trustAllCerts = new TrustManager[]{
+                new X509TrustManager() {
+                    @Override
+                    public java.security.cert.X509Certificate[] getAcceptedIssuers() {
+                        return null;
+                    }
+
+                    @Override
+                    public void checkClientTrusted(
+                            java.security.cert.X509Certificate[] certs, String authType) {
+                    }
+
+                    @Override
+                    public void checkServerTrusted(
+                            java.security.cert.X509Certificate[] certs, String authType) {
+                    }
+                }
+        };
+
+        try {
+            SSLContext sc = SSLContext.getInstance("SSL");
+            sc.init(null, trustAllCerts, new java.security.SecureRandom());
+            HttpsURLConnection.setDefaultSSLSocketFactory(sc.getSocketFactory());
+        } catch (GeneralSecurityException e) {
+            log.error("异常 e={}", e.getMessage(), e);
+        }
     }
 
     private void changeTitle(String title) {
