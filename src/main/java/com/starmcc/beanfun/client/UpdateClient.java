@@ -63,10 +63,15 @@ public class UpdateClient {
                 return UpdateModel.builder().state(UpdateModel.State.已是最新版本).build();
             }
 
+            String body = jsonObj.getString("body");
+            if (body.indexOf(UpdateModel.VERSION_PRE) != -1) {
+                // 体验版不更新
+                return UpdateModel.builder().state(UpdateModel.State.已是最新版本).build();
+            }
             StringBuffer tipsBf = new StringBuffer();
             tipsBf.append("最新版本:").append(githubVersion).append("\n");
             tipsBf.append("--------------------\n");
-            tipsBf.append(jsonObj.getString("body"));
+            tipsBf.append(body);
             JSONArray assets = jsonObj.getJSONArray("assets");
             String downloadUrl = "";
             for (int i = 0; i < assets.size(); i++) {

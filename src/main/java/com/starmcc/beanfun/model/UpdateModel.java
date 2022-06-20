@@ -16,6 +16,8 @@ import java.io.Serializable;
 public class UpdateModel implements Serializable {
     private static final long serialVersionUID = -7379298032869785110L;
 
+    public static final String VERSION_PRE = "[$pre]";
+
     private String nowVersion;
     private String downloadUrl;
     private String tips;
@@ -26,16 +28,27 @@ public class UpdateModel implements Serializable {
         /**
          * 获取失败
          */
-        获取失败,
+        获取失败(-1),
         /**
          * 已是最新版本
          */
-        已是最新版本,
+        已是最新版本(0),
         /**
          * 有新版本
          */
-        有新版本,
+        有新版本(1),
+
+        /**
+         * 有新版本不更新
+         */
+        有新版本不更新(2),
         ;
+
+        private final int state;
+
+        State(int state) {
+            this.state = state;
+        }
     }
 
 }
