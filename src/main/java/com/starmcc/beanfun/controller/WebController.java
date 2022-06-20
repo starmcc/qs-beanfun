@@ -2,6 +2,7 @@ package com.starmcc.beanfun.controller;
 
 import com.starmcc.beanfun.client.HttpClient;
 import com.starmcc.beanfun.constant.QsConstant;
+import com.starmcc.beanfun.model.LoginType;
 import javafx.collections.ObservableList;
 import javafx.concurrent.Worker;
 import javafx.fxml.FXML;
@@ -36,8 +37,9 @@ public class WebController implements Initializable {
     public void initialize(URL location, ResourceBundle resources) {
         urlText.setText(jumpUrl);
         WebEngine webEngine = webView.getEngine();
-        webEngine.setUserAgent("User-Agent : Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/46.0.2486.0 Safari/537.36Edge/13.10586");
-
+        if (Integer.compare(QsConstant.config.getLoginType(), LoginType.TypeEnum.HK_OLD.getType()) == 0) {
+            webEngine.setUserAgent("User-Agent : Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/46.0.2486.0 Safari/537.36Edge/13.10586");
+        }
         try {
             Map<String, String> cookies = HttpClient.getCookies();
             List<String> list = new ArrayList<>();
