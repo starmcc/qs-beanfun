@@ -2,8 +2,10 @@ package com.starmcc.beanfun.handler;
 
 import com.starmcc.beanfun.constant.QsConstant;
 import com.starmcc.beanfun.model.ConfigJson;
+import com.starmcc.beanfun.utils.AesUtil;
 import com.starmcc.beanfun.utils.ConfigFileUtils;
 import com.starmcc.beanfun.utils.DataTools;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 
 import java.util.Iterator;
@@ -15,6 +17,7 @@ import java.util.List;
  * @author starmcc
  * @date 2022/03/21
  */
+@Slf4j
 public class AccountHandler {
 
 
@@ -36,12 +39,20 @@ public class AccountHandler {
                 }
             }
         }
-        ConfigJson.ActPwd actPwd = new ConfigJson.ActPwd();
-        actPwd.setAct(account);
-        actPwd.setPwd(password);
-        actPwds.add(0, actPwd);
-        QsConstant.config.setActPwds(actPwds);
-        ConfigFileUtils.writeConfig(QsConstant.config);
+        try {
+            ConfigJson.ActPwd actPwd = new ConfigJson.ActPwd();
+            // 加密储存
+            final String key = DataTools.getComputerUniqueId();
+            account = AesUtil.encode(key, account);
+            password = AesUtil.encode(key, password);
+            actPwd.setAct(account);
+            actPwd.setPwd(password);
+            actPwds.add(0, actPwd);
+            QsConstant.config.setActPwds(actPwds);
+            ConfigFileUtils.writeConfig(QsConstant.config);
+        } catch (Exception e) {
+            log.error("异常 e={}", e.getMessage(), e);
+        }
     }
 
 

@@ -10,6 +10,7 @@ import com.starmcc.beanfun.model.client.AbstractBeanfunResult;
 import com.starmcc.beanfun.model.client.BeanfunAccountResult;
 import com.starmcc.beanfun.model.client.BeanfunModel;
 import com.starmcc.beanfun.model.client.BeanfunStringResult;
+import com.starmcc.beanfun.utils.AesUtil;
 import com.starmcc.beanfun.utils.ConfigFileUtils;
 import com.starmcc.beanfun.utils.DataTools;
 import com.starmcc.beanfun.utils.FrameUtils;
@@ -75,6 +76,22 @@ public class LoginController implements Initializable {
     public void initialize(URL location, ResourceBundle resources) {
         ObservableList<String> items = account.getItems();
         List<ConfigJson.ActPwd> actPwds = QsConstant.config.getActPwds();
+        final String key = DataTools.getComputerUniqueId();
+        // 解密
+        actPwds.forEach(item -> {
+            try {
+                if (item.getAct().indexOf("@") != -1) {
+                    // 是明文，不处理
+                    return;
+                }
+                String act = AesUtil.dncode(key, item.getAct());
+                String pwd = AesUtil.dncode(key, item.getPwd());
+                item.setAct(act);
+                item.setPwd(pwd);
+            } catch (Exception e) {
+                log.error("解密异常 e={}", e.getMessage(), e);
+            }
+        });
         actPwds.forEach((actPwd) -> items.add(actPwd.getAct()));
         if (DataTools.collectionIsNotEmpty(actPwds)) {
             account.getSelectionModel().selectFirst();
