@@ -11,6 +11,11 @@
 ![image](./info.png)
 
 
+
+此客户端UI版本只会进行维护升级不再进行功能增加。
+
+目前正在开发4.0.0网页版，界面更好更简洁，速度更快更方便
+
 ## 下载安装使用
 
 [**Releases-点击进入下载页面**](https://github.com/starmcc/qs-beanfun/releases)
