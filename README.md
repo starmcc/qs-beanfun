@@ -1,14 +1,10 @@
 # QsBeanfun
 
-![image](./src/main/resources/static/images/logo.png)
-
 本工具不是游戏橘子数位科技开发的官方工具
 
 引用LR区域模拟元件，支持`32/64bit`台服新枫之谷游戏。
 
 **遵循MIT开源协议**，如遇到问题 或 Bug 欢迎提交 Issues。
-
-![image](./info.png)
 
 ## 下载安装使用
 
