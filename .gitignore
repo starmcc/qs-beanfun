@@ -3,7 +3,7 @@ node_modules
 /dist
 
 /qs-beanfun-api/src/main/resources/public/**
-
+/QsBeanfun/
 
 # local env files
 .env.local
