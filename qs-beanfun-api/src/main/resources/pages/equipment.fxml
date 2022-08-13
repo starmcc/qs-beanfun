@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.text.*?>
+
+<AnchorPane prefHeight="248.0" prefWidth="289.0" xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.starmcc.beanfun.controller.page.EquipmentController">
+    <children>
+      <Label fx:id="autoText" alignment="CENTER" layoutX="14.0" layoutY="185.0" prefHeight="59.0" prefWidth="261.0" style="-fx-background-color: #ffffff;" text="自动模式" textFill="#f984ff">
+         <font>
+            <Font size="23.0" />
+         </font>
+      </Label>
+        <Pane layoutX="4.0" layoutY="4.0" prefHeight="173.0" prefWidth="279.0" style="-fx-background-color: #808080;">
+            <children>
+                <Label fx:id="levelRadio" layoutX="13.0" layoutY="48.0" text="装备等级" textFill="WHITE" />
+                <ComboBox fx:id="levelSelectBox" layoutX="66.0" layoutY="44.0" prefHeight="23.0" prefWidth="97.0" />
+                <RadioButton layoutX="14.0" layoutY="16.0" mnemonicParsing="false" selected="true" text="武器" textFill="WHITE" userData="1">
+                    <toggleGroup>
+                        <ToggleGroup fx:id="typeToggleGroup" />
+                    </toggleGroup>
+                </RadioButton>
+                <RadioButton fx:id="armorRadio" layoutX="78.0" layoutY="16.0" mnemonicParsing="false" text="防具" textFill="WHITE" toggleGroup="$typeToggleGroup" userData="2" />
+                <RadioButton fx:id="heartRadio" layoutX="146.0" layoutY="16.0" mnemonicParsing="false" text="心脏" textFill="WHITE" toggleGroup="$typeToggleGroup" userData="3" />
+                <RadioButton fx:id="glovesRadio" layoutX="212.0" layoutY="16.0" mnemonicParsing="false" text="手套" textFill="WHITE" toggleGroup="$typeToggleGroup" userData="4" />
+                <Label layoutX="22.0" layoutY="78.0" text="总攻击" textFill="#9acce3" />
+                <TextField fx:id="totalAtkText" alignment="CENTER" layoutX="11.0" layoutY="97.0" prefHeight="23.0" prefWidth="58.0" text="0" />
+                <Label layoutX="91.0" layoutY="78.0" text="原攻击" textFill="WHITE" />
+                <TextField fx:id="originAtkText" alignment="CENTER" layoutX="85.0" layoutY="97.0" prefHeight="23.0" prefWidth="48.0" text="0" />
+                <Label layoutX="159.0" layoutY="78.0" text="星火值" textFill="#8ee18e" />
+                <TextField fx:id="starAtkText" alignment="CENTER" layoutX="155.0" layoutY="97.0" prefHeight="23.0" prefWidth="48.0" text="0" />
+                <Label layoutX="14.0" layoutY="141.0" text="星力强化" textFill="WHITE" />
+                <TextField fx:id="starLevelText" alignment="CENTER" layoutX="67.0" layoutY="137.0" prefHeight="23.0" prefWidth="48.0" text="0" />
+                <Label layoutX="139.0" layoutY="101.0" text="+" textFill="#8ee18e" />
+                <Label layoutX="69.0" layoutY="101.0" text="（" textFill="WHITE" />
+                <Label layoutX="209.0" layoutY="100.0" text="+" textFill="#9acce3" />
+                <Label fx:id="appendAtkLabel" alignment="CENTER" layoutX="221.0" layoutY="100.0" prefHeight="15.0" prefWidth="36.0" text="0" textAlignment="CENTER" textFill="#9acce3" />
+                <Label layoutX="261.0" layoutY="99.0" prefHeight="15.0" prefWidth="9.0" text=")" textFill="WHITE" />
+                <Label fx:id="reelNumLabel" layoutX="145.0" layoutY="141.0" text="上卷次数" textFill="WHITE" />
+                <TextField fx:id="reelNumText" alignment="CENTER" layoutX="202.0" layoutY="137.0" prefHeight="23.0" prefWidth="58.0" text="0" />
+                <CheckBox fx:id="autoCheckBox" layoutX="192.0" layoutY="49.0" mnemonicParsing="false" prefHeight="16.0" prefWidth="78.0" text="自动识别" textFill="WHITE" />
+            </children>
+        </Pane>
+        <Label fx:id="gloryLabel" layoutX="23.0" layoutY="192.0" text="荣耀卷" />
+        <TextField fx:id="gloryReelNumText" alignment="CENTER" layoutX="67.0" layoutY="188.0" prefHeight="23.0" prefWidth="36.0" text="0" />
+        <Label fx:id="gloryValLabel" layoutX="13.0" layoutY="220.0" text="荣耀均值" />
+        <TextField fx:id="redReelNumText" alignment="CENTER" layoutX="228.0" layoutY="216.0" prefHeight="23.0" prefWidth="36.0" text="0" />
+        <Label fx:id="blackLabel" layoutX="112.0" layoutY="192.0" text="黑卷" />
+        <TextField fx:id="gloryValText" alignment="CENTER" layoutX="68.0" layoutY="216.0" prefHeight="23.0" prefWidth="36.0" text="0" />
+        <Label fx:id="vLabel" layoutX="114.0" layoutY="220.0" text="V卷" />
+        <TextField fx:id="blackReelNumText" alignment="CENTER" layoutX="144.0" layoutY="188.0" prefHeight="23.0" prefWidth="36.0" text="0" />
+        <Label fx:id="xLabel" layoutX="198.0" layoutY="192.0" text="X卷" />
+        <TextField fx:id="vReelNumText" alignment="CENTER" layoutX="144.0" layoutY="216.0" prefHeight="23.0" prefWidth="36.0" text="0" />
+        <Label fx:id="redLabel" layoutX="198.0" layoutY="220.0" text="R卷" />
+        <TextField alignment="CENTER" layoutX="228.0" layoutY="188.0" prefHeight="23.0" prefWidth="36.0" text="0" fx:id="xReelNumText" />
+    </children>
+</AnchorPane>

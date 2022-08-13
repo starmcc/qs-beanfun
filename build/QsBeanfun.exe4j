@@ -1,12 +1,12 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <exe4j version="6.0.2" transformSequenceNumber="2">
-  <directoryPresets config="C:/Users/starc/Desktop/deploy" />
-  <application name="QsBeanfun" distributionSourceDir="../target">
+  <directoryPresets config="E:/project/qs-beanfun2/qs-beanfun-api/target" />
+  <application name="QsBeanfun" distributionSourceDir="../qs-beanfun-api/target">
     <languages>
       <principalLanguage id="en" customLocalizationFile="" />
     </languages>
   </application>
-  <executable name="QsBeanfun" type="2" iconSet="true" iconFile="./ico.ico" executableDir="." redirectStderr="true" stderrFile="error.log" stderrMode="overwrite" redirectStdout="false" stdoutFile="output.log" stdoutMode="overwrite" failOnStderrOutput="true" executableMode="1" changeWorkingDirectory="true" workingDirectory="." singleInstance="true" serviceStartType="2" serviceDependencies="" serviceDescription="" jreLocation="" executionLevel="asInvoker" checkConsoleParameter="true" globalSingleInstance="false" singleInstanceActivate="true" dpiAware="java9+" amd64="false">
+  <executable name="QsBeanfun" type="2" iconSet="true" iconFile="./ico.ico" executableDir="." redirectStderr="true" stderrFile="error.log" stderrMode="overwrite" redirectStdout="false" stdoutFile="output.log" stdoutMode="overwrite" failOnStderrOutput="true" executableMode="1" changeWorkingDirectory="true" workingDirectory="." singleInstance="false" serviceStartType="2" serviceDependencies="" serviceDescription="" jreLocation="" executionLevel="asInvoker" checkConsoleParameter="true" globalSingleInstance="false" singleInstanceActivate="true" dpiAware="java9+" amd64="false">
     <messageSet />
     <versionInfo include="false" fileVersion="" fileDescription="" legalCopyright="" internalName="" productName="" companyName="" productVersion="" />
   </executable>
@@ -16,15 +16,15 @@
       <versionLine x="20" y="40" text="version %VERSION%" fontSize="8" fontColor="0,0,0" bold="false" />
     </text>
   </splashScreen>
-  <java mainClass="com.starmcc.beanfun.QsBeanfunApplication" mainMode="1" vmParameters="-Dappdir=${EXE4J_EXEDIR}" arguments="" allowVMPassthroughParameters="true" preferredVM="client" bundleRuntime="true" minVersion="1.8" maxVersion="1.8" allowBetaVM="false" jdkOnly="false">
+  <java mainClass="org.springframework.boot.loader.JarLauncher" mainMode="1" vmParameters="" arguments="" allowVMPassthroughParameters="true" preferredVM="client" bundleRuntime="true" minVersion="1.8" maxVersion="1.8" allowBetaVM="false" jdkOnly="false">
     <searchSequence>
+      <directory location="./jre" />
       <registry />
       <envVar name="JAVA_HOME" />
       <envVar name="JDK_HOME" />
-      <directory location="./jre" />
     </searchSequence>
     <classPath>
-      <archive location="../target/qs-beanfun*.jar" failOnError="true" />
+      <archive location="../../qs-beanfun-api/target/qs-beanfun-api-4.0.0.jar" failOnError="true" />
     </classPath>
     <modulePath />
     <nativeLibraryDirectories />

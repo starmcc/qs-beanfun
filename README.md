@@ -6,10 +6,9 @@
 
 引用LR区域模拟元件，支持`32/64bit`台服新枫之谷游戏。
 
-**遵循MIT开源协议**，如遇到问题或 Bug 欢迎提交 Issues。
+**遵循MIT开源协议**，如遇到问题 或 Bug 欢迎提交 Issues。
 
 ![image](./info.png)
-
 
 ## 下载安装使用
 
@@ -19,25 +18,21 @@
 
 **以前安装过的直接下载`QsBeanfun.exe`替换即可。**
 
-*第一次运行如未安装橘子官方Beanfun插件则会提示下载。(只会提醒旧网页登录)*
-
 ---
 
-拥有Java环境的使用方法：
+拥有JRE32位环境的使用方法：
 
 直接下载`QsBeanfun.exe`运行就可以了。
-
-这里可以下载环境哦
 
 [**JRE1.8 32位 Offline Installer**](https://www.oracle.com/java/technologies/downloads/#jre8-windows)
 
 ---
 
-游戏会在系统用户目录释放依赖文件
+QsBeanfun会在游戏目录释放依赖文件
 
-目录为`C:\Users\用户名\QsBeanfun`
+目录为`游戏目录/lr_bin`
 
-**注意：windows用户名不可以使用中文，不然无法启动游戏**
+**注意：目录不能存在中文路径，不然无法启动游戏**
 
 ## 工具更新
 
@@ -45,34 +40,34 @@
 
 ## 实现功能
 
-1. 香港橘子账号登录，快捷获取动态密码(无需IE网页操作)
+1. 香港橘子账号登录，快捷获取动态密码(无需IE网页)
 2. 模拟繁体环境启动新枫之谷游戏
 3. 装备卷轴计算器 （包含荣耀卷轴计算）
 4. 免输入账号密码进游戏模式（实现方式与网页登录相同）
-5. 免Play窗口进入
+5. 免Play窗口
 6. 中台实时汇率计算
 7. 自动轮烧（使用Java虚拟机模拟按键）
 8. 新枫之谷相关网站快捷访问
 9. 香港橘子IE一键优化功能
-10. 已加入新港号接口 **NEW**
-11. 新港号接口免beanfun插件 **NEW**
+10. 全面替换旧港号接口为新接口 **NEW**
+11. 免浏览器插件，beanfun插件 **NEW**
+12. 全新网页界面（更好的使用体验） **NEW**
 
 ## 运行环境
 
 - Windows7 以上
-- [**JRE1.8 x86 Offline Installer**](https://www.oracle.com/java/technologies/downloads/#jre8-windows)
+- [**JRE1.8 x32 Offline Installer**](https://www.oracle.com/java/technologies/downloads/#jre8-windows)
 - [Microsoft Visual C++ Redistributable VC环境](https://aka.ms/vs/17/release/vc_redist.x64.exe)
-- [橘子官方Beanfun插件(新网页接口不需要)](http://hk.download.beanfun.com/beanfun20/beanfun_2_0_93_170_hk.exe)
 
 ## 依赖
 
-- JNA - Java 调用DLL支持
-- FastJson - JSON解析支持
-- JavaFX - UI库
-- apache - httpclient HTTP请求支持
-- eclipse.swt 内置IE浏览器支持
-- [LR区域模拟元件支持](https://github.com/InWILL/Locale_Remulator)
-- 易语言调用`Beanfun`插件支持 **BFService**
+- SpringBoot and qm-framework - Spring框架+自写脚手架
+- Vue and Element-UI - 界面库
+- Jna - Java 调用DLL
+- FastJson - JSON解析
+- JavaFX - WebKit万能浏览器内核
+- Apache for HttpClient - HTTP请求客户端
+- [LR区域模拟元件](https://github.com/InWILL/Locale_Remulator)
 
 ## 打包
 
@@ -91,6 +86,6 @@
 3. 凡是登录器(第三方工具)，都是橘子官方明令不允许使用的，最好就是将系统转为繁体语言后使用IE进行网页登录，望客官悉知。
 4. 关于自动轮烧：鉴于不属于升级挂机、破坏游戏环境等才放出来的，在此也强烈谴责那些为了一己私欲写脚本辅助等严重影响游戏环境的家伙。
 5. 我只是茫茫人海中一个热爱枫谷懂点皮毛技术的玩家，希望新枫之谷会一直运营下去，长盛不衰！
-6. **工具仅供学习使用，下载后请24小时内删除，遵循MIT开源协议**
+6. **QsBeanfun仅供学习使用，下载后请24小时内删除**
 
 > 枫谷作伴，潇潇洒洒...

@@ -1,0 +1,47 @@
+.hbox{
+    -fx-background-color: #40444f;
+}
+
+.logo{
+    -fx-background-radius: 2px;
+    -fx-background-position: center center;
+    -fx-background-repeat: no-repeat;
+    -fx-background-size: 16px 16px;
+    -fx-background-color: transparent;
+    -fx-background-image: url("../images/ico.png");
+    -fx-border-width: 0;
+}
+
+.title{
+    -fx-text-fill: #fff;
+}
+
+.close{
+    -fx-background-position: center center;
+    -fx-background-repeat: no-repeat;
+    -fx-background-size: 16px 16px;
+    -fx-background-color: transparent;
+    -fx-background-image: url("../images/close_0.png");
+    -fx-cursor: hand;
+    -fx-border-width: 0;
+}
+
+.close:hover{
+    -fx-background-image: url("../images/close_1.png");
+    -fx-border-width: 0;
+}
+
+.min{
+    -fx-background-position: center center;
+    -fx-background-repeat: no-repeat;
+    -fx-background-size: 16px 16px;
+    -fx-background-color: transparent;
+    -fx-background-image: url("../images/min_0.png");
+    -fx-cursor: hand;
+    -fx-border-width: 0;
+}
+
+.min:hover{
+    -fx-background-image: url("../images/min_1.png");
+    -fx-border-width: 0;
+}

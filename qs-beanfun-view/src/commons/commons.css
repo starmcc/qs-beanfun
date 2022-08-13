@@ -1,0 +1,26 @@
+html,
+body,
+#app,
+.el-container {
+  padding: 0px;
+  margin: 0px;
+  height: 100%;
+}
+
+
+.text-center {
+  text-align: center;
+}
+
+.flex-align-center {
+  align-items: center;
+}
+
+.cursor_pointer {
+  cursor: pointer !important;
+}
+
+#nprogress .bar {
+  background: #f47920 !important;
+  height: 3px;
+}

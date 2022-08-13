@@ -1,0 +1,19 @@
+server:
+  port: 54321
+
+spring:
+  mvc:
+    static-path-pattern: /**
+
+
+logging:
+  config: 'classpath:logback.xml'
+
+
+
+
+qmframework:
+  aes:
+    encoding: UTF-8
+  transmit:
+    response-message-lang: EN
