@@ -1,26 +1,25 @@
 package com.starmcc.beanfun.constant;
 
 import com.starmcc.beanfun.model.ConfigJson;
+import com.starmcc.beanfun.model.JFXStage;
 import com.starmcc.beanfun.model.QsTray;
+import com.starmcc.beanfun.model.client.Account;
 import com.starmcc.beanfun.model.client.BeanfunModel;
-import com.starmcc.beanfun.utils.FrameUtils;
-import com.starmcc.beanfun.windows.JFXStage;
+import com.starmcc.beanfun.windows.FrameService;
 import javafx.application.Platform;
+import javafx.scene.Parent;
 import javafx.scene.control.Alert;
 import javafx.scene.control.ButtonType;
 import javafx.scene.control.TextInputDialog;
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
-import org.apache.http.HttpHost;
 
 import java.awt.*;
 import java.math.BigDecimal;
 import java.util.Arrays;
 import java.util.List;
-import java.util.Objects;
 import java.util.Optional;
-import java.util.concurrent.ScheduledExecutorService;
 import java.util.function.Consumer;
 import java.util.stream.Collectors;
 
@@ -33,25 +32,26 @@ import java.util.stream.Collectors;
  */
 @Slf4j
 public class QsConstant {
-    public static final String APP_VERSION = "3.0.1";
-    public static final String APP_PATH = System.getProperties().getProperty("user.home") + "\\QsBeanfun\\";
+    public static final String APP_VERSION = "4.0.0";
+    public static final String APP_PATH = System.getProperties().getProperty("user.dir") + "/qs-data/";
     public static final String APP_CONFIG = APP_PATH + "config.json";
     public static final String APP_NAME = "QsBeanfun";
+    public static final String GITHUB_API_URL = "https://api.github.com/repos/starmcc/qs-beanfun/releases/latest";
+    public static final String GITHUB_URL = "https://github.com/starmcc/qs-beanfun";
     public static JFXStage loginJFXStage;
     public static JFXStage mainJFXStage;
     public static JFXStage aboutJFXStage;
     public static JFXStage equippingJFXStage;
     public static JFXStage webJFXStage;
-    public static ConfigJson config;
-    public static HttpHost proxy = null;
-    public static BigDecimal currentRateChinaToTw = new BigDecimal("4.7");
-    public static TrayIcon trayIcon;
-    public static ScheduledExecutorService heartExecutorService;
-    public static BeanfunModel beanfunModel;
 
-    public static void buildProxy(String host, int port) {
-        QsConstant.proxy = new HttpHost(host, port);
-    }
+    public static TrayIcon trayIcon;
+
+    public static ConfigJson config;
+    public static BigDecimal currentRateChinaToTw = new BigDecimal("4.5");
+    public static BeanfunModel beanfunModel;
+    public static Account nowAccount;
+    public static Integer port;
+    public static String serverAddress;
 
 
     /**
@@ -61,12 +61,12 @@ public class QsConstant {
      * @date 2022/03/22
      */
     public static enum Resources {
-        LR_PROC_EXE(APP_PATH + "LRProc.exe", "lib/LRProc.exe"),
-        LR_HOOKX64_DLL(APP_PATH + "LRHookx64.dll", "lib/LRHookx64.dll"),
-        LR_HOOKX32_DLL(APP_PATH + "LRHookx32.dll", "lib/LRHookx32.dll"),
-        LR_CONFIG_XML(APP_PATH + "LRConfig.xml", "lib/LRConfig.xml"),
-        LR_SUB_MENUS_DLL(APP_PATH + "LRSubMenus.dll", "lib/LRSubMenus.dll"),
-        REGISTER_REG(APP_PATH + "register.reg", "lib/register.reg"),
+        LR_PROC_EXE(APP_PATH + "lr/LRProc.exe", "lib/lr/LRProc.exe"),
+        LR_HOOKX64_DLL(APP_PATH + "lr/LRHookx64.dll", "lib/lr/LRHookx64.dll"),
+        LR_HOOKX32_DLL(APP_PATH + "lr/LRHookx32.dll", "lib/lr/LRHookx32.dll"),
+        LR_CONFIG_XML(APP_PATH + "lr/LRConfig.xml", "lib/lr/LRConfig.xml"),
+        LR_SUB_MENUS_DLL(APP_PATH + "lr/LRSubMenus.dll", "lib/lr/LRSubMenus.dll"),
+
         ;
 
         private final String targetPath;
@@ -94,16 +94,15 @@ public class QsConstant {
      */
     @Getter
     public static enum Page {
-        登录页面("login", "QsBeanfun", jfxStage -> {
+        登录页面("login", "QsBeanfun", false, jfxStage -> {
             jfxStage.setCloseEvent(() -> Platform.exit());
             jfxStage.setMiniSupport(false);
+            Parent root = jfxStage.getRoot();
+            root.getStylesheets().add(QsConstant.class.getResource("/static/css/login.css").toExternalForm());
             QsConstant.loginJFXStage = jfxStage;
         }),
-        主界面("main", "QsBeanfun", jfxStage -> {
+        主界面("main", "QsBeanfun", true, jfxStage -> {
             jfxStage.setCloseEvent(() -> {
-                if (Objects.nonNull(QsConstant.heartExecutorService)) {
-                    QsConstant.heartExecutorService.shutdownNow();
-                }
                 Platform.exit();
                 QsTray.remove(QsConstant.trayIcon);
             });
@@ -115,37 +114,30 @@ public class QsConstant {
             });
             QsConstant.mainJFXStage = jfxStage;
         }),
-        关于我("about", "QsBeanfun", jfxStage -> {
-            jfxStage.setCloseEvent(() -> FrameUtils.closeWindow(jfxStage));
+        关于我("about", "QsBeanfun", true, jfxStage -> {
+            jfxStage.setCloseEvent(() -> FrameService.getInstance().closeWindow(jfxStage));
             jfxStage.setMiniSupport(false);
             QsConstant.aboutJFXStage = jfxStage;
         }),
-        装备计算器("equipment", "Equipment", jfxStage -> {
+        装备计算器("equipment", "Equipment", true, jfxStage -> {
             jfxStage.setMiniSupport(false);
-            jfxStage.setCloseEvent(() -> FrameUtils.closeWindow(jfxStage));
+            jfxStage.setCloseEvent(() -> FrameService.getInstance().closeWindow(jfxStage));
             QsConstant.equippingJFXStage = jfxStage;
-        }),
-        网页客户端("web", "WebKit", jfxStage -> {
-            jfxStage.setMiniSupport(true);
-//            Rectangle2D screenRectangle = Screen.getPrimary().getBounds();
-//            double width = screenRectangle.getWidth();
-//            double height = screenRectangle.getHeight();
-//            Stage stage = jfxStage.getStage();
-//            stage.setWidth(width * 0.7);
-//            stage.setHeight(height * 0.7);
-            jfxStage.setCloseEvent(() -> FrameUtils.closeWindow(jfxStage));
-            QsConstant.webJFXStage = jfxStage;
         }),
 
         ;
 
         private final String url;
         private final String title;
+
+        private final Boolean showTitle;
         private final Consumer<JFXStage> buildMethod;
 
-        Page(String url, String title, Consumer<JFXStage> buildMethod) {
+
+        Page(String url, String title, Boolean showTitle, Consumer<JFXStage> buildMethod) {
             this.url = url;
             this.title = title;
+            this.showTitle = showTitle;
             this.buildMethod = buildMethod;
         }
 

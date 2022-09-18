@@ -5,6 +5,6 @@ log/
 *.iml
 target/
 .idea
-qs-beanfun-logs/
 *.bak
 /build/jre/
+/qs-data/

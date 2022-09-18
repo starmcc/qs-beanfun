@@ -1,15 +1,23 @@
 package com.starmcc.beanfun.handler;
 
+import com.starmcc.beanfun.client.BeanfunClient;
 import com.starmcc.beanfun.constant.QsConstant;
 import com.starmcc.beanfun.model.ConfigJson;
+import com.starmcc.beanfun.model.client.Account;
+import com.starmcc.beanfun.model.client.BeanfunStringResult;
 import com.starmcc.beanfun.utils.AesUtil;
 import com.starmcc.beanfun.utils.ConfigFileUtils;
 import com.starmcc.beanfun.utils.DataTools;
+import com.starmcc.beanfun.utils.ThreadUtils;
+import com.sun.istack.internal.NotNull;
+import javafx.application.Platform;
+import javafx.scene.control.Alert;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 
 import java.util.Iterator;
 import java.util.List;
+import java.util.function.BiConsumer;
 
 /**
  * 账户处理程序
@@ -55,5 +63,24 @@ public class AccountHandler {
         }
     }
 
-
+    /**
+     * 获取动态密码
+     *
+     * @param runnable 可运行
+     */
+    public static void getDynamicPassword(Account account, @NotNull BiConsumer<String, String> runnable) {
+        ThreadUtils.executeThread(() -> {
+            try {
+                BeanfunStringResult pwdResult = BeanfunClient.run().getDynamicPassword(account, QsConstant.beanfunModel.getToken());
+                if (!pwdResult.isSuccess()) {
+                    Platform.runLater(() -> QsConstant.alert(pwdResult.getMsg(), Alert.AlertType.ERROR));
+                }
+                log.debug("动态密码 ={}", pwdResult.getData());
+                runnable.accept(account.getId(), pwdResult.getData());
+            } catch (Exception e) {
+                log.error("获取密码失败 e={}", e.getMessage(), e);
+                Platform.runLater(() -> QsConstant.alert("获取动态密码异常:" + e.getMessage(), Alert.AlertType.ERROR));
+            }
+        });
+    }
 }

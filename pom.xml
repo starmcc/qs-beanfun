@@ -50,11 +50,10 @@
             <artifactId>logback-classic</artifactId>
             <version>1.2.3</version>
         </dependency>
-        <!--    内置浏览器    -->
         <dependency>
-            <groupId>org.eclipse.swt.win32.win32</groupId>
-            <artifactId>x86</artifactId>
-            <version>3.3.0-v3346</version>
+            <groupId>net.java.dev.jna</groupId>
+            <artifactId>jna-platform-jpms</artifactId>
+            <version>5.10.0</version>
         </dependency>
     </dependencies>
     <build>

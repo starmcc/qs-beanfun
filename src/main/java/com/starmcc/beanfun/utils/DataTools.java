@@ -12,7 +12,6 @@ public class DataTools {
 
     private static final String AES_DEFAULT_KEY = "2022KEYQSBEANFUNACTPWDAESENC";
 
-
     public static boolean collectionIsEmpty(final Collection<?> coll) {
         return coll == null || coll.isEmpty();
     }
@@ -82,4 +81,5 @@ public class DataTools {
         }
         return sb.toString();
     }
+
 }

@@ -15,6 +15,12 @@ public class AesUtil {
 
     /**
      * 加密
+     * 1.构造密钥生成器
+     * 2.根据ecnodeRules规则初始化密钥生成器
+     * 3.产生密钥
+     * 4.创建和初始化密码器
+     * 5.内容加密
+     * 6.返回字符串
      *
      * @param key     秘钥
      * @param content 内容
@@ -56,6 +62,10 @@ public class AesUtil {
 
     /**
      * 解密
+     * 解密过程：
+     * 1.同加密1-4步
+     * 2.将加密后的字符串反纺成byte[]数组
+     * 3.将加密内容解密
      *
      * @param encodeRules   秘钥
      * @param encodeContent 密文

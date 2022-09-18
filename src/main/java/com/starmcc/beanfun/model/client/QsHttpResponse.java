@@ -2,7 +2,6 @@ package com.starmcc.beanfun.model.client;
 
 import lombok.Data;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.http.cookie.Cookie;
 
 import java.io.Serializable;
 import java.net.URI;
@@ -27,14 +26,12 @@ public class QsHttpResponse implements Serializable {
     private long contentLength;
     private Boolean success;
     private Map<String, String> cookieMap;
-    private List<Cookie> cookieScore;
 
 
     public QsHttpResponse build() {
         this.success = this.code == 200;
         log.info("HTTP response code = {} success = {} contentLength = {}",
                 this.code, this.success, this.contentLength);
-        log.debug("HTTP response content = {}", this.content);
         return this;
     }
 

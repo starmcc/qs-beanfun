@@ -6,23 +6,22 @@ import com.starmcc.beanfun.handler.AccountHandler;
 import com.starmcc.beanfun.model.ConfigJson;
 import com.starmcc.beanfun.model.LoginType;
 import com.starmcc.beanfun.model.QsTray;
-import com.starmcc.beanfun.model.client.AbstractBeanfunResult;
 import com.starmcc.beanfun.model.client.BeanfunAccountResult;
 import com.starmcc.beanfun.model.client.BeanfunModel;
 import com.starmcc.beanfun.model.client.BeanfunStringResult;
 import com.starmcc.beanfun.utils.AesUtil;
 import com.starmcc.beanfun.utils.ConfigFileUtils;
 import com.starmcc.beanfun.utils.DataTools;
-import com.starmcc.beanfun.utils.FrameUtils;
-import com.starmcc.beanfun.windows.SwtWebBrowser;
+import com.starmcc.beanfun.utils.ThreadUtils;
+import com.starmcc.beanfun.windows.FrameService;
 import javafx.application.Platform;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.*;
-import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
+import javafx.scene.input.MouseEvent;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.concurrent.BasicThreadFactory;
@@ -30,7 +29,6 @@ import org.apache.http.conn.HttpHostConnectException;
 
 import java.net.URL;
 import java.util.List;
-import java.util.Objects;
 import java.util.Optional;
 import java.util.ResourceBundle;
 import java.util.concurrent.ScheduledExecutorService;
@@ -48,25 +46,23 @@ import java.util.concurrent.TimeUnit;
 public class LoginController implements Initializable {
 
     @FXML
-    private ChoiceBox<LoginType> loginTypeBox;
+    private ChoiceBox<LoginType> choiceBoxLoginType;
     @FXML
-    private ComboBox<String> account;
+    private ComboBox<String> comboBoxAccount;
     @FXML
-    private PasswordField password;
+    private PasswordField PasswordFieldPassword;
     @FXML
-    private Button loginBtn;
+    private Button buttonLogin;
     @FXML
-    private CheckBox remember;
+    private CheckBox checkBoxRemember;
     @FXML
-    private ImageView logo;
+    private Hyperlink hyperlinkRegister;
     @FXML
-    private Hyperlink register;
-    @FXML
-    private Hyperlink forgetPwd;
+    private Hyperlink hyperlinkForgetPwd;
     @FXML
     private ProgressBar progressBar;
     @FXML
-    private Button resetBtn;
+    private ImageView imageViewQrCode;
 
 
     private boolean loginTask = false;
@@ -74,7 +70,7 @@ public class LoginController implements Initializable {
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
-        ObservableList<String> items = account.getItems();
+        ObservableList<String> items = comboBoxAccount.getItems();
         List<ConfigJson.ActPwd> actPwds = QsConstant.config.getActPwds();
         final String key = DataTools.getComputerUniqueId();
         // 解密
@@ -94,20 +90,18 @@ public class LoginController implements Initializable {
         });
         actPwds.forEach((actPwd) -> items.add(actPwd.getAct()));
         if (DataTools.collectionIsNotEmpty(actPwds)) {
-            account.getSelectionModel().selectFirst();
-            password.setText(actPwds.get(0).getPwd());
+            comboBoxAccount.getSelectionModel().selectFirst();
+            PasswordFieldPassword.setText(actPwds.get(0).getPwd());
         }
-        remember.setSelected(QsConstant.config.getRecordActPwd());
-        Image image = new Image("static/images/logo.png");
-        logo.setImage(image);
+        checkBoxRemember.setSelected(QsConstant.config.getRecordActPwd());
 
-        register.setFocusTraversable(false);
-        forgetPwd.setFocusTraversable(false);
-        remember.setFocusTraversable(false);
+        hyperlinkRegister.setFocusTraversable(false);
+        hyperlinkForgetPwd.setFocusTraversable(false);
+        checkBoxRemember.setFocusTraversable(false);
 
         Integer configLoginType = QsConstant.config.getLoginType();
-        LoginType selectLoginType = new LoginType(LoginType.TypeEnum.HK_NEW);
-        ObservableList<LoginType> loginTypeItems = loginTypeBox.getItems();
+        LoginType selectLoginType = new LoginType(LoginType.TypeEnum.HK);
+        ObservableList<LoginType> loginTypeItems = choiceBoxLoginType.getItems();
         for (LoginType.TypeEnum typeEnum : LoginType.TypeEnum.values()) {
             LoginType loginType = new LoginType(typeEnum);
             loginTypeItems.add(loginType);
@@ -115,37 +109,28 @@ public class LoginController implements Initializable {
                 selectLoginType = loginType;
             }
         }
-        loginTypeBox.getSelectionModel().select(selectLoginType);
-
+        choiceBoxLoginType.getSelectionModel().select(selectLoginType);
     }
 
-    @FXML
-    public void resetAction(ActionEvent actionEvent) {
-        QsConstant.config = new ConfigJson();
-        ConfigFileUtils.writeConfig(QsConstant.config);
-        account.getItems().clear();
-        password.setText("");
-        remember.setSelected(false);
-    }
 
     @FXML
     public void selectAccountAction() {
-        String act = account.getSelectionModel().getSelectedItem();
+        String act = comboBoxAccount.getSelectionModel().getSelectedItem();
         List<ConfigJson.ActPwd> actPwds = QsConstant.config.getActPwds();
         if (DataTools.collectionIsEmpty(actPwds)) {
-            password.setText("");
+            PasswordFieldPassword.setText("");
             return;
         }
         Optional<ConfigJson.ActPwd> queryOpt = actPwds.stream().filter(x -> StringUtils.equals(x.getAct(), act)).findFirst();
         if (queryOpt.isPresent()) {
-            password.setText(queryOpt.get().getPwd());
+            PasswordFieldPassword.setText(queryOpt.get().getPwd());
         } else {
-            password.setText("");
+            PasswordFieldPassword.setText("");
         }
     }
 
     @FXML
-    public void login() {
+    public void loginAction() {
         loginning(true);
 
         ScheduledExecutorService executorService = new ScheduledThreadPoolExecutor(1,
@@ -161,26 +146,17 @@ public class LoginController implements Initializable {
         }, 0, 50, TimeUnit.MILLISECONDS);
 
         // 执行登录方法
-        FrameUtils.executeThread(() -> {
+        ThreadUtils.executeThread(() -> {
             try {
-                BeanfunStringResult loginResult = BeanfunClient.run().login(account.getValue(), password.getText(), process -> loginProcess = process);
+                BeanfunStringResult loginResult = BeanfunClient.run().login(comboBoxAccount.getValue(), PasswordFieldPassword.getText(), process -> loginProcess = process);
                 if (!loginResult.isSuccess()) {
-                    if (Objects.equals(loginResult.getCode(), AbstractBeanfunResult.CodeEnum.PLUGIN_NOT_INSTALL.getCode())) {
-                        // 没安装beanfun插件 提示一下，并前往下载
-                        Platform.runLater(() -> {
-                            if (!QsConstant.confirmDialog("初始化失败", "初始化失败!没有安装Beanfun插件!是否前往下载?")) {
-                                return;
-                            }
-                            SwtWebBrowser.getInstance("https://hk.beanfun.com/locales/HK/contents/beanfun_block/help/plugin_install.html").open();
-                        });
-                        return;
-                    }
                     Platform.runLater(() -> QsConstant.alert(loginResult.getMsg(), Alert.AlertType.ERROR));
                     return;
                 }
                 BeanfunModel beanfunModel = new BeanfunModel();
                 beanfunModel.setToken(loginResult.getData());
                 BeanfunAccountResult actResult = BeanfunClient.run().getAccountList(loginResult.getData());
+                loginProcess = 1;
                 if (!actResult.isSuccess()) {
                     Platform.runLater(() -> QsConstant.alert(actResult.getMsg(), Alert.AlertType.ERROR));
                     return;
@@ -206,24 +182,14 @@ public class LoginController implements Initializable {
     @FXML
     public void registerAction() throws Exception {
         String jumpUrl = BeanfunClient.run().getWebUrlRegister();
-        if (Integer.compare(QsConstant.config.getLoginType(), LoginType.TypeEnum.HK_OLD.getType()) == 0) {
-            FrameUtils.executeThread(() -> SwtWebBrowser.getInstance(jumpUrl).open());
-            return;
-        }
-        WebController.jumpUrl = jumpUrl;
-        FrameUtils.openWindow(QsConstant.Page.网页客户端);
+        FrameService.getInstance().openWebBrowser(jumpUrl);
     }
 
 
     @FXML
     public void forgotPwdAction() throws Exception {
         String jumpUrl = BeanfunClient.run().getWebUrlForgotPwd();
-        if (Integer.compare(QsConstant.config.getLoginType(), LoginType.TypeEnum.HK_OLD.getType()) == 0) {
-            FrameUtils.executeThread(() -> SwtWebBrowser.getInstance(jumpUrl).open());
-            return;
-        }
-        WebController.jumpUrl = jumpUrl;
-        FrameUtils.openWindow(QsConstant.Page.网页客户端);
+        FrameService.getInstance().openWebBrowser(jumpUrl);
     }
 
     /**
@@ -231,17 +197,37 @@ public class LoginController implements Initializable {
      */
     @FXML
     public void rememberClickAction() {
-        QsConstant.config.setRecordActPwd(remember.isSelected());
+        QsConstant.config.setRecordActPwd(checkBoxRemember.isSelected());
         ConfigFileUtils.writeConfig(QsConstant.config);
     }
 
 
     @FXML
     public void selectLoginTypeAction(ActionEvent actionEvent) {
-        LoginType selectedItem = loginTypeBox.getSelectionModel().getSelectedItem();
+        LoginType selectedItem = choiceBoxLoginType.getSelectionModel().getSelectedItem();
         QsConstant.config.setLoginType(selectedItem.getType());
         ConfigFileUtils.writeConfig(QsConstant.config);
+        LoginType.TypeEnum typeEnum = LoginType.TypeEnum.getData(QsConstant.config.getLoginType());
+        imageViewQrCode.setVisible(typeEnum == LoginType.TypeEnum.TW);
     }
+
+    @FXML
+    public void qrCodeClick() {
+        System.out.println(1);
+    }
+
+    @FXML
+    public void closeApplication() {
+        Platform.exit();
+    }
+
+    @FXML
+    public void aboutAction(MouseEvent mouseEvent) throws Exception {
+        FrameService.getInstance().openWindow(QsConstant.Page.关于我);
+    }
+
+
+    // ==================================================================
 
 
     /**
@@ -250,24 +236,15 @@ public class LoginController implements Initializable {
     private void loginSuccessGoMain() {
         loginning(false);
         // 记录账密
-        if (remember.isSelected()) {
-            AccountHandler.recordActPwd(account.getValue(), password.getText());
+        if (checkBoxRemember.isSelected()) {
+            AccountHandler.recordActPwd(comboBoxAccount.getValue(), PasswordFieldPassword.getText());
         }
         try {
-            if (Integer.compare(QsConstant.config.getLoginType(), LoginType.TypeEnum.HK_OLD.getType()) == 0) {
-                // 定时心跳设置
-                QsConstant.heartExecutorService = new ScheduledThreadPoolExecutor(1,
-                        new BasicThreadFactory.Builder().namingPattern("MainController-heartbeat-schedule-pool-%d").daemon(true).build());
-                QsConstant.heartExecutorService.scheduleAtFixedRate(() -> {
-                    boolean heartbeat = BeanfunClient.run().heartbeat(QsConstant.beanfunModel.getToken());
-                    log.info("心跳 heart={}", heartbeat);
-                }, 0, 5, TimeUnit.MINUTES);
-            }
             // 窗口显示
-            FrameUtils.openWindow(QsConstant.Page.主界面);
+            FrameService.getInstance().openWindow(QsConstant.Page.主界面);
             QsConstant.trayIcon = QsTray.init(QsConstant.mainJFXStage.getStage());
             QsTray.show(QsConstant.trayIcon);
-            FrameUtils.closeWindow(QsConstant.loginJFXStage);
+            FrameService.getInstance().closeWindow(QsConstant.loginJFXStage);
         } catch (Exception e) {
             log.error("loginSuccessGoMain e={}", e.getMessage(), e);
         }
@@ -280,19 +257,18 @@ public class LoginController implements Initializable {
      * @param state 状态
      */
     private void loginning(boolean state) {
-        register.setDisable(state);
-        forgetPwd.setDisable(state);
-        remember.setDisable(state);
-        account.setDisable(state);
-        password.setDisable(state);
-        loginBtn.setVisible(!state);
-        progressBar.setVisible(state);
+        hyperlinkRegister.setDisable(state);
+        hyperlinkForgetPwd.setDisable(state);
+        checkBoxRemember.setDisable(state);
+        comboBoxAccount.setDisable(state);
+        PasswordFieldPassword.setDisable(state);
+        imageViewQrCode.setDisable(state);
+        buttonLogin.setDisable(state);
         if (state) {
             progressBar.setProgress(0);
         }
         loginTask = state;
-        resetBtn.setDisable(state);
-        loginTypeBox.setDisable(state);
+        choiceBoxLoginType.setDisable(state);
     }
 
 

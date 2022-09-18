@@ -28,7 +28,7 @@ public class ThirdPartyApiClient {
         try {
             ReqParams reqParams = ReqParams.getInstance()
                     .addParam("from", "CNY").addParam("to", "TWD").addParam("q", "1");
-            QsHttpResponse qsHttpResponse = HttpClient.get("https://qq.ip138.com/hl.asp", reqParams);
+            QsHttpResponse qsHttpResponse = HttpClient.getInstance().get("https://qq.ip138.com/hl.asp", reqParams);
             if (!qsHttpResponse.getSuccess()) {
                 return BigDecimal.ZERO;
             }

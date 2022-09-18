@@ -12,14 +12,6 @@ import java.security.Key;
  */
 public class DesUtils {
 
-    public static void main(String[] args) throws Exception {
-        //这里的数据长度必须为8的倍数
-        String clearText = "08EE6D13776E5EC30D0E90D069B9E89F";
-        String key = "1FE10331";
-        String decryptText = decrypt(clearText, key);
-        System.out.println("解密后：" + decryptText);
-    }
-
     /***
      * 解密数据
      * @param decryptString

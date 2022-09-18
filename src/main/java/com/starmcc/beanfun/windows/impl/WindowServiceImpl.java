@@ -1,16 +1,25 @@
 package com.starmcc.beanfun.windows.impl;
 
+import com.alibaba.fastjson.JSONArray;
+import com.alibaba.fastjson.JSONObject;
+import com.starmcc.beanfun.client.HttpClient;
 import com.starmcc.beanfun.windows.WindowService;
-import com.sun.jna.Library;
-import com.sun.jna.Native;
+import com.starmcc.beanfun.windows.dll.CustomUser32;
+import com.starmcc.beanfun.windows.dll.EService;
+import com.sun.jna.platform.win32.*;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.concurrent.BasicThreadFactory;
+import org.apache.http.client.CookieStore;
+import org.apache.http.cookie.Cookie;
 
 import java.awt.*;
-import java.awt.event.KeyEvent;
+import java.util.List;
+import java.util.Objects;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.ScheduledThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
+import java.util.function.Consumer;
 
 /**
  * 窗口服务impl
@@ -21,77 +30,156 @@ import java.util.concurrent.TimeUnit;
 @Slf4j
 public class WindowServiceImpl implements WindowService {
 
+    private static final int WM_KEYDOWN = 0X100;
+    private static final int WM_LBUTTONDOWN = 0x0201;
+    private static final byte VK_BACK = 0x0008;
+    private static final byte VK_TAB = 0x0009;
+    private static final byte VK_ENTER = 0x000D;
+    private static final byte VK_ESCAPE = 0x001B;
+    private static final byte VK_END = 0x0023;
+
 
     @Override
     public void closeMapleStoryStart() {
         final long time = System.currentTimeMillis();
         ScheduledExecutorService executorService = new ScheduledThreadPoolExecutor(2,
-                new BasicThreadFactory.Builder().namingPattern("starGame-schedule-pool-%d").daemon(true).build());
+                new BasicThreadFactory.Builder().namingPattern("closeMapleStoryStart-schedule-pool-%d").daemon(true).build());
         executorService.scheduleAtFixedRate(() -> {
-            int hwnd = 0;
+            WinDef.HWND hwnd = null;
             try {
-                hwnd = User32.RUN.FindWindowA("StartUpDlgClass", "MapleStory");
-                if (hwnd != 0) {
-                    User32.RUN.SetForegroundWindow(hwnd);
-                    new Robot().keyPress(KeyEvent.VK_ESCAPE);
+                hwnd = CustomUser32.INSTANCE.FindWindow("StartUpDlgClass", "MapleStory");
+                if (hwnd != null) {
+                    CustomUser32.INSTANCE.SetForegroundWindow(hwnd);
+                    CustomUser32.INSTANCE.PostMessage(hwnd, 0x10, new WinDef.WPARAM(0), new WinDef.LPARAM(0));
                 }
             } catch (Exception e) {
                 log.error("自动关闭Play窗口发生异常! e={}", e.getMessage(), e);
             } finally {
-                if (hwnd != 0 || System.currentTimeMillis() - time > 10000) {
-                    // 进程句柄找到了，超过10秒，结束该线程池
+                if (hwnd != null || System.currentTimeMillis() - time > 5000) {
+                    // 进程句柄找到了或超过5秒，结束该线程池
                     executorService.shutdownNow();
                 }
             }
-        }, 0, 1000, TimeUnit.MILLISECONDS);
+        }, 0, 200, TimeUnit.MILLISECONDS);
     }
 
     @Override
-    public boolean setMapleStoryForegroundWindow() {
-        int hwnd = User32.RUN.FindWindowA(null, "MapleStory");
-        if (hwnd == 0) {
-            return false;
-        }
-        return User32.RUN.SetForegroundWindow(hwnd);
+    public void stopAutoPatcher(Consumer<Process> consumer) {
+        final long time = System.currentTimeMillis();
+        ScheduledExecutorService executorService = new ScheduledThreadPoolExecutor(2,
+                new BasicThreadFactory.Builder().namingPattern("closeMapleStoryStart-schedule-pool-%d").daemon(true).build());
+        executorService.scheduleAtFixedRate(() -> {
+            int patcherPid = 0;
+            try {
+                // 查找更新程序
+                patcherPid = this.searchNameProcess("Patcher.exe");
+                if (patcherPid == 0) {
+                    return;
+                }
+                String cmdScript = String.format("taskkill /F /PID %d", patcherPid);
+                consumer.accept(Runtime.getRuntime().exec(cmdScript));
+            } catch (Exception e) {
+                log.error("异常 e={}", e.getMessage(), e);
+            } finally {
+                if (patcherPid != 0 || System.currentTimeMillis() - time > 5000) {
+                    // 进程PID找到了或超过5秒，结束该线程池
+                    executorService.shutdownNow();
+                }
+            }
+        }, 0, 200, TimeUnit.MILLISECONDS);
     }
 
 
-    /**
-     * User32.dll win原生调用
-     *
-     * @author starmcc
-     * @date 2022/05/04
-     */
-    public interface User32 extends Library {
+    @Deprecated
+    private boolean closeProcess(int processId) {
+        WinNT.HANDLE handle = Kernel32.INSTANCE.OpenProcess(WinNT.PROCESS_QUERY_INFORMATION, false, processId);
+        if (Objects.isNull(handle)) {
+            return false;
+        }
+        boolean is = Kernel32.INSTANCE.TerminateProcess(handle, WinNT.PROCESS_TERMINATE);
+        Kernel32.INSTANCE.CloseHandle(handle);
+        return is;
+    }
 
-        User32 RUN = (User32) Native.load("User32", User32.class);
+    private int searchNameProcess(String name) {
+        WinNT.HANDLE hand = Kernel32.INSTANCE.CreateToolhelp32Snapshot(new WinDef.DWORD(2), new WinDef.DWORD(0));
+        Tlhelp32.PROCESSENTRY32 processInfo = new Tlhelp32.PROCESSENTRY32();
+        boolean exists = Kernel32.INSTANCE.Process32First(hand, processInfo);
+        while (exists) {
+            String processName = String.valueOf(processInfo.szExeFile);
+            if (StringUtils.equals(processName.trim(), name.trim())) {
+                Kernel32.INSTANCE.CloseHandle(hand);
+                return processInfo.th32ProcessID.intValue();
+            }
+            exists = Kernel32.INSTANCE.Process32Next(hand, processInfo);
+        }
+        Kernel32.INSTANCE.CloseHandle(hand);
+        return 0;
+    }
 
-        /**
-         * 找到window窗口句柄
-         *
-         * @param lpClassName  lp类名
-         * @param lpWindowName lp窗口名称
-         * @return int 返回进程句柄
-         */
-        int FindWindowA(String lpClassName, String lpWindowName);
 
-        /**
-         * 帖子messagea
-         *
-         * @param hWnd   进程句柄
-         * @param wMsg   消息类型
-         * @param wParam 消息参数1
-         * @param lParam 消息参数2
-         * @return int
-         */
-        int PostMessageA(int hWnd, int wMsg, int wParam, int lParam);
+    @Override
+    public boolean setMapleStoryForegroundWindow() {
+        WinDef.HWND hwnd = User32.INSTANCE.FindWindow("MapleStoryClassTW", "MapleStory");
+        if (hwnd == null) {
+            return false;
+        }
+        return CustomUser32.INSTANCE.SetForegroundWindow(hwnd);
+    }
 
-        /**
-         * 设置前景窗口
-         *
-         * @param hwnd 窗口句柄
-         * @return boolean 是否成功
-         */
-        boolean SetForegroundWindow(int hwnd);
+    @Override
+    public void autoInputActPwd(String act, String pwd) throws Exception {
+        int dpi = Toolkit.getDefaultToolkit().getScreenResolution();
+        dpi = dpi / 96;
+        // 获取句柄
+        WinDef.HWND hwnd = CustomUser32.INSTANCE.FindWindow("MapleStoryClassTW", "MapleStory");
+        // 前置游戏窗口
+        CustomUser32.INSTANCE.SetForegroundWindow(hwnd);
+        // 获取鼠标位置
+        WinDef.POINT point = new WinDef.POINT();
+        CustomUser32.INSTANCE.GetCursorPos(point);
+        WinDef.POINT windowPoint = new WinDef.POINT();
+        CustomUser32.INSTANCE.ClientToScreen(hwnd, windowPoint);
+        // 获取当前鼠标位置
+        Point oldPoint = MouseInfo.getPointerInfo().getLocation();
+        Thread.sleep(100);
+        // 关闭错误提示框
+        postEventKey(hwnd, WM_KEYDOWN, VK_ESCAPE);
+        Robot rbt = new Robot();
+        rbt.delay(100);
+        rbt.mouseMove(windowPoint.x + (510 * dpi), windowPoint.y + (340 * dpi));
+        rbt.delay(100);
+        rbt.mousePress(16);
+        rbt.delay(100);
+        rbt.mouseRelease(16);
+        rbt.delay(100);
+        rbt.mouseMove(oldPoint.x, oldPoint.y);
+        postEventKey(hwnd, WM_KEYDOWN, VK_END);
+        for (int i = 0; i < 50; i++) {
+            postEventKey(hwnd, WM_KEYDOWN, VK_BACK);
+        }
+        inputString(hwnd, act);
+        postEventKey(hwnd, WM_KEYDOWN, VK_TAB);
+        Thread.sleep(100);
+        postEventKey(hwnd, WM_KEYDOWN, VK_END);
+        for (int i = 0; i < 20; i++) {
+            postEventKey(hwnd, WM_KEYDOWN, VK_BACK);
+        }
+        inputString(hwnd, pwd);
+        Thread.sleep(100);
+        postEventKey(hwnd, WM_KEYDOWN, VK_ENTER);
+    }
+
+    private static void inputString(WinDef.HWND hwnd, String val) {
+        char[] chars = val.toCharArray();
+        for (char ch : chars) {
+            Integer vKey = Integer.valueOf(ch);
+            CustomUser32.INSTANCE.PostMessage(hwnd, 0x102, new WinDef.WPARAM(vKey), new WinDef.LPARAM(0));
+        }
+    }
+
+    private static void postEventKey(WinDef.HWND hwnd, int wMsg, byte wParam) {
+        byte lp = CustomUser32.INSTANCE.MapVirtualKey(wParam, 0);
+        CustomUser32.INSTANCE.PostMessage(hwnd, wMsg, new WinDef.WPARAM(wParam), new WinDef.LPARAM(lp));
     }
 }

@@ -1,6 +1,6 @@
 package com.starmcc.beanfun.model;
 
-import lombok.Builder;
+import com.starmcc.beanfun.constant.QsConstant;
 import lombok.Data;
 
 import java.io.Serializable;
@@ -12,15 +12,13 @@ import java.io.Serializable;
  * @date 2022/04/08
  */
 @Data
-@Builder
 public class UpdateModel implements Serializable {
     private static final long serialVersionUID = -7379298032869785110L;
 
-    public static final String VERSION_PRE = "[$pre]";
-
+    private String updateVersion;
     private String nowVersion;
     private String downloadUrl;
-    private String tips;
+    private String updateText;
     private State state;
 
 
@@ -28,20 +26,15 @@ public class UpdateModel implements Serializable {
         /**
          * 获取失败
          */
-        获取失败(-1),
+        获取失败(0),
         /**
          * 已是最新版本
          */
-        已是最新版本(0),
+        已是最新版本(1),
         /**
          * 有新版本
          */
-        有新版本(1),
-
-        /**
-         * 有新版本不更新
-         */
-        有新版本不更新(2),
+        有新版本(2),
         ;
 
         private final int state;
@@ -49,6 +42,18 @@ public class UpdateModel implements Serializable {
         State(int state) {
             this.state = state;
         }
+
+        public int getState() {
+            return state;
+        }
     }
+
+    public static UpdateModel build(State state) {
+        UpdateModel model = new UpdateModel();
+        model.setState(state);
+        model.setNowVersion(QsConstant.APP_VERSION);
+        return model;
+    }
+
 
 }

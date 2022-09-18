@@ -1,14 +1,10 @@
 package com.starmcc.beanfun.client;
 
-import com.starmcc.beanfun.client.impl.BeanfunNewHongKongClientImpl;
-import com.starmcc.beanfun.client.impl.BeanfunOldHongKongClientImpl;
-import com.starmcc.beanfun.constant.QsConstant;
-import com.starmcc.beanfun.model.LoginType;
+import com.starmcc.beanfun.client.impl.BeanfunHongKongClientImpl;
 import com.starmcc.beanfun.model.client.Account;
 import com.starmcc.beanfun.model.client.BeanfunAccountResult;
 import com.starmcc.beanfun.model.client.BeanfunStringResult;
 import com.starmcc.beanfun.utils.DesUtils;
-import com.starmcc.beanfun.windows.BaseBFService;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -26,10 +22,7 @@ import java.util.function.Consumer;
 public abstract class BeanfunClient {
 
     public static BeanfunClient run() {
-        if (Integer.compare(QsConstant.config.getLoginType(), LoginType.TypeEnum.HK_OLD.getType()) == 0) {
-            return new BeanfunOldHongKongClientImpl();
-        }
-        return new BeanfunNewHongKongClientImpl();
+        return new BeanfunHongKongClientImpl();
     }
 
     /**
@@ -37,6 +30,7 @@ public abstract class BeanfunClient {
      *
      * @param account  账户
      * @param password 密码
+     * @param process  登录进度
      * @throws Exception 异常
      */
     public abstract BeanfunStringResult login(String account, String password, Consumer<Double> process) throws Exception;
@@ -149,28 +143,6 @@ public abstract class BeanfunClient {
 
 
     /**
-     * 获取插件token
-     *
-     * @param token 令牌
-     * @return {@link String}
-     */
-    protected String getBfToken(String token) {
-        if (StringUtils.isEmpty(token)) {
-            return "";
-        }
-        BaseBFService instance = BaseBFService.getInstance();
-        instance.saveData("Seed", "0");
-        instance.saveData("Token", token);
-        String bfToken = instance.loadData("Token");
-        if (StringUtils.isEmpty(bfToken)) {
-            instance.initialize2();
-            return getBfToken(token);
-        }
-        return bfToken;
-    }
-
-
-    /**
      * 解密des pkcs5 hex密文
      *
      * @param text 文本
@@ -190,7 +162,7 @@ public abstract class BeanfunClient {
         String key = split[1].substring(0, 8);
         String deVal = split[1].substring(8);
         try {
-            return DesUtils.decrypt(deVal, key);
+            return DesUtils.decrypt(deVal, key).trim();
         } catch (Exception e) {
             log.error("解密失败 e={}", e.getMessage());
             return "";

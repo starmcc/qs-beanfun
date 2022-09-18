@@ -1,60 +1,86 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<?import javafx.scene.control.*?>
+<?import javafx.scene.Cursor?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.CheckBox?>
+<?import javafx.scene.control.ChoiceBox?>
+<?import javafx.scene.control.ComboBox?>
+<?import javafx.scene.control.Hyperlink?>
+<?import javafx.scene.control.PasswordField?>
+<?import javafx.scene.control.ProgressBar?>
+<?import javafx.scene.image.Image?>
 <?import javafx.scene.image.ImageView?>
 <?import javafx.scene.layout.AnchorPane?>
-<?import javafx.scene.text.*?>
-<AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="250.0"
-            prefWidth="300.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1"
-            fx:controller="com.starmcc.beanfun.controller.LoginController">
-    <children>
-        <Label layoutX="14.0" layoutY="110.0" text="账号">
-            <font>
-                <Font size="13.0"/>
-            </font>
-        </Label>
-        <Label layoutX="14.0" layoutY="152.0" text="密码">
-            <font>
-                <Font size="13.0"/>
-            </font>
-        </Label>
-        <Hyperlink fx:id="register" layoutX="19.0" layoutY="179.0" onAction="#registerAction" text="注册账号">
-            <font>
-                <Font size="13.0"/>
-            </font>
-        </Hyperlink>
-        <Hyperlink fx:id="forgetPwd" layoutX="219.0" layoutY="179.0" onAction="#forgotPwdAction" text="忘记密码">
-            <font>
-                <Font size="13.0"/>
-            </font>
-        </Hyperlink>
-        <CheckBox fx:id="remember" layoutX="112.0" layoutY="183.0" mnemonicParsing="false"
-                  onAction="#rememberClickAction" text="记住账号">
-            <font>
-                <Font size="13.0"/>
-            </font>
-        </CheckBox>
-        <ComboBox fx:id="account" editable="true" layoutX="50.0" layoutY="103.0" onAction="#selectAccountAction"
-                  prefHeight="30.0" prefWidth="239.0" style="-fx-font-size: 13;" visibleRowCount="5"/>
-        <PasswordField fx:id="password" layoutX="50.0" layoutY="145.0" prefHeight="30.0" prefWidth="239.0"
-                       style="-fx-font-size: 13;"/>
-        <Button fx:id="loginBtn" layoutX="9.0" layoutY="206.0" mnemonicParsing="false" onAction="#login"
-                prefHeight="40.0" prefWidth="283.0" text="登录">
-            <font>
-                <Font size="13.0"/>
-            </font>
-        </Button>
-        <ImageView fx:id="logo" fitHeight="40.0" fitWidth="200.0" layoutX="50.0" layoutY="19.0" pickOnBounds="true"
-                   preserveRatio="true"/>
-        <ProgressBar fx:id="progressBar" layoutX="9.0" layoutY="206.0" prefHeight="40.0" prefWidth="283.0"
-                     progress="0.0" visible="false"/>
-        <Button fx:id="resetBtn" layoutX="12.0" layoutY="67.0" mnemonicParsing="false" onAction="#resetAction"
-                style="-fx-font-size: 13;" text="重置工具">
-            <font>
-                <Font size="13.0"/>
-            </font>
-        </Button>
-        <ChoiceBox fx:id="loginTypeBox" layoutX="169.0" layoutY="67.0" onAction="#selectLoginTypeAction"
-                   prefHeight="28.0" prefWidth="119.0" style="-fx-font-size: 13;"/>
-    </children>
-</AnchorPane>
+<?import javafx.scene.layout.StackPane?>
+
+<StackPane xmlns="http://javafx.com/javafx/8.0.171" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.starmcc.beanfun.controller.LoginController">
+   <children>
+      <AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="250.0" prefWidth="330.0">
+          <children>
+              <AnchorPane prefHeight="80.0" prefWidth="330.0" style="-fx-background-color: #40444f;">
+                  <children>
+                      <ImageView fx:id="logo" fitHeight="80.0" fitWidth="230.0" layoutX="10.0" pickOnBounds="true" smooth="false">
+                          <image>
+                              <Image url="@../static/images/logo.png" />
+                          </image>
+                      </ImageView>
+                      <ImageView fitHeight="22.0" fitWidth="22.0" layoutX="305.0" layoutY="3.0" onMouseClicked="#closeApplication" pickOnBounds="true" preserveRatio="true" styleClass="title-close">
+                          <image>
+                              <Image url="@../static/images/login_close_0.png" />
+                          </image>
+                          <cursor>
+                              <Cursor fx:constant="DEFAULT" />
+                          </cursor>
+                      </ImageView>
+                  <ChoiceBox fx:id="choiceBoxLoginType" layoutX="260.0" layoutY="50.0" onAction="#selectLoginTypeAction" prefHeight="23.0" prefWidth="62.0" style="-fx-background-color: white;" />
+                  <ImageView fitHeight="22.0" fitWidth="22.0" layoutX="276.0" layoutY="3.0" onMouseClicked="#aboutAction" pickOnBounds="true" preserveRatio="true" styleClass="title-about">
+                     <image>
+                        <Image url="@../static/images/login_about_0.png" />
+                     </image>
+                     <cursor>
+                        <Cursor fx:constant="DEFAULT" />
+                     </cursor>
+                  </ImageView>
+                  </children>
+              </AnchorPane>
+              <ComboBox fx:id="comboBoxAccount" editable="true" layoutX="61.0" layoutY="94.0" onAction="#selectAccountAction" prefHeight="28.0" prefWidth="234.0" style="-fx-border-color: D3D3D3; -fx-outer-border: transparent;" />
+              <ImageView fitHeight="22.0" fitWidth="22.0" layoutX="36.0" layoutY="97.0" pickOnBounds="true" preserveRatio="true">
+                  <image>
+                      <Image url="@../static/images/ico.png" />
+                  </image>
+              </ImageView>
+              <ImageView fitHeight="22.0" fitWidth="22.0" layoutX="36.0" layoutY="130.0" pickOnBounds="true" preserveRatio="true">
+                  <image>
+                      <Image url="@../static/images/pwd.png" />
+                  </image>
+              </ImageView>
+              <PasswordField fx:id="PasswordFieldPassword" layoutX="61.0" layoutY="128.0" prefHeight="26.0" prefWidth="234.0" />
+              <CheckBox fx:id="checkBoxRemember" focusTraversable="false" layoutX="39.0" layoutY="165.0" mnemonicParsing="false" onAction="#rememberClickAction" text="记住密码">
+                  <cursor>
+                      <Cursor fx:constant="DEFAULT" />
+                  </cursor>
+              </CheckBox>
+              <Hyperlink fx:id="hyperlinkForgetPwd" focusTraversable="false" layoutX="167.0" layoutY="162.0" onAction="#forgotPwdAction" style="-fx-text-fill: black;" text="忘记密码">
+                  <cursor>
+                      <Cursor fx:constant="DEFAULT" />
+                  </cursor>
+              </Hyperlink>
+              <Hyperlink fx:id="hyperlinkRegister" focusTraversable="false" layoutX="239.0" layoutY="162.0" onAction="#registerAction" style="-fx-text-fill: black;" text="注册账号">
+                  <cursor>
+                      <Cursor fx:constant="DEFAULT" />
+                  </cursor>
+              </Hyperlink>
+              <Button fx:id="buttonLogin" layoutX="39.0" layoutY="188.0" mnemonicParsing="false" onAction="#loginAction" prefHeight="35.0" prefWidth="255.0" text="登录" />
+              <ImageView fx:id="imageViewQrCode" fitHeight="26.0" fitWidth="26.0" layoutX="303.0" layoutY="223.0" onMouseClicked="#qrCodeClick" pickOnBounds="true" preserveRatio="true">
+                  <image>
+                      <Image url="@../static/images/二维码.png" />
+                  </image>
+                  <cursor>
+                      <Cursor fx:constant="HAND" />
+                  </cursor>
+              </ImageView>
+            <ProgressBar fx:id="progressBar" layoutY="80.0" prefHeight="0.0" prefWidth="330.0" progress="0.0" style="-fx-min-height: 10; -fx-control-inner-background: palegreen; -fx-accent: ff6b6b; -fx-text-box-border: 0;" />
+          </children>
+      </AnchorPane>
+   </children>
+</StackPane>

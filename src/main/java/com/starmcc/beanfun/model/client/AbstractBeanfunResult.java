@@ -58,10 +58,6 @@ public abstract class AbstractBeanfunResult {
          */
         ACT_PWD_IS_NULL(1, "登录账号和密码不能为空!"),
         /**
-         * 插件没有安装
-         */
-        PLUGIN_NOT_INSTALL(2, "未安装Beanfun插件!"),
-        /**
          * otp得到空
          */
         OTP_GET_EMPTY(3, "OTP获取失败!"),
@@ -93,6 +89,10 @@ public abstract class AbstractBeanfunResult {
          * 登录错误
          */
         LOGIN_ERROR_MSG(10, "登录错误"),
+        /**
+         * 获取动态密码失败!账号信息不存在
+         */
+        GET_DYNAMIC_PWD_ERROR(11, "获取动态密码失败,解密失败!"),
         ;
 
         private final int code;

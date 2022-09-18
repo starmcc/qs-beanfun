@@ -1,5 +1,6 @@
 package com.starmcc.beanfun.model;
 
+import com.starmcc.beanfun.constant.QsConstant;
 import lombok.Data;
 
 import java.util.ArrayList;
@@ -9,35 +10,64 @@ import java.util.List;
 public class ConfigJson {
 
     private Boolean recordActPwd;
-    private Boolean passInput;
     private String gamePath;
     private Integer lunHuiKey;
     private Integer ranShaoKey;
     private Boolean killStartPalyWindow;
+    private Boolean killGamePatcher;
+    private Boolean autoInput;
+    private Boolean passInput;
     private Integer loginType;
-
+    private Video video;
     private List<ActPwd> actPwds;
 
     public ConfigJson() {
+        // 默认配置
         this.recordActPwd = false;
-        this.passInput = false;
+        // 游戏路径
         this.gamePath = "";
+        // 账号
         this.actPwds = new ArrayList<>();
-        // 默认 B
+        // B
         this.lunHuiKey = 66;
-        // 默认 N
+        // N
         this.ranShaoKey = 78;
-        // 默认 不关闭
-        this.killStartPalyWindow = false;
-        // 默认 新港号登录
-        this.loginType = LoginType.TypeEnum.HK_NEW.getType();
+        // 关闭
+        this.killStartPalyWindow = true;
+        // 港号登录
+        this.loginType = LoginType.TypeEnum.HK.getType();
+        // 关闭
+        this.killGamePatcher = true;
+        // 不置顶
+        this.passInput = false;
+        // 录像配置
+        this.video = new Video();
+        // 自动输入
+        this.autoInput = true;
     }
+
 
     @Data
     public static class ActPwd {
         private String act;
         private String pwd;
+    }
 
+    @Data
+    public static class Video {
+        private String videoPath;
+        private Integer videoFps;
+        private Integer videoCodeRate;
+
+        public Video() {
+            // 默认配置
+            // 自身目录/video
+            this.videoPath = QsConstant.APP_PATH + "video";
+            // FPS 60
+            this.setVideoFps(60);
+            // 码率 2500
+            this.setVideoCodeRate(2500);
+        }
     }
 
 }

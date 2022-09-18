@@ -3,6 +3,8 @@ package com.starmcc.beanfun.model;
 import lombok.Data;
 import lombok.Getter;
 
+import java.util.Objects;
+
 /**
  * 登录类型
  *
@@ -26,9 +28,8 @@ public class LoginType {
 
     @Getter
     public static enum TypeEnum {
-        HK_NEW("新香港网页接口", 1),
-        HK_OLD("旧香港网页接口", 2),
-//        TW("台号网页接口", 3),
+        HK("香港", 1),
+        TW("台湾", 2),
         ;
 
         private final String name;
@@ -38,6 +39,17 @@ public class LoginType {
             this.name = name;
             this.type = type;
         }
+
+
+        public static TypeEnum getData(Integer type) {
+            for (TypeEnum value : values()) {
+                if (Objects.equals(value.getType(), type)) {
+                    return value;
+                }
+            }
+            return null;
+        }
+
     }
 
     @Override

@@ -9,7 +9,8 @@ import com.starmcc.beanfun.model.ConfigJson;
 import com.starmcc.beanfun.model.UpdateModel;
 import com.starmcc.beanfun.utils.ConfigFileUtils;
 import com.starmcc.beanfun.utils.DataTools;
-import com.starmcc.beanfun.utils.FrameUtils;
+import com.starmcc.beanfun.utils.ThreadUtils;
+import com.starmcc.beanfun.windows.FrameService;
 import javafx.application.Application;
 import javafx.application.Platform;
 import javafx.scene.control.Alert;
@@ -69,14 +70,15 @@ public class QsBeanfunApplication extends Application {
         initApp();
         // 加载界面
         Platform.setImplicitExit(false);
-        FrameUtils.openWindow(QsConstant.Page.登录页面);
+        FrameService frameService = FrameService.getInstance();
+        frameService.openWindow(QsConstant.Page.登录页面);
         log.info("QsBeanfun 启动成功..");
-        FrameUtils.executeThread(() -> {
+        ThreadUtils.executeThread(() -> {
             UpdateModel versionModel = UpdateClient.getInstance().getVersionModel();
             if (versionModel.getState() == UpdateModel.State.有新版本) {
                 Platform.runLater(() -> {
-                    if (QsConstant.confirmDialog("是否前往更新？", versionModel.getTips())) {
-                        FrameUtils.openWebUrl("https://github.com/starmcc/qs-beanfun/releases");
+                    if (QsConstant.confirmDialog("是否前往更新？", versionModel.getUpdateText())) {
+                        frameService.openWebUrl("https://github.com/starmcc/qs-beanfun/releases");
                     }
                 });
             }
@@ -106,7 +108,6 @@ public class QsBeanfunApplication extends Application {
         copyResourceFile(QsConstant.Resources.LR_HOOKX32_DLL);
         copyResourceFile(QsConstant.Resources.LR_CONFIG_XML);
         copyResourceFile(QsConstant.Resources.LR_SUB_MENUS_DLL);
-        copyResourceFile(QsConstant.Resources.REGISTER_REG);
 
     }
 
