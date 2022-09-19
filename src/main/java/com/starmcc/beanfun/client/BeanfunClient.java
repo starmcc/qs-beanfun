@@ -1,6 +1,9 @@
 package com.starmcc.beanfun.client;
 
-import com.starmcc.beanfun.client.impl.BeanfunHongKongClientImpl;
+import com.starmcc.beanfun.client.impl.HKBeanfunClientImpl;
+import com.starmcc.beanfun.client.impl.TWBeanfunClientImpl;
+import com.starmcc.beanfun.constant.QsConstant;
+import com.starmcc.beanfun.model.LoginType;
 import com.starmcc.beanfun.model.client.Account;
 import com.starmcc.beanfun.model.client.BeanfunAccountResult;
 import com.starmcc.beanfun.model.client.BeanfunStringResult;
@@ -10,6 +13,7 @@ import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.StringUtils;
 
 import java.util.List;
+import java.util.Objects;
 import java.util.function.Consumer;
 
 /**
@@ -21,9 +25,28 @@ import java.util.function.Consumer;
 @Slf4j
 public abstract class BeanfunClient {
 
+    private static BeanfunClient beanfunClient = null;
+
     public static BeanfunClient run() {
-        return new BeanfunHongKongClientImpl();
+        LoginType.TypeEnum type = LoginType.TypeEnum.getData(QsConstant.config.getLoginType());
+        if (type == LoginType.TypeEnum.HK) {
+            if (Objects.isNull(beanfunClient) || !(beanfunClient instanceof HKBeanfunClientImpl)) {
+                beanfunClient = new HKBeanfunClientImpl();
+            }
+        } else {
+            if (Objects.isNull(beanfunClient) || !(beanfunClient instanceof TWBeanfunClientImpl)) {
+                beanfunClient = new TWBeanfunClientImpl();
+            }
+        }
+        return beanfunClient;
     }
+
+    /**
+     * 获得会话密钥
+     *
+     * @return {@link String}
+     */
+    protected abstract String getSessionKey() throws Exception;
 
     /**
      * 登录
@@ -61,11 +84,6 @@ public abstract class BeanfunClient {
      * @throws Exception 异常
      */
     public abstract void loginOut(String token) throws Exception;
-
-    /**
-     * 退出Beanfun元件
-     */
-    public abstract void uninitialize();
 
 
     /**

@@ -187,7 +187,7 @@
                             <content>
                                 <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="243.0" prefWidth="426.0">
                                     <children>
-                                        <TextField fx:id="textFieldGamePath" layoutX="14.0" layoutY="52.0" prefHeight="30.0" prefWidth="368.0">
+                                        <TextField fx:id="textFieldGamePath" editable="false" layoutX="14.0" layoutY="52.0" prefHeight="30.0" prefWidth="368.0">
                                             <font>
                                                 <Font size="15.0" />
                                             </font>
@@ -257,7 +257,7 @@
                                                 <Font size="14.0" />
                                             </font>
                                         </Label>
-                                        <TextField fx:id="textFieldVideoPath" layoutX="21.0" layoutY="205.0" prefHeight="33.0" prefWidth="362.0" />
+                                        <TextField fx:id="textFieldVideoPath" editable="false" layoutX="21.0" layoutY="205.0" prefHeight="33.0" prefWidth="362.0" />
                                         <Button layoutX="314.0" layoutY="172.0" mnemonicParsing="false" onAction="#videoPathOpenAction" prefHeight="3.0" prefWidth="66.0" text="打开">
                                             <font>
                                                 <Font size="15.0" />

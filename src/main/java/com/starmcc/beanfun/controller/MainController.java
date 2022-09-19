@@ -134,8 +134,11 @@ public class MainController implements Initializable {
         menuItemAddAct.setVisible(QsConstant.beanfunModel.isNewAccount());
         checkBoxKillGamePatcher.setVisible(QsConstant.config.getKillGamePatcher());
         checkBoxAutoInput.setSelected(QsConstant.config.getAutoInput());
+        buttonUpdatePoints.setDisable(true);
 
         if (QsConstant.beanfunModel.isNewAccount()) {
+            // 获取游戏点数
+            this.updatePoints();
             // 新用户
             QsConstant.alert("新账号请点击创建账号!", Alert.AlertType.INFORMATION);
         } else {
@@ -269,7 +272,7 @@ public class MainController implements Initializable {
 
     @FXML
     public void changeAccountNowAction() {
-        selectAccount();
+        accountInfoRefresh();
     }
 
 
@@ -351,15 +354,7 @@ public class MainController implements Initializable {
      */
     @FXML
     public void updatePointsAction(ActionEvent actionEvent) {
-        buttonUpdatePoints.setDisable(true);
-        // 获取游戏点数
-        ThreadUtils.executeThread(() -> {
-            String pointsText = getPointsText();
-            Platform.runLater(() -> {
-                labelActPoint.setText(pointsText);
-                buttonUpdatePoints.setDisable(false);
-            });
-        });
+        this.updatePoints();
     }
 
 
@@ -609,9 +604,28 @@ public class MainController implements Initializable {
             QsConstant.beanfunModel.getAccountList().forEach(account -> options.add(account));
             choiceBoxActList.setItems(options);
             choiceBoxActList.getSelectionModel().selectFirst();
+            this.accountInfoRefresh();
             if (Objects.nonNull(runnable)) {
                 runnable.run();
             }
+        });
+    }
+
+
+    /**
+     * 更新点数
+     */
+    private void updatePoints() {
+        Platform.runLater(() -> {
+            buttonUpdatePoints.setDisable(true);
+            // 获取游戏点数
+            ThreadUtils.executeThread(() -> {
+                String pointsText = getPointsText();
+                Platform.runLater(() -> {
+                    labelActPoint.setText(pointsText);
+                    buttonUpdatePoints.setDisable(false);
+                });
+            });
         });
     }
 
@@ -642,10 +656,9 @@ public class MainController implements Initializable {
     /**
      * 选择账户
      */
-    private void selectAccount() {
-        SingleSelectionModel<Account> selectionModel = choiceBoxActList.getSelectionModel();
+    private void accountInfoRefresh() {
         // 保存当前账号
-        this.nowAccount = selectionModel.getSelectedItem();
+        this.nowAccount = choiceBoxActList.getSelectionModel().getSelectedItem();
         if (Objects.isNull(this.nowAccount)) {
             return;
         }
@@ -659,21 +672,8 @@ public class MainController implements Initializable {
             labelActCreateTime.setText(createTimeStr);
         }
         textFieldActId.setText(this.nowAccount.getId());
-        buttonUpdatePoints.setDisable(true);
         // 获取游戏点数
-        ThreadUtils.executeThread(() -> {
-            try {
-                // 2秒后再执行
-                Thread.sleep(2000);
-            } catch (InterruptedException e) {
-                log.error("线程异常 e={}", e.getMessage(), e);
-            }
-            String pointsText = getPointsText();
-            Platform.runLater(() -> {
-                labelActPoint.setText(pointsText);
-                buttonUpdatePoints.setDisable(false);
-            });
-        });
+        this.updatePoints();
     }
 
 }

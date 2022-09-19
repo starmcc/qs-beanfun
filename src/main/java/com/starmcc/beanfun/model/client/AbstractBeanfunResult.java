@@ -58,6 +58,10 @@ public abstract class AbstractBeanfunResult {
          */
         ACT_PWD_IS_NULL(1, "登录账号和密码不能为空!"),
         /**
+         * 账密为空
+         */
+        IP_BANK(2, "您的IP被官方锁定,请切换网络环境后再试!"),
+        /**
          * otp得到空
          */
         OTP_GET_EMPTY(3, "OTP获取失败!"),
@@ -93,6 +97,11 @@ public abstract class AbstractBeanfunResult {
          * 获取动态密码失败!账号信息不存在
          */
         GET_DYNAMIC_PWD_ERROR(11, "获取动态密码失败,解密失败!"),
+
+        /**
+         * 需要进阶认证
+         */
+        CERT_VERIFY(12, "账号需要进阶认证才可以使用!"),
         ;
 
         private final int code;

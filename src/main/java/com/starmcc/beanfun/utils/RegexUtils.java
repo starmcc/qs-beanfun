@@ -14,22 +14,40 @@ import java.util.regex.Pattern;
 public class RegexUtils {
 
 
-    public static enum PatternHongKong {
-        OTP(Pattern.compile("otp1=(.*)&p")),
-        VIEWSTATE(Pattern.compile("id=\"__VIEWSTATE\"\\svalue=\"(.*?)\"\\s/>")),
-        EVENTVALIDATION(Pattern.compile("id=\"__EVENTVALIDATION\"\\svalue=\"(.*?)\"\\s/>")),
-        VIEWSTATEGENERATOR(Pattern.compile("id=\"__VIEWSTATEGENERATOR\"\\svalue=\"(.*?)\"\\s/>")),
-        LOGIN_ACCOUNT_LIST(Pattern.compile("<div\\sid=\"(.*?)\"\\ssn=\"(\\d+)\"\\sname=\"(.*?)\"\\sinherited=\".*\"\\svisible=\"\\d\"")),
-        LOGIN_CREATE_ACCOUNT(Pattern.compile("<div\\sid\\=\"divServiceInstruction\">請先創立新帳戶</div>")),
-        LOGIN_ERROR_MSG(Pattern.compile("<script>ShowMsgBox\\('(.*?)'\\);</script>")),
-        GET_PWD_OTP_KEY(Pattern.compile("GetResultByLongPolling&key=(.*?)\"")),
-        GET_SERVICE_CREATE_TIME(Pattern.compile("ServiceAccountCreateTime: \\\"([^\\\"]+)\\\"")),
-        GET_PWD_OTP_SECRET(Pattern.compile("var m_strSecretCode = '(.*)'")),
-        GAME_POINTS(Pattern.compile("\"RemainPoint\"\\s:\\s\"(\\d+)\"")),
+    public static enum Constant {
+        HK_SESSION_KEY(Pattern.compile("otp1=(.*)&p")),
+        HK_VIEWSTATE(Pattern.compile("id=\"__VIEWSTATE\"\\svalue=\"(.*?)\"\\s/>")),
+        HK_EVENTVALIDATION(Pattern.compile("id=\"__EVENTVALIDATION\"\\svalue=\"(.*?)\"\\s/>")),
+        HK_VIEWSTATEGENERATOR(Pattern.compile("id=\"__VIEWSTATEGENERATOR\"\\svalue=\"(.*?)\"\\s/>")),
+        HK_LOGIN_ACCOUNT_LIST(Pattern.compile("onclick=\\\"([^\\\"]*)\\\"><div id=\\\"(\\w+)\\\" sn=\\\"(\\d+)\\\" name=\\\"([^\\\"]+)\\\"")),
+        HK_LOGIN_CREATE_ACCOUNT(Pattern.compile("<div\\sid\\=\"divServiceInstruction\">請先創立新帳戶</div>")),
+        HK_LOGIN_ERROR_MSG(Pattern.compile("<script>ShowMsgBox\\('(.*?)'\\);</script>")),
+        HK_LOGIN_AKEY(Pattern.compile("AuthKey\\.value\\s=\\s\"(.*?)\";parent")),
+        HK_GET_PWD_OTP_KEY(Pattern.compile("GetResultByLongPolling&key=(.*?)\"")),
+        HK_GET_SERVICE_CREATE_TIME(Pattern.compile("ServiceAccountCreateTime:\\s\\\"([^\\\"]+)\\\"")),
+        HK_GET_PWD_OTP_SECRET(Pattern.compile("var\\sm_strSecretCode\\s=\\s'(.*)'")),
+        HK_GAME_POINTS(Pattern.compile("\"RemainPoint\"\\s:\\s\"(\\d+)\"")),
+        HK_CERT_VERIFY(Pattern.compile("<div\\sid=\\\"divServiceAccountAmountLimitNotice\\\"\\sclass=\\\"InnerContent\\\">(.*)</div>")),
+
+
+        // =========================== tw ========================
+        TW_SESSION_KEY(Pattern.compile("var\\sstrSessionKey\\s=\\s\"(.*)\";var\\sstrClientID")),
+        TW_VIEWSTATE(Pattern.compile("id=\"__VIEWSTATE\"\\svalue=\"(.*?)\"\\s/>")),
+        TW_EVENTVALIDATION(Pattern.compile("id=\"__EVENTVALIDATION\"\\svalue=\"(.*?)\"\\s/>")),
+        TW_VIEWSTATEGENERATOR(Pattern.compile("id=\"__VIEWSTATEGENERATOR\"\\svalue=\"(.*?)\"\\s/>")),
+        TW_LOGIN_ERROR_MSG(Pattern.compile("\\$\\(function\\(\\)\\{MsgBox\\.Show\\('(.*?)'\\);}\\);")),
+        TW_LOGIN_AKEY(Pattern.compile("AuthKey\\.value\\s=\\s\"(.*?)\";parent")),
+        TW_LOGIN_ACCOUNT_LIST(Pattern.compile("onclick=\\\"([^\\\"]*)\\\"><div id=\\\"(\\w+)\\\" sn=\\\"(\\d+)\\\" name=\\\"([^\\\"]+)\\\"")),
+        TW_LOGIN_CREATE_ACCOUNT(Pattern.compile("<div\\sid\\=\"divServiceInstruction\">請先創立新帳戶</div>")),
+        TW_CERT_VERIFY(Pattern.compile("<div\\sid=\\\"divServiceAccountAmountLimitNotice\\\"\\sclass=\\\"InnerContent\\\">(.*)</div>")),
+        TW_GET_SERVICE_CREATE_TIME(Pattern.compile("ServiceAccountCreateTime:\\s\\\"([^\\\"]+)\\\"")),
+        TW_GET_PWD_OTP_KEY(Pattern.compile("GetResultByLongPolling&key=(.*?)\"")),
+        TW_GET_PWD_OTP_SECRET(Pattern.compile("var\\sm_strSecretCode\\s=\\s'(.*)'")),
+        TW_GAME_POINTS(Pattern.compile("\"RemainPoint\"\\s:\\s\"(\\d+)\"")),
         ;
         private final Pattern pattern;
 
-        PatternHongKong(Pattern pattern){
+        Constant(Pattern pattern) {
             this.pattern = pattern;
         }
 
@@ -61,6 +79,11 @@ public class RegexUtils {
         return list.get(group).get(children);
     }
 
+
+    public static List<List<String>> regex(RegexUtils.Constant pattern, String content) {
+        return regex(pattern.getPattern(), content);
+    }
+
     public static List<List<String>> regex(Pattern pattern, String content) {
         Matcher matcher = pattern.matcher(content);
         List<List<String>> result = new ArrayList<>();
@@ -73,6 +96,11 @@ public class RegexUtils {
             result.add(list);
         }
         return result;
+    }
+
+
+    public static boolean test(RegexUtils.Constant pattern, String content) {
+        return test(pattern.getPattern(), content);
     }
 
     public static boolean test(Pattern pattern, String content) {

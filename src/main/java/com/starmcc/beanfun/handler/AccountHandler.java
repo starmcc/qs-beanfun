@@ -17,6 +17,7 @@ import org.apache.commons.lang3.StringUtils;
 
 import java.util.Iterator;
 import java.util.List;
+import java.util.Objects;
 import java.util.function.BiConsumer;
 
 /**
@@ -76,7 +77,12 @@ public class AccountHandler {
                     Platform.runLater(() -> QsConstant.alert(pwdResult.getMsg(), Alert.AlertType.ERROR));
                 }
                 log.debug("动态密码 ={}", pwdResult.getData());
-                runnable.accept(account.getId(), pwdResult.getData());
+                if (Objects.isNull(account)) {
+                    runnable.accept(null, pwdResult.getData());
+                } else {
+                    runnable.accept(account.getId(), pwdResult.getData());
+                }
+
             } catch (Exception e) {
                 log.error("获取密码失败 e={}", e.getMessage(), e);
                 Platform.runLater(() -> QsConstant.alert("获取动态密码异常:" + e.getMessage(), Alert.AlertType.ERROR));

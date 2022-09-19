@@ -43,34 +43,34 @@
                   </ImageView>
                   </children>
               </AnchorPane>
-              <ComboBox fx:id="comboBoxAccount" editable="true" layoutX="61.0" layoutY="94.0" onAction="#selectAccountAction" prefHeight="28.0" prefWidth="234.0" style="-fx-border-color: D3D3D3; -fx-outer-border: transparent;" />
-              <ImageView fitHeight="22.0" fitWidth="22.0" layoutX="36.0" layoutY="97.0" pickOnBounds="true" preserveRatio="true">
+              <ComboBox fx:id="comboBoxAccount" editable="true" layoutX="61.0" layoutY="100.0" onAction="#selectAccountAction" prefHeight="28.0" prefWidth="234.0" style="-fx-border-color: D3D3D3; -fx-outer-border: transparent;" />
+              <ImageView fitHeight="22.0" fitWidth="22.0" layoutX="36.0" layoutY="103.0" pickOnBounds="true" preserveRatio="true">
                   <image>
                       <Image url="@../static/images/ico.png" />
                   </image>
               </ImageView>
-              <ImageView fitHeight="22.0" fitWidth="22.0" layoutX="36.0" layoutY="130.0" pickOnBounds="true" preserveRatio="true">
+              <ImageView fitHeight="22.0" fitWidth="22.0" layoutX="36.0" layoutY="136.0" pickOnBounds="true" preserveRatio="true">
                   <image>
                       <Image url="@../static/images/pwd.png" />
                   </image>
               </ImageView>
-              <PasswordField fx:id="PasswordFieldPassword" layoutX="61.0" layoutY="128.0" prefHeight="26.0" prefWidth="234.0" />
-              <CheckBox fx:id="checkBoxRemember" focusTraversable="false" layoutX="39.0" layoutY="165.0" mnemonicParsing="false" onAction="#rememberClickAction" text="记住密码">
+              <PasswordField fx:id="PasswordFieldPassword" layoutX="61.0" layoutY="134.0" prefHeight="26.0" prefWidth="234.0" />
+              <CheckBox fx:id="checkBoxRemember" focusTraversable="false" layoutX="39.0" layoutY="171.0" mnemonicParsing="false" onAction="#rememberClickAction" text="记住密码">
                   <cursor>
                       <Cursor fx:constant="DEFAULT" />
                   </cursor>
               </CheckBox>
-              <Hyperlink fx:id="hyperlinkForgetPwd" focusTraversable="false" layoutX="167.0" layoutY="162.0" onAction="#forgotPwdAction" style="-fx-text-fill: black;" text="忘记密码">
+              <Hyperlink fx:id="hyperlinkForgetPwd" focusTraversable="false" layoutX="167.0" layoutY="168.0" onAction="#forgotPwdAction" style="-fx-text-fill: black;" text="忘记密码">
                   <cursor>
                       <Cursor fx:constant="DEFAULT" />
                   </cursor>
               </Hyperlink>
-              <Hyperlink fx:id="hyperlinkRegister" focusTraversable="false" layoutX="239.0" layoutY="162.0" onAction="#registerAction" style="-fx-text-fill: black;" text="注册账号">
+              <Hyperlink fx:id="hyperlinkRegister" focusTraversable="false" layoutX="239.0" layoutY="168.0" onAction="#registerAction" style="-fx-text-fill: black;" text="注册账号">
                   <cursor>
                       <Cursor fx:constant="DEFAULT" />
                   </cursor>
               </Hyperlink>
-              <Button fx:id="buttonLogin" layoutX="39.0" layoutY="188.0" mnemonicParsing="false" onAction="#loginAction" prefHeight="35.0" prefWidth="255.0" text="登录" />
+              <Button fx:id="buttonLogin" layoutX="39.0" layoutY="194.0" mnemonicParsing="false" onAction="#loginAction" prefHeight="35.0" prefWidth="255.0" text="登录" />
               <ImageView fx:id="imageViewQrCode" fitHeight="26.0" fitWidth="26.0" layoutX="303.0" layoutY="223.0" onMouseClicked="#qrCodeClick" pickOnBounds="true" preserveRatio="true">
                   <image>
                       <Image url="@../static/images/二维码.png" />

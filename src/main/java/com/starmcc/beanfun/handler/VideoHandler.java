@@ -4,7 +4,7 @@ public class VideoHandler {
 
 
     public static boolean run(boolean status) {
-        return false;
+        return true;
     }
 
 

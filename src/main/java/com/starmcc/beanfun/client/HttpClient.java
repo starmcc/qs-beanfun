@@ -6,6 +6,7 @@ import com.starmcc.beanfun.model.client.QsHttpResponse;
 import org.apache.http.client.CookieStore;
 
 import java.net.URI;
+import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.Objects;
 
@@ -59,13 +60,29 @@ public abstract class HttpClient {
      * GET
      *
      * @param url       url
+     * @return {@link QsHttpResponse}
+     * @throws Exception 异常
+     */
+    public abstract QsHttpResponse get(String url) throws Exception;
+
+    /**
+     * GET
+     *
+     * @param url       url
      * @param reqParams 要求参数
      * @return {@link QsHttpResponse}
      * @throws Exception 异常
      */
     public abstract QsHttpResponse get(String url, ReqParams reqParams) throws Exception;
 
-
+    /**
+     * POST
+     *
+     * @param url    url
+     * @return {@link QsHttpResponse}
+     * @throws Exception 异常
+     */
+    public abstract QsHttpResponse post(String url) throws Exception;
     /**
      * POST
      *
@@ -74,5 +91,5 @@ public abstract class HttpClient {
      * @return {@link QsHttpResponse}
      * @throws Exception 异常
      */
-    public abstract QsHttpResponse post(String url, Map<String, String> params) throws Exception;
+    public abstract QsHttpResponse post(String url, ReqParams params) throws Exception;
 }

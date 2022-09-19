@@ -47,6 +47,11 @@ public class HttpClientImpl extends HttpClient {
     }
 
     @Override
+    public QsHttpResponse get(String url) throws Exception {
+        return this.get(url, new ReqParams());
+    }
+
+    @Override
     public Map<String, String> getCookie(URI uri) {
         if (Objects.isNull(uri)) {
             return new HashMap<>();
@@ -97,6 +102,11 @@ public class HttpClientImpl extends HttpClient {
         });
     }
 
+    @Override
+    public QsHttpResponse post(String url) throws Exception {
+        return this.post(url, new ReqParams());
+    }
+
     /**
      * POST
      *
@@ -106,12 +116,12 @@ public class HttpClientImpl extends HttpClient {
      * @throws Exception 异常
      */
     @Override
-    public QsHttpResponse post(String url, Map<String, String> params) throws Exception {
+    public QsHttpResponse post(String url, ReqParams params) throws Exception {
         return request(() -> {
             HttpPost post = new HttpPost(url);
             post.setHeader("Content-Type", "application/x-www-form-urlencoded");
-            ArrayList<BasicNameValuePair> list = new ArrayList<>();
-            params.forEach((key, value) -> list.add(new BasicNameValuePair(key, value)));
+            List<BasicNameValuePair> list = new ArrayList<>();
+            params.getParams().forEach(val -> list.add(new BasicNameValuePair(val.getKey(), val.getVal())));
             post.setEntity(new UrlEncodedFormEntity(list, "UTF-8"));
             return post;
         });
