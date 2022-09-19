@@ -122,11 +122,27 @@ public class MainController implements Initializable {
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
-        this.initData();
-        this.initEvent();
+        ThreadUtils.executeThread(() -> {
+            try {
+                // 获取账号数据
+                refeshAccount(null);
+                // 获取游戏点数
+                this.updatePoints();
+            } catch (Exception e) {
+                log.error("error={}", e.getMessage(), e);
+            }
+        });
+
+        try {
+            this.initData();
+            this.initEvent();
+        } catch (Exception e) {
+            log.error("error={}", e.getMessage(), e);
+        }
     }
 
-    private void initData() {
+    private void initData() throws Exception {
+        // 基础状态设置
         checkBoxPassInput.setSelected(QsConstant.config.getPassInput());
         checkBoxKillPlayStartWindow.setSelected(QsConstant.config.getKillStartPalyWindow());
         textFieldGamePath.setText(QsConstant.config.getGamePath());
@@ -134,17 +150,6 @@ public class MainController implements Initializable {
         menuItemAddAct.setVisible(QsConstant.beanfunModel.isNewAccount());
         checkBoxKillGamePatcher.setVisible(QsConstant.config.getKillGamePatcher());
         checkBoxAutoInput.setSelected(QsConstant.config.getAutoInput());
-        buttonUpdatePoints.setDisable(true);
-
-        if (QsConstant.beanfunModel.isNewAccount()) {
-            // 获取游戏点数
-            this.updatePoints();
-            // 新用户
-            QsConstant.alert("新账号请点击创建账号!", Alert.AlertType.INFORMATION);
-        } else {
-            // 旧用户
-            refeshAccountComboBox(null);
-        }
 
         // 轮烧配置
         Integer lunHuiKey = QsConstant.config.getLunHuiKey();
@@ -375,8 +380,7 @@ public class MainController implements Initializable {
                     Platform.runLater(() -> QsConstant.alert(result.getMsg(), Alert.AlertType.WARNING));
                     return;
                 }
-                BeanfunClient.run().getAccountList(QsConstant.beanfunModel.getToken());
-                refeshAccountComboBox(() -> {
+                refeshAccount(() -> {
                     QsConstant.alert("创建成功!", Alert.AlertType.INFORMATION);
                     buttonAddAct.setVisible(false);
                 });
@@ -408,13 +412,7 @@ public class MainController implements Initializable {
                     Platform.runLater(() -> QsConstant.alert(result.getMsg(), Alert.AlertType.WARNING));
                     return;
                 }
-                BeanfunAccountResult actResult = BeanfunClient.run().getAccountList(QsConstant.beanfunModel.getToken());
-                if (!actResult.isSuccess()) {
-                    Platform.runLater(() -> QsConstant.alert(result.getMsg(), Alert.AlertType.WARNING));
-                    return;
-                }
-                QsConstant.beanfunModel.setAccountList(actResult.getAccountList());
-                refeshAccountComboBox(() -> QsConstant.alert("编辑成功!", Alert.AlertType.INFORMATION));
+                refeshAccount(() -> QsConstant.alert("编辑成功!", Alert.AlertType.INFORMATION));
             } catch (Exception e) {
                 log.error("编辑账号异常 e={}", e.getMessage(), e);
             }
@@ -597,7 +595,26 @@ public class MainController implements Initializable {
     /**
      * 初始化账户组合框
      */
-    private void refeshAccountComboBox(Runnable runnable) {
+    private void refeshAccount(Runnable runnable) throws Exception {
+        BeanfunAccountResult actResult = BeanfunClient.run().getAccountList(QsConstant.beanfunModel.getToken());
+        if (actResult.isSuccess()) {
+            QsConstant.beanfunModel.build(actResult);
+        } else {
+            Platform.runLater(() -> QsConstant.alert(actResult.getMsg(), Alert.AlertType.ERROR));
+            return;
+        }
+
+        QsConstant.beanfunModel.build(actResult);
+
+        if (!QsConstant.beanfunModel.isCertStatus()) {
+            // 需要进阶认证
+            Platform.runLater(() -> QsConstant.alert("请前往用户中心 -> 会员中心进行进阶认证!\n"
+                    + "做完进阶认证后请重新退出重新登录!", Alert.AlertType.INFORMATION));
+        } else if (QsConstant.beanfunModel.isNewAccount()) {
+            // 需要创建账号
+            Platform.runLater(() -> QsConstant.alert("新账号请点击创建账号!", Alert.AlertType.INFORMATION));
+        }
+
         Platform.runLater(() -> {
             ObservableList<Account> options = FXCollections.observableArrayList();
             options.clear();

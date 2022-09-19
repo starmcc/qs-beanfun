@@ -153,18 +153,11 @@ public class LoginController implements Initializable {
                     Platform.runLater(() -> QsConstant.alert(loginResult.getMsg(), Alert.AlertType.ERROR));
                     return;
                 }
+                loginProcess = 1;
                 BeanfunModel beanfunModel = new BeanfunModel();
                 beanfunModel.setToken(loginResult.getData());
-                BeanfunAccountResult actResult = BeanfunClient.run().getAccountList(loginResult.getData());
-                loginProcess = 1;
-                if (!actResult.isSuccess()) {
-                    Platform.runLater(() -> QsConstant.alert(actResult.getMsg(), Alert.AlertType.ERROR));
-                    return;
-                }
-                beanfunModel.setAccountList(actResult.getAccountList());
-                beanfunModel.setNewAccount(actResult.getNewAccount());
-                // 登录成功后操作
                 QsConstant.beanfunModel = beanfunModel;
+                // 登录成功后操作
                 Platform.runLater(() -> loginSuccessGoMain());
             } catch (HttpHostConnectException e) {
                 log.info("login error e={}", e.getMessage(), e);

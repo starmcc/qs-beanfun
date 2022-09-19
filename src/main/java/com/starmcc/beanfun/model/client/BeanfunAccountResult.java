@@ -18,26 +18,38 @@ import java.util.List;
 public class BeanfunAccountResult extends AbstractBeanfunResult implements Serializable {
     private static final long serialVersionUID = -7146203696662330129L;
 
+    /**
+     * 账户列表
+     */
     private List<Account> accountList;
+    /**
+     * 新帐户
+     */
     private Boolean newAccount;
+    /**
+     * 进阶认证状态
+     */
+    private Boolean certStatus;
+    /**
+     * 最大创建账号数量
+     */
+    private Integer maxActNumber;
+
+    public BeanfunAccountResult() {
+        this(CodeEnum.SUCCESS);
+    }
 
     protected BeanfunAccountResult(CodeEnum codeEnum) {
         super(codeEnum);
+        this.newAccount = false;
+        this.certStatus = true;
+        this.maxActNumber = 0;
+        this.accountList = new ArrayList<>();
     }
 
-    public static BeanfunAccountResult success(List<Account> accountList, boolean newAccount) {
-        BeanfunAccountResult result = new BeanfunAccountResult(CodeEnum.SUCCESS);
-        result.setAccountList(accountList);
-        result.setNewAccount(newAccount);
-        return result;
-    }
 
     public static BeanfunAccountResult error(CodeEnum codeEnum) {
-        log.error("错误信息={}", codeEnum);
-        BeanfunAccountResult result = new BeanfunAccountResult(codeEnum);
-        result.setAccountList(new ArrayList<>());
-        result.setNewAccount(false);
-        return result;
+        return new BeanfunAccountResult(codeEnum);
     }
 
 

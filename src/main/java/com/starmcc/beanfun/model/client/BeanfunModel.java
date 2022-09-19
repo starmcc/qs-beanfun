@@ -21,12 +21,31 @@ public class BeanfunModel implements Serializable {
     /**
      * 是新账户
      */
-    private boolean isNewAccount;
+    private boolean newAccount;
+    /**
+     * 进阶认证状态
+     */
+    private boolean certStatus;
+    /**
+     * 账号最大数量
+     */
+    private Integer maxActNumber;
 
 
     public BeanfunModel() {
         this.token = "";
         this.accountList = new ArrayList<>();
-        this.isNewAccount = false;
+        this.newAccount = false;
+        this.certStatus = true;
+        this.maxActNumber = 0;
+    }
+
+
+    public BeanfunModel build(BeanfunAccountResult result) {
+        this.accountList = result.getAccountList();
+        this.newAccount = result.getNewAccount();
+        this.maxActNumber = result.getMaxActNumber();
+        this.certStatus = result.getCertStatus();
+        return this;
     }
 }

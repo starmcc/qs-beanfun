@@ -148,6 +148,8 @@ public class HKBeanfunClientImpl extends BeanfunClient {
     @Override
     public BeanfunAccountResult getAccountList(String token) throws Exception {
         // 授权接口访问，携带cookies和token信息，查询账号列表
+        BeanfunAccountResult actResult = new BeanfunAccountResult();
+
         String url = "https://bfweb.hk.beanfun.com/beanfun_block/auth.aspx";
         ReqParams params = ReqParams.getInstance()
                 .addParam("channel", "game_zone")
@@ -158,21 +160,29 @@ public class HKBeanfunClientImpl extends BeanfunClient {
             return BeanfunAccountResult.error(AbstractBeanfunResult.CodeEnum.REQUEST_ERROR);
         }
         String content = httpResponse.getContent();
-        List<List<String>> dataList = RegexUtils.regex(RegexUtils.Constant.HK_LOGIN_ACCOUNT_LIST, content);
+
+        List<List<String>> dataList = RegexUtils.regex(RegexUtils.Constant.TW_ACCOUNT_MAX, content);
+        String maxActNumberStr = RegexUtils.getIndex(0, 1, dataList);
+        Integer maxActNumber = 0;
+        if (StringUtils.isNotBlank(maxActNumberStr)) {
+            maxActNumber = Integer.parseInt(maxActNumberStr);
+        }
+        actResult.setMaxActNumber(maxActNumber);
+
+        dataList = RegexUtils.regex(RegexUtils.Constant.HK_ACCOUNT_LIST, content);
         if (DataTools.collectionIsEmpty(dataList)) {
             // 进阶认证校验
             dataList = RegexUtils.regex(RegexUtils.Constant.HK_CERT_VERIFY, content);
             String certStr = RegexUtils.getIndex(0, 1, dataList);
             if (StringUtils.indexOf(certStr, "進階認證") >= 0) {
                 // 没有做进阶认证
-                return BeanfunAccountResult.error(AbstractBeanfunResult.CodeEnum.CERT_VERIFY);
+                actResult.setCertStatus(false);
             }
-            if (RegexUtils.test(RegexUtils.Constant.HK_LOGIN_CREATE_ACCOUNT, content)) {
+            if (RegexUtils.test(RegexUtils.Constant.HK_CREATE_ACCOUNT, content)) {
                 // 新账号，没有账号
-                return BeanfunAccountResult.success(new ArrayList<>(), true);
+                actResult.setNewAccount(true);
             }
-            // 找不到账号信息，且不是新账号
-            return BeanfunAccountResult.error(AbstractBeanfunResult.CodeEnum.GET_ACT_LIST_EMPTY);
+            return actResult;
         }
         List<Account> accountList = new ArrayList<>();
         for (int i = 0; i < dataList.size(); i++) {
@@ -186,7 +196,8 @@ public class HKBeanfunClientImpl extends BeanfunClient {
             account.setCreateTime(accountCreateTime);
             accountList.add(account);
         }
-        return BeanfunAccountResult.success(accountList, false);
+        actResult.setAccountList(accountList);
+        return actResult;
     }
 
     @Override
