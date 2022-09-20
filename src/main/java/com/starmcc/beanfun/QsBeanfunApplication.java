@@ -3,10 +3,12 @@ package com.starmcc.beanfun;
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.TypeReference;
 import com.starmcc.beanfun.client.UpdateClient;
+import com.starmcc.beanfun.constant.FXPages;
 import com.starmcc.beanfun.constant.QsConstant;
 import com.starmcc.beanfun.model.ConfigJson;
 import com.starmcc.beanfun.model.UpdateModel;
 import com.starmcc.beanfun.thread.ThreadPoolManager;
+import com.starmcc.beanfun.thread.timer.AdvancedTimerMamager;
 import com.starmcc.beanfun.utils.ConfigFileUtils;
 import com.starmcc.beanfun.utils.DataTools;
 import com.starmcc.beanfun.windows.FrameService;
@@ -38,12 +40,10 @@ public class QsBeanfunApplication extends Application {
         Runtime.getRuntime().addShutdownHook(new Thread() {
             @Override
             public void run() {
-                closeWin();
+                FrameService.getInstance().killAllTask();
+                AdvancedTimerMamager.shutdown();
             }
         });
-    }
-
-    static void closeWin() {
     }
 
 
@@ -65,7 +65,7 @@ public class QsBeanfunApplication extends Application {
         // 加载界面
         Platform.setImplicitExit(false);
         FrameService frameService = FrameService.getInstance();
-        frameService.openWindow(QsConstant.Page.登录页面, primaryStage);
+        frameService.openWindow(FXPages.登录页面);
         log.info("QsBeanfun 启动成功..");
         ThreadPoolManager.execute(() -> {
             UpdateModel versionModel = UpdateClient.getInstance().getVersionModel();

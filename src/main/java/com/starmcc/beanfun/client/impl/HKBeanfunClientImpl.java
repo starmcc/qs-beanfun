@@ -389,13 +389,9 @@ public class HKBeanfunClientImpl extends BeanfunClient {
 
     @Override
     public boolean heartbeat(String token) throws Exception {
-        try {
-            HttpClient.getInstance().get("https://bfweb.hk.beanfun.com/");
-            return true;
-        } catch (Exception e) {
-            log.error("异常={}", e, e.getMessage());
-        }
-        return false;
+        HttpClient.getInstance().get("https://bfweb.hk.beanfun.com/");
+        log.info("心跳 = {}", System.currentTimeMillis());
+        return true;
     }
 
 

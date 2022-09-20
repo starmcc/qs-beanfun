@@ -1,10 +1,8 @@
 package com.starmcc.beanfun.windows;
 
-import com.starmcc.beanfun.constant.QsConstant;
-import com.starmcc.beanfun.model.JFXStage;
+import com.starmcc.beanfun.constant.FXPages;
 import com.starmcc.beanfun.thread.Runnable2;
 import com.starmcc.beanfun.windows.impl.FrameServiceImpl;
-import javafx.stage.Stage;
 
 /**
  * @author starmcc
@@ -21,13 +19,11 @@ public interface FrameService {
         return new FrameServiceImpl();
     }
 
-    void openWindow(QsConstant.Page page, Stage parentStage) throws Exception;
+    void openWindow(FXPages page, FXPages parentPage) throws Exception;
 
-    void openWindow(QsConstant.Page page) throws Exception;
+    void openWindow(FXPages page) throws Exception;
 
-    boolean closeWindow(JFXStage jfxStage);
-
-    boolean closeWindow(JFXStage jfxStage, boolean killAllTask);
+    boolean closeWindow(FXPages page);
 
     void openWebUrl(String url);
 
@@ -36,6 +32,8 @@ public interface FrameService {
     void exit();
 
     void runLater(Runnable2 runnable2);
+
+    void killAllTask();
 
 
 }

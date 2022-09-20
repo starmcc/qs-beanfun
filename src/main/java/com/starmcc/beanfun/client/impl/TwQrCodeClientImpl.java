@@ -86,7 +86,6 @@ public class TwQrCodeClientImpl extends QrCodeClient {
     @Override
     public BeanfunStringResult login(String sessionKey) throws Exception {
         String url = "https://tw.newlogin.beanfun.com/login/qr_step2.aspx";
-
         ReqParams params = ReqParams.getInstance()
                 .addHeader("Referer", "https://tw.newlogin.beanfun.com/login/qr_form.aspx?skey=" + sessionKey)
                 .addParam("skey", sessionKey);

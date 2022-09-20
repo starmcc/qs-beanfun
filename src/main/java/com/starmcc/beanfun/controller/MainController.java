@@ -2,15 +2,17 @@ package com.starmcc.beanfun.controller;
 
 import com.starmcc.beanfun.api.ThirdPartyApiClient;
 import com.starmcc.beanfun.client.BeanfunClient;
+import com.starmcc.beanfun.constant.FXPages;
 import com.starmcc.beanfun.constant.QsConstant;
 import com.starmcc.beanfun.handler.*;
 import com.starmcc.beanfun.model.ConfigJson;
+import com.starmcc.beanfun.model.QsTray;
 import com.starmcc.beanfun.model.client.Account;
 import com.starmcc.beanfun.model.client.BeanfunAccountResult;
 import com.starmcc.beanfun.model.client.BeanfunStringResult;
+import com.starmcc.beanfun.thread.ThreadPoolManager;
 import com.starmcc.beanfun.utils.ConfigFileUtils;
 import com.starmcc.beanfun.utils.RegexUtils;
-import com.starmcc.beanfun.thread.ThreadPoolManager;
 import com.starmcc.beanfun.windows.FrameService;
 import com.starmcc.beanfun.windows.WindowService;
 import javafx.application.Platform;
@@ -117,21 +119,16 @@ public class MainController implements Initializable {
     @FXML
     private CheckBox checkBoxAutoInput;
 
-    private Account nowAccount;
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
-        ThreadPoolManager.execute(() -> {
-            try {
-                // 获取账号数据
-                refeshAccount(null);
-                // 获取游戏点数
-                this.updatePoints();
-            } catch (Exception e) {
-                log.error("error={}", e.getMessage(), e);
-            }
+        FrameService.getInstance().runLater(() -> {
+            // 托盘菜单
+            QsConstant.trayIcon = QsTray.init(QsConstant.JFX_STAGE_DATA.get(FXPages.主界面).getStage());
+            QsTray.show(QsConstant.trayIcon);
         });
-
+        // 获取账号数据
+        ThreadPoolManager.execute(() -> refeshAccount(null));
         try {
             this.initData();
             this.initEvent();
@@ -259,8 +256,8 @@ public class MainController implements Initializable {
         FrameService.getInstance().runLater(() -> {
             try {
                 BeanfunClient.run().loginOut(QsConstant.beanfunModel.getToken());
-                FrameService.getInstance().openWindow(QsConstant.Page.登录页面);
-                FrameService.getInstance().closeWindow(QsConstant.mainJFXStage, true);
+                FrameService.getInstance().openWindow(FXPages.登录页面);
+                FrameService.getInstance().closeWindow(FXPages.主界面);
             } catch (Exception e) {
                 log.error("登出异常 e={}", e.getMessage(), e);
             }
@@ -279,7 +276,7 @@ public class MainController implements Initializable {
     @FXML
     public void getPasswordAction() {
         buttonGetPassword.setDisable(true);
-        AccountHandler.getDynamicPassword(this.nowAccount, (id, password) -> {
+        AccountHandler.getDynamicPassword(QsConstant.nowAccount, (id, password) -> {
             FrameService.getInstance().runLater(() -> {
                 textFieldDynamicPwd.setText(password);
                 buttonGetPassword.setDisable(false);
@@ -309,7 +306,7 @@ public class MainController implements Initializable {
         boolean killStartPalyWindow = BooleanUtils.isTrue(QsConstant.config.getKillStartPalyWindow());
         if (BooleanUtils.isTrue(QsConstant.config.getPassInput())) {
             buttonGetPassword.setDisable(true);
-            AccountHandler.getDynamicPassword(this.nowAccount, (id, password) -> {
+            AccountHandler.getDynamicPassword(QsConstant.nowAccount, (id, password) -> {
                 GameHandler.runGame(textFieldGamePath.getText(), id, password, killStartPalyWindow);
                 FrameService.getInstance().runLater(() -> {
                     textFieldDynamicPwd.setText(password);
@@ -326,7 +323,7 @@ public class MainController implements Initializable {
         FileChooser fileChooser = new FileChooser();
         FileChooser.ExtensionFilter extFilter = new FileChooser.ExtensionFilter("新枫之谷启动程序(MapleStory.exe)", "MapleStory.exe");
         fileChooser.getExtensionFilters().add(extFilter);
-        File file = fileChooser.showOpenDialog(QsConstant.mainJFXStage.getStage());
+        File file = fileChooser.showOpenDialog(QsConstant.JFX_STAGE_DATA.get(FXPages.主界面).getStage());
         if (Objects.isNull(file)) {
             return;
         }
@@ -392,11 +389,11 @@ public class MainController implements Initializable {
      */
     @FXML
     public void editActAction(ActionEvent actionEvent) {
-        String newName = QsConstant.textDialog("编辑账号", this.nowAccount.getName());
+        String newName = QsConstant.textDialog("编辑账号", QsConstant.nowAccount.getName());
         if (StringUtils.isBlank(newName)) {
             return;
         }
-        String id = this.nowAccount.getId();
+        String id = QsConstant.nowAccount.getId();
         ThreadPoolManager.execute(() -> {
             try {
                 BeanfunStringResult result = BeanfunClient.run().changeAccountName(id, newName);
@@ -452,7 +449,7 @@ public class MainController implements Initializable {
      */
     @FXML
     public void alwaysOnTopAction(ActionEvent actionEvent) {
-        QsConstant.mainJFXStage.getStage().setAlwaysOnTop(checkMenuItemAlwaysOnTop.isSelected());
+        QsConstant.JFX_STAGE_DATA.get(FXPages.主界面).getStage().setAlwaysOnTop(checkMenuItemAlwaysOnTop.isSelected());
     }
 
 
@@ -463,7 +460,7 @@ public class MainController implements Initializable {
      */
     @FXML
     public void openEquipmentCalcWindowMenu(ActionEvent actionEvent) throws Exception {
-        FrameService.getInstance().openWindow(QsConstant.Page.装备计算器);
+        FrameService.getInstance().openWindow(FXPages.装备计算器);
     }
 
     @FXML
@@ -521,14 +518,14 @@ public class MainController implements Initializable {
      */
     @FXML
     public void openToolsWindowAction(ActionEvent actionEvent) throws Exception {
-        FrameService.getInstance().openWindow(QsConstant.Page.关于我, QsConstant.mainJFXStage.getStage());
+        FrameService.getInstance().openWindow(FXPages.关于我, FXPages.主界面);
     }
 
     @FXML
     public void videoPathOpenAction(ActionEvent actionEvent) throws Exception {
         DirectoryChooser directoryChooser = new DirectoryChooser();
         directoryChooser.setTitle("录像目录");
-        File selectedfolder = directoryChooser.showDialog(QsConstant.mainJFXStage.getStage());
+        File selectedfolder = directoryChooser.showDialog(QsConstant.JFX_STAGE_DATA.get(FXPages.主界面).getStage());
         if (Objects.isNull(selectedfolder)) {
             return;
         }
@@ -625,15 +622,13 @@ public class MainController implements Initializable {
      * 更新点数
      */
     private void updatePoints() {
-        FrameService.getInstance().runLater(() -> {
-            buttonUpdatePoints.setDisable(true);
-            // 获取游戏点数
-            ThreadPoolManager.execute(() -> {
-                String pointsText = getPointsText();
-                FrameService.getInstance().runLater(() -> {
-                    labelActPoint.setText(pointsText);
-                    buttonUpdatePoints.setDisable(false);
-                });
+        FrameService.getInstance().runLater(() -> buttonUpdatePoints.setDisable(true));
+        // 获取游戏点数
+        ThreadPoolManager.execute(() -> {
+            String pointsText = getPointsText();
+            FrameService.getInstance().runLater(() -> {
+                labelActPoint.setText(pointsText);
+                buttonUpdatePoints.setDisable(false);
             });
         });
     }
@@ -667,20 +662,20 @@ public class MainController implements Initializable {
      */
     private void accountInfoRefresh() {
         // 保存当前账号
-        this.nowAccount = choiceBoxActList.getSelectionModel().getSelectedItem();
-        if (Objects.isNull(this.nowAccount)) {
+        QsConstant.nowAccount = choiceBoxActList.getSelectionModel().getSelectedItem();
+        if (Objects.isNull(QsConstant.nowAccount)) {
             return;
         }
         // 设置账号状态
-        String statusText = BooleanUtils.isTrue(this.nowAccount.getStatus()) ? "正常" : "禁止";
-        Color statusColor = BooleanUtils.isTrue(this.nowAccount.getStatus()) ? Color.GREEN : Color.RED;
+        String statusText = BooleanUtils.isTrue(QsConstant.nowAccount.getStatus()) ? "正常" : "禁止";
+        Color statusColor = BooleanUtils.isTrue(QsConstant.nowAccount.getStatus()) ? Color.GREEN : Color.RED;
         labelActStatus.setText(statusText);
         labelActStatus.setTextFill(statusColor);
-        if (Objects.nonNull(this.nowAccount.getCreateTime())) {
-            String createTimeStr = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(this.nowAccount.getCreateTime());
+        if (Objects.nonNull(QsConstant.nowAccount.getCreateTime())) {
+            String createTimeStr = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(QsConstant.nowAccount.getCreateTime());
             labelActCreateTime.setText(createTimeStr);
         }
-        textFieldActId.setText(this.nowAccount.getId());
+        textFieldActId.setText(QsConstant.nowAccount.getId());
         // 获取游戏点数
         this.updatePoints();
     }

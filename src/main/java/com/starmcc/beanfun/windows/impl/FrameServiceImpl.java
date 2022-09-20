@@ -3,6 +3,7 @@ package com.starmcc.beanfun.windows.impl;
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.starmcc.beanfun.client.HttpClient;
+import com.starmcc.beanfun.constant.FXPages;
 import com.starmcc.beanfun.constant.QsConstant;
 import com.starmcc.beanfun.model.JFXStage;
 import com.starmcc.beanfun.model.QsTray;
@@ -33,38 +34,46 @@ import java.util.function.Consumer;
 @Slf4j
 public class FrameServiceImpl implements FrameService {
     @Override
-    public void openWindow(QsConstant.Page page, Stage parentStage) throws Exception {
-        openWindow(page, parentStage, page.getBuildMethod());
+    public void openWindow(FXPages page, FXPages parentPage) throws Exception {
+        openWindow(page, QsConstant.JFX_STAGE_DATA.get(parentPage).getStage(), page.getBuildMethod());
     }
 
     @Override
-    public void openWindow(QsConstant.Page page) throws Exception {
+    public void openWindow(FXPages page) throws Exception {
         openWindow(page, null, page.getBuildMethod());
     }
 
-    private void killAllTask() {
-//        ThreadPoolManager.getInstance().removeAll();
+    @Override
+    public void killAllTask() {
         ThreadPoolManager.shutdown();
-        AdvancedTimerMamager.getInstance().shutdown();
+        AdvancedTimerMamager.getInstance().removeAllTask();
         if (Objects.nonNull(QsConstant.trayIcon)) {
             QsTray.remove(QsConstant.trayIcon);
         }
     }
 
     @Override
-    public boolean closeWindow(JFXStage jfxStage) {
-        return this.closeWindow(jfxStage, false);
-    }
+    public boolean closeWindow(FXPages page) {
+        if (Objects.isNull(page)) {
+            return false;
+        }
 
-    @Override
-    public boolean closeWindow(JFXStage jfxStage, boolean killAllTask) {
-        if (killAllTask) {
+        if (page.getCloseAndExitApp()) {
+            this.exit();
+            return true;
+        }
+
+        if (page.getCloseAndKillThread()) {
             this.killAllTask();
         }
+
+        JFXStage jfxStage = QsConstant.JFX_STAGE_DATA.get(page);
         if (Objects.isNull(jfxStage) || Objects.isNull(jfxStage.getStage())) {
             return false;
         }
         jfxStage.getStage().close();
+
+
         return true;
     }
 
@@ -99,29 +108,28 @@ public class FrameServiceImpl implements FrameService {
     }
 
 
-    void openWindow(QsConstant.Page page, Stage parentStage, Consumer<JFXStage> build) throws Exception {
+    void openWindow(FXPages page, Stage parentStage, Consumer<JFXStage> build) throws Exception {
         Stage stage = new Stage();
         if (Objects.nonNull(parentStage)) {
             stage.initOwner(parentStage);
         }
-        Parent parent = FXMLLoader.load(FrameServiceImpl.class.getResource(page.getUrl()));
+        Parent parent = FXMLLoader.load(FrameServiceImpl.class.getResource(page.buildPath()));
         JFXStage jfxStage = JFXStage.of(stage, parent);
-        jfxStage.setTitle(page.getTitle());
-        jfxStage.setMiniSupport(page.getShowMinButton());
         // 构建外部方法
         if (Objects.nonNull(build)) {
             build.accept(jfxStage);
         }
         if (page.getShowTop()) {
-            jfxStage.build();
+            jfxStage.build(page);
         } else {
-            jfxStage.buildSimple();
+            jfxStage.buildSimple(page);
         }
-
         stage.getIcons().add(new Image("static/images/ico.png"));
         stage.setResizable(false);
         stage.setTitle(page.getTitle());
         stage.show();
+        // 保存该Stage
+        QsConstant.JFX_STAGE_DATA.put(page, jfxStage);
     }
 
     @Override

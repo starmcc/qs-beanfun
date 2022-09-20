@@ -2,6 +2,7 @@ package com.starmcc.beanfun.controller;
 
 import com.starmcc.beanfun.client.HttpClient;
 import com.starmcc.beanfun.client.QrCodeClient;
+import com.starmcc.beanfun.constant.FXPages;
 import com.starmcc.beanfun.constant.QsConstant;
 import com.starmcc.beanfun.model.client.BeanfunModel;
 import com.starmcc.beanfun.model.client.BeanfunQrCodeResult;
@@ -130,9 +131,9 @@ public class QrCodeController implements Initializable {
             QsConstant.beanfunModel.setToken(loginResult.getData());
             FrameService.getInstance().runLater(() -> {
                 try {
-                    FrameService.getInstance().closeWindow(QsConstant.loginJFXStage, true);
-                    FrameService.getInstance().openWindow(QsConstant.Page.主界面);
-                    FrameService.getInstance().closeWindow(QsConstant.qrCodeJFXStage, true);
+                    FrameService.getInstance().openWindow(FXPages.主界面);
+                    FrameService.getInstance().closeWindow(FXPages.登录页面);
+                    FrameService.getInstance().closeWindow(FXPages.二维码登录);
                 } catch (Exception e) {
                     log.error("error = {}", e.getMessage(), e);
                 }

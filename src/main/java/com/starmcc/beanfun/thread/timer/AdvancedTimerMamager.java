@@ -111,7 +111,10 @@ public class AdvancedTimerMamager {
     }
 
 
-    public synchronized void shutdown() {
+    /**
+     * 关闭
+     */
+    public synchronized static void shutdown() {
         advancedTimerMamager.removeAllTask();
         advancedTimerMamager.scheduledExecutorService.shutdownNow();
         advancedTimerMamager = null;

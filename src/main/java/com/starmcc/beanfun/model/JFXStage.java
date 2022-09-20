@@ -1,5 +1,7 @@
 package com.starmcc.beanfun.model;
 
+import com.starmcc.beanfun.constant.FXPages;
+import com.starmcc.beanfun.windows.FrameService;
 import javafx.event.EventHandler;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
@@ -17,8 +19,6 @@ import javafx.stage.Stage;
 import javafx.stage.StageStyle;
 import lombok.Data;
 
-import java.util.Objects;
-
 /**
  * @author itqn
  */
@@ -27,12 +27,13 @@ public class JFXStage implements EventHandler<MouseEvent> {
 
     private final Stage stage;
     private final Parent root;
-    private String title = "";
 
     private double xOffset = 0;
     private double yOffset = 0;
-    private boolean miniSupport = true;
-    private Runnable closeEvent;
+
+    private boolean closeKillThread = false;
+
+    private boolean closeAndExitApp = false;
 
     // CSS
     private static final String HBOX_CSS_CLASS = "hbox";
@@ -51,22 +52,11 @@ public class JFXStage implements EventHandler<MouseEvent> {
     }
 
 
-    /**
-     * 设置Title
-     *
-     * @param title
-     * @return
-     */
-    public JFXStage setTitle(String title, String cssClass) {
-        this.title = title;
-        return this;
-    }
-
-
-    public void buildSimple() {
+    public void buildSimple(FXPages page) {
         Scene scene = new Scene(root);
         stage.setScene(scene);
         stage.initStyle(StageStyle.TRANSPARENT);
+        stage.setTitle(page.getTitle());
         root.setStyle("-fx-border-width: 1; -fx-border-color: black");
         new DragListener(stage).enableDrag(root);
     }
@@ -113,7 +103,7 @@ public class JFXStage implements EventHandler<MouseEvent> {
     /**
      * 构建
      */
-    public void build() {
+    public void build(FXPages page) {
         final Insets insets = new Insets(5, 10, 5, 10);
         HBox hbox = new HBox();
         hbox.setPrefHeight(26);
@@ -128,7 +118,7 @@ public class JFXStage implements EventHandler<MouseEvent> {
         logo.getStyleClass().add(LOGO_CSS_CLASS);
         hbox.getChildren().add(logo);
         // TITLE
-        Label titleLbl = new Label(title);
+        Label titleLbl = new Label(page.getTitle());
         titleLbl.setId("customTitle");
         titleLbl.setPadding(insets);
         titleLbl.setPrefHeight(16);
@@ -146,15 +136,10 @@ public class JFXStage implements EventHandler<MouseEvent> {
         close.setPrefWidth(16);
         close.setPrefHeight(16);
         close.getStyleClass().add(CLOSE_CSS_CLASS);
-        close.setOnMouseClicked(e -> {
-            if (Objects.nonNull(this.closeEvent)) {
-                this.closeEvent.run();
-            }
-            this.stage.close();
-        });
-        if (miniSupport) {
-            // MIN
+        close.setOnMouseClicked(e -> FrameService.getInstance().closeWindow(page));
 
+        if (page.getShowMinButton()) {
+            // MIN
             Label min = new Label();
             min.setPadding(insets);
             min.setPrefWidth(16);

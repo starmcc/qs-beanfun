@@ -21,6 +21,9 @@ public class ThreadPoolManager {
 
     private static ThreadPoolExecutor THREAD_POOL;
 
+    /**
+     * 初始化
+     */
     public synchronized static void init() {
         if (!isShutdown()) {
             return;
@@ -32,10 +35,21 @@ public class ThreadPoolManager {
                 new ThreadPoolExecutor.AbortPolicy());
     }
 
+    /**
+     * 执行
+     *
+     * @param runnable 可运行
+     */
     public synchronized static void execute(@NotNull Runnable2 runnable) {
         execute(runnable, true);
     }
 
+    /**
+     * 执行
+     *
+     * @param runnable 可运行
+     * @param init     初始化
+     */
     public synchronized static void execute(@NotNull Runnable2 runnable, boolean init) {
         if (init) {
             init();
@@ -52,6 +66,9 @@ public class ThreadPoolManager {
         });
     }
 
+    /**
+     * 关闭
+     */
     public synchronized static void shutdown() {
         if (Objects.isNull(THREAD_POOL)) {
             return;
@@ -61,6 +78,11 @@ public class ThreadPoolManager {
     }
 
 
+    /**
+     * 是否关闭
+     *
+     * @return boolean
+     */
     public synchronized static boolean isShutdown() {
         if (Objects.isNull(THREAD_POOL)) {
             return true;
