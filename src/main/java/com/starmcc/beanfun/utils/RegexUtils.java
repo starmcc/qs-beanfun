@@ -46,6 +46,7 @@ public class RegexUtils {
         TW_GET_PWD_OTP_KEY(Pattern.compile("GetResultByLongPolling&key=(.*?)\"")),
         TW_GET_PWD_OTP_SECRET(Pattern.compile("var\\sm_strSecretCode\\s=\\s'(.*)'")),
         TW_GAME_POINTS(Pattern.compile("\"RemainPoint\"\\s:\\s\"(\\d+)\"")),
+        TW_QRCODE_AKEY(Pattern.compile("akey=(.*)&authkey=(.*)&")),
         ;
         private final Pattern pattern;
 

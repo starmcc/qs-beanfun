@@ -21,8 +21,9 @@ import java.util.function.Consumer;
 
 @Slf4j
 public class TWBeanfunClientImpl extends BeanfunClient {
+
     @Override
-    protected String getSessionKey() throws Exception {
+    public String getSessionKey() throws Exception {
         String url = "https://tw.beanfun.com/beanfun_block/bflogin/default.aspx";
         ReqParams params = ReqParams.getInstance().addParam("service", "999999_T0");
         QsHttpResponse qsHttpResponse = HttpClient.getInstance().get(url, params);
@@ -44,7 +45,7 @@ public class TWBeanfunClientImpl extends BeanfunClient {
     @Override
     public BeanfunStringResult login(String account, String password, Consumer<Double> process) throws Exception {
         if (StringUtils.isEmpty(account) || StringUtils.isEmpty(password)) {
-            return BeanfunStringResult.error(BeanfunStringResult.CodeEnum.ACT_PWD_IS_NULL);
+            return BeanfunStringResult.error(AbstractBeanfunResult.CodeEnum.ACT_PWD_IS_NULL);
         }
         // 1. 请求获取SessionKey
         String sessionKey = this.getSessionKey();
@@ -52,7 +53,7 @@ public class TWBeanfunClientImpl extends BeanfunClient {
         if (StringUtils.isBlank(sessionKey)) {
             return BeanfunStringResult.error(AbstractBeanfunResult.CodeEnum.OTP_GET_EMPTY);
         } else if (StringUtils.equals(sessionKey, "IP锁定")) {
-            return BeanfunStringResult.error(BeanfunStringResult.CodeEnum.IP_BANK);
+            return BeanfunStringResult.error(AbstractBeanfunResult.CodeEnum.IP_BANK);
         }
 
 
@@ -80,15 +81,14 @@ public class TWBeanfunClientImpl extends BeanfunClient {
 
 
         // 3. 登录接口 获取authKey
-        params = ReqParams.getInstance().addParam("__EVENTTARGET", "")
+        params = ReqParams.getInstance()
+                .addParam("__EVENTTARGET", "")
                 .addParam("__EVENTARGUMENT", "")
-                .addParam("__VIEWSTATEENCRYPTED", "")
                 .addParam("__VIEWSTATE", viewstate)
                 .addParam("__VIEWSTATEGENERATOR", viewstateGenerator)
                 .addParam("__EVENTVALIDATION", eventvalidation)
                 .addParam("t_AccountID", account)
                 .addParam("t_Password", password)
-                .addParam("token1", "")
                 .addParam("btn_login", "登入");
         url = "https://tw.newlogin.beanfun.com/login/id-pass_form.aspx?skey=" + sessionKey;
 
@@ -385,8 +385,11 @@ public class TWBeanfunClientImpl extends BeanfunClient {
     }
 
     @Override
-    public boolean heartbeat(String token) {
-        return false;
+    public boolean heartbeat(String token) throws Exception {
+        String url = "https://tw.beanfun.com/beanfun_block/generic_handlers/echo_token.ashx?webtoken=1";
+        QsHttpResponse response = HttpClient.getInstance().get(url, ReqParams.getInstance().addParam("webtoken", "1"));
+        log.info("心跳 = {}", response.getContent());
+        return true;
     }
 
 

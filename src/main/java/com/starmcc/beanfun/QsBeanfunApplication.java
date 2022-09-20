@@ -2,14 +2,13 @@ package com.starmcc.beanfun;
 
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.TypeReference;
-import com.starmcc.beanfun.client.BeanfunClient;
 import com.starmcc.beanfun.client.UpdateClient;
 import com.starmcc.beanfun.constant.QsConstant;
 import com.starmcc.beanfun.model.ConfigJson;
 import com.starmcc.beanfun.model.UpdateModel;
+import com.starmcc.beanfun.thread.ThreadPoolManager;
 import com.starmcc.beanfun.utils.ConfigFileUtils;
 import com.starmcc.beanfun.utils.DataTools;
-import com.starmcc.beanfun.utils.ThreadUtils;
 import com.starmcc.beanfun.windows.FrameService;
 import javafx.application.Application;
 import javafx.application.Platform;
@@ -66,12 +65,12 @@ public class QsBeanfunApplication extends Application {
         // 加载界面
         Platform.setImplicitExit(false);
         FrameService frameService = FrameService.getInstance();
-        frameService.openWindow(QsConstant.Page.登录页面);
+        frameService.openWindow(QsConstant.Page.登录页面, primaryStage);
         log.info("QsBeanfun 启动成功..");
-        ThreadUtils.executeThread(() -> {
+        ThreadPoolManager.execute(() -> {
             UpdateModel versionModel = UpdateClient.getInstance().getVersionModel();
             if (versionModel.getState() == UpdateModel.State.有新版本) {
-                Platform.runLater(() -> {
+                FrameService.getInstance().runLater(() -> {
                     if (QsConstant.confirmDialog("是否前往更新？", versionModel.getUpdateText())) {
                         frameService.openWebUrl("https://github.com/starmcc/qs-beanfun/releases");
                     }
@@ -92,7 +91,7 @@ public class QsBeanfunApplication extends Application {
             StringBuilder msg = new StringBuilder();
             msg.append("读取配置异常,请检查以下路径文件,尝试删除该文件重新打开!\n");
             msg.append(QsConstant.APP_CONFIG);
-            Platform.runLater(() -> QsConstant.alert(msg.toString(), Alert.AlertType.ERROR));
+            FrameService.getInstance().runLater(() -> QsConstant.alert(msg.toString(), Alert.AlertType.ERROR));
             Platform.exit();
             System.exit(0);
             return;

@@ -46,7 +46,7 @@ public abstract class BeanfunClient {
      *
      * @return {@link String}
      */
-    protected abstract String getSessionKey() throws Exception;
+    public abstract String getSessionKey() throws Exception;
 
     /**
      * 登录
@@ -157,7 +157,7 @@ public abstract class BeanfunClient {
     /**
      * 心跳
      */
-    public abstract boolean heartbeat(String token);
+    public abstract boolean heartbeat(String token) throws Exception;
 
 
     /**

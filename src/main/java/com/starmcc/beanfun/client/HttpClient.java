@@ -5,6 +5,7 @@ import com.starmcc.beanfun.model.ReqParams;
 import com.starmcc.beanfun.model.client.QsHttpResponse;
 import org.apache.http.client.CookieStore;
 
+import java.io.File;
 import java.net.URI;
 import java.util.LinkedHashMap;
 import java.util.Map;
@@ -75,6 +76,7 @@ public abstract class HttpClient {
      */
     public abstract QsHttpResponse get(String url, ReqParams reqParams) throws Exception;
 
+
     /**
      * POST
      *
@@ -92,4 +94,14 @@ public abstract class HttpClient {
      * @throws Exception 异常
      */
     public abstract QsHttpResponse post(String url, ReqParams params) throws Exception;
+
+
+    /**
+     * 下载文件
+     *
+     * @param url      url
+     * @param savePath 保存路径
+     * @return {@link boolean}
+     */
+    public abstract File downloadFile(String url, String savePath);
 }

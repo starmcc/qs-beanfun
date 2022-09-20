@@ -6,8 +6,6 @@ import com.starmcc.beanfun.model.QsTray;
 import com.starmcc.beanfun.model.client.Account;
 import com.starmcc.beanfun.model.client.BeanfunModel;
 import com.starmcc.beanfun.windows.FrameService;
-import javafx.application.Platform;
-import javafx.scene.Parent;
 import javafx.scene.control.Alert;
 import javafx.scene.control.ButtonType;
 import javafx.scene.control.TextInputDialog;
@@ -42,10 +40,8 @@ public class QsConstant {
     public static JFXStage mainJFXStage;
     public static JFXStage aboutJFXStage;
     public static JFXStage equippingJFXStage;
-    public static JFXStage webJFXStage;
-
+    public static JFXStage qrCodeJFXStage;
     public static TrayIcon trayIcon;
-
     public static ConfigJson config;
     public static BigDecimal currentRateChinaToTw = new BigDecimal("4.5");
     public static BeanfunModel beanfunModel;
@@ -94,50 +90,39 @@ public class QsConstant {
      */
     @Getter
     public static enum Page {
-        登录页面("login", "QsBeanfun", false, jfxStage -> {
-            jfxStage.setCloseEvent(() -> Platform.exit());
-            jfxStage.setMiniSupport(false);
-            Parent root = jfxStage.getRoot();
-            root.getStylesheets().add(QsConstant.class.getResource("/static/css/login.css").toExternalForm());
+        登录页面("login", "QsBeanfun", false, false, jfxStage -> {
+            jfxStage.getRoot().getStylesheets().add(QsConstant.class.getResource("/static/css/login.css").toExternalForm());
             QsConstant.loginJFXStage = jfxStage;
         }),
-        主界面("main", "QsBeanfun", true, jfxStage -> {
-            jfxStage.setCloseEvent(() -> {
-                Platform.exit();
-                QsTray.remove(QsConstant.trayIcon);
-            });
-            jfxStage.setMinEvent(() -> {
-                if (jfxStage.getStage().isIconified()) {
-                    jfxStage.getStage().setIconified(false);
-                }
-                jfxStage.getStage().hide();
-            });
+        主界面("main", "QsBeanfun", true, true, jfxStage -> {
+            jfxStage.setCloseEvent(() -> FrameService.getInstance().exit());
+            // 托盘菜单
             QsConstant.mainJFXStage = jfxStage;
+            QsConstant.trayIcon = QsTray.init(QsConstant.mainJFXStage.getStage());
+            QsTray.show(QsConstant.trayIcon);
         }),
-        关于我("about", "QsBeanfun", true, jfxStage -> {
-            jfxStage.setCloseEvent(() -> FrameService.getInstance().closeWindow(jfxStage));
-            jfxStage.setMiniSupport(false);
-            QsConstant.aboutJFXStage = jfxStage;
-        }),
-        装备计算器("equipment", "Equipment", true, jfxStage -> {
-            jfxStage.setMiniSupport(false);
-            jfxStage.setCloseEvent(() -> FrameService.getInstance().closeWindow(jfxStage));
-            QsConstant.equippingJFXStage = jfxStage;
+        关于我("about", "About", true, false, jfxStage ->
+                QsConstant.aboutJFXStage = jfxStage),
+        装备计算器("equipment", "Equipment", true, false,
+                jfxStage -> QsConstant.equippingJFXStage = jfxStage),
+        二维码登录("qrCode", "QR-Code", true, false, jfxStage -> {
+            jfxStage.setCloseEvent(() -> FrameService.getInstance().closeWindow(jfxStage, true));
+            QsConstant.qrCodeJFXStage = jfxStage;
         }),
 
         ;
 
         private final String url;
         private final String title;
-
-        private final Boolean showTitle;
+        private final Boolean showTop;
+        private final Boolean showMinButton;
         private final Consumer<JFXStage> buildMethod;
 
-
-        Page(String url, String title, Boolean showTitle, Consumer<JFXStage> buildMethod) {
+        Page(String url, String title, Boolean showTop, Boolean showMinButton, Consumer<JFXStage> buildMethod) {
             this.url = url;
             this.title = title;
-            this.showTitle = showTitle;
+            this.showTop = showTop;
+            this.showMinButton = showMinButton;
             this.buildMethod = buildMethod;
         }
 

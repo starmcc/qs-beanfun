@@ -5,14 +5,12 @@ import com.starmcc.beanfun.constant.QsConstant;
 import com.starmcc.beanfun.handler.AccountHandler;
 import com.starmcc.beanfun.model.ConfigJson;
 import com.starmcc.beanfun.model.LoginType;
-import com.starmcc.beanfun.model.QsTray;
-import com.starmcc.beanfun.model.client.BeanfunAccountResult;
 import com.starmcc.beanfun.model.client.BeanfunModel;
 import com.starmcc.beanfun.model.client.BeanfunStringResult;
 import com.starmcc.beanfun.utils.AesUtil;
 import com.starmcc.beanfun.utils.ConfigFileUtils;
 import com.starmcc.beanfun.utils.DataTools;
-import com.starmcc.beanfun.utils.ThreadUtils;
+import com.starmcc.beanfun.thread.ThreadPoolManager;
 import com.starmcc.beanfun.windows.FrameService;
 import javafx.application.Platform;
 import javafx.collections.ObservableList;
@@ -146,11 +144,11 @@ public class LoginController implements Initializable {
         }, 0, 50, TimeUnit.MILLISECONDS);
 
         // 执行登录方法
-        ThreadUtils.executeThread(() -> {
+        ThreadPoolManager.execute(() -> {
             try {
                 BeanfunStringResult loginResult = BeanfunClient.run().login(comboBoxAccount.getValue(), PasswordFieldPassword.getText(), process -> loginProcess = process);
                 if (!loginResult.isSuccess()) {
-                    Platform.runLater(() -> QsConstant.alert(loginResult.getMsg(), Alert.AlertType.ERROR));
+                    FrameService.getInstance().runLater(() -> QsConstant.alert(loginResult.getMsg(), Alert.AlertType.ERROR));
                     return;
                 }
                 loginProcess = 1;
@@ -158,13 +156,13 @@ public class LoginController implements Initializable {
                 beanfunModel.setToken(loginResult.getData());
                 QsConstant.beanfunModel = beanfunModel;
                 // 登录成功后操作
-                Platform.runLater(() -> loginSuccessGoMain());
+                FrameService.getInstance().runLater(() -> loginSuccessGoMain());
             } catch (HttpHostConnectException e) {
                 log.info("login error e={}", e.getMessage(), e);
-                Platform.runLater(() -> QsConstant.alert("连接超时,请检查网络环境", Alert.AlertType.ERROR));
+                FrameService.getInstance().runLater(() -> QsConstant.alert("连接超时,请检查网络环境", Alert.AlertType.ERROR));
             } catch (Exception e) {
                 log.info("login error e={}", e.getMessage(), e);
-                Platform.runLater(() -> QsConstant.alert("异常:" + e.getMessage(), Alert.AlertType.ERROR));
+                FrameService.getInstance().runLater(() -> QsConstant.alert("异常:" + e.getMessage(), Alert.AlertType.ERROR));
             } finally {
                 loginning(false);
             }
@@ -205,18 +203,18 @@ public class LoginController implements Initializable {
     }
 
     @FXML
-    public void qrCodeClick() {
-        System.out.println(1);
+    public void qrCodeClick() throws Exception {
+        FrameService.getInstance().openWindow(QsConstant.Page.二维码登录, QsConstant.loginJFXStage.getStage());
     }
 
     @FXML
     public void closeApplication() {
-        Platform.exit();
+        FrameService.getInstance().exit();
     }
 
     @FXML
     public void aboutAction(MouseEvent mouseEvent) throws Exception {
-        FrameService.getInstance().openWindow(QsConstant.Page.关于我);
+        FrameService.getInstance().openWindow(QsConstant.Page.关于我, QsConstant.loginJFXStage.getStage());
     }
 
 
@@ -235,9 +233,7 @@ public class LoginController implements Initializable {
         try {
             // 窗口显示
             FrameService.getInstance().openWindow(QsConstant.Page.主界面);
-            QsConstant.trayIcon = QsTray.init(QsConstant.mainJFXStage.getStage());
-            QsTray.show(QsConstant.trayIcon);
-            FrameService.getInstance().closeWindow(QsConstant.loginJFXStage);
+            FrameService.getInstance().closeWindow(QsConstant.loginJFXStage, true);
         } catch (Exception e) {
             log.error("loginSuccessGoMain e={}", e.getMessage(), e);
         }

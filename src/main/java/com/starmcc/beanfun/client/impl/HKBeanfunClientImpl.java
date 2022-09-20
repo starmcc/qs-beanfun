@@ -23,8 +23,9 @@ import java.util.function.Consumer;
  */
 @Slf4j
 public class HKBeanfunClientImpl extends BeanfunClient {
+
     @Override
-    protected String getSessionKey() throws Exception {
+    public String getSessionKey() throws Exception {
         String url = "https://bfweb.hk.beanfun.com/beanfun_block/bflogin/default.aspx";
         ReqParams params = ReqParams.getInstance().addParam("service", "999999_T0");
         QsHttpResponse qsHttpResponse = HttpClient.getInstance().get(url, params);
@@ -50,7 +51,7 @@ public class HKBeanfunClientImpl extends BeanfunClient {
     @Override
     public BeanfunStringResult login(String account, String password, Consumer<Double> process) throws Exception {
         if (StringUtils.isEmpty(account) || StringUtils.isEmpty(password)) {
-            return BeanfunStringResult.error(BeanfunStringResult.CodeEnum.ACT_PWD_IS_NULL);
+            return BeanfunStringResult.error(AbstractBeanfunResult.CodeEnum.ACT_PWD_IS_NULL);
         }
 
         // 1. 请求获取SessionKey
@@ -59,7 +60,7 @@ public class HKBeanfunClientImpl extends BeanfunClient {
         if (StringUtils.isBlank(sessionKey)) {
             return BeanfunStringResult.error(AbstractBeanfunResult.CodeEnum.OTP_GET_EMPTY);
         } else if (StringUtils.equals(sessionKey, "IP锁定")) {
-            return BeanfunStringResult.error(BeanfunStringResult.CodeEnum.IP_BANK);
+            return BeanfunStringResult.error(AbstractBeanfunResult.CodeEnum.IP_BANK);
         }
 
         // 2. 获取签名信息
@@ -387,7 +388,7 @@ public class HKBeanfunClientImpl extends BeanfunClient {
     }
 
     @Override
-    public boolean heartbeat(String token) {
+    public boolean heartbeat(String token) throws Exception {
         try {
             HttpClient.getInstance().get("https://bfweb.hk.beanfun.com/");
             return true;

@@ -5,12 +5,12 @@ import com.starmcc.beanfun.constant.QsConstant;
 import com.starmcc.beanfun.model.ConfigJson;
 import com.starmcc.beanfun.model.client.Account;
 import com.starmcc.beanfun.model.client.BeanfunStringResult;
+import com.starmcc.beanfun.thread.ThreadPoolManager;
 import com.starmcc.beanfun.utils.AesUtil;
 import com.starmcc.beanfun.utils.ConfigFileUtils;
 import com.starmcc.beanfun.utils.DataTools;
-import com.starmcc.beanfun.utils.ThreadUtils;
+import com.starmcc.beanfun.windows.FrameService;
 import com.sun.istack.internal.NotNull;
-import javafx.application.Platform;
 import javafx.scene.control.Alert;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
@@ -70,11 +70,11 @@ public class AccountHandler {
      * @param runnable 可运行
      */
     public static void getDynamicPassword(Account account, @NotNull BiConsumer<String, String> runnable) {
-        ThreadUtils.executeThread(() -> {
+        ThreadPoolManager.execute(() -> {
             try {
                 BeanfunStringResult pwdResult = BeanfunClient.run().getDynamicPassword(account, QsConstant.beanfunModel.getToken());
                 if (!pwdResult.isSuccess()) {
-                    Platform.runLater(() -> QsConstant.alert(pwdResult.getMsg(), Alert.AlertType.ERROR));
+                    FrameService.getInstance().runLater(() -> QsConstant.alert(pwdResult.getMsg(), Alert.AlertType.ERROR));
                 }
                 log.debug("动态密码 ={}", pwdResult.getData());
                 if (Objects.isNull(account)) {
@@ -85,7 +85,7 @@ public class AccountHandler {
 
             } catch (Exception e) {
                 log.error("获取密码失败 e={}", e.getMessage(), e);
-                Platform.runLater(() -> QsConstant.alert("获取动态密码异常:" + e.getMessage(), Alert.AlertType.ERROR));
+                FrameService.getInstance().runLater(() -> QsConstant.alert("获取动态密码异常:" + e.getMessage(), Alert.AlertType.ERROR));
             }
         });
     }

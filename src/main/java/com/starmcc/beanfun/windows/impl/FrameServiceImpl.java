@@ -5,9 +5,13 @@ import com.alibaba.fastjson.JSONObject;
 import com.starmcc.beanfun.client.HttpClient;
 import com.starmcc.beanfun.constant.QsConstant;
 import com.starmcc.beanfun.model.JFXStage;
-import com.starmcc.beanfun.utils.ThreadUtils;
+import com.starmcc.beanfun.model.QsTray;
+import com.starmcc.beanfun.thread.Runnable2;
+import com.starmcc.beanfun.thread.ThreadPoolManager;
+import com.starmcc.beanfun.thread.timer.AdvancedTimerMamager;
 import com.starmcc.beanfun.windows.FrameService;
 import com.starmcc.beanfun.windows.dll.EService;
+import javafx.application.Platform;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.image.Image;
@@ -34,22 +38,51 @@ public class FrameServiceImpl implements FrameService {
     }
 
     @Override
-    public void openWindow(QsConstant.Page page, Consumer<JFXStage> build) throws Exception {
-        openWindow(page, null, build);
-    }
-
-    @Override
     public void openWindow(QsConstant.Page page) throws Exception {
         openWindow(page, null, page.getBuildMethod());
     }
 
+    private void killAllTask() {
+//        ThreadPoolManager.getInstance().removeAll();
+        ThreadPoolManager.shutdown();
+        AdvancedTimerMamager.getInstance().shutdown();
+        if (Objects.nonNull(QsConstant.trayIcon)) {
+            QsTray.remove(QsConstant.trayIcon);
+        }
+    }
+
     @Override
     public boolean closeWindow(JFXStage jfxStage) {
+        return this.closeWindow(jfxStage, false);
+    }
+
+    @Override
+    public boolean closeWindow(JFXStage jfxStage, boolean killAllTask) {
+        if (killAllTask) {
+            this.killAllTask();
+        }
         if (Objects.isNull(jfxStage) || Objects.isNull(jfxStage.getStage())) {
             return false;
         }
         jfxStage.getStage().close();
         return true;
+    }
+
+    @Override
+    public void exit() {
+        this.killAllTask();
+        Platform.exit();
+    }
+
+    @Override
+    public void runLater(Runnable2 runnable2) {
+        Platform.runLater(() -> {
+            try {
+                runnable2.run();
+            } catch (Exception e) {
+                throw new RuntimeException(e);
+            }
+        });
     }
 
     @Override
@@ -71,23 +104,20 @@ public class FrameServiceImpl implements FrameService {
         if (Objects.nonNull(parentStage)) {
             stage.initOwner(parentStage);
         }
-        Parent parent = FXMLLoader.load(ThreadUtils.class.getResource(page.getUrl()));
+        Parent parent = FXMLLoader.load(FrameServiceImpl.class.getResource(page.getUrl()));
         JFXStage jfxStage = JFXStage.of(stage, parent);
         jfxStage.setTitle(page.getTitle());
+        jfxStage.setMiniSupport(page.getShowMinButton());
         // 构建外部方法
         if (Objects.nonNull(build)) {
             build.accept(jfxStage);
         }
-        if (page.getShowTitle()) {
-            jfxStage.build(() -> {
-                if (Objects.nonNull(ThreadUtils.THREAD_POOL)) {
-                    ThreadUtils.THREAD_POOL.shutdownNow();
-                    ThreadUtils.THREAD_POOL = null;
-                }
-            });
-        }else {
+        if (page.getShowTop()) {
+            jfxStage.build();
+        } else {
             jfxStage.buildSimple();
         }
+
         stage.getIcons().add(new Image("static/images/ico.png"));
         stage.setResizable(false);
         stage.setTitle(page.getTitle());

@@ -2,6 +2,7 @@ package com.starmcc.beanfun.model;
 
 import com.starmcc.beanfun.QsBeanfunApplication;
 import com.starmcc.beanfun.constant.QsConstant;
+import com.starmcc.beanfun.windows.FrameService;
 import javafx.application.Platform;
 import javafx.stage.Stage;
 import lombok.extern.slf4j.Slf4j;
@@ -34,8 +35,8 @@ public class QsTray {
         openItem.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                Platform.runLater(() -> {
-                    if (stage.isIconified()){
+                FrameService.getInstance().runLater(() -> {
+                    if (stage.isIconified()) {
                         stage.setIconified(false);
                     }
                     if (!stage.isShowing()) {
@@ -62,8 +63,8 @@ public class QsTray {
             public void mouseClicked(MouseEvent evt) {
                 // 处理鼠标双击
                 if (evt.getClickCount() == 2) {
-                    Platform.runLater(() -> {
-                        if (stage.isIconified()){
+                    FrameService.getInstance().runLater(() -> {
+                        if (stage.isIconified()) {
                             stage.setIconified(false);
                         }
                         if (stage.isShowing()) {

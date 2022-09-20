@@ -7,13 +7,11 @@ import javafx.scene.Node;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.Label;
-import javafx.scene.effect.InnerShadow;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.Priority;
-import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
 import javafx.stage.Stage;
 import javafx.stage.StageStyle;
@@ -35,8 +33,6 @@ public class JFXStage implements EventHandler<MouseEvent> {
     private double yOffset = 0;
     private boolean miniSupport = true;
     private Runnable closeEvent;
-    private Runnable minEvent;
-
 
     // CSS
     private static final String HBOX_CSS_CLASS = "hbox";
@@ -117,7 +113,7 @@ public class JFXStage implements EventHandler<MouseEvent> {
     /**
      * 构建
      */
-    public void build(Runnable closeEvent) {
+    public void build() {
         final Insets insets = new Insets(5, 10, 5, 10);
         HBox hbox = new HBox();
         hbox.setPrefHeight(26);
@@ -154,12 +150,11 @@ public class JFXStage implements EventHandler<MouseEvent> {
             if (Objects.nonNull(this.closeEvent)) {
                 this.closeEvent.run();
             }
-            if (Objects.nonNull(closeEvent)) {
-                closeEvent.run();
-            }
+            this.stage.close();
         });
         if (miniSupport) {
             // MIN
+
             Label min = new Label();
             min.setPadding(insets);
             min.setPrefWidth(16);
@@ -167,9 +162,10 @@ public class JFXStage implements EventHandler<MouseEvent> {
             min.getStyleClass().add(MIN_CSS_CLASS);
             min.setOnMouseClicked(e -> {
                 stage.setIconified(true);
-                if (Objects.nonNull(minEvent)) {
-                    minEvent.run();
+                if (stage.isIconified()) {
+                    stage.setIconified(false);
                 }
+                stage.hide();
             });
             hbox.getChildren().add(min);
         }

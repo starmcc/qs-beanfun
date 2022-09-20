@@ -5,13 +5,12 @@ import com.starmcc.beanfun.client.BeanfunClient;
 import com.starmcc.beanfun.constant.QsConstant;
 import com.starmcc.beanfun.handler.*;
 import com.starmcc.beanfun.model.ConfigJson;
-import com.starmcc.beanfun.model.QsTray;
 import com.starmcc.beanfun.model.client.Account;
 import com.starmcc.beanfun.model.client.BeanfunAccountResult;
 import com.starmcc.beanfun.model.client.BeanfunStringResult;
 import com.starmcc.beanfun.utils.ConfigFileUtils;
 import com.starmcc.beanfun.utils.RegexUtils;
-import com.starmcc.beanfun.utils.ThreadUtils;
+import com.starmcc.beanfun.thread.ThreadPoolManager;
 import com.starmcc.beanfun.windows.FrameService;
 import com.starmcc.beanfun.windows.WindowService;
 import javafx.application.Platform;
@@ -122,7 +121,7 @@ public class MainController implements Initializable {
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
-        ThreadUtils.executeThread(() -> {
+        ThreadPoolManager.execute(() -> {
             try {
                 // 获取账号数据
                 refeshAccount(null);
@@ -203,9 +202,9 @@ public class MainController implements Initializable {
         });
 
         // 获取汇率
-        ThreadUtils.executeThread(() -> {
+        ThreadPoolManager.execute(() -> {
             QsConstant.currentRateChinaToTw = ThirdPartyApiClient.getCurrentRateChinaToTw();
-            Platform.runLater(() -> labelExchangeNow.setText(QsConstant.currentRateChinaToTw.toString()));
+            FrameService.getInstance().runLater(() -> labelExchangeNow.setText(QsConstant.currentRateChinaToTw.toString()));
         });
 
         // =================== 轮烧按键配置事件 =====================
@@ -257,18 +256,11 @@ public class MainController implements Initializable {
 
     @FXML
     public void exitLoginAction() {
-        Platform.runLater(() -> {
+        FrameService.getInstance().runLater(() -> {
             try {
                 BeanfunClient.run().loginOut(QsConstant.beanfunModel.getToken());
-                FrameService.getInstance().openWindow(QsConstant.Page.登录页面, (jfxStage) -> {
-                    jfxStage.setCloseEvent(() -> {
-                        Platform.exit();
-                    });
-                    jfxStage.setMiniSupport(false);
-                    QsConstant.loginJFXStage = jfxStage;
-                });
-                QsTray.remove(QsConstant.trayIcon);
-                FrameService.getInstance().closeWindow(QsConstant.mainJFXStage);
+                FrameService.getInstance().openWindow(QsConstant.Page.登录页面);
+                FrameService.getInstance().closeWindow(QsConstant.mainJFXStage, true);
             } catch (Exception e) {
                 log.error("登出异常 e={}", e.getMessage(), e);
             }
@@ -288,7 +280,7 @@ public class MainController implements Initializable {
     public void getPasswordAction() {
         buttonGetPassword.setDisable(true);
         AccountHandler.getDynamicPassword(this.nowAccount, (id, password) -> {
-            Platform.runLater(() -> {
+            FrameService.getInstance().runLater(() -> {
                 textFieldDynamicPwd.setText(password);
                 buttonGetPassword.setDisable(false);
             });
@@ -298,7 +290,7 @@ public class MainController implements Initializable {
                     WindowService.getInstance().autoInputActPwd(id, password);
                 } catch (Exception e) {
                     log.error("error={}", e, e.getMessage());
-                    Platform.runLater(() -> QsConstant.alert("自动输入异常", Alert.AlertType.ERROR));
+                    FrameService.getInstance().runLater(() -> QsConstant.alert("自动输入异常", Alert.AlertType.ERROR));
                 }
             }
         });
@@ -319,7 +311,7 @@ public class MainController implements Initializable {
             buttonGetPassword.setDisable(true);
             AccountHandler.getDynamicPassword(this.nowAccount, (id, password) -> {
                 GameHandler.runGame(textFieldGamePath.getText(), id, password, killStartPalyWindow);
-                Platform.runLater(() -> {
+                FrameService.getInstance().runLater(() -> {
                     textFieldDynamicPwd.setText(password);
                     buttonGetPassword.setDisable(false);
                 });
@@ -373,11 +365,11 @@ public class MainController implements Initializable {
             return;
         }
         buttonAddAct.setDisable(true);
-        ThreadUtils.executeThread(() -> {
+        ThreadPoolManager.execute(() -> {
             try {
                 BeanfunStringResult result = BeanfunClient.run().addAccount(name);
                 if (!result.isSuccess()) {
-                    Platform.runLater(() -> QsConstant.alert(result.getMsg(), Alert.AlertType.WARNING));
+                    FrameService.getInstance().runLater(() -> QsConstant.alert(result.getMsg(), Alert.AlertType.WARNING));
                     return;
                 }
                 refeshAccount(() -> {
@@ -386,7 +378,7 @@ public class MainController implements Initializable {
                 });
             } catch (Exception e) {
                 log.error("添加账号异常 e={}", e.getMessage(), e);
-                Platform.runLater(() -> QsConstant.alert("创建失败!", Alert.AlertType.WARNING));
+                FrameService.getInstance().runLater(() -> QsConstant.alert("创建失败!", Alert.AlertType.WARNING));
             } finally {
                 buttonAddAct.setDisable(false);
             }
@@ -405,11 +397,11 @@ public class MainController implements Initializable {
             return;
         }
         String id = this.nowAccount.getId();
-        ThreadUtils.executeThread(() -> {
+        ThreadPoolManager.execute(() -> {
             try {
                 BeanfunStringResult result = BeanfunClient.run().changeAccountName(id, newName);
                 if (!result.isSuccess()) {
-                    Platform.runLater(() -> QsConstant.alert(result.getMsg(), Alert.AlertType.WARNING));
+                    FrameService.getInstance().runLater(() -> QsConstant.alert(result.getMsg(), Alert.AlertType.WARNING));
                     return;
                 }
                 refeshAccount(() -> QsConstant.alert("编辑成功!", Alert.AlertType.INFORMATION));
@@ -489,9 +481,9 @@ public class MainController implements Initializable {
     @FXML
     public void updateRateAction(ActionEvent actionEvent) {
         // 获取汇率
-        ThreadUtils.executeThread(() -> {
+        ThreadPoolManager.execute(() -> {
             QsConstant.currentRateChinaToTw = ThirdPartyApiClient.getCurrentRateChinaToTw();
-            Platform.runLater(() -> labelExchangeNow.setText(QsConstant.currentRateChinaToTw.toString()));
+            FrameService.getInstance().runLater(() -> labelExchangeNow.setText(QsConstant.currentRateChinaToTw.toString()));
         });
     }
 
@@ -506,12 +498,12 @@ public class MainController implements Initializable {
         if (checkMenuItemAutoLunShao.isSelected()) {
             // 需要启动
             if (!AutoLunShaoHandler.start()) {
-                Platform.runLater(() -> checkMenuItemAutoLunShao.setSelected(false));
+                FrameService.getInstance().runLater(() -> checkMenuItemAutoLunShao.setSelected(false));
             }
         } else {
             // 需要停止
             if (!AutoLunShaoHandler.stop()) {
-                Platform.runLater(() -> checkMenuItemAutoLunShao.setSelected(true));
+                FrameService.getInstance().runLater(() -> checkMenuItemAutoLunShao.setSelected(true));
             }
         }
     }
@@ -600,7 +592,7 @@ public class MainController implements Initializable {
         if (actResult.isSuccess()) {
             QsConstant.beanfunModel.build(actResult);
         } else {
-            Platform.runLater(() -> QsConstant.alert(actResult.getMsg(), Alert.AlertType.ERROR));
+            FrameService.getInstance().runLater(() -> QsConstant.alert(actResult.getMsg(), Alert.AlertType.ERROR));
             return;
         }
 
@@ -608,14 +600,14 @@ public class MainController implements Initializable {
 
         if (!QsConstant.beanfunModel.isCertStatus()) {
             // 需要进阶认证
-            Platform.runLater(() -> QsConstant.alert("请前往用户中心 -> 会员中心进行进阶认证!\n"
+            FrameService.getInstance().runLater(() -> QsConstant.alert("请前往用户中心 -> 会员中心进行进阶认证!\n"
                     + "做完进阶认证后请重新退出重新登录!", Alert.AlertType.INFORMATION));
         } else if (QsConstant.beanfunModel.isNewAccount()) {
             // 需要创建账号
-            Platform.runLater(() -> QsConstant.alert("新账号请点击创建账号!", Alert.AlertType.INFORMATION));
+            FrameService.getInstance().runLater(() -> QsConstant.alert("新账号请点击创建账号!", Alert.AlertType.INFORMATION));
         }
 
-        Platform.runLater(() -> {
+        FrameService.getInstance().runLater(() -> {
             ObservableList<Account> options = FXCollections.observableArrayList();
             options.clear();
             QsConstant.beanfunModel.getAccountList().forEach(account -> options.add(account));
@@ -633,12 +625,12 @@ public class MainController implements Initializable {
      * 更新点数
      */
     private void updatePoints() {
-        Platform.runLater(() -> {
+        FrameService.getInstance().runLater(() -> {
             buttonUpdatePoints.setDisable(true);
             // 获取游戏点数
-            ThreadUtils.executeThread(() -> {
+            ThreadPoolManager.execute(() -> {
                 String pointsText = getPointsText();
-                Platform.runLater(() -> {
+                FrameService.getInstance().runLater(() -> {
                     labelActPoint.setText(pointsText);
                     buttonUpdatePoints.setDisable(false);
                 });

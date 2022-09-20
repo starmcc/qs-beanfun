@@ -1,28 +1,41 @@
 package com.starmcc.beanfun.model;
 
 
-import com.starmcc.beanfun.utils.DataTools;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.LinkedHashMap;
+import java.util.Objects;
 
 @Data
 public class ReqParams {
 
-    private List<Param> params;
+    private LinkedHashMap<String, String> params;
+    private LinkedHashMap<String, String> headers;
 
 
     public static ReqParams getInstance() {
         return new ReqParams();
     }
 
+    public ReqParams(){
+        this.params = new LinkedHashMap<>();
+        this.headers = new LinkedHashMap<>();
+    }
+
     public ReqParams addParam(String key, String val) {
-        if (DataTools.collectionIsEmpty(this.params)) {
-            this.params = new ArrayList<>();
+        if (Objects.isNull(this.params)) {
+            this.params = new LinkedHashMap<>();
         }
-        this.params.add(new Param(key, val));
+        this.params.put(key, val);
+        return this;
+    }
+
+    public ReqParams addHeader(String key, String val) {
+        if (Objects.isNull(this.headers)) {
+            this.headers = new LinkedHashMap<>();
+        }
+        this.headers.put(key, val);
         return this;
     }
 

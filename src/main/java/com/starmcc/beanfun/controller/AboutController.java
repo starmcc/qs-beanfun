@@ -3,7 +3,7 @@ package com.starmcc.beanfun.controller;
 import com.starmcc.beanfun.client.UpdateClient;
 import com.starmcc.beanfun.constant.QsConstant;
 import com.starmcc.beanfun.model.UpdateModel;
-import com.starmcc.beanfun.utils.ThreadUtils;
+import com.starmcc.beanfun.thread.ThreadPoolManager;
 import com.starmcc.beanfun.windows.FrameService;
 import javafx.application.Platform;
 import javafx.event.ActionEvent;
@@ -39,9 +39,9 @@ public class AboutController implements Initializable {
 
     @FXML
     public void verifyVersionAction(ActionEvent actionEvent) {
-        ThreadUtils.executeThread(() -> {
+        ThreadPoolManager.execute(() -> {
             UpdateModel versionModel = UpdateClient.getInstance().getVersionModel();
-            Platform.runLater(() -> {
+            FrameService.getInstance().runLater(() -> {
                 switch (versionModel.getState()) {
                     case 有新版本:
                         if (QsConstant.confirmDialog("是否前往更新？", versionModel.getUpdateText())) {

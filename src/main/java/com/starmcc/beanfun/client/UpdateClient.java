@@ -46,7 +46,7 @@ public class UpdateClient {
      */
     public UpdateModel getVersionModel() {
         try {
-            QsHttpResponse qsHttpResponse = HttpClient.getInstance().get(GITHUB_URL, null);
+            QsHttpResponse qsHttpResponse = HttpClient.getInstance().get(GITHUB_URL);
             if (!qsHttpResponse.getSuccess()) {
                 return UpdateModel.build(UpdateModel.State.获取失败);
             }
