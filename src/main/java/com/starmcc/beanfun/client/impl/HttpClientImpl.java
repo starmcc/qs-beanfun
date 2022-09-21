@@ -28,10 +28,7 @@ import org.apache.http.message.BasicNameValuePair;
 import org.apache.http.util.EntityUtils;
 
 import java.io.*;
-import java.net.HttpURLConnection;
-import java.net.URI;
-import java.net.URL;
-import java.net.URLEncoder;
+import java.net.*;
 import java.nio.charset.Charset;
 import java.util.*;
 
@@ -51,11 +48,6 @@ public class HttpClientImpl extends HttpClient {
             basicClientCookie.setDomain(uri.getHost());
             COOKIE_STORE.addCookie(basicClientCookie);
         }
-    }
-
-    @Override
-    public QsHttpResponse get(String url) throws Exception {
-        return this.get(url, new ReqParams());
     }
 
     @Override
@@ -83,6 +75,11 @@ public class HttpClientImpl extends HttpClient {
     }
 
 
+    @Override
+    public QsHttpResponse get(String url) throws Exception {
+        return get(url, null);
+    }
+
     /**
      * GET
      *
@@ -92,20 +89,26 @@ public class HttpClientImpl extends HttpClient {
      */
     @Override
     public QsHttpResponse get(String url, ReqParams reqParams) throws Exception {
+        final ReqParams finalParams = Objects.isNull(reqParams) ? new ReqParams() : reqParams;
         return request(() -> {
-            // 参数
-            StringBuilder params = new StringBuilder(url.replace("?", ""));
-            int i = 0;
-            for (Map.Entry<String, String> entry : reqParams.getParams().entrySet()) {
-                StringBuilder valParam = new StringBuilder();
-                valParam = i == 0 ? valParam.append("?") : valParam.append("&");
-                valParam.append(entry.getKey()).append("=").append(URLEncoder.encode(entry.getValue(), "utf-8"));
-                params.append(valParam.toString());
-                i++;
+            HttpGet httpGet = null;
+            if (finalParams.getParams().size() == 0) {
+                httpGet = new HttpGet(url);
+            } else {
+                // 参数
+                StringBuilder params = new StringBuilder(url.replace("?", ""));
+                int i = 0;
+                for (Map.Entry<String, String> entry : finalParams.getParams().entrySet()) {
+                    StringBuilder valParam = new StringBuilder();
+                    valParam = i == 0 ? valParam.append("?") : valParam.append("&");
+                    valParam.append(entry.getKey()).append("=").append(URLEncoder.encode(entry.getValue(), "utf-8"));
+                    params.append(valParam.toString());
+                    i++;
+                }
+                httpGet = new HttpGet(params.toString());
             }
-            log.info("请求URL = {}", params.toString());
-            HttpGet httpGet = new HttpGet(params.toString());
-            for (Map.Entry<String, String> entry : reqParams.getHeaders().entrySet()) {
+            log.info("请求URL = {}", httpGet.getURI().toString());
+            for (Map.Entry<String, String> entry : finalParams.getHeaders().entrySet()) {
                 httpGet.setHeader(entry.getKey(), entry.getValue());
             }
             return httpGet;
@@ -114,7 +117,7 @@ public class HttpClientImpl extends HttpClient {
 
     @Override
     public QsHttpResponse post(String url) throws Exception {
-        return this.post(url, new ReqParams());
+        return this.post(url, null);
     }
 
     /**
@@ -127,14 +130,15 @@ public class HttpClientImpl extends HttpClient {
      */
     @Override
     public QsHttpResponse post(String url, ReqParams params) throws Exception {
+        final ReqParams finalParams = Objects.isNull(params) ? new ReqParams() : params;
         return request(() -> {
             HttpPost post = new HttpPost(url);
             post.setHeader("Content-Type", "application/x-www-form-urlencoded");
-            for (Map.Entry<String, String> entry : params.getHeaders().entrySet()) {
+            for (Map.Entry<String, String> entry : finalParams.getHeaders().entrySet()) {
                 post.setHeader(entry.getKey(), entry.getValue());
             }
             List<BasicNameValuePair> list = new ArrayList<>();
-            for (Map.Entry<String, String> entry : params.getParams().entrySet()) {
+            for (Map.Entry<String, String> entry : finalParams.getParams().entrySet()) {
                 list.add(new BasicNameValuePair(entry.getKey(), entry.getValue()));
             }
             post.setEntity(new UrlEncodedFormEntity(list, "UTF-8"));
@@ -143,37 +147,88 @@ public class HttpClientImpl extends HttpClient {
     }
 
     @Override
-    public File downloadFile(String url, String savePath) {
-        HttpClientBuilder httpClientBuilder = HttpClientBuilder.create();
-        List<Header> headers = new ArrayList<>();
-        headers.add(new BasicHeader("Accept-Encoding", "identity"));
-        httpClientBuilder.setDefaultHeaders(headers);
-        httpClientBuilder.setRedirectStrategy(new LaxRedirectStrategy());
-        httpClientBuilder.setDefaultCookieStore(COOKIE_STORE);
-        httpClientBuilder.setUserAgent(USER_AGENT);
-        httpClientBuilder.setProxy(WindowService.getInstance().getPacScriptProxy(url));
-        CloseableHttpClient httpClient = httpClientBuilder.build();
-        FileOutputStream outputStream = null;
-        try {
-            HttpClientContext context = HttpClientContext.create();
-            CloseableHttpResponse response = httpClient.execute(new HttpGet(url), context);
-            byte[] bytes = EntityUtils.toByteArray(response.getEntity());
-            outputStream = new FileOutputStream(savePath);
-            outputStream.write(bytes);
-            outputStream.flush();
+    public void downloadFile(String url, String savePath, HttpClient.Process process) {
+        process.call(HttpClient.Process.State.准备开始, null, 0, null);
+        InputStream inputStream = null;
+        RandomAccessFile randomAccessFile = null;
+        HttpURLConnection urlConnection = null;
+        int responseCode = 0;
+        int unitProgress = 0;
 
+        try {
+            process.call(HttpClient.Process.State.正在连接, null, unitProgress, null);
+            HttpHost httpHost = WindowService.getInstance().getPacScriptProxy(url);
+            if (Objects.nonNull(httpHost)) {
+                Proxy proxy = new Proxy(Proxy.Type.HTTP, new InetSocketAddress(httpHost.getHostName(), httpHost.getPort()));
+                urlConnection = (HttpURLConnection) new URL(url).openConnection(proxy);
+            } else {
+                urlConnection = (HttpURLConnection) new URL(url).openConnection();
+            }
+            urlConnection.setRequestMethod("GET");
+            urlConnection.setConnectTimeout(10 * 1000);
+            responseCode = urlConnection.getResponseCode();
         } catch (Exception e) {
-            log.error("下载文件异常 e={}", e.getMessage(), e);
-            return null;
+            process.call(HttpClient.Process.State.连接超时, null, unitProgress, e);
+            return;
+        }
+
+        try {
+            boolean is = responseCode >= 200 && responseCode < 300;
+            if (!is) {
+                process.call(HttpClient.Process.State.请求状态码异常, null, unitProgress, null);
+                return;
+            }
+            process.call(HttpClient.Process.State.创建文件, null, unitProgress, null);
+            inputStream = urlConnection.getInputStream();
+            int len = 0;
+            byte[] data = new byte[4096];
+            //用于保存当前进度（具体进度）
+            int progres = 0;
+            //获取文件
+            int maxProgres = urlConnection.getContentLength();
+            File file = new File(savePath);
+            if (!file.getParentFile().exists()) {
+                file.getParentFile().mkdir();
+            }
+            if (file.exists()) {
+                file.delete();
+            }
+            file.createNewFile();
+            randomAccessFile = new RandomAccessFile(file, "rwd");
+            //设置文件大小
+            randomAccessFile.setLength(maxProgres);
+            //将文件大小分成100分，每一分的大小为unit
+            int unit = maxProgres / 100;
+            //用于保存当前进度(1~100%)
+            while (-1 != (len = inputStream.read(data))) {
+                randomAccessFile.write(data, 0, len);
+                //保存当前具体进度
+                progres += len;
+                //计算当前百分比进度
+                int temp = progres / unit;
+                //如果下载过程出现百分比变化
+                if (temp >= 1 && temp > unitProgress) {
+                    //保存当前百分比
+                    unitProgress = temp;
+                    process.call(HttpClient.Process.State.下载中, null, unitProgress, null);
+                }
+            }
+            inputStream.close();
+            process.call(HttpClient.Process.State.下载完毕, new File(savePath), unitProgress, null);
+        } catch (Exception e) {
+            process.call(HttpClient.Process.State.未知异常, null, unitProgress, e);
         } finally {
             try {
-                outputStream.close();
+                if (null != inputStream) {
+                    inputStream.close();
+                }
+                if (null != randomAccessFile) {
+                    randomAccessFile.close();
+                }
             } catch (Exception e) {
-                log.error("关闭文件异常 e={}", e.getMessage(), e);
-                return null;
+                process.call(HttpClient.Process.State.未知异常, null, unitProgress, e);
             }
         }
-        return new File(savePath);
     }
 
     /**

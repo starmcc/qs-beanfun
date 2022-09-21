@@ -6,13 +6,10 @@ import com.starmcc.beanfun.constant.FXPageEnum;
 import com.starmcc.beanfun.constant.QsConstant;
 import com.starmcc.beanfun.handler.*;
 import com.starmcc.beanfun.model.ConfigModel;
-import com.starmcc.beanfun.model.QsTray;
 import com.starmcc.beanfun.model.client.Account;
 import com.starmcc.beanfun.model.client.BeanfunAccountResult;
 import com.starmcc.beanfun.model.client.BeanfunStringResult;
 import com.starmcc.beanfun.thread.ThreadPoolManager;
-import com.starmcc.beanfun.thread.timer.AdvancedTimerMamager;
-import com.starmcc.beanfun.thread.timer.AdvancedTimerTask;
 import com.starmcc.beanfun.utils.FileTools;
 import com.starmcc.beanfun.utils.RegexUtils;
 import com.starmcc.beanfun.windows.FrameService;
@@ -124,11 +121,11 @@ public class MainController implements Initializable {
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
-        FrameService.getInstance().runLater(() -> {
-            // 托盘菜单
-            QsConstant.trayIcon = QsTray.init(QsConstant.JFX_STAGE_DATA.get(FXPageEnum.主界面).getStage());
-            QsTray.show(QsConstant.trayIcon);
-        });
+//        FrameService.getInstance().runLater(() -> {
+//            // 托盘菜单
+//            QsConstant.trayIcon = QsTray.init(QsConstant.JFX_STAGE_DATA.get(FXPageEnum.主界面).getStage());
+//            QsTray.show(QsConstant.trayIcon);
+//        });
         // 获取账号数据
         ThreadPoolManager.execute(() -> refeshAccount(null));
         try {
@@ -137,13 +134,13 @@ public class MainController implements Initializable {
         } catch (Exception e) {
             log.error("error={}", e.getMessage(), e);
         }
-        // 开始心跳 5分钟心跳一次保持登录状态
-        AdvancedTimerMamager.getInstance().addTask(new AdvancedTimerTask() {
-            @Override
-            public void start() throws Exception {
-                BeanfunClient.run().heartbeat();
-            }
-        }, 0, 1000 * 60 * 5);
+//        // 开始心跳 5分钟心跳一次保持登录状态
+//        AdvancedTimerMamager.getInstance().addTask(new AdvancedTimerTask() {
+//            @Override
+//            public void start() throws Exception {
+//                BeanfunClient.run().heartbeat();
+//            }
+//        }, 0, 1000 * 60 * 5);
     }
 
     private void initData() throws Exception {
@@ -163,22 +160,22 @@ public class MainController implements Initializable {
         textFieldRanShao.setText(KeyEvent.getKeyText(ranShaoKey));
 
         // 录像配置
-        ConfigModel.Video video = QsConstant.config.getVideo();
+        ConfigModel.RecordVideo recordVideo = QsConstant.config.getRecordVideo();
         ObservableList<Integer> fpsItems = FXCollections.observableArrayList();
         fpsItems.add(30);
         fpsItems.add(60);
         fpsItems.add(90);
         choiceBoxVideoFps.setItems(fpsItems);
-        choiceBoxVideoFps.getSelectionModel().select(video.getVideoFps());
-        textFieldVideoPath.setText(video.getVideoPath());
+        choiceBoxVideoFps.getSelectionModel().select(recordVideo.getFps());
+        textFieldVideoPath.setText(recordVideo.getFolder());
 
         ObservableList<String> codeRateItems = FXCollections.observableArrayList();
         codeRateItems.add("1800");
         codeRateItems.add("2500");
         codeRateItems.add("3500");
         comboBoxVideoCodeRate.setItems(codeRateItems);
-        comboBoxVideoCodeRate.getSelectionModel().select(video.getVideoCodeRate());
-        comboBoxVideoCodeRate.setValue(String.valueOf(video.getVideoCodeRate()));
+        comboBoxVideoCodeRate.getSelectionModel().select(recordVideo.getCodeRate());
+        comboBoxVideoCodeRate.setValue(String.valueOf(recordVideo.getCodeRate()));
     }
 
 
@@ -247,14 +244,14 @@ public class MainController implements Initializable {
                 comboBoxVideoCodeRate.setValue(oldVal);
                 return;
             }
-            ConfigModel.Video videoTemp = QsConstant.config.getVideo();
+            ConfigModel.RecordVideo recordVideoTemp = QsConstant.config.getRecordVideo();
             int number = Integer.valueOf(newVal);
             if (number == 0) {
-                number = videoTemp.getVideoCodeRate();
+                number = recordVideoTemp.getCodeRate();
             }
-            videoTemp.setVideoCodeRate(number);
+            recordVideoTemp.setCodeRate(number);
             comboBoxVideoCodeRate.setValue(String.valueOf(number));
-            QsConstant.config.setVideo(videoTemp);
+            QsConstant.config.setRecordVideo(recordVideoTemp);
             FileTools.saveConfig(QsConstant.config);
         });
     }
@@ -551,21 +548,21 @@ public class MainController implements Initializable {
             return;
         }
         textFieldVideoPath.setText(path);
-        QsConstant.config.getVideo().setVideoPath(path);
+        QsConstant.config.getRecordVideo().setFolder(path);
         FileTools.saveConfig(QsConstant.config);
     }
 
     @FXML
     public void selectVideoFpsAction(ActionEvent actionEvent) {
         Integer value = choiceBoxVideoFps.getValue();
-        QsConstant.config.getVideo().setVideoFps(value);
+        QsConstant.config.getRecordVideo().setFps(value);
         FileTools.saveConfig(QsConstant.config);
     }
 
     @FXML
     public void selectVideoCodeRateAction(ActionEvent actionEvent) {
         String value = comboBoxVideoCodeRate.getValue();
-        QsConstant.config.getVideo().setVideoCodeRate(Integer.valueOf(value));
+        QsConstant.config.getRecordVideo().setCodeRate(Integer.valueOf(value));
         FileTools.saveConfig(QsConstant.config);
     }
 
@@ -577,15 +574,27 @@ public class MainController implements Initializable {
     }
 
     @FXML
-    public void videoAction(ActionEvent actionEvent) {
+    public void recordVideoAction(ActionEvent actionEvent) {
         // 开始/结束录像
         if (buttonVideo.isSelected()) {
+            // 开始录制
             buttonVideo.setText("录像中");
         } else {
             buttonVideo.setText("开始录像");
         }
-        if (!VideoHandler.run(buttonVideo.isSelected())) {
+
+        if (!RecordVideoHandler.run(buttonVideo.isSelected())) {
             buttonVideo.setSelected(!buttonVideo.isSelected());
+            StringBuffer sbf = new StringBuffer();
+            sbf.append("自动录像功能需要Ffmpeg.exe支持\n");
+            sbf.append("请自行下载依赖并放置在下方显示目录中即可\n");
+            sbf.append(QsConstant.PATH_PLUGINS).append("\n");
+            sbf.append("名称请以ffmpeg.exe命名\n");
+            sbf.append("是否前往下载?");
+            boolean go = QsConstant.confirmDialog("缺少依赖", sbf.toString());
+            if (go){
+                FrameService.getInstance().openWebUrl("https://github.com/BtbN/FFmpeg-Builds/releases");
+            }
         }
     }
 

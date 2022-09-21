@@ -24,8 +24,7 @@ public class QsBeanfunApplication extends Application {
         Runtime.getRuntime().addShutdownHook(new Thread() {
             @Override
             public void run() {
-                FrameService.getInstance().killAllTask();
-                AdvancedTimerMamager.shutdown();
+                FrameService.getInstance().exit();
             }
         });
     }
@@ -49,7 +48,7 @@ public class QsBeanfunApplication extends Application {
         InitApplication.initApp();
         // ====================== 加载界面 ======================
         Platform.setImplicitExit(false);
-        FrameService.getInstance().openWindow(FXPageEnum.登录页面);
+        FrameService.getInstance().openWindow(FXPageEnum.登录页面, primaryStage);
         log.info("QsBeanfun 启动成功..");
         InitApplication.checkVersion();
     }

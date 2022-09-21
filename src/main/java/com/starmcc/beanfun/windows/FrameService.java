@@ -3,6 +3,7 @@ package com.starmcc.beanfun.windows;
 import com.starmcc.beanfun.constant.FXPageEnum;
 import com.starmcc.beanfun.thread.Runnable2;
 import com.starmcc.beanfun.windows.impl.FrameServiceImpl;
+import javafx.stage.Stage;
 
 /**
  * @author starmcc
@@ -27,6 +28,15 @@ public interface FrameService {
      * @throws Exception 异常
      */
     void openWindow(FXPageEnum page, FXPageEnum parentPage) throws Exception;
+
+    /**
+     * 打开窗口
+     *
+     * @param page        页面
+     * @param parentStage 父页面
+     * @throws Exception 异常
+     */
+    void openWindow(FXPageEnum page, Stage parentStage) throws Exception;
 
     /**
      * 打开窗口

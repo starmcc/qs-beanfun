@@ -142,7 +142,13 @@ public class JFXStage implements EventHandler<MouseEvent> {
         close.setPrefWidth(16);
         close.setPrefHeight(16);
         close.getStyleClass().add(CLOSE_CSS_CLASS);
-        close.setOnMouseClicked(e -> FrameService.getInstance().closeWindow(page));
+        close.setOnMouseClicked(e -> {
+            if (page == FXPageEnum.登录页面 || page == FXPageEnum.主界面) {
+                FrameService.getInstance().exit();
+                return;
+            }
+            FrameService.getInstance().closeWindow(page);
+        });
 
         if (page.getShowMinButton()) {
             // MIN

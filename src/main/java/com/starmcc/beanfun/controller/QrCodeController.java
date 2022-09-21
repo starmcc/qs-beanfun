@@ -87,20 +87,36 @@ public class QrCodeController implements Initializable {
             ThreadPoolManager.execute(this::loadQrCode, false);
             return;
         }
-        String savePath = QsConstant.APP_PATH + "onlineQrCode.jpg";
-        File file = HttpClient.getInstance().downloadFile(beanfunQrCodeResult.getQrImageUrl(), savePath);
-        if (Objects.isNull(file)) {
-            // 下载二维码出现问题 重新下载
-            return;
-        }
+        String savePath = QsConstant.PATH_PLUGINS + "onlineQrCode.jpg";
+        HttpClient.getInstance().downloadFile(beanfunQrCodeResult.getQrImageUrl(), savePath, (state, file, process, e) -> {
+            if (state == HttpClient.Process.State.下载完毕) {
+                if (Objects.nonNull(file)) {
+                    this.startScanQrCode(file);
+                    return;
+                }
+                try {
+                    // 下载二维码出现问题 重新下载
+                    Thread.sleep(1000);
+                    ThreadPoolManager.execute(this::loadQrCode, false);
+                } catch (Exception ex) {
+                    log.error("error={}", e.getMessage(), e);
+                }
+            }
+        });
+    }
 
+    /**
+     * 开始扫描二维码
+     *
+     * @param file 文件
+     */
+    private void startScanQrCode(File file) {
         FrameService.getInstance().runLater(() -> {
             Image image = new Image(file.toURI().toString());
             imageViewQrCode.setImage(image);
             labelQrCodeTips.setText("请扫描二维码登录");
             labelQrCodeTips.setTextFill(Color.GREEN);
         });
-
         // 开始心跳检查
         AdvancedTimerMamager.getInstance().addTask(new AdvancedTimerTask<QrCodeController>(this) {
             @Override

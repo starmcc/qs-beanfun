@@ -10,7 +10,6 @@ import com.starmcc.beanfun.utils.DataTools;
 import com.starmcc.beanfun.utils.RegexUtils;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
-import org.apache.http.cookie.Cookie;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -216,8 +215,8 @@ public class TWBeanfunClientImpl extends BeanfunClient {
             Date createTime = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").parse(time);
             account.setCreateTime(createTime);
         }
-        String url2 = "https://tw.newlogin.beanfun.com/generic_handlers/get_cookies.ashx";
-        httpResponse = HttpClient.getInstance().get(url2, null);
+        url = "https://tw.newlogin.beanfun.com/generic_handlers/get_cookies.ashx";
+        httpResponse = HttpClient.getInstance().get(url);
         if (!httpResponse.getSuccess()) {
             return BeanfunStringResult.error(AbstractBeanfunResult.CodeEnum.REQUEST_ERROR);
         }

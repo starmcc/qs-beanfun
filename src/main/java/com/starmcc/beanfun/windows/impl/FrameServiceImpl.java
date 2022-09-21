@@ -5,6 +5,7 @@ import com.alibaba.fastjson.JSONObject;
 import com.starmcc.beanfun.client.HttpClient;
 import com.starmcc.beanfun.constant.FXPageEnum;
 import com.starmcc.beanfun.constant.QsConstant;
+import com.starmcc.beanfun.windows.RecordVideoManager;
 import com.starmcc.beanfun.model.JFXStage;
 import com.starmcc.beanfun.model.QsTray;
 import com.starmcc.beanfun.thread.Runnable2;
@@ -41,6 +42,11 @@ public class FrameServiceImpl implements FrameService {
     }
 
     @Override
+    public void openWindow(FXPageEnum page, Stage parentStage) throws Exception {
+        openWindow(page, parentStage, page.getBuildMethod());
+    }
+
+    @Override
     public void openWindow(FXPageEnum page) throws Exception {
         openWindow(page, null, page.getBuildMethod());
     }
@@ -49,6 +55,7 @@ public class FrameServiceImpl implements FrameService {
     public void killAllTask() {
         ThreadPoolManager.shutdown();
         AdvancedTimerMamager.getInstance().removeAllTask();
+        RecordVideoManager.getInstance().stop();
         if (Objects.nonNull(QsConstant.trayIcon)) {
             QsTray.remove(QsConstant.trayIcon);
         }
@@ -60,11 +67,6 @@ public class FrameServiceImpl implements FrameService {
             return false;
         }
 
-        if (page.getCloseAndExitApp()) {
-            this.exit();
-            return true;
-        }
-
         if (page.getCloseAndKillThread()) {
             this.killAllTask();
         }
@@ -74,10 +76,9 @@ public class FrameServiceImpl implements FrameService {
             return false;
         }
         jfxStage.getStage().close();
-
-
         return true;
     }
+
 
     @Override
     public void exit() {
@@ -145,7 +146,6 @@ public class FrameServiceImpl implements FrameService {
             obj.put("domain", cookie.getDomain());
             obj.put("key", cookie.getName());
             obj.put("val", cookie.getValue());
-            System.out.println(cookie.getDomain() + "=" + cookie.getValue());
             jsonArr.add(obj);
         }
         HttpHost proxyHttpHost = WindowService.getInstance().getPacScriptProxy(url);

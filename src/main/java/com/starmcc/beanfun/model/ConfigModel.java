@@ -3,6 +3,7 @@ package com.starmcc.beanfun.model;
 import com.starmcc.beanfun.constant.QsConstant;
 import lombok.Data;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -24,7 +25,7 @@ public class ConfigModel {
     private Boolean autoInput;
     private Boolean passInput;
     private Integer loginType;
-    private Video video;
+    private RecordVideo recordVideo;
     private List<ActPwd> actPwds;
 
     private ProxyConfig proxyConfig;
@@ -49,7 +50,7 @@ public class ConfigModel {
         // 不置顶
         this.passInput = false;
         // 录像配置
-        this.video = new Video();
+        this.recordVideo = new RecordVideo();
         // 自动输入
         this.autoInput = true;
         // 代理配置
@@ -63,20 +64,63 @@ public class ConfigModel {
         private String pwd;
     }
 
+    /**
+     * 录制视频
+     *
+     * @author starmcc
+     * @date 2022/09/22
+     */
     @Data
-    public static class Video {
-        private String videoPath;
-        private Integer videoFps;
-        private Integer videoCodeRate;
+    public static class RecordVideo {
+        /**
+         * 文件夹
+         */
+        private String folder;
+        /**
+         * 帧/秒
+         */
+        private Integer fps;
+        /**
+         * 视频码率
+         */
+        private Integer codeRate;
+        /**
+         * 捕捉类型 1=游戏录制 2=全屏
+         */
+        private Integer captureType;
 
-        public Video() {
+        public RecordVideo() {
             // 默认配置
             // 自身目录/video
-            this.videoPath = QsConstant.APP_PATH + "video";
-            // FPS 60
-            this.setVideoFps(60);
-            // 码率 2500
-            this.setVideoCodeRate(2500);
+            this.folder = new File(QsConstant.PATH_PLUGINS + "video").getPath();
+            // FPS 30
+            this.setFps(30);
+            // 码率 1800
+            this.setCodeRate(1800);
+            // 类型 默认捕捉游戏窗口
+            this.setCaptureType(1);
+        }
+
+
+        /**
+         * 捕捉枚举类型
+         *
+         * @author starmcc
+         * @date 2022/09/22
+         */
+        public static enum CaptureTypeEnum {
+            游戏窗口(1),
+            桌面(2),
+            ;
+            private final int type;
+
+            CaptureTypeEnum(int type) {
+                this.type = type;
+            }
+
+            public int getType() {
+                return type;
+            }
         }
     }
 

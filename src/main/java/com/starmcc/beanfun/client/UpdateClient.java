@@ -6,7 +6,6 @@ import com.alibaba.fastjson.JSONObject;
 import com.starmcc.beanfun.constant.QsConstant;
 import com.starmcc.beanfun.model.UpdateModel;
 import com.starmcc.beanfun.model.client.QsHttpResponse;
-import com.starmcc.beanfun.utils.DownloadTools;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 
@@ -104,18 +103,11 @@ public class UpdateClient {
      * @param process     过程
      */
     public void update(String downloadUrl) {
-        String path = QsConstant.APP_PATH + QsConstant.APP_NAME + ".exe";
-        DownloadTools.Process process = new DownloadTools.Process() {
-            @Override
-            public void call(State state, Integer process, Exception e) {
-
-            }
-        };
+        String path = QsConstant.PATH_PLUGINS + QsConstant.APP_NAME + ".exe";
 
         // 下载进度窗口提示
 
         // 下载
-        DownloadTools.getInstance().run(downloadUrl, path + ".tmp", process);
 
 
         // 构建Bat文件
@@ -144,7 +136,7 @@ public class UpdateClient {
         // 写入bat
         this.writeBatFile(bat);
         // 执行bat
-        String command = "cmd /c " + QsConstant.APP_PATH + "update.bat";
+        String command = "cmd /c " + QsConstant.PATH_PLUGINS + "update.bat";
         try {
             Runtime.getRuntime().exec(command);
         } catch (Exception e) {
@@ -162,7 +154,7 @@ public class UpdateClient {
         Writer write = null;
         try {
             // 写到文件
-            File file = new File(QsConstant.APP_PATH + "update.bat");
+            File file = new File(QsConstant.PATH_PLUGINS + "update.bat");
             // 创建上级目录
             if (!file.getParentFile().exists()) {
                 file.getParentFile().mkdirs();

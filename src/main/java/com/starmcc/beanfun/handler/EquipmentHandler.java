@@ -39,7 +39,6 @@ public class EquipmentHandler {
         }
 
         double reedAtk = verifyIsGlory(param);
-        System.out.println(reedAtk);
         if (reedAtk > 0D) {
             return "荣耀卷-均:" + reedAtk;
         }

@@ -7,7 +7,6 @@ import org.apache.http.client.CookieStore;
 
 import java.io.File;
 import java.net.URI;
-import java.net.URL;
 import java.util.Map;
 import java.util.Objects;
 
@@ -102,9 +101,9 @@ public abstract class HttpClient {
      *
      * @param url      url
      * @param savePath 保存路径
-     * @return {@link boolean}
+     * @param process  过程
      */
-    public abstract File downloadFile(String url, String savePath);
+    public abstract void downloadFile(String url, String savePath, HttpClient.Process process);
 
     /**
      * 读取http文件
@@ -113,4 +112,40 @@ public abstract class HttpClient {
      * @return {@link String}
      */
     public abstract String readHttpFile(String urlAddress);
+
+
+    @FunctionalInterface
+    public interface Process {
+
+        public static enum State {
+            请求状态码异常(-3),
+            连接超时(-2),
+            未知异常(-1),
+            准备开始(0),
+            正在连接(1),
+            创建文件(2),
+            下载中(3),
+            下载完毕(4),
+            ;
+            private final int state;
+
+            State(int state) {
+                this.state = state;
+            }
+
+            public int getState() {
+                return state;
+            }
+        }
+
+        /**
+         * 调用
+         *
+         * @param state   状态
+         * @param file    文件
+         * @param process 过程
+         * @param e       e
+         */
+        void call(HttpClient.Process.State state, File file, Integer process, Exception e) ;
+    }
 }

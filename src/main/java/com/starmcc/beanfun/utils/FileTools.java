@@ -57,7 +57,7 @@ public class FileTools {
     public static ConfigModel readConfig() {
         ConfigModel configModel = new ConfigModel();
         try {
-            File jsonFile = new File(QsConstant.APP_CONFIG);
+            File jsonFile = new File(QsConstant.PATH_APP_CONFIG);
             if (!jsonFile.exists()) {
                 return configModel;
             }
@@ -95,7 +95,7 @@ public class FileTools {
         String content = JSON.toJSONString(jsonData, SerializerFeature.PrettyFormat, SerializerFeature.WriteMapNullValue,
                 SerializerFeature.WriteDateUseDateFormat);
         try {
-            File file = new File(QsConstant.APP_CONFIG);
+            File file = new File(QsConstant.PATH_APP_CONFIG);
             // 创建上级目录
             if (!file.getParentFile().exists()) {
                 file.getParentFile().mkdirs();

@@ -13,7 +13,7 @@ import java.util.function.Consumer;
  */
 @Getter
 public enum FXPageEnum {
-    登录页面("login", "QsBeanfun", false, false, true, true,
+    登录页面("login", "QsBeanfun", false, false, true,
             jfxStage -> jfxStage.getRoot().getStylesheets().add(QsConstant.class.getResource("/static/css/login.css").toExternalForm())),
     主界面("main", "QsBeanfun", true, true, true),
     关于我("about", "About"),
@@ -42,44 +42,34 @@ public enum FXPageEnum {
      */
     private final Boolean closeAndKillThread;
     /**
-     * 关闭并退出应用程序
-     */
-    private final Boolean closeAndExitApp;
-    /**
      * 构建方法
      */
     private final Consumer<JFXStage> buildMethod;
 
     FXPageEnum(String fileName, String title) {
-        this(fileName, title, true, false, false, false, null);
+        this(fileName, title, true, false, false, null);
     }
 
     FXPageEnum(String fileName, String title, Boolean showTop) {
-        this(fileName, title, showTop, false, false, false, null);
+        this(fileName, title, showTop, false, false, null);
     }
 
     FXPageEnum(String fileName, String title, Boolean showTop, Boolean showMinButton) {
-        this(fileName, title, showTop, showMinButton, false, false, null);
+        this(fileName, title, showTop, showMinButton, false, null);
     }
 
     FXPageEnum(String fileName, String title, Boolean showTop, Boolean showMinButton,
                boolean closeAndKillThread) {
-        this(fileName, title, showTop, showMinButton, closeAndKillThread, false, null);
+        this(fileName, title, showTop, showMinButton, closeAndKillThread, null);
     }
 
     FXPageEnum(String fileName, String title, Boolean showTop, Boolean showMinButton,
-               boolean closeAndKillThread, boolean closeAndExitApp) {
-        this(fileName, title, showTop, showMinButton, closeAndKillThread, closeAndExitApp, null);
-    }
-
-    FXPageEnum(String fileName, String title, Boolean showTop, Boolean showMinButton,
-               boolean closeAndKillThread, boolean closeAndExitApp, Consumer<JFXStage> buildMethod) {
+               boolean closeAndKillThread, Consumer<JFXStage> buildMethod) {
         this.fileName = fileName;
         this.title = title;
         this.showTop = showTop;
         this.showMinButton = showMinButton;
         this.closeAndKillThread = closeAndKillThread;
-        this.closeAndExitApp = closeAndExitApp;
         this.buildMethod = buildMethod;
     }
 

@@ -223,7 +223,7 @@ public class HKBeanfunClientImpl extends BeanfunClient {
             account.setCreateTime(createTime);
         }
         String url2 = "https://login.hk.beanfun.com/generic_handlers/get_cookies.ashx";
-        httpResponse = HttpClient.getInstance().get(url2, null);
+        httpResponse = HttpClient.getInstance().get(url2);
         if (!httpResponse.getSuccess()) {
             return BeanfunStringResult.error(AbstractBeanfunResult.CodeEnum.REQUEST_ERROR);
         }

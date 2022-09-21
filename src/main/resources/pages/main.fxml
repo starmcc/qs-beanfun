@@ -127,7 +127,7 @@
                                                 <Font size="15.0" />
                                             </font>
                                         </Button>
-                                        <ToggleButton fx:id="buttonVideo" layoutX="308.0" layoutY="91.0" mnemonicParsing="false" onAction="#videoAction" prefHeight="30.0" prefWidth="80.0" text="开始录像" />
+                                        <ToggleButton fx:id="buttonVideo" layoutX="308.0" layoutY="91.0" mnemonicParsing="false" onAction="#recordVideoAction" prefHeight="30.0" prefWidth="80.0" text="开始录像" />
                                         <CheckBox fx:id="checkBoxAutoInput" layoutX="224.0" layoutY="139.0" mnemonicParsing="false" onAction="#autoInputAction" prefHeight="16.0" prefWidth="78.0" text="自动输入" />
                                         <Button fx:id="buttonGetPassword" layoutX="307.0" layoutY="125.0" mnemonicParsing="false" onAction="#getPasswordAction" prefHeight="35.0" prefWidth="82.0" text="获取密码">
                                             <font>
@@ -231,7 +231,7 @@
                                 <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0">
                                     <children>
                                         <Label layoutX="14.0" layoutY="14.0" prefHeight="15.0" prefWidth="177.0" text="默认配置：FPS=60;码率=2500;" />
-                                        <Label layoutX="14.0" layoutY="37.0" prefHeight="15.0" prefWidth="177.0" text="录像默认路径：登录器/video" />
+                                        <Label layoutX="14.0" layoutY="37.0" prefHeight="15.0" prefWidth="177.0" text="录像默认路径：登录器/recordVideo" />
                                         <Label layoutX="14.0" layoutY="66.0" prefHeight="15.0" prefWidth="65.0" text="推荐配置：" textFill="RED">
                                             <font>
                                                 <Font name="System Bold" size="13.0" />

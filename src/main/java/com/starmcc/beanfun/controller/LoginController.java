@@ -10,8 +10,8 @@ import com.starmcc.beanfun.model.client.BeanfunModel;
 import com.starmcc.beanfun.model.client.BeanfunStringResult;
 import com.starmcc.beanfun.thread.ThreadPoolManager;
 import com.starmcc.beanfun.utils.AesTools;
-import com.starmcc.beanfun.utils.FileTools;
 import com.starmcc.beanfun.utils.DataTools;
+import com.starmcc.beanfun.utils.FileTools;
 import com.starmcc.beanfun.windows.FrameService;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
@@ -210,7 +210,7 @@ public class LoginController implements Initializable {
 
     @FXML
     public void closeApplication() {
-        FrameService.getInstance().closeWindow(FXPageEnum.登录页面);
+        FrameService.getInstance().exit();
     }
 
     @FXML
@@ -220,7 +220,6 @@ public class LoginController implements Initializable {
 
 
     // ==================================================================
-
 
     /**
      * 登录成功前往主界面

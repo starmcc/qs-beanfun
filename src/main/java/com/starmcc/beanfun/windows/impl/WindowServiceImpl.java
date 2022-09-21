@@ -55,8 +55,7 @@ public class WindowServiceImpl implements WindowService {
             }
             String valStr = (String) val;
             log.debug("scan regedit uninstall app DisplayName={}", valStr);
-            if (StringUtils.indexOf("Microsoft Visual C++ 20", valStr) >= 0
-                    && StringUtils.indexOf("Runtime", valStr) >= 0) {
+            if (StringUtils.indexOf("Microsoft Visual C++ 20", valStr) >= 0) {
                 is = true;
                 break;
             }
@@ -198,11 +197,6 @@ public class WindowServiceImpl implements WindowService {
         postEventKey(hwnd, WM_KEYDOWN, VK_ENTER);
     }
 
-    public static void main(String[] args) {
-        HttpHost pacScriptProxy = WindowService.getInstance().getPacScriptProxy("https://bfweb.hk.beanfun.com/");
-        System.out.println(pacScriptProxy.getHostName() + ":" + pacScriptProxy.getPort());
-    }
-
     /**
      * 获取pac代理
      *
@@ -234,7 +228,6 @@ public class WindowServiceImpl implements WindowService {
             engine.eval(pacScript);
             //调用js中的方法
             URI uri = new URI(url);
-            System.out.println(uri.getHost());
             Object test2 = ((Invocable) engine).invokeFunction("FindProxyForURL", uri.toString(), uri.getHost());
             if (Objects.isNull(test2)) {
                 log.info("url:{} runing FindProxyForURL is null result", url);
