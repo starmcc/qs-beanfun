@@ -11,6 +11,7 @@ import com.starmcc.beanfun.thread.Runnable2;
 import com.starmcc.beanfun.thread.ThreadPoolManager;
 import com.starmcc.beanfun.thread.timer.AdvancedTimerMamager;
 import com.starmcc.beanfun.windows.FrameService;
+import com.starmcc.beanfun.windows.WindowService;
 import com.starmcc.beanfun.windows.dll.EService;
 import javafx.application.Platform;
 import javafx.fxml.FXMLLoader;
@@ -18,6 +19,7 @@ import javafx.scene.Parent;
 import javafx.scene.image.Image;
 import javafx.stage.Stage;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.http.HttpHost;
 import org.apache.http.client.CookieStore;
 import org.apache.http.cookie.Cookie;
 
@@ -145,6 +147,11 @@ public class FrameServiceImpl implements FrameService {
             obj.put("val", cookie.getValue());
             System.out.println(cookie.getDomain() + "=" + cookie.getValue());
             jsonArr.add(obj);
+        }
+        HttpHost proxyHttpHost = WindowService.getInstance().getPacScriptProxy(url);
+        String agent = "";
+        if (Objects.nonNull(proxyHttpHost)) {
+            agent = proxyHttpHost.getHostName() + ":" + proxyHttpHost.getPort();
         }
         EService.INSTANCE.openBrowser(url, "", jsonArr.toJSONString());
     }

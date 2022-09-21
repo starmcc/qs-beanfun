@@ -3,6 +3,7 @@ package com.starmcc.beanfun.client.impl;
 import com.starmcc.beanfun.client.HttpClient;
 import com.starmcc.beanfun.model.ReqParams;
 import com.starmcc.beanfun.model.client.QsHttpResponse;
+import com.starmcc.beanfun.windows.WindowService;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.text.StringEscapeUtils;
@@ -26,9 +27,10 @@ import org.apache.http.message.BasicHeader;
 import org.apache.http.message.BasicNameValuePair;
 import org.apache.http.util.EntityUtils;
 
-import java.io.File;
-import java.io.FileOutputStream;
+import java.io.*;
+import java.net.HttpURLConnection;
 import java.net.URI;
+import java.net.URL;
 import java.net.URLEncoder;
 import java.nio.charset.Charset;
 import java.util.*;
@@ -149,7 +151,7 @@ public class HttpClientImpl extends HttpClient {
         httpClientBuilder.setRedirectStrategy(new LaxRedirectStrategy());
         httpClientBuilder.setDefaultCookieStore(COOKIE_STORE);
         httpClientBuilder.setUserAgent(USER_AGENT);
-        httpClientBuilder.setProxy(this.getPacProxy());
+        httpClientBuilder.setProxy(WindowService.getInstance().getPacScriptProxy(url));
         CloseableHttpClient httpClient = httpClientBuilder.build();
         FileOutputStream outputStream = null;
         try {
@@ -189,12 +191,13 @@ public class HttpClientImpl extends HttpClient {
         httpClientBuilder.setRedirectStrategy(new LaxRedirectStrategy());
         httpClientBuilder.setDefaultCookieStore(COOKIE_STORE);
         httpClientBuilder.setUserAgent(USER_AGENT);
-        httpClientBuilder.setProxy(this.getPacProxy());
-        CloseableHttpClient httpClient = httpClientBuilder.build();
         try {
             // 由客户端执行(发送)Get请求
             HttpUriRequest httpUriRequest = supplier.build();
+            HttpHost proxy = WindowService.getInstance().getPacScriptProxy(httpUriRequest.getURI().toString());
+            httpClientBuilder.setProxy(proxy);
             HttpClientContext context = HttpClientContext.create();
+            CloseableHttpClient httpClient = httpClientBuilder.build();
             CloseableHttpResponse response = httpClient.execute(httpUriRequest, context);
             // 从响应模型中获取响应实体
             qsHttpResponse.setRedirectLocations(context.getRedirectLocations());
@@ -216,20 +219,42 @@ public class HttpClientImpl extends HttpClient {
     }
 
 
+    @Override
+    public String readHttpFile(String urlAddress) {
+        BufferedReader reader = null;
+        StringBuilder content = new StringBuilder();
+        try {
+            URL url = new URL(urlAddress);
+            String line = null;
+//            CookieHandler.setDefault(new CookieManager(null, CookiePolicy.ACCEPT_ALL));
+            HttpURLConnection connection = (HttpURLConnection) url.openConnection();
+            connection.setRequestMethod("GET");
+            connection.setConnectTimeout(10 * 1000);
+            connection.setReadTimeout(10 * 1000);
+            connection.connect();
+            reader = new BufferedReader(new InputStreamReader(connection.getInputStream(), "UTF-8"));
+            while ((line = reader.readLine()) != null) {
+                content.append(line + "\n");
+            }
+            connection.disconnect();
+        } catch (Exception e) {
+            e.printStackTrace();
+        } finally {
+            if (reader != null) {
+                try {
+                    reader.close();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }
+        }
+        return content.toString();
+    }
+
+
     @FunctionalInterface
     public static interface SupplierCustom {
-
         HttpUriRequest build() throws Exception;
     }
-
-    /**
-     * 获取pac代理
-     *
-     * @return {@link HttpHost}
-     */
-    private HttpHost getPacProxy() {
-        return new HttpHost("127.0.0.1", 9000);
-    }
-
 
 }

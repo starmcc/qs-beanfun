@@ -27,6 +27,8 @@ public class ConfigModel {
     private Video video;
     private List<ActPwd> actPwds;
 
+    private ProxyConfig proxyConfig;
+
     public ConfigModel() {
         // 默认配置
         this.recordActPwd = false;
@@ -50,6 +52,8 @@ public class ConfigModel {
         this.video = new Video();
         // 自动输入
         this.autoInput = true;
+        // 代理配置
+        this.proxyConfig = null;
     }
 
 
@@ -76,4 +80,16 @@ public class ConfigModel {
         }
     }
 
+
+    @Data
+    public static class ProxyConfig {
+
+        private String ip;
+        private Float port;
+
+        @Override
+        public String toString() {
+            return ip + ":" + port;
+        }
+    }
 }

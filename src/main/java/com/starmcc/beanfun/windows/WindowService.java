@@ -1,6 +1,7 @@
 package com.starmcc.beanfun.windows;
 
 import com.starmcc.beanfun.windows.impl.WindowServiceImpl;
+import org.apache.http.HttpHost;
 
 import java.util.function.Consumer;
 
@@ -44,6 +45,13 @@ public interface WindowService {
      */
     void autoInputActPwd(String act, String pwd) throws Exception;
 
+    /**
+     * 获取pac脚本代理
+     *
+     * @param url url
+     * @return {@link HttpHost}
+     */
+    HttpHost getPacScriptProxy(String url);
 
     /**
      * 获得实例

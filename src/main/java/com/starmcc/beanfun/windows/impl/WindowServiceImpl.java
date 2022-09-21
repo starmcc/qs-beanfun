@@ -1,5 +1,8 @@
 package com.starmcc.beanfun.windows.impl;
 
+import com.starmcc.beanfun.client.HttpClient;
+import com.starmcc.beanfun.constant.QsConstant;
+import com.starmcc.beanfun.model.ConfigModel;
 import com.starmcc.beanfun.thread.timer.AdvancedTimerMamager;
 import com.starmcc.beanfun.thread.timer.AdvancedTimerTask;
 import com.starmcc.beanfun.windows.WindowService;
@@ -8,8 +11,13 @@ import com.sun.jna.platform.win32.*;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.http.HttpHost;
 
+import javax.script.Invocable;
+import javax.script.ScriptEngine;
+import javax.script.ScriptEngineManager;
 import java.awt.*;
+import java.net.URI;
 import java.util.Map;
 import java.util.Objects;
 import java.util.function.Consumer;
@@ -40,14 +48,15 @@ public class WindowServiceImpl implements WindowService {
             return is;
         }
         for (String software : softwares) {
-            Map<String, Object> map = Advapi32Util.registryGetValues(WinReg.HKEY_LOCAL_MACHINE, path + software);
+            Map<String, Object> map = Advapi32Util.registryGetValues(WinReg.HKEY_LOCAL_MACHINE, path + software, WinNT.KEY_READ);
             Object val = map.get("DisplayName");
             if (Objects.isNull(val)) {
                 continue;
             }
             String valStr = (String) val;
             log.debug("scan regedit uninstall app DisplayName={}", valStr);
-            if (StringUtils.indexOf("Microsoft Visual C++ 20", valStr) >= 0 && StringUtils.indexOf("Runtime", valStr) >= 0) {
+            if (StringUtils.indexOf("Microsoft Visual C++ 20", valStr) >= 0
+                    && StringUtils.indexOf("Runtime", valStr) >= 0) {
                 is = true;
                 break;
             }
@@ -188,6 +197,74 @@ public class WindowServiceImpl implements WindowService {
         Thread.sleep(100);
         postEventKey(hwnd, WM_KEYDOWN, VK_ENTER);
     }
+
+    public static void main(String[] args) {
+        HttpHost pacScriptProxy = WindowService.getInstance().getPacScriptProxy("https://bfweb.hk.beanfun.com/");
+        System.out.println(pacScriptProxy.getHostName() + ":" + pacScriptProxy.getPort());
+    }
+
+    /**
+     * 获取pac代理
+     *
+     * @return {@link HttpHost}
+     */
+    @Override
+    public HttpHost getPacScriptProxy(String url) {
+        HttpHost httpHost = null;
+        // 如果有自定义配置的代理，优先使用配置代理
+        ConfigModel.ProxyConfig proxyConfig = QsConstant.config.getProxyConfig();
+        if (Objects.nonNull(proxyConfig) && StringUtils.isNotBlank(proxyConfig.getIp()) && Objects.nonNull(proxyConfig.getIp())) {
+            log.info("use proxy my custom value = {}", proxyConfig.toString());
+            return new HttpHost(proxyConfig.getIp(), proxyConfig.getPort().intValue());
+        }
+
+        try {
+            String path = "Software\\Microsoft\\Windows\\CurrentVersion\\Internet Settings";
+            String proxyUrl = Advapi32Util.registryGetStringValue(WinReg.HKEY_CURRENT_USER, path, "AutoConfigURL");
+            if (StringUtils.isBlank(proxyUrl)) {
+                log.info("not pac proxy");
+                return httpHost;
+            }
+            String pacScript = HttpClient.getInstance().readHttpFile(proxyUrl);
+            if (StringUtils.isBlank(pacScript)) {
+                log.info("read pac proxy file is null");
+                return httpHost;
+            }
+            ScriptEngine engine = new ScriptEngineManager().getEngineByName("JavaScript");
+            engine.eval(pacScript);
+            //调用js中的方法
+            URI uri = new URI(url);
+            System.out.println(uri.getHost());
+            Object test2 = ((Invocable) engine).invokeFunction("FindProxyForURL", uri.toString(), uri.getHost());
+            if (Objects.isNull(test2)) {
+                log.info("url:{} runing FindProxyForURL is null result", url);
+                return httpHost;
+            }
+            String pac = String.valueOf(test2);
+            log.info("pac={}", pac);
+            // DIRECT 不代理
+            if (StringUtils.indexOf(pac, "DIRECT") >= 0) {
+                return httpHost;
+            }
+            String[] split = pac.split(";");
+            for (String pxy : split) {
+                String[] pxyArr = pxy.trim().split(" ");
+                if (ArrayUtils.isEmpty(pxyArr) || pxyArr.length < 2) {
+                    continue;
+                }
+                if (!StringUtils.equals(pxyArr[0].trim(), "PROXY")) {
+                    continue;
+                }
+                String[] address = pxyArr[1].trim().split(":");
+                httpHost = new HttpHost(address[0], Integer.valueOf(address[1]));
+                break;
+            }
+        } catch (Exception e) {
+            log.error("proxy error = {}", e.getMessage(), e);
+        }
+        return httpHost;
+    }
+
 
     private static void inputString(WinDef.HWND hwnd, String val) {
         char[] chars = val.toCharArray();

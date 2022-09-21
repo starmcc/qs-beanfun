@@ -7,7 +7,7 @@ import org.apache.http.client.CookieStore;
 
 import java.io.File;
 import java.net.URI;
-import java.util.LinkedHashMap;
+import java.net.URL;
 import java.util.Map;
 import java.util.Objects;
 
@@ -60,7 +60,7 @@ public abstract class HttpClient {
     /**
      * GET
      *
-     * @param url       url
+     * @param url url
      * @return {@link QsHttpResponse}
      * @throws Exception 异常
      */
@@ -80,11 +80,12 @@ public abstract class HttpClient {
     /**
      * POST
      *
-     * @param url    url
+     * @param url url
      * @return {@link QsHttpResponse}
      * @throws Exception 异常
      */
     public abstract QsHttpResponse post(String url) throws Exception;
+
     /**
      * POST
      *
@@ -104,4 +105,12 @@ public abstract class HttpClient {
      * @return {@link boolean}
      */
     public abstract File downloadFile(String url, String savePath);
+
+    /**
+     * 读取http文件
+     *
+     * @param urlAddress url地址
+     * @return {@link String}
+     */
+    public abstract String readHttpFile(String urlAddress);
 }
