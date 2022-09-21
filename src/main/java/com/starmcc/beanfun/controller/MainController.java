@@ -2,16 +2,18 @@ package com.starmcc.beanfun.controller;
 
 import com.starmcc.beanfun.api.ThirdPartyApiClient;
 import com.starmcc.beanfun.client.BeanfunClient;
-import com.starmcc.beanfun.constant.FXPages;
+import com.starmcc.beanfun.constant.FXPageEnum;
 import com.starmcc.beanfun.constant.QsConstant;
 import com.starmcc.beanfun.handler.*;
-import com.starmcc.beanfun.model.ConfigJson;
+import com.starmcc.beanfun.model.ConfigModel;
 import com.starmcc.beanfun.model.QsTray;
 import com.starmcc.beanfun.model.client.Account;
 import com.starmcc.beanfun.model.client.BeanfunAccountResult;
 import com.starmcc.beanfun.model.client.BeanfunStringResult;
 import com.starmcc.beanfun.thread.ThreadPoolManager;
-import com.starmcc.beanfun.utils.ConfigFileUtils;
+import com.starmcc.beanfun.thread.timer.AdvancedTimerMamager;
+import com.starmcc.beanfun.thread.timer.AdvancedTimerTask;
+import com.starmcc.beanfun.utils.FileTools;
 import com.starmcc.beanfun.utils.RegexUtils;
 import com.starmcc.beanfun.windows.FrameService;
 import com.starmcc.beanfun.windows.WindowService;
@@ -41,7 +43,7 @@ import java.util.ResourceBundle;
 
 
 /**
- * 主控制器
+ * 主页面控制器
  *
  * @author starmcc
  * @date 2022/03/19
@@ -124,7 +126,7 @@ public class MainController implements Initializable {
     public void initialize(URL location, ResourceBundle resources) {
         FrameService.getInstance().runLater(() -> {
             // 托盘菜单
-            QsConstant.trayIcon = QsTray.init(QsConstant.JFX_STAGE_DATA.get(FXPages.主界面).getStage());
+            QsConstant.trayIcon = QsTray.init(QsConstant.JFX_STAGE_DATA.get(FXPageEnum.主界面).getStage());
             QsTray.show(QsConstant.trayIcon);
         });
         // 获取账号数据
@@ -135,6 +137,13 @@ public class MainController implements Initializable {
         } catch (Exception e) {
             log.error("error={}", e.getMessage(), e);
         }
+        // 开始心跳 5分钟心跳一次保持登录状态
+        AdvancedTimerMamager.getInstance().addTask(new AdvancedTimerTask() {
+            @Override
+            public void start() throws Exception {
+                BeanfunClient.run().heartbeat();
+            }
+        }, 0, 1000 * 60 * 5);
     }
 
     private void initData() throws Exception {
@@ -154,7 +163,7 @@ public class MainController implements Initializable {
         textFieldRanShao.setText(KeyEvent.getKeyText(ranShaoKey));
 
         // 录像配置
-        ConfigJson.Video video = QsConstant.config.getVideo();
+        ConfigModel.Video video = QsConstant.config.getVideo();
         ObservableList<Integer> fpsItems = FXCollections.observableArrayList();
         fpsItems.add(30);
         fpsItems.add(60);
@@ -215,7 +224,7 @@ public class MainController implements Initializable {
             textFieldLunHui.setText(KeyEvent.getKeyText(code));
             // 记录设置
             QsConstant.config.setLunHuiKey(code);
-            ConfigFileUtils.writeConfig(QsConstant.config);
+            FileTools.saveConfig(QsConstant.config);
         });
 
         textFieldRanShao.setOnKeyPressed((keyEvent) -> {
@@ -227,7 +236,7 @@ public class MainController implements Initializable {
             textFieldRanShao.setText(KeyEvent.getKeyText(code));
             // 记录设置
             QsConstant.config.setRanShaoKey(code);
-            ConfigFileUtils.writeConfig(QsConstant.config);
+            FileTools.saveConfig(QsConstant.config);
         });
 
 
@@ -238,7 +247,7 @@ public class MainController implements Initializable {
                 comboBoxVideoCodeRate.setValue(oldVal);
                 return;
             }
-            ConfigJson.Video videoTemp = QsConstant.config.getVideo();
+            ConfigModel.Video videoTemp = QsConstant.config.getVideo();
             int number = Integer.valueOf(newVal);
             if (number == 0) {
                 number = videoTemp.getVideoCodeRate();
@@ -246,7 +255,7 @@ public class MainController implements Initializable {
             videoTemp.setVideoCodeRate(number);
             comboBoxVideoCodeRate.setValue(String.valueOf(number));
             QsConstant.config.setVideo(videoTemp);
-            ConfigFileUtils.writeConfig(QsConstant.config);
+            FileTools.saveConfig(QsConstant.config);
         });
     }
 
@@ -256,8 +265,8 @@ public class MainController implements Initializable {
         FrameService.getInstance().runLater(() -> {
             try {
                 BeanfunClient.run().loginOut(QsConstant.beanfunModel.getToken());
-                FrameService.getInstance().openWindow(FXPages.登录页面);
-                FrameService.getInstance().closeWindow(FXPages.主界面);
+                FrameService.getInstance().openWindow(FXPageEnum.登录页面);
+                FrameService.getInstance().closeWindow(FXPageEnum.主界面);
             } catch (Exception e) {
                 log.error("登出异常 e={}", e.getMessage(), e);
             }
@@ -301,20 +310,28 @@ public class MainController implements Initializable {
             gamePathOpenAction(actionEvent);
             return;
         }
+        // 检查VC环境是否安装
+        boolean vcRuntimeEnvironment = WindowService.getInstance().checkVcRuntimeEnvironment();
+        if (!vcRuntimeEnvironment) {
+            QsConstant.alert("请安装VC环境!", Alert.AlertType.INFORMATION);
+            boolean goDownload = QsConstant.confirmDialog("VcRuntime Error", "模拟繁体环境需要拥有VC环境,是否前往下载并安装?");
+            if (goDownload) {
+                FrameService.getInstance().openWebUrl("https://aka.ms/vs/17/release/vc_redist.x64.exe");
+            }
+            return;
+        }
         // 启动游戏 如果免输入模式，组装账密
-
-        boolean killStartPalyWindow = BooleanUtils.isTrue(QsConstant.config.getKillStartPalyWindow());
         if (BooleanUtils.isTrue(QsConstant.config.getPassInput())) {
             buttonGetPassword.setDisable(true);
             AccountHandler.getDynamicPassword(QsConstant.nowAccount, (id, password) -> {
-                GameHandler.runGame(textFieldGamePath.getText(), id, password, killStartPalyWindow);
+                GameHandler.runGame(textFieldGamePath.getText(), id, password);
                 FrameService.getInstance().runLater(() -> {
                     textFieldDynamicPwd.setText(password);
                     buttonGetPassword.setDisable(false);
                 });
             });
         } else {
-            GameHandler.runGame(textFieldGamePath.getText(), null, null, killStartPalyWindow);
+            GameHandler.runGame(textFieldGamePath.getText(), null, null);
         }
     }
 
@@ -323,7 +340,7 @@ public class MainController implements Initializable {
         FileChooser fileChooser = new FileChooser();
         FileChooser.ExtensionFilter extFilter = new FileChooser.ExtensionFilter("新枫之谷启动程序(MapleStory.exe)", "MapleStory.exe");
         fileChooser.getExtensionFilters().add(extFilter);
-        File file = fileChooser.showOpenDialog(QsConstant.JFX_STAGE_DATA.get(FXPages.主界面).getStage());
+        File file = fileChooser.showOpenDialog(QsConstant.JFX_STAGE_DATA.get(FXPageEnum.主界面).getStage());
         if (Objects.isNull(file)) {
             return;
         }
@@ -339,7 +356,7 @@ public class MainController implements Initializable {
 
         textFieldGamePath.setText(path);
         QsConstant.config.setGamePath(path);
-        ConfigFileUtils.writeConfig(QsConstant.config);
+        FileTools.saveConfig(QsConstant.config);
     }
 
 
@@ -449,7 +466,7 @@ public class MainController implements Initializable {
      */
     @FXML
     public void alwaysOnTopAction(ActionEvent actionEvent) {
-        QsConstant.JFX_STAGE_DATA.get(FXPages.主界面).getStage().setAlwaysOnTop(checkMenuItemAlwaysOnTop.isSelected());
+        QsConstant.JFX_STAGE_DATA.get(FXPageEnum.主界面).getStage().setAlwaysOnTop(checkMenuItemAlwaysOnTop.isSelected());
     }
 
 
@@ -460,13 +477,13 @@ public class MainController implements Initializable {
      */
     @FXML
     public void openEquipmentCalcWindowMenu(ActionEvent actionEvent) throws Exception {
-        FrameService.getInstance().openWindow(FXPages.装备计算器);
+        FrameService.getInstance().openWindow(FXPageEnum.装备计算器);
     }
 
     @FXML
     public void passInputAction(ActionEvent actionEvent) {
         QsConstant.config.setPassInput(checkBoxPassInput.isSelected());
-        ConfigFileUtils.writeConfig(QsConstant.config);
+        FileTools.saveConfig(QsConstant.config);
     }
 
 
@@ -508,7 +525,7 @@ public class MainController implements Initializable {
     @FXML
     public void killPlayWindowAction(ActionEvent actionEvent) {
         QsConstant.config.setKillStartPalyWindow(checkBoxKillPlayStartWindow.isSelected());
-        ConfigFileUtils.writeConfig(QsConstant.config);
+        FileTools.saveConfig(QsConstant.config);
     }
 
     /**
@@ -518,14 +535,14 @@ public class MainController implements Initializable {
      */
     @FXML
     public void openToolsWindowAction(ActionEvent actionEvent) throws Exception {
-        FrameService.getInstance().openWindow(FXPages.关于我, FXPages.主界面);
+        FrameService.getInstance().openWindow(FXPageEnum.关于我, FXPageEnum.主界面);
     }
 
     @FXML
     public void videoPathOpenAction(ActionEvent actionEvent) throws Exception {
         DirectoryChooser directoryChooser = new DirectoryChooser();
         directoryChooser.setTitle("录像目录");
-        File selectedfolder = directoryChooser.showDialog(QsConstant.JFX_STAGE_DATA.get(FXPages.主界面).getStage());
+        File selectedfolder = directoryChooser.showDialog(QsConstant.JFX_STAGE_DATA.get(FXPageEnum.主界面).getStage());
         if (Objects.isNull(selectedfolder)) {
             return;
         }
@@ -535,28 +552,28 @@ public class MainController implements Initializable {
         }
         textFieldVideoPath.setText(path);
         QsConstant.config.getVideo().setVideoPath(path);
-        ConfigFileUtils.writeConfig(QsConstant.config);
+        FileTools.saveConfig(QsConstant.config);
     }
 
     @FXML
     public void selectVideoFpsAction(ActionEvent actionEvent) {
         Integer value = choiceBoxVideoFps.getValue();
         QsConstant.config.getVideo().setVideoFps(value);
-        ConfigFileUtils.writeConfig(QsConstant.config);
+        FileTools.saveConfig(QsConstant.config);
     }
 
     @FXML
     public void selectVideoCodeRateAction(ActionEvent actionEvent) {
         String value = comboBoxVideoCodeRate.getValue();
         QsConstant.config.getVideo().setVideoCodeRate(Integer.valueOf(value));
-        ConfigFileUtils.writeConfig(QsConstant.config);
+        FileTools.saveConfig(QsConstant.config);
     }
 
 
     @FXML
     public void killGamePatcherAction(ActionEvent actionEvent) {
         QsConstant.config.setKillGamePatcher(checkBoxKillGamePatcher.isSelected());
-        ConfigFileUtils.writeConfig(QsConstant.config);
+        FileTools.saveConfig(QsConstant.config);
     }
 
     @FXML
@@ -575,7 +592,7 @@ public class MainController implements Initializable {
 
     public void autoInputAction(ActionEvent actionEvent) {
         QsConstant.config.setAutoInput(checkBoxAutoInput.isSelected());
-        ConfigFileUtils.writeConfig(QsConstant.config);
+        FileTools.saveConfig(QsConstant.config);
     }
 
 
@@ -597,8 +614,7 @@ public class MainController implements Initializable {
 
         if (!QsConstant.beanfunModel.isCertStatus()) {
             // 需要进阶认证
-            FrameService.getInstance().runLater(() -> QsConstant.alert("请前往用户中心 -> 会员中心进行进阶认证!\n"
-                    + "做完进阶认证后请重新退出重新登录!", Alert.AlertType.INFORMATION));
+            FrameService.getInstance().runLater(() -> QsConstant.alert("请前往用户中心 -> 会员中心进行进阶认证!\n" + "做完进阶认证后请重新退出重新登录!", Alert.AlertType.INFORMATION));
         } else if (QsConstant.beanfunModel.isNewAccount()) {
             // 需要创建账号
             FrameService.getInstance().runLater(() -> QsConstant.alert("新账号请点击创建账号!", Alert.AlertType.INFORMATION));

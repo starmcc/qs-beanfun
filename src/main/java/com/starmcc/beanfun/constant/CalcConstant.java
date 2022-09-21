@@ -4,6 +4,12 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
 
+/**
+ * 装备计算常量
+ *
+ * @author starmcc
+ * @date 2022/09/21
+ */
 public class CalcConstant {
     // 武器星力攻击系数加成
     public static final Map<Integer, Integer> WEAPON_STAR_200_ATK = new HashMap<>();

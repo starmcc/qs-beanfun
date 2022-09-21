@@ -29,6 +29,11 @@ public class UpdateClient {
     private UpdateClient() {
     }
 
+    /**
+     * 获得实例
+     *
+     * @return {@link UpdateClient}
+     */
     public static synchronized UpdateClient getInstance() {
         //先检查实例是否存在，如果不存在才进入下面的同步块
         if (instance == null) {

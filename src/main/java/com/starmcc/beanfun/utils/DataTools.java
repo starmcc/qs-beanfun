@@ -7,6 +7,12 @@ import org.apache.commons.lang3.StringUtils;
 import java.util.Collection;
 import java.util.Scanner;
 
+/**
+ * 数据工具
+ *
+ * @author starmcc
+ * @date 2022/09/21
+ */
 @Slf4j
 public class DataTools {
 

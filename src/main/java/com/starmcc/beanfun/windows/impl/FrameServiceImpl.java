@@ -3,7 +3,7 @@ package com.starmcc.beanfun.windows.impl;
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.starmcc.beanfun.client.HttpClient;
-import com.starmcc.beanfun.constant.FXPages;
+import com.starmcc.beanfun.constant.FXPageEnum;
 import com.starmcc.beanfun.constant.QsConstant;
 import com.starmcc.beanfun.model.JFXStage;
 import com.starmcc.beanfun.model.QsTray;
@@ -34,12 +34,12 @@ import java.util.function.Consumer;
 @Slf4j
 public class FrameServiceImpl implements FrameService {
     @Override
-    public void openWindow(FXPages page, FXPages parentPage) throws Exception {
+    public void openWindow(FXPageEnum page, FXPageEnum parentPage) throws Exception {
         openWindow(page, QsConstant.JFX_STAGE_DATA.get(parentPage).getStage(), page.getBuildMethod());
     }
 
     @Override
-    public void openWindow(FXPages page) throws Exception {
+    public void openWindow(FXPageEnum page) throws Exception {
         openWindow(page, null, page.getBuildMethod());
     }
 
@@ -53,7 +53,7 @@ public class FrameServiceImpl implements FrameService {
     }
 
     @Override
-    public boolean closeWindow(FXPages page) {
+    public boolean closeWindow(FXPageEnum page) {
         if (Objects.isNull(page)) {
             return false;
         }
@@ -80,6 +80,7 @@ public class FrameServiceImpl implements FrameService {
     @Override
     public void exit() {
         this.killAllTask();
+        AdvancedTimerMamager.shutdown();
         Platform.exit();
     }
 
@@ -108,7 +109,7 @@ public class FrameServiceImpl implements FrameService {
     }
 
 
-    void openWindow(FXPages page, Stage parentStage, Consumer<JFXStage> build) throws Exception {
+    private void openWindow(FXPageEnum page, Stage parentStage, Consumer<JFXStage> build) throws Exception {
         Stage stage = new Stage();
         if (Objects.nonNull(parentStage)) {
             stage.initOwner(parentStage);

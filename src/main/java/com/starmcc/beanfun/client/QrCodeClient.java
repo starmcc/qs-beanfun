@@ -6,12 +6,23 @@ import com.starmcc.beanfun.model.client.BeanfunStringResult;
 
 import java.util.Objects;
 
+/**
+ * 二维码客户端
+ *
+ * @author starmcc
+ * @date 2022/09/21
+ */
 public abstract class QrCodeClient {
 
-    private static QrCodeClient qrCodeClient;
+    private static QrCodeClient qrCodeClient = null;
 
 
-    public static QrCodeClient run() {
+    /**
+     * 运行
+     *
+     * @return {@link QrCodeClient}
+     */
+    public synchronized static QrCodeClient run() {
         if (Objects.isNull(qrCodeClient)) {
             qrCodeClient = new TwQrCodeClientImpl();
         }
@@ -38,7 +49,7 @@ public abstract class QrCodeClient {
 
 
     /**
-     * 登录
+     * 二维码登录
      *
      * @param sessionKey 会话密钥
      * @return {@link BeanfunStringResult}

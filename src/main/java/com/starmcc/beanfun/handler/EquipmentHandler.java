@@ -12,6 +12,12 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
+/**
+ * 装备卷轴计算器处理程序
+ *
+ * @author starmcc
+ * @date 2022/09/21
+ */
 @Slf4j
 public class EquipmentHandler {
 

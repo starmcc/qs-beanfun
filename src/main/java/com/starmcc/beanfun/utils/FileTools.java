@@ -1,20 +1,30 @@
 package com.starmcc.beanfun.utils;
 
 import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson.TypeReference;
 import com.alibaba.fastjson.serializer.SerializerFeature;
 import com.starmcc.beanfun.QsBeanfunApplication;
 import com.starmcc.beanfun.constant.QsConstant;
+import com.starmcc.beanfun.model.ConfigModel;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.StringUtils;
 
 import java.io.*;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
+import java.util.ArrayList;
 
+/**
+ * 文件工具
+ *
+ * @author starmcc
+ * @date 2022/09/21
+ */
 @Slf4j
-public class FileUtils {
+public class FileTools {
 
     /**
-     * 资源文件生成(无限重刷)
+     * 资源文件生成(会重刷)
      *
      * @param rconstantResource rconstant资源
      */
@@ -39,13 +49,17 @@ public class FileUtils {
         }
     }
 
-    //读取json文件
-    public static String readConfig() {
-        String jsonStr = "";
+    /**
+     * 读取配置
+     *
+     * @return {@link String}
+     */
+    public static ConfigModel readConfig() {
+        ConfigModel configModel = new ConfigModel();
         try {
             File jsonFile = new File(QsConstant.APP_CONFIG);
             if (!jsonFile.exists()) {
-                return jsonStr;
+                return configModel;
             }
             FileReader fileReader = new FileReader(jsonFile);
             Reader reader = new InputStreamReader(new FileInputStream(jsonFile), "utf-8");
@@ -56,15 +70,28 @@ public class FileUtils {
             }
             fileReader.close();
             reader.close();
-            jsonStr = sb.toString();
-            return jsonStr;
+            String jsonStr = sb.toString();
+            if (StringUtils.isNotEmpty(jsonStr)) {
+                configModel = JSON.parseObject(jsonStr, new TypeReference<ConfigModel>() {
+                });
+            }
+            if (DataTools.collectionIsEmpty(configModel.getActPwds())) {
+                configModel.setActPwds(new ArrayList<>());
+            }
+            FileTools.saveConfig(configModel);
         } catch (IOException e) {
             log.error("文件读取异常 e={}", e.getMessage(), e);
-            return jsonStr;
         }
+        return configModel;
     }
 
-    public static boolean writeConfig(Object jsonData) {
+    /**
+     * 保存配置
+     *
+     * @param jsonData json数据
+     * @return boolean
+     */
+    public static boolean saveConfig(Object jsonData) {
         String content = JSON.toJSONString(jsonData, SerializerFeature.PrettyFormat, SerializerFeature.WriteMapNullValue,
                 SerializerFeature.WriteDateUseDateFormat);
         try {

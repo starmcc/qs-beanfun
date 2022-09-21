@@ -1,24 +1,17 @@
 package com.starmcc.beanfun.windows.impl;
 
-import com.alibaba.fastjson.JSONArray;
-import com.alibaba.fastjson.JSONObject;
-import com.starmcc.beanfun.client.HttpClient;
+import com.starmcc.beanfun.thread.timer.AdvancedTimerMamager;
+import com.starmcc.beanfun.thread.timer.AdvancedTimerTask;
 import com.starmcc.beanfun.windows.WindowService;
 import com.starmcc.beanfun.windows.dll.CustomUser32;
-import com.starmcc.beanfun.windows.dll.EService;
 import com.sun.jna.platform.win32.*;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.StringUtils;
-import org.apache.commons.lang3.concurrent.BasicThreadFactory;
-import org.apache.http.client.CookieStore;
-import org.apache.http.cookie.Cookie;
 
 import java.awt.*;
-import java.util.List;
+import java.util.Map;
 import java.util.Objects;
-import java.util.concurrent.ScheduledExecutorService;
-import java.util.concurrent.ScheduledThreadPoolExecutor;
-import java.util.concurrent.TimeUnit;
 import java.util.function.Consumer;
 
 /**
@@ -38,55 +31,97 @@ public class WindowServiceImpl implements WindowService {
     private static final byte VK_ESCAPE = 0x001B;
     private static final byte VK_END = 0x0023;
 
-
     @Override
-    public void closeMapleStoryStart() {
-        final long time = System.currentTimeMillis();
-        ScheduledExecutorService executorService = new ScheduledThreadPoolExecutor(2,
-                new BasicThreadFactory.Builder().namingPattern("closeMapleStoryStart-schedule-pool-%d").daemon(true).build());
-        executorService.scheduleAtFixedRate(() -> {
-            WinDef.HWND hwnd = null;
-            try {
-                hwnd = CustomUser32.INSTANCE.FindWindow("StartUpDlgClass", "MapleStory");
-                if (hwnd != null) {
-                    CustomUser32.INSTANCE.SetForegroundWindow(hwnd);
-                    CustomUser32.INSTANCE.PostMessage(hwnd, 0x10, new WinDef.WPARAM(0), new WinDef.LPARAM(0));
-                }
-            } catch (Exception e) {
-                log.error("自动关闭Play窗口发生异常! e={}", e.getMessage(), e);
-            } finally {
-                if (hwnd != null || System.currentTimeMillis() - time > 5000) {
-                    // 进程句柄找到了或超过5秒，结束该线程池
-                    executorService.shutdownNow();
-                }
+    public boolean checkVcRuntimeEnvironment() {
+        boolean is = false;
+        String path = "SOFTWARE\\WOW6432Node\\Microsoft\\Windows\\CurrentVersion\\Uninstall\\";
+        String[] softwares = Advapi32Util.registryGetKeys(WinReg.HKEY_LOCAL_MACHINE, path, WinNT.KEY_READ);
+        if (ArrayUtils.isEmpty(softwares)) {
+            return is;
+        }
+        for (String software : softwares) {
+            Map<String, Object> map = Advapi32Util.registryGetValues(WinReg.HKEY_LOCAL_MACHINE, path + software);
+            Object val = map.get("DisplayName");
+            if (Objects.isNull(val)) {
+                continue;
             }
-        }, 0, 200, TimeUnit.MILLISECONDS);
+            String valStr = (String) val;
+            log.debug("scan regedit uninstall app DisplayName={}", valStr);
+            if (StringUtils.indexOf("Microsoft Visual C++ 20", valStr) >= 0 && StringUtils.indexOf("Runtime", valStr) >= 0) {
+                is = true;
+                break;
+            }
+        }
+        return is;
     }
 
     @Override
-    public void stopAutoPatcher(Consumer<Process> consumer) {
+    public void closeMapleStoryStart() {
+        // 200毫秒检查一次
         final long time = System.currentTimeMillis();
-        ScheduledExecutorService executorService = new ScheduledThreadPoolExecutor(2,
-                new BasicThreadFactory.Builder().namingPattern("closeMapleStoryStart-schedule-pool-%d").daemon(true).build());
-        executorService.scheduleAtFixedRate(() -> {
-            int patcherPid = 0;
-            try {
-                // 查找更新程序
-                patcherPid = this.searchNameProcess("Patcher.exe");
-                if (patcherPid == 0) {
-                    return;
-                }
-                String cmdScript = String.format("taskkill /F /PID %d", patcherPid);
-                consumer.accept(Runtime.getRuntime().exec(cmdScript));
-            } catch (Exception e) {
-                log.error("异常 e={}", e.getMessage(), e);
-            } finally {
-                if (patcherPid != 0 || System.currentTimeMillis() - time > 5000) {
-                    // 进程PID找到了或超过5秒，结束该线程池
-                    executorService.shutdownNow();
+        AdvancedTimerMamager.getInstance().addTask(new AdvancedTimerTask() {
+            @Override
+            public void start() throws Exception {
+                WinDef.HWND hwnd = null;
+                try {
+                    hwnd = CustomUser32.INSTANCE.FindWindow("StartUpDlgClass", "MapleStory");
+                    if (hwnd != null) {
+                        CustomUser32.INSTANCE.SetForegroundWindow(hwnd);
+                        CustomUser32.INSTANCE.PostMessage(hwnd, 0x10, new WinDef.WPARAM(0), new WinDef.LPARAM(0));
+                    }
+                } catch (Exception e) {
+                    log.error("自动关闭Play窗口发生异常! e={}", e.getMessage(), e);
+                } finally {
+                    if (hwnd != null || System.currentTimeMillis() - time > 5000) {
+                        // 进程句柄找到了或超过5秒，结束该任务
+                        AdvancedTimerMamager.getInstance().removeTask(this.getTaskName());
+                    }
                 }
             }
-        }, 0, 200, TimeUnit.MILLISECONDS);
+        }, 0, 200);
+    }
+
+    @Override
+    public void stopAutoPatcher(Consumer<Process> callback) {
+        final long time = System.currentTimeMillis();
+        AdvancedTimerMamager.getInstance().addTask(new AdvancedTimerTask() {
+            @Override
+            public void start() throws Exception {
+                int patcherPid = 0;
+                try {
+                    // 查找更新程序
+                    patcherPid = this.searchNameProcess("Patcher.exe");
+                    if (patcherPid == 0) {
+                        return;
+                    }
+                    String cmdScript = String.format("taskkill /F /PID %d", patcherPid);
+                    callback.accept(Runtime.getRuntime().exec(cmdScript));
+                } catch (Exception e) {
+                    log.error("异常 e={}", e.getMessage(), e);
+                } finally {
+                    if (patcherPid != 0 || System.currentTimeMillis() - time > 5000) {
+                        // 进程PID找到了或超过5秒，结束该线程池
+                        AdvancedTimerMamager.getInstance().removeTask(this.getTaskName());
+                    }
+                }
+            }
+
+            private int searchNameProcess(String name) {
+                WinNT.HANDLE hand = Kernel32.INSTANCE.CreateToolhelp32Snapshot(new WinDef.DWORD(2), new WinDef.DWORD(0));
+                Tlhelp32.PROCESSENTRY32 processInfo = new Tlhelp32.PROCESSENTRY32();
+                boolean exists = Kernel32.INSTANCE.Process32First(hand, processInfo);
+                while (exists) {
+                    String processName = String.valueOf(processInfo.szExeFile);
+                    if (StringUtils.equals(processName.trim(), name.trim())) {
+                        Kernel32.INSTANCE.CloseHandle(hand);
+                        return processInfo.th32ProcessID.intValue();
+                    }
+                    exists = Kernel32.INSTANCE.Process32Next(hand, processInfo);
+                }
+                Kernel32.INSTANCE.CloseHandle(hand);
+                return 0;
+            }
+        }, 0, 200);
     }
 
 
@@ -99,22 +134,6 @@ public class WindowServiceImpl implements WindowService {
         boolean is = Kernel32.INSTANCE.TerminateProcess(handle, WinNT.PROCESS_TERMINATE);
         Kernel32.INSTANCE.CloseHandle(handle);
         return is;
-    }
-
-    private int searchNameProcess(String name) {
-        WinNT.HANDLE hand = Kernel32.INSTANCE.CreateToolhelp32Snapshot(new WinDef.DWORD(2), new WinDef.DWORD(0));
-        Tlhelp32.PROCESSENTRY32 processInfo = new Tlhelp32.PROCESSENTRY32();
-        boolean exists = Kernel32.INSTANCE.Process32First(hand, processInfo);
-        while (exists) {
-            String processName = String.valueOf(processInfo.szExeFile);
-            if (StringUtils.equals(processName.trim(), name.trim())) {
-                Kernel32.INSTANCE.CloseHandle(hand);
-                return processInfo.th32ProcessID.intValue();
-            }
-            exists = Kernel32.INSTANCE.Process32Next(hand, processInfo);
-        }
-        Kernel32.INSTANCE.CloseHandle(hand);
-        return 0;
     }
 
 

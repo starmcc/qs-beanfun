@@ -5,12 +5,12 @@ import javax.crypto.spec.SecretKeySpec;
 import java.security.Key;
 
 /**
- * des工具类
+ * des工具
  *
  * @author starmcc
  * @date 2022/03/21
  */
-public class DesUtils {
+public class DesTools {
 
     /***
      * 解密数据

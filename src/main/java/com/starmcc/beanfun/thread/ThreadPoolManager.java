@@ -11,10 +11,10 @@ import java.util.concurrent.TimeUnit;
 
 
 /**
- * 窗口工具类
+ * 线程池管理器
  *
  * @author starmcc
- * @date 2022/03/19
+ * @date 2022/09/21
  */
 @Slf4j
 public class ThreadPoolManager {

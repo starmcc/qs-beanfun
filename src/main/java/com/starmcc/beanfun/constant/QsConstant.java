@@ -1,14 +1,11 @@
 package com.starmcc.beanfun.constant;
 
-import com.starmcc.beanfun.model.ConfigJson;
-import com.starmcc.beanfun.model.JFXStage;
+import com.starmcc.beanfun.model.ConfigModel;
 import com.starmcc.beanfun.model.client.Account;
 import com.starmcc.beanfun.model.client.BeanfunModel;
-import com.starmcc.beanfun.windows.FrameService;
 import javafx.scene.control.Alert;
 import javafx.scene.control.ButtonType;
 import javafx.scene.control.TextInputDialog;
-import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 
@@ -17,12 +14,11 @@ import java.math.BigDecimal;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
-import java.util.function.Consumer;
 import java.util.stream.Collectors;
 
 
 /**
- * 常量
+ * 全局常量
  *
  * @author starmcc
  * @date 2022/03/19
@@ -37,7 +33,7 @@ public class QsConstant {
     public static final String GITHUB_URL = "https://github.com/starmcc/qs-beanfun";
     public static final JFXStageData JFX_STAGE_DATA = new JFXStageData();
     public static TrayIcon trayIcon;
-    public static ConfigJson config;
+    public static ConfigModel config;
     public static BigDecimal currentRateChinaToTw = new BigDecimal("4.5");
     public static BeanfunModel beanfunModel;
     public static Account nowAccount;

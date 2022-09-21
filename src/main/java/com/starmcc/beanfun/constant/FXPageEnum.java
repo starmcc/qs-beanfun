@@ -6,13 +6,13 @@ import lombok.Getter;
 import java.util.function.Consumer;
 
 /**
- * 对应页面的路由
+ * 对应页面的路由枚举类
  *
  * @author starmcc
- * @date 2022/03/17
+ * @date 2022/09/21
  */
 @Getter
-public enum FXPages {
+public enum FXPageEnum {
     登录页面("login", "QsBeanfun", false, false, true, true,
             jfxStage -> jfxStage.getRoot().getStylesheets().add(QsConstant.class.getResource("/static/css/login.css").toExternalForm())),
     主界面("main", "QsBeanfun", true, true, true),
@@ -50,30 +50,30 @@ public enum FXPages {
      */
     private final Consumer<JFXStage> buildMethod;
 
-    FXPages(String fileName, String title) {
+    FXPageEnum(String fileName, String title) {
         this(fileName, title, true, false, false, false, null);
     }
 
-    FXPages(String fileName, String title, Boolean showTop) {
+    FXPageEnum(String fileName, String title, Boolean showTop) {
         this(fileName, title, showTop, false, false, false, null);
     }
 
-    FXPages(String fileName, String title, Boolean showTop, Boolean showMinButton) {
+    FXPageEnum(String fileName, String title, Boolean showTop, Boolean showMinButton) {
         this(fileName, title, showTop, showMinButton, false, false, null);
     }
 
-    FXPages(String fileName, String title, Boolean showTop, Boolean showMinButton,
-            boolean closeAndKillThread) {
+    FXPageEnum(String fileName, String title, Boolean showTop, Boolean showMinButton,
+               boolean closeAndKillThread) {
         this(fileName, title, showTop, showMinButton, closeAndKillThread, false, null);
     }
 
-    FXPages(String fileName, String title, Boolean showTop, Boolean showMinButton,
-            boolean closeAndKillThread, boolean closeAndExitApp) {
+    FXPageEnum(String fileName, String title, Boolean showTop, Boolean showMinButton,
+               boolean closeAndKillThread, boolean closeAndExitApp) {
         this(fileName, title, showTop, showMinButton, closeAndKillThread, closeAndExitApp, null);
     }
 
-    FXPages(String fileName, String title, Boolean showTop, Boolean showMinButton,
-            boolean closeAndKillThread, boolean closeAndExitApp, Consumer<JFXStage> buildMethod) {
+    FXPageEnum(String fileName, String title, Boolean showTop, Boolean showMinButton,
+               boolean closeAndKillThread, boolean closeAndExitApp, Consumer<JFXStage> buildMethod) {
         this.fileName = fileName;
         this.title = title;
         this.showTop = showTop;

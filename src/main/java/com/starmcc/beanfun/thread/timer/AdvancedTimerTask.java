@@ -6,6 +6,12 @@ import lombok.extern.slf4j.Slf4j;
 import java.util.Objects;
 import java.util.concurrent.ScheduledFuture;
 
+/**
+ * 高级计时器任务
+ *
+ * @author starmcc
+ * @date 2022/09/21
+ */
 @Slf4j
 @Data
 public abstract class AdvancedTimerTask<T> implements Runnable {

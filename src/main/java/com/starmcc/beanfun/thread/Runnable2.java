@@ -1,5 +1,11 @@
 package com.starmcc.beanfun.thread;
 
+/**
+ * runnable2
+ *
+ * @author starmcc
+ * @date 2022/09/21
+ */
 @FunctionalInterface
 public interface Runnable2 {
     /**

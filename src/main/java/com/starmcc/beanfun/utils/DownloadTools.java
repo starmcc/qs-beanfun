@@ -6,9 +6,12 @@ import java.io.RandomAccessFile;
 import java.net.HttpURLConnection;
 import java.net.URL;
 
+
 /**
- * @Author starmcc
- * @Date 2022/4/8 9:52
+ * 下载工具
+ *
+ * @author starmcc
+ * @date 2022/09/21
  */
 public class DownloadTools {
 
@@ -17,7 +20,6 @@ public class DownloadTools {
     private DownloadTools() {
 
     }
-
 
     public static synchronized DownloadTools getInstance() {
         //先检查实例是否存在，如果不存在才进入下面的同步块

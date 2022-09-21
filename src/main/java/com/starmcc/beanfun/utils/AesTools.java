@@ -10,8 +10,14 @@ import javax.crypto.SecretKey;
 import javax.crypto.spec.SecretKeySpec;
 import java.security.SecureRandom;
 
+/**
+ * aes工具
+ *
+ * @author starmcc
+ * @date 2022/09/21
+ */
 @Slf4j
-public class AesUtil {
+public class AesTools {
 
     /**
      * 加密

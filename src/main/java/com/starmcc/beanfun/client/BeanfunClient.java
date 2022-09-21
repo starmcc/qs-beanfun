@@ -7,10 +7,11 @@ import com.starmcc.beanfun.model.LoginType;
 import com.starmcc.beanfun.model.client.Account;
 import com.starmcc.beanfun.model.client.BeanfunAccountResult;
 import com.starmcc.beanfun.model.client.BeanfunStringResult;
-import com.starmcc.beanfun.utils.DesUtils;
+import com.starmcc.beanfun.utils.DesTools;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.http.cookie.Cookie;
 
 import java.util.List;
 import java.util.Objects;
@@ -27,7 +28,12 @@ public abstract class BeanfunClient {
 
     private static BeanfunClient beanfunClient = null;
 
-    public static BeanfunClient run() {
+    /**
+     * 运行 (根据选择的账号类型获取不同地区的客户端)
+     *
+     * @return {@link BeanfunClient}
+     */
+    public synchronized static BeanfunClient run() {
         LoginType.TypeEnum type = LoginType.TypeEnum.getData(QsConstant.config.getLoginType());
         if (type == LoginType.TypeEnum.HK) {
             if (Objects.isNull(beanfunClient) || !(beanfunClient instanceof HKBeanfunClientImpl)) {
@@ -156,9 +162,24 @@ public abstract class BeanfunClient {
 
     /**
      * 心跳
+     *
+     * @return boolean
+     * @throws Exception 异常
      */
-    public abstract boolean heartbeat(String token) throws Exception;
+    public abstract boolean heartbeat() throws Exception;
 
+
+    protected String getBfWebToken() {
+        List<Cookie> cookies = HttpClient.getInstance().getCookieStore().getCookies();
+        String bfWebToken = null;
+        for (Cookie cookie : cookies) {
+            if (StringUtils.equals(cookie.getDomain(), "beanfun.com") && StringUtils.equals(cookie.getName(), "bfWebToken")) {
+                bfWebToken = cookie.getValue();
+                break;
+            }
+        }
+        return bfWebToken;
+    }
 
     /**
      * 解密des pkcs5 hex密文
@@ -180,7 +201,7 @@ public abstract class BeanfunClient {
         String key = split[1].substring(0, 8);
         String deVal = split[1].substring(8);
         try {
-            return DesUtils.decrypt(deVal, key).trim();
+            return DesTools.decrypt(deVal, key).trim();
         } catch (Exception e) {
             log.error("解密失败 e={}", e.getMessage());
             return "";

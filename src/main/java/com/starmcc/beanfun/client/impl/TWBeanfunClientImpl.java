@@ -126,14 +126,7 @@ public class TWBeanfunClientImpl extends BeanfunClient {
         if (!response.getSuccess()) {
             return BeanfunStringResult.error(AbstractBeanfunResult.CodeEnum.REQUEST_ERROR);
         }
-        List<Cookie> cookies = HttpClient.getInstance().getCookieStore().getCookies();
-        String bfWebToken = null;
-        for (Cookie cookie : cookies) {
-            if (StringUtils.equals(cookie.getDomain(), "beanfun.com") && StringUtils.equals(cookie.getName(), "bfWebToken")) {
-                bfWebToken = cookie.getValue();
-                break;
-            }
-        }
+        String bfWebToken = this.getBfWebToken();
         if (StringUtils.isBlank(bfWebToken)) {
             return BeanfunStringResult.error(AbstractBeanfunResult.CodeEnum.REQUEST_ERROR);
         }
@@ -385,7 +378,7 @@ public class TWBeanfunClientImpl extends BeanfunClient {
     }
 
     @Override
-    public boolean heartbeat(String token) throws Exception {
+    public boolean heartbeat() throws Exception {
         String url = "https://tw.beanfun.com/beanfun_block/generic_handlers/echo_token.ashx?webtoken=1";
         QsHttpResponse response = HttpClient.getInstance().get(url, ReqParams.getInstance().addParam("webtoken", "1"));
         log.info("心跳 = {}", response.getContent());

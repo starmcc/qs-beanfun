@@ -1,6 +1,6 @@
 package com.starmcc.beanfun.model;
 
-import com.starmcc.beanfun.constant.FXPages;
+import com.starmcc.beanfun.constant.FXPageEnum;
 import com.starmcc.beanfun.windows.FrameService;
 import javafx.event.EventHandler;
 import javafx.geometry.Insets;
@@ -20,7 +20,10 @@ import javafx.stage.StageStyle;
 import lombok.Data;
 
 /**
- * @author itqn
+ * jfxstage
+ *
+ * @author starmcc
+ * @date 2022/09/21
  */
 @Data
 public class JFXStage implements EventHandler<MouseEvent> {
@@ -52,7 +55,7 @@ public class JFXStage implements EventHandler<MouseEvent> {
     }
 
 
-    public void buildSimple(FXPages page) {
+    public void buildSimple(FXPageEnum page) {
         Scene scene = new Scene(root);
         stage.setScene(scene);
         stage.initStyle(StageStyle.TRANSPARENT);
@@ -63,9 +66,10 @@ public class JFXStage implements EventHandler<MouseEvent> {
 
 
     /**
-     * 拖拽监听器
+     * 拖动监听器
      *
-     * @author Light
+     * @author starmcc
+     * @date 2022/09/21
      */
     private static class DragListener implements EventHandler<MouseEvent> {
 
@@ -102,8 +106,10 @@ public class JFXStage implements EventHandler<MouseEvent> {
 
     /**
      * 构建
+     *
+     * @param page 页面
      */
-    public void build(FXPages page) {
+    public void build(FXPageEnum page) {
         final Insets insets = new Insets(5, 10, 5, 10);
         HBox hbox = new HBox();
         hbox.setPrefHeight(26);
@@ -169,6 +175,11 @@ public class JFXStage implements EventHandler<MouseEvent> {
         stage.setScene(scene);
     }
 
+    /**
+     * 重写鼠标handle
+     *
+     * @param event 事件
+     */
     @Override
     public void handle(MouseEvent event) {
         if (event.getEventType() == MouseEvent.MOUSE_PRESSED) {

@@ -1,16 +1,16 @@
 package com.starmcc.beanfun.controller;
 
 import com.starmcc.beanfun.client.BeanfunClient;
-import com.starmcc.beanfun.constant.FXPages;
+import com.starmcc.beanfun.constant.FXPageEnum;
 import com.starmcc.beanfun.constant.QsConstant;
 import com.starmcc.beanfun.handler.AccountHandler;
-import com.starmcc.beanfun.model.ConfigJson;
+import com.starmcc.beanfun.model.ConfigModel;
 import com.starmcc.beanfun.model.LoginType;
 import com.starmcc.beanfun.model.client.BeanfunModel;
 import com.starmcc.beanfun.model.client.BeanfunStringResult;
 import com.starmcc.beanfun.thread.ThreadPoolManager;
-import com.starmcc.beanfun.utils.AesUtil;
-import com.starmcc.beanfun.utils.ConfigFileUtils;
+import com.starmcc.beanfun.utils.AesTools;
+import com.starmcc.beanfun.utils.FileTools;
 import com.starmcc.beanfun.utils.DataTools;
 import com.starmcc.beanfun.windows.FrameService;
 import javafx.collections.ObservableList;
@@ -69,7 +69,7 @@ public class LoginController implements Initializable {
     @Override
     public void initialize(URL location, ResourceBundle resources) {
         ObservableList<String> items = comboBoxAccount.getItems();
-        List<ConfigJson.ActPwd> actPwds = QsConstant.config.getActPwds();
+        List<ConfigModel.ActPwd> actPwds = QsConstant.config.getActPwds();
         final String key = DataTools.getComputerUniqueId();
         // 解密
         actPwds.forEach(item -> {
@@ -78,8 +78,8 @@ public class LoginController implements Initializable {
                     // 是明文，不处理
                     return;
                 }
-                String act = AesUtil.dncode(key, item.getAct());
-                String pwd = AesUtil.dncode(key, item.getPwd());
+                String act = AesTools.dncode(key, item.getAct());
+                String pwd = AesTools.dncode(key, item.getPwd());
                 item.setAct(act);
                 item.setPwd(pwd);
             } catch (Exception e) {
@@ -114,12 +114,12 @@ public class LoginController implements Initializable {
     @FXML
     public void selectAccountAction() {
         String act = comboBoxAccount.getSelectionModel().getSelectedItem();
-        List<ConfigJson.ActPwd> actPwds = QsConstant.config.getActPwds();
+        List<ConfigModel.ActPwd> actPwds = QsConstant.config.getActPwds();
         if (DataTools.collectionIsEmpty(actPwds)) {
             PasswordFieldPassword.setText("");
             return;
         }
-        Optional<ConfigJson.ActPwd> queryOpt = actPwds.stream().filter(x -> StringUtils.equals(x.getAct(), act)).findFirst();
+        Optional<ConfigModel.ActPwd> queryOpt = actPwds.stream().filter(x -> StringUtils.equals(x.getAct(), act)).findFirst();
         if (queryOpt.isPresent()) {
             PasswordFieldPassword.setText(queryOpt.get().getPwd());
         } else {
@@ -189,7 +189,7 @@ public class LoginController implements Initializable {
     @FXML
     public void rememberClickAction() {
         QsConstant.config.setRecordActPwd(checkBoxRemember.isSelected());
-        ConfigFileUtils.writeConfig(QsConstant.config);
+        FileTools.saveConfig(QsConstant.config);
     }
 
 
@@ -197,7 +197,7 @@ public class LoginController implements Initializable {
     public void selectLoginTypeAction(ActionEvent actionEvent) {
         LoginType selectedItem = choiceBoxLoginType.getSelectionModel().getSelectedItem();
         QsConstant.config.setLoginType(selectedItem.getType());
-        ConfigFileUtils.writeConfig(QsConstant.config);
+        FileTools.saveConfig(QsConstant.config);
         LoginType.TypeEnum typeEnum = LoginType.TypeEnum.getData(QsConstant.config.getLoginType());
         imageViewQrCode.setVisible(typeEnum == LoginType.TypeEnum.TW);
     }
@@ -205,17 +205,17 @@ public class LoginController implements Initializable {
     @FXML
     public void qrCodeClick() throws Exception {
 
-        FrameService.getInstance().openWindow(FXPages.二维码登录, FXPages.登录页面);
+        FrameService.getInstance().openWindow(FXPageEnum.二维码登录, FXPageEnum.登录页面);
     }
 
     @FXML
     public void closeApplication() {
-        FrameService.getInstance().closeWindow(FXPages.登录页面);
+        FrameService.getInstance().closeWindow(FXPageEnum.登录页面);
     }
 
     @FXML
     public void aboutAction(MouseEvent mouseEvent) throws Exception {
-        FrameService.getInstance().openWindow(FXPages.关于我, FXPages.登录页面);
+        FrameService.getInstance().openWindow(FXPageEnum.关于我, FXPageEnum.登录页面);
     }
 
 
@@ -233,9 +233,9 @@ public class LoginController implements Initializable {
         }
         try {
             // 窗口显示
-            FrameService.getInstance().openWindow(FXPages.主界面);
-            FrameService.getInstance().closeWindow(FXPages.登录页面);
-            FrameService.getInstance().closeWindow(FXPages.二维码登录);
+            FrameService.getInstance().openWindow(FXPageEnum.主界面);
+            FrameService.getInstance().closeWindow(FXPageEnum.登录页面);
+            FrameService.getInstance().closeWindow(FXPageEnum.二维码登录);
         } catch (Exception e) {
             log.error("loginSuccessGoMain e={}", e.getMessage(), e);
         }

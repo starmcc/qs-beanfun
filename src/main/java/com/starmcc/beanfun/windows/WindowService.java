@@ -7,6 +7,13 @@ import java.util.function.Consumer;
 public interface WindowService {
 
     /**
+     * 检查vc运行环境
+     *
+     * @return boolean
+     */
+    boolean checkVcRuntimeEnvironment();
+
+    /**
      * 关闭新枫之谷启动窗口
      *
      * @return int
@@ -17,12 +24,12 @@ public interface WindowService {
     /**
      * 阻止游戏自动更新
      *
-     * @param consumer 消费者
+     * @param callback 回调
      */
-    void stopAutoPatcher(Consumer<Process> consumer);
+    void stopAutoPatcher(Consumer<Process> callback);
 
     /**
-     * 新枫之谷前景窗口
+     * 新枫之谷前置窗口
      *
      * @return boolean
      */

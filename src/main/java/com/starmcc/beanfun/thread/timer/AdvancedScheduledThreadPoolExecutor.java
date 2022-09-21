@@ -3,6 +3,12 @@ package com.starmcc.beanfun.thread.timer;
 import java.util.concurrent.RunnableScheduledFuture;
 import java.util.concurrent.ScheduledThreadPoolExecutor;
 
+/**
+ * 高级调度线程池执行类
+ *
+ * @author starmcc
+ * @date 2022/09/21
+ */
 public class AdvancedScheduledThreadPoolExecutor extends ScheduledThreadPoolExecutor {
 
     public AdvancedScheduledThreadPoolExecutor(int corePoolSize) {

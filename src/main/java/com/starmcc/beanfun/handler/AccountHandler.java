@@ -2,12 +2,12 @@ package com.starmcc.beanfun.handler;
 
 import com.starmcc.beanfun.client.BeanfunClient;
 import com.starmcc.beanfun.constant.QsConstant;
-import com.starmcc.beanfun.model.ConfigJson;
+import com.starmcc.beanfun.model.ConfigModel;
 import com.starmcc.beanfun.model.client.Account;
 import com.starmcc.beanfun.model.client.BeanfunStringResult;
 import com.starmcc.beanfun.thread.ThreadPoolManager;
-import com.starmcc.beanfun.utils.AesUtil;
-import com.starmcc.beanfun.utils.ConfigFileUtils;
+import com.starmcc.beanfun.utils.AesTools;
+import com.starmcc.beanfun.utils.FileTools;
 import com.starmcc.beanfun.utils.DataTools;
 import com.starmcc.beanfun.windows.FrameService;
 import com.sun.istack.internal.NotNull;
@@ -37,11 +37,11 @@ public class AccountHandler {
      * @param password 密码
      */
     public static void recordActPwd(String account, String password) {
-        List<ConfigJson.ActPwd> actPwds = QsConstant.config.getActPwds();
+        List<ConfigModel.ActPwd> actPwds = QsConstant.config.getActPwds();
         if (DataTools.collectionIsNotEmpty(actPwds)) {
-            Iterator<ConfigJson.ActPwd> iterator = actPwds.iterator();
+            Iterator<ConfigModel.ActPwd> iterator = actPwds.iterator();
             while (iterator.hasNext()) {
-                ConfigJson.ActPwd next = iterator.next();
+                ConfigModel.ActPwd next = iterator.next();
                 if (StringUtils.equals(next.getAct(), account)) {
                     iterator.remove();
                     break;
@@ -49,16 +49,16 @@ public class AccountHandler {
             }
         }
         try {
-            ConfigJson.ActPwd actPwd = new ConfigJson.ActPwd();
+            ConfigModel.ActPwd actPwd = new ConfigModel.ActPwd();
             // 加密储存
             final String key = DataTools.getComputerUniqueId();
-            account = AesUtil.encode(key, account);
-            password = AesUtil.encode(key, password);
+            account = AesTools.encode(key, account);
+            password = AesTools.encode(key, password);
             actPwd.setAct(account);
             actPwd.setPwd(password);
             actPwds.add(0, actPwd);
             QsConstant.config.setActPwds(actPwds);
-            ConfigFileUtils.writeConfig(QsConstant.config);
+            FileTools.saveConfig(QsConstant.config);
         } catch (Exception e) {
             log.error("异常 e={}", e.getMessage(), e);
         }

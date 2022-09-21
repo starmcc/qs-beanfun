@@ -5,7 +5,6 @@ import com.starmcc.beanfun.constant.QsConstant;
 import com.starmcc.beanfun.model.UpdateModel;
 import com.starmcc.beanfun.thread.ThreadPoolManager;
 import com.starmcc.beanfun.windows.FrameService;
-import javafx.application.Platform;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
@@ -17,6 +16,12 @@ import lombok.extern.slf4j.Slf4j;
 import java.net.URL;
 import java.util.ResourceBundle;
 
+/**
+ * 关于控制器
+ *
+ * @author starmcc
+ * @date 2022/09/21
+ */
 @Slf4j
 public class AboutController implements Initializable {
 
