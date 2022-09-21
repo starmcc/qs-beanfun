@@ -9,6 +9,7 @@
 <?import javafx.scene.control.Menu?>
 <?import javafx.scene.control.MenuBar?>
 <?import javafx.scene.control.MenuItem?>
+<?import javafx.scene.control.RadioButton?>
 <?import javafx.scene.control.Separator?>
 <?import javafx.scene.control.Tab?>
 <?import javafx.scene.control.TabPane?>
@@ -127,7 +128,7 @@
                                                 <Font size="15.0" />
                                             </font>
                                         </Button>
-                                        <ToggleButton fx:id="buttonVideo" layoutX="308.0" layoutY="91.0" mnemonicParsing="false" onAction="#recordVideoAction" prefHeight="30.0" prefWidth="80.0" text="开始录像" />
+                                        <ToggleButton fx:id="buttonRecordVideo" layoutX="308.0" layoutY="91.0" mnemonicParsing="false" onAction="#recordVideoAction" prefHeight="30.0" prefWidth="80.0" text="开始录像" />
                                         <CheckBox fx:id="checkBoxAutoInput" layoutX="224.0" layoutY="139.0" mnemonicParsing="false" onAction="#autoInputAction" prefHeight="16.0" prefWidth="78.0" text="自动输入" />
                                         <Button fx:id="buttonGetPassword" layoutX="307.0" layoutY="125.0" mnemonicParsing="false" onAction="#getPasswordAction" prefHeight="35.0" prefWidth="82.0" text="获取密码">
                                             <font>
@@ -230,48 +231,61 @@
                             <content>
                                 <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0">
                                     <children>
-                                        <Label layoutX="14.0" layoutY="14.0" prefHeight="15.0" prefWidth="177.0" text="默认配置：FPS=60;码率=2500;" />
-                                        <Label layoutX="14.0" layoutY="37.0" prefHeight="15.0" prefWidth="177.0" text="录像默认路径：登录器/recordVideo" />
-                                        <Label layoutX="14.0" layoutY="66.0" prefHeight="15.0" prefWidth="65.0" text="推荐配置：" textFill="RED">
+                                        <Label layoutX="98.0" layoutY="29.0" prefHeight="15.0" prefWidth="130.0" text="默认使用低配进行录制" />
+                                        <Label layoutX="21.0" layoutY="27.0" prefHeight="15.0" prefWidth="65.0" text="推荐配置：" textFill="RED">
                                             <font>
                                                 <Font name="System Bold" size="13.0" />
                                             </font>
                                         </Label>
-                                        <Label layoutX="28.0" layoutY="96.0" prefHeight="18.0" prefWidth="150.0" text="30FPS,1800码率 | 低配" textFill="#09a426">
+                                        <Label layoutX="38.0" layoutY="55.0" prefHeight="18.0" prefWidth="150.0" text="30FPS,1800码率 | 低配" textFill="#09a426">
                                             <font>
                                                 <Font size="13.0" />
                                             </font>
                                         </Label>
-                                        <Label layoutX="28.0" layoutY="122.0" prefHeight="18.0" prefWidth="150.0" text="60FPS,2500码率 | 中配" textFill="#cd4100">
+                                        <Label layoutX="38.0" layoutY="81.0" prefHeight="18.0" prefWidth="150.0" text="60FPS,2500码率 | 中配" textFill="#cd4100">
                                             <font>
                                                 <Font size="13.0" />
                                             </font>
                                         </Label>
-                                        <Label layoutX="28.0" layoutY="148.0" prefHeight="18.0" prefWidth="150.0" text="90FPS,3500码率 | 高配" textFill="#ff5227">
+                                        <Label layoutX="38.0" layoutY="107.0" prefHeight="18.0" prefWidth="150.0" text="90FPS,3500码率 | 高配" textFill="#ff5227">
                                             <font>
                                                 <Font size="13.0" />
                                             </font>
                                         </Label>
-                                        <Label layoutX="21.0" layoutY="177.0" text="录像保存路径：">
+                                        <Label layoutX="21.0" layoutY="211.0" text="视频目录：">
                                             <font>
                                                 <Font size="14.0" />
                                             </font>
                                         </Label>
-                                        <TextField fx:id="textFieldVideoPath" editable="false" layoutX="21.0" layoutY="205.0" prefHeight="33.0" prefWidth="362.0" />
-                                        <Button layoutX="314.0" layoutY="172.0" mnemonicParsing="false" onAction="#videoPathOpenAction" prefHeight="3.0" prefWidth="66.0" text="打开">
+                                        <TextField fx:id="textFieldVideoPath" editable="false" layoutX="97.0" layoutY="205.0" prefHeight="33.0" prefWidth="219.0" />
+                                        <Button layoutX="322.0" layoutY="203.0" mnemonicParsing="false" onAction="#videoPathOpenAction" prefHeight="34.0" prefWidth="66.0" text="打开">
                                             <font>
                                                 <Font size="15.0" />
                                             </font>
                                         </Button>
-                                        <ChoiceBox fx:id="choiceBoxVideoFps" layoutX="271.0" layoutY="10.0" onDragDetected="#selectVideoFpsAction" prefHeight="23.0" prefWidth="109.0" />
-                                        <Label layoutX="235.0" layoutY="14.0" text="FPS" />
-                                        <Label layoutX="235.0" layoutY="49.0" text="码率" />
-                                        <ComboBox fx:id="comboBoxVideoCodeRate" editable="true" layoutX="272.0" layoutY="45.0" onDragDetected="#selectVideoCodeRateAction" prefHeight="23.0" prefWidth="109.0" />
-                                        <Button fx:id="clearVideoBtn" layoutX="267.0" layoutY="81.0" mnemonicParsing="false" onAction="#gamePathOpenAction" prefHeight="30.0" prefWidth="115.0" text="清空视频数据">
+                                        <ChoiceBox fx:id="choiceBoxVideoFps" layoutX="277.0" layoutY="60.0" onDragDetected="#selectVideoFpsAction" prefHeight="23.0" prefWidth="109.0" />
+                                        <Label layoutX="241.0" layoutY="64.0" text="FPS" />
+                                        <Label layoutX="241.0" layoutY="99.0" text="码率" />
+                                        <ComboBox fx:id="comboBoxVideoCodeRate" editable="true" layoutX="278.0" layoutY="95.0" onDragDetected="#selectVideoCodeRateAction" prefHeight="23.0" prefWidth="109.0" />
+                                        <Button layoutX="275.0" layoutY="20.0" mnemonicParsing="false" onAction="#clearRecordVideoAction" prefHeight="30.0" prefWidth="115.0" text="清空视频数据">
                                             <font>
                                                 <Font size="15.0" />
                                             </font>
                                         </Button>
+                              <RadioButton fx:id="radioButtonGame" layoutX="275.0" layoutY="133.0" mnemonicParsing="false" text="游戏" />
+                              <RadioButton fx:id="radioButtonScreen" layoutX="332.0" layoutY="133.0" mnemonicParsing="false" text="全屏" />
+                              <Label layoutX="25.0" layoutY="173.0" text="FFmpeg：">
+                                 <font>
+                                    <Font size="14.0" />
+                                 </font>
+                              </Label>
+                              <TextField fx:id="textFieldFFmpegPath" editable="false" layoutX="97.0" layoutY="166.0" prefHeight="33.0" prefWidth="219.0" />
+                              <Button layoutX="322.0" layoutY="166.0" mnemonicParsing="false" onAction="#ffmpegOpenAction" prefHeight="34.0" prefWidth="66.0" text="打开">
+                                 <font>
+                                    <Font size="15.0" />
+                                 </font>
+                              </Button>
+                              <Button layoutX="17.0" layoutY="131.0" mnemonicParsing="false" onAction="#downloadFFmpegAction" prefHeight="30.0" prefWidth="115.0" text="前往下载FFmpeg" />
                                     </children>
                                 </AnchorPane>
                             </content>

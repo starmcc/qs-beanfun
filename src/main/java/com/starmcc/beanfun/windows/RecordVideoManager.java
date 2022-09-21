@@ -80,7 +80,7 @@ public class RecordVideoManager {
         // ffmpeg 命令
         // ffmpeg.exe -f gdigrab -framerate 30 -i title="MapleStory" -pix_fmt yuv420p -c:v h264 -b:v 2500k -preset veryfast -y out.mp4
         StringBuilder sbf = new StringBuilder();
-        sbf.append(QsConstant.PATH_EXE_FFMPEG);
+        sbf.append(config.getFfmpegPath());
         sbf.append(" -f gdigrab -framerate ").append(config.getFps());
         if (Objects.equals(config.getCaptureType(), ConfigModel.RecordVideo.CaptureTypeEnum.游戏窗口.getType())) {
             sbf.append(" -i title=\"MapleStory\"");

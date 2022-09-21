@@ -28,15 +28,17 @@ public class RecordVideoHandler {
     private static List<String> taskNames = new ArrayList<>();
 
     public static boolean run(boolean status) {
-        // 检查是否存在ffmpeg.exe
-        File file = new File(QsConstant.PATH_EXE_FFMPEG);
-        if (!file.exists()){
+        // 检查ffmpeg.exe是否存在
+        File file = new File(QsConstant.config.getRecordVideo().getFfmpegPath());
+        if (!file.exists()) {
             return false;
         }
 
         if (!status) {
+            // 停止录像，则删除任务
             AdvancedTimerMamager.getInstance().removeTask(taskNames);
             taskNames.clear();
+            // 停止录像
             RecordVideoManager.getInstance().stop();
             return true;
         }
@@ -46,19 +48,21 @@ public class RecordVideoHandler {
             @Override
             public void start() throws Exception {
                 RecordVideoManager.getInstance().stop();
-                RecordVideoHandler.start();
+                // 停止后继续执行
+                ThreadPoolManager.execute(() -> {
+                    RecordVideoManager.getInstance().start(
+                            QsConstant.config.getRecordVideo(), (str) -> log.debug("ffmpeg - {}", str));
+                });
             }
         }, TIME_INTERVAL, TIME_INTERVAL);
         taskNames.add(taskName);
-        RecordVideoHandler.start();
-        return true;
-    }
 
-    private static void start() {
-        // 开始ffmpeg录制
+        // 开始执行
         ThreadPoolManager.execute(() -> {
-            RecordVideoManager.getInstance().start(QsConstant.config.getRecordVideo(), (str) -> log.debug("ffmpeg - {}", str));
+            RecordVideoManager.getInstance().start(
+                    QsConstant.config.getRecordVideo(), (str) -> log.debug("ffmpeg - {}", str));
         });
+        return true;
     }
 
 

@@ -6,10 +6,13 @@ import com.starmcc.beanfun.constant.FXPageEnum;
 import com.starmcc.beanfun.constant.QsConstant;
 import com.starmcc.beanfun.handler.*;
 import com.starmcc.beanfun.model.ConfigModel;
+import com.starmcc.beanfun.model.QsTray;
 import com.starmcc.beanfun.model.client.Account;
 import com.starmcc.beanfun.model.client.BeanfunAccountResult;
 import com.starmcc.beanfun.model.client.BeanfunStringResult;
 import com.starmcc.beanfun.thread.ThreadPoolManager;
+import com.starmcc.beanfun.thread.timer.AdvancedTimerMamager;
+import com.starmcc.beanfun.thread.timer.AdvancedTimerTask;
 import com.starmcc.beanfun.utils.FileTools;
 import com.starmcc.beanfun.utils.RegexUtils;
 import com.starmcc.beanfun.windows.FrameService;
@@ -26,6 +29,7 @@ import javafx.scene.paint.Color;
 import javafx.stage.DirectoryChooser;
 import javafx.stage.FileChooser;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.BooleanUtils;
 import org.apache.commons.lang3.StringUtils;
 
@@ -114,33 +118,39 @@ public class MainController implements Initializable {
     @FXML
     private CheckBox checkBoxKillGamePatcher;
     @FXML
-    private ToggleButton buttonVideo;
+    private ToggleButton buttonRecordVideo;
     @FXML
     private CheckBox checkBoxAutoInput;
+    @FXML
+    private RadioButton radioButtonGame;
+    @FXML
+    private RadioButton radioButtonScreen;
+    @FXML
+    private TextField textFieldFFmpegPath;
 
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
-//        FrameService.getInstance().runLater(() -> {
-//            // 托盘菜单
-//            QsConstant.trayIcon = QsTray.init(QsConstant.JFX_STAGE_DATA.get(FXPageEnum.主界面).getStage());
-//            QsTray.show(QsConstant.trayIcon);
-//        });
+        FrameService.getInstance().runLater(() -> {
+            // 托盘菜单
+            QsConstant.trayIcon = QsTray.init(QsConstant.JFX_STAGE_DATA.get(FXPageEnum.主界面).getStage());
+            QsTray.show(QsConstant.trayIcon);
+        });
         // 获取账号数据
         ThreadPoolManager.execute(() -> refeshAccount(null));
         try {
-            this.initData();
             this.initEvent();
+            this.initData();
         } catch (Exception e) {
             log.error("error={}", e.getMessage(), e);
         }
-//        // 开始心跳 5分钟心跳一次保持登录状态
-//        AdvancedTimerMamager.getInstance().addTask(new AdvancedTimerTask() {
-//            @Override
-//            public void start() throws Exception {
-//                BeanfunClient.run().heartbeat();
-//            }
-//        }, 0, 1000 * 60 * 5);
+        // 开始心跳 5分钟心跳一次保持登录状态
+        AdvancedTimerMamager.getInstance().addTask(new AdvancedTimerTask() {
+            @Override
+            public void start() throws Exception {
+                BeanfunClient.run().heartbeat();
+            }
+        }, 0, 1000 * 60 * 5);
     }
 
     private void initData() throws Exception {
@@ -176,11 +186,19 @@ public class MainController implements Initializable {
         comboBoxVideoCodeRate.setItems(codeRateItems);
         comboBoxVideoCodeRate.getSelectionModel().select(recordVideo.getCodeRate());
         comboBoxVideoCodeRate.setValue(String.valueOf(recordVideo.getCodeRate()));
+
+        Integer captureType = recordVideo.getCaptureType();
+        if (Objects.equals(captureType, ConfigModel.RecordVideo.CaptureTypeEnum.游戏窗口.getType())) {
+            radioButtonGame.setSelected(true);
+        } else {
+            radioButtonScreen.setSelected(true);
+        }
+        textFieldFFmpegPath.setText(recordVideo.getFfmpegPath());
     }
 
 
     private void initEvent() {
-        // =========================== 导航菜单事件 ========================
+        // =========================== 导航菜单控件事件 ========================
         FrameService frameService = FrameService.getInstance();
         menuItemOfficialTmsUrl.setOnAction(event -> frameService.openWebUrl("https://maplestory.beanfun.com/main"));
         menuItemHkNewBeanfunUrl.setOnAction(event -> frameService.openWebUrl("https://bfweb.hk.beanfun.com/"));
@@ -192,7 +210,7 @@ public class MainController implements Initializable {
         qsbiliUrlMenu.setOnAction(event -> frameService.openWebUrl("https://space.bilibili.com/391919722"));
 
 
-        // =========================== 汇率事件 ========================
+        // =========================== 汇率控件事件 ========================
         textFieldRmbInput.textProperty().addListener((ObservableValue<? extends String> observable, String oldValue, String newValue) -> {
             if (textFieldRmbInput.isFocused()) {
                 textFieldXtbInput.setText(CellHandler.cellHuiLv(newValue, 1).toString());
@@ -210,7 +228,7 @@ public class MainController implements Initializable {
             FrameService.getInstance().runLater(() -> labelExchangeNow.setText(QsConstant.currentRateChinaToTw.toString()));
         });
 
-        // =================== 轮烧按键配置事件 =====================
+        // =================== 轮烧按键配置控件事件 =====================
 
         textFieldLunHui.setOnKeyPressed((keyEvent) -> {
             int code = keyEvent.getCode().impl_getCode();
@@ -237,7 +255,7 @@ public class MainController implements Initializable {
         });
 
 
-        // =================== 录像事件 =====================
+        // =================== 录像控件事件 =====================
         comboBoxVideoCodeRate.valueProperty().addListener((obsVal, oldVal, newVal) -> {
             // 只能输入数字
             if (!RegexUtils.test(RegexUtils.PTN_NUMBER, newVal)) {
@@ -252,6 +270,18 @@ public class MainController implements Initializable {
             recordVideoTemp.setCodeRate(number);
             comboBoxVideoCodeRate.setValue(String.valueOf(number));
             QsConstant.config.setRecordVideo(recordVideoTemp);
+            FileTools.saveConfig(QsConstant.config);
+        });
+
+        ToggleGroup group = new ToggleGroup();
+        radioButtonGame.setToggleGroup(group);
+        radioButtonScreen.setToggleGroup(group);
+        radioButtonGame.setOnAction(event -> {
+            QsConstant.config.getRecordVideo().setCaptureType(ConfigModel.RecordVideo.CaptureTypeEnum.游戏窗口.getType());
+            FileTools.saveConfig(QsConstant.config);
+        });
+        radioButtonScreen.setOnAction(event -> {
+            QsConstant.config.getRecordVideo().setCaptureType(ConfigModel.RecordVideo.CaptureTypeEnum.全屏.getType());
             FileTools.saveConfig(QsConstant.config);
         });
     }
@@ -576,35 +606,68 @@ public class MainController implements Initializable {
     @FXML
     public void recordVideoAction(ActionEvent actionEvent) {
         // 开始/结束录像
-        if (buttonVideo.isSelected()) {
+        if (buttonRecordVideo.isSelected()) {
             // 开始录制
-            buttonVideo.setText("录像中");
+            buttonRecordVideo.setText("录像中");
         } else {
-            buttonVideo.setText("开始录像");
+            buttonRecordVideo.setText("开始录像");
         }
 
-        if (!RecordVideoHandler.run(buttonVideo.isSelected())) {
-            buttonVideo.setSelected(!buttonVideo.isSelected());
-            StringBuffer sbf = new StringBuffer();
-            sbf.append("自动录像功能需要Ffmpeg.exe支持\n");
-            sbf.append("请自行下载依赖并放置在下方显示目录中即可\n");
-            sbf.append(QsConstant.PATH_PLUGINS).append("\n");
-            sbf.append("名称请以ffmpeg.exe命名\n");
-            sbf.append("是否前往下载?");
-            boolean go = QsConstant.confirmDialog("缺少依赖", sbf.toString());
-            if (go){
-                FrameService.getInstance().openWebUrl("https://github.com/BtbN/FFmpeg-Builds/releases");
+        if (!RecordVideoHandler.run(buttonRecordVideo.isSelected())) {
+            buttonRecordVideo.setSelected(!buttonRecordVideo.isSelected());
+            if (QsConstant.confirmDialog("缺少依赖", "自动录像功能需要Ffmpeg.exe支持\n是否前往下载?")) {
+                FrameService.getInstance().openWebUrl("https://ffmpeg.org/download.html");
             }
         }
     }
 
-
+    @FXML
     public void autoInputAction(ActionEvent actionEvent) {
         QsConstant.config.setAutoInput(checkBoxAutoInput.isSelected());
         FileTools.saveConfig(QsConstant.config);
     }
 
+    @FXML
+    public void clearRecordVideoAction(ActionEvent actionEvent) {
+        String folder = QsConstant.config.getRecordVideo().getFolder();
+        File file = new File(folder);
+        if (!file.exists()) {
+            return;
+        }
+        File[] files = file.listFiles(pathname -> pathname.getName().endsWith(".mp4"));
+        if (ArrayUtils.isEmpty(files)) {
+            return;
+        }
+        int delNum = 0;
+        for (File f : files) {
+            delNum = f.delete() ? delNum++ : delNum;
+        }
+        QsConstant.alert("已清理" + delNum + "个录像", Alert.AlertType.INFORMATION);
+    }
 
+
+    @FXML
+    public void ffmpegOpenAction(ActionEvent actionEvent) {
+        FileChooser fileChooser = new FileChooser();
+        FileChooser.ExtensionFilter extFilter = new FileChooser.ExtensionFilter("FFmpeg.exe(*.exe)", "*.exe");
+        fileChooser.getExtensionFilters().add(extFilter);
+        File file = fileChooser.showOpenDialog(QsConstant.JFX_STAGE_DATA.get(FXPageEnum.主界面).getStage());
+        if (Objects.isNull(file)) {
+            return;
+        }
+        String path = file.getPath();
+        if (StringUtils.isBlank(path)) {
+            return;
+        }
+        textFieldFFmpegPath.setText(path);
+        QsConstant.config.getRecordVideo().setFfmpegPath(path);
+        FileTools.saveConfig(QsConstant.config);
+    }
+
+    @FXML
+    public void downloadFFmpegAction(ActionEvent actionEvent) {
+        FrameService.getInstance().openWebUrl("https://ffmpeg.org/download.html");
+    }
     // =============================================== 私有方法 =================================
 
     /**

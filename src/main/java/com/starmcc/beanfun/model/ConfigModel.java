@@ -88,17 +88,23 @@ public class ConfigModel {
          * 捕捉类型 1=游戏录制 2=全屏
          */
         private Integer captureType;
+        /**
+         * ffmpeg路径
+         */
+        private String ffmpegPath;
 
         public RecordVideo() {
             // 默认配置
             // 自身目录/video
-            this.folder = new File(QsConstant.PATH_PLUGINS + "video").getPath();
+            this.folder = new File(QsConstant.PATH_PLUGINS + "recordVideo").getPath();
             // FPS 30
-            this.setFps(30);
+            this.fps = 30;
             // 码率 1800
-            this.setCodeRate(1800);
+            this.codeRate = 1800;
             // 类型 默认捕捉游戏窗口
-            this.setCaptureType(1);
+            this.captureType = 1;
+            // 默认ffmpeg路径
+            this.ffmpegPath = "";
         }
 
 
@@ -110,7 +116,7 @@ public class ConfigModel {
          */
         public static enum CaptureTypeEnum {
             游戏窗口(1),
-            桌面(2),
+            全屏(2),
             ;
             private final int type;
 
