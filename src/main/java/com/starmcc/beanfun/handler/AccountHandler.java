@@ -4,6 +4,7 @@ import com.starmcc.beanfun.client.BeanfunClient;
 import com.starmcc.beanfun.constant.QsConstant;
 import com.starmcc.beanfun.manager.ThreadPoolManager;
 import com.starmcc.beanfun.model.ConfigModel;
+import com.starmcc.beanfun.model.LoginType;
 import com.starmcc.beanfun.model.client.Account;
 import com.starmcc.beanfun.model.client.BeanfunStringResult;
 import com.starmcc.beanfun.utils.AesTools;
@@ -32,10 +33,11 @@ public class AccountHandler {
     /**
      * 记录账密配置
      *
-     * @param account  账户
-     * @param password 密码
+     * @param account   账户
+     * @param password  密码
+     * @param loginType type
      */
-    public static void recordActPwd(String account, String password) {
+    public static void recordActPwd(String account, String password, LoginType loginType) {
         List<ConfigModel.ActPwd> actPwds = QsConstant.config.getActPwds();
         if (DataTools.collectionIsNotEmpty(actPwds)) {
             Iterator<ConfigModel.ActPwd> iterator = actPwds.iterator();
@@ -55,6 +57,7 @@ public class AccountHandler {
             password = AesTools.encode(key, password);
             actPwd.setAct(account);
             actPwd.setPwd(password);
+            actPwd.setType(loginType.getType());
             actPwds.add(0, actPwd);
             QsConstant.config.setActPwds(actPwds);
             FileTools.saveConfig(QsConstant.config);

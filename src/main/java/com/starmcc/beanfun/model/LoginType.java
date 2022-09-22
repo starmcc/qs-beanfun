@@ -18,7 +18,8 @@ public class LoginType {
     private Integer type;
 
     public LoginType() {
-
+        this.name = TypeEnum.HK.getName();
+        this.type = TypeEnum.HK.getType();
     }
 
     public LoginType(TypeEnum typeEnum) {

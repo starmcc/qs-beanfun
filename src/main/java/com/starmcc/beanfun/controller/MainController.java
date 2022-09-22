@@ -137,7 +137,7 @@ public class MainController implements Initializable {
             QsTray.show(QsConstant.trayIcon);
         });
         // 获取账号数据
-        ThreadPoolManager.execute(() -> refeshAccount(null));
+        ThreadPoolManager.execute(() -> refeshAccounts(null));
         try {
             this.initEvent();
             this.initData();
@@ -413,7 +413,7 @@ public class MainController implements Initializable {
                     FrameService.getInstance().runLater(() -> QsConstant.alert(result.getMsg(), Alert.AlertType.WARNING));
                     return;
                 }
-                refeshAccount(() -> {
+                refeshAccounts(() -> {
                     QsConstant.alert("创建成功!", Alert.AlertType.INFORMATION);
                     buttonAddAct.setVisible(false);
                 });
@@ -445,7 +445,7 @@ public class MainController implements Initializable {
                     FrameService.getInstance().runLater(() -> QsConstant.alert(result.getMsg(), Alert.AlertType.WARNING));
                     return;
                 }
-                refeshAccount(() -> QsConstant.alert("编辑成功!", Alert.AlertType.INFORMATION));
+                refeshAccounts(() -> QsConstant.alert("编辑成功!", Alert.AlertType.INFORMATION));
             } catch (Exception e) {
                 log.error("编辑账号异常 e={}", e.getMessage(), e);
             }
@@ -673,7 +673,7 @@ public class MainController implements Initializable {
     /**
      * 初始化账户组合框
      */
-    private void refeshAccount(Runnable runnable) throws Exception {
+    private void refeshAccounts(Runnable runnable) throws Exception {
         BeanfunAccountResult actResult = BeanfunClient.run().getAccountList(QsConstant.beanfunModel.getToken());
         if (actResult.isSuccess()) {
             QsConstant.beanfunModel.build(actResult);

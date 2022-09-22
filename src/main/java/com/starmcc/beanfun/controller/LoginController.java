@@ -4,11 +4,11 @@ import com.starmcc.beanfun.client.BeanfunClient;
 import com.starmcc.beanfun.constant.FXPageEnum;
 import com.starmcc.beanfun.constant.QsConstant;
 import com.starmcc.beanfun.handler.AccountHandler;
+import com.starmcc.beanfun.manager.ThreadPoolManager;
 import com.starmcc.beanfun.model.ConfigModel;
 import com.starmcc.beanfun.model.LoginType;
 import com.starmcc.beanfun.model.client.BeanfunModel;
 import com.starmcc.beanfun.model.client.BeanfunStringResult;
-import com.starmcc.beanfun.manager.ThreadPoolManager;
 import com.starmcc.beanfun.utils.AesTools;
 import com.starmcc.beanfun.utils.DataTools;
 import com.starmcc.beanfun.utils.FileTools;
@@ -27,6 +27,7 @@ import org.apache.http.conn.HttpHostConnectException;
 
 import java.net.URL;
 import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
 import java.util.ResourceBundle;
 import java.util.concurrent.ScheduledExecutorService;
@@ -48,7 +49,7 @@ public class LoginController implements Initializable {
     @FXML
     private ComboBox<String> comboBoxAccount;
     @FXML
-    private PasswordField PasswordFieldPassword;
+    private PasswordField passwordFieldPassword;
     @FXML
     private Button buttonLogin;
     @FXML
@@ -68,37 +69,17 @@ public class LoginController implements Initializable {
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
-        ObservableList<String> items = comboBoxAccount.getItems();
-        List<ConfigModel.ActPwd> actPwds = QsConstant.config.getActPwds();
-        final String key = DataTools.getComputerUniqueId();
-        // 解密
-        actPwds.forEach(item -> {
-            try {
-                if (item.getAct().indexOf("@") != -1) {
-                    // 是明文，不处理
-                    return;
-                }
-                String act = AesTools.dncode(key, item.getAct());
-                String pwd = AesTools.dncode(key, item.getPwd());
-                item.setAct(act);
-                item.setPwd(pwd);
-            } catch (Exception e) {
-                log.error("解密异常 e={}", e.getMessage(), e);
-            }
-        });
-        actPwds.forEach((actPwd) -> items.add(actPwd.getAct()));
-        if (DataTools.collectionIsNotEmpty(actPwds)) {
-            comboBoxAccount.getSelectionModel().selectFirst();
-            PasswordFieldPassword.setText(actPwds.get(0).getPwd());
-        }
-        checkBoxRemember.setSelected(QsConstant.config.getRecordActPwd());
+        initBasic();
+        refeshAccounts();
+    }
 
+    private void initBasic() {
+        checkBoxRemember.setSelected(QsConstant.config.getRecordActPwd());
         hyperlinkRegister.setFocusTraversable(false);
         hyperlinkForgetPwd.setFocusTraversable(false);
         checkBoxRemember.setFocusTraversable(false);
-
         Integer configLoginType = QsConstant.config.getLoginType();
-        LoginType selectLoginType = new LoginType(LoginType.TypeEnum.HK);
+        LoginType selectLoginType = new LoginType();
         ObservableList<LoginType> loginTypeItems = choiceBoxLoginType.getItems();
         for (LoginType.TypeEnum typeEnum : LoginType.TypeEnum.values()) {
             LoginType loginType = new LoginType(typeEnum);
@@ -110,21 +91,35 @@ public class LoginController implements Initializable {
         choiceBoxLoginType.getSelectionModel().select(selectLoginType);
     }
 
+    private void refeshAccounts() {
+        ObservableList<String> items = comboBoxAccount.getItems();
+        items.clear();
+        List<ConfigModel.ActPwd> actPwds = QsConstant.config.getActPwds();
+        final String key = DataTools.getComputerUniqueId();
+        LoginType selectedItem = choiceBoxLoginType.getSelectionModel().getSelectedItem();
+        // 解密
+        for (ConfigModel.ActPwd item : actPwds) {
+            if (!Objects.equals(item.getType(), selectedItem.getType())) {
+                continue;
+            }
+            try {
+                items.add(AesTools.dncode(key, item.getAct()));
+            } catch (Exception e) {
+                log.error("解密异常 e={}", e.getMessage(), e);
+            }
+        }
+        if (DataTools.collectionIsNotEmpty(items)) {
+            comboBoxAccount.getSelectionModel().selectFirst();
+            String act = comboBoxAccount.getSelectionModel().getSelectedItem();
+            passwordFieldPassword.setText(this.getPasswordByAccount(act));
+        }
+    }
+
 
     @FXML
     public void selectAccountAction() {
-        String act = comboBoxAccount.getSelectionModel().getSelectedItem();
-        List<ConfigModel.ActPwd> actPwds = QsConstant.config.getActPwds();
-        if (DataTools.collectionIsEmpty(actPwds)) {
-            PasswordFieldPassword.setText("");
-            return;
-        }
-        Optional<ConfigModel.ActPwd> queryOpt = actPwds.stream().filter(x -> StringUtils.equals(x.getAct(), act)).findFirst();
-        if (queryOpt.isPresent()) {
-            PasswordFieldPassword.setText(queryOpt.get().getPwd());
-        } else {
-            PasswordFieldPassword.setText("");
-        }
+        String selectedItem = comboBoxAccount.getSelectionModel().getSelectedItem();
+        passwordFieldPassword.setText(this.getPasswordByAccount(selectedItem));
     }
 
     @FXML
@@ -146,7 +141,9 @@ public class LoginController implements Initializable {
         // 执行登录方法
         ThreadPoolManager.execute(() -> {
             try {
-                BeanfunStringResult loginResult = BeanfunClient.run().login(comboBoxAccount.getValue(), PasswordFieldPassword.getText(), process -> loginProcess = process);
+                String act = comboBoxAccount.getValue();
+                String pwd = passwordFieldPassword.getText();
+                BeanfunStringResult loginResult = BeanfunClient.run().login(act, pwd, process -> loginProcess = process);
                 if (!loginResult.isSuccess()) {
                     FrameService.getInstance().runLater(() -> QsConstant.alert(loginResult.getMsg(), Alert.AlertType.ERROR));
                     return;
@@ -200,6 +197,8 @@ public class LoginController implements Initializable {
         FileTools.saveConfig(QsConstant.config);
         LoginType.TypeEnum typeEnum = LoginType.TypeEnum.getData(QsConstant.config.getLoginType());
         imageViewQrCode.setVisible(typeEnum == LoginType.TypeEnum.TW);
+
+        refeshAccounts();
     }
 
     @FXML
@@ -228,7 +227,9 @@ public class LoginController implements Initializable {
         loginning(false);
         // 记录账密
         if (checkBoxRemember.isSelected()) {
-            AccountHandler.recordActPwd(comboBoxAccount.getValue(), PasswordFieldPassword.getText());
+            String act = comboBoxAccount.getValue();
+            String pwd = passwordFieldPassword.getText();
+            AccountHandler.recordActPwd(act, pwd, choiceBoxLoginType.getValue());
         }
         try {
             // 窗口显示
@@ -251,7 +252,7 @@ public class LoginController implements Initializable {
         hyperlinkForgetPwd.setDisable(state);
         checkBoxRemember.setDisable(state);
         comboBoxAccount.setDisable(state);
-        PasswordFieldPassword.setDisable(state);
+        passwordFieldPassword.setDisable(state);
         imageViewQrCode.setDisable(state);
         buttonLogin.setDisable(state);
         if (state) {
@@ -262,4 +263,18 @@ public class LoginController implements Initializable {
     }
 
 
+    private String getPasswordByAccount(final String act) {
+        List<ConfigModel.ActPwd> actPwds = QsConstant.config.getActPwds();
+        if (DataTools.collectionIsEmpty(actPwds)) {
+            return "";
+        }
+        final String key = DataTools.getComputerUniqueId();
+        Optional<ConfigModel.ActPwd> optional = actPwds.stream().filter(actPwd -> {
+            if (!Objects.equals(QsConstant.config.getLoginType(), actPwd.getType())) {
+                return false;
+            }
+            return StringUtils.equals(AesTools.dncode(key, actPwd.getAct()), act);
+        }).findFirst();
+        return optional.isPresent() ? AesTools.dncode(key, optional.get().getPwd()) : "";
+    }
 }

@@ -54,7 +54,7 @@
                       <Image url="@../static/images/pwd.png" />
                   </image>
               </ImageView>
-              <PasswordField fx:id="PasswordFieldPassword" layoutX="61.0" layoutY="134.0" prefHeight="26.0" prefWidth="234.0" />
+              <PasswordField fx:id="passwordFieldPassword" layoutX="61.0" layoutY="134.0" prefHeight="26.0" prefWidth="234.0" />
               <CheckBox fx:id="checkBoxRemember" focusTraversable="false" layoutX="39.0" layoutY="171.0" mnemonicParsing="false" onAction="#rememberClickAction" text="记住密码">
                   <cursor>
                       <Cursor fx:constant="DEFAULT" />

@@ -54,7 +54,7 @@ public class ConfigModel {
         // 自动输入
         this.autoInput = true;
         // 代理配置
-        this.proxyConfig = null;
+        this.proxyConfig = new ProxyConfig();
     }
 
 
@@ -62,6 +62,19 @@ public class ConfigModel {
     public static class ActPwd {
         private String act;
         private String pwd;
+        private Integer type;
+
+        public static ActPwd build(String act, String pwd) {
+            ActPwd actPwd = new ActPwd();
+            actPwd.setAct(act);
+            actPwd.setPwd(pwd);
+            return actPwd;
+        }
+
+        @Override
+        public String toString() {
+            return act;
+        }
     }
 
     /**
@@ -135,7 +148,7 @@ public class ConfigModel {
     public static class ProxyConfig {
 
         private String ip;
-        private Float port;
+        private Integer port;
 
         @Override
         public String toString() {

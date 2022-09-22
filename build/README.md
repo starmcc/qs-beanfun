@@ -20,7 +20,7 @@
 
 ## 4. Resource Hacker 赋予程序管理员权限
 
-安装并运行`Resource Hacker` 
+安装并运行[Resource Hacker](http://www.angusj.com/resourcehacker/)
 
 拖拽刚才打包出来的`exe`文件（在`target`目录）
 

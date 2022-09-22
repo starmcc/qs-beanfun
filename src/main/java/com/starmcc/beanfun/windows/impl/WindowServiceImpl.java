@@ -207,9 +207,9 @@ public class WindowServiceImpl implements WindowService {
         HttpHost httpHost = null;
         // 如果有自定义配置的代理，优先使用配置代理
         ConfigModel.ProxyConfig proxyConfig = QsConstant.config.getProxyConfig();
-        if (Objects.nonNull(proxyConfig) && StringUtils.isNotBlank(proxyConfig.getIp()) && Objects.nonNull(proxyConfig.getIp())) {
+        if (Objects.nonNull(proxyConfig) && StringUtils.isNotBlank(proxyConfig.getIp()) && Objects.nonNull(proxyConfig.getPort())) {
             log.info("use proxy my custom value = {}", proxyConfig.toString());
-            return new HttpHost(proxyConfig.getIp(), proxyConfig.getPort().intValue());
+            return new HttpHost(proxyConfig.getIp(), proxyConfig.getPort());
         }
 
         try {
