@@ -1,14 +1,22 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-
+<?import javafx.scene.control.Label?>
 <?import javafx.scene.control.ProgressBar?>
 <?import javafx.scene.control.TextArea?>
 <?import javafx.scene.layout.AnchorPane?>
-<AnchorPane fx:controller="com.starmcc.beanfun.controller.UpdateController" maxHeight="-Infinity" maxWidth="-Infinity"
-            minHeight="-Infinity" minWidth="-Infinity" prefHeight="300.0" prefWidth="500.0"
-            xmlns="http://javafx.com/javafx/8.0.171" xmlns:fx="http://javafx.com/fxml/1">
+<?import javafx.scene.text.Font?>
+
+<AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="260.0" prefWidth="330.0" xmlns="http://javafx.com/javafx/8.0.171" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.starmcc.beanfun.controller.UpdateController">
     <children>
-        <TextArea fx:id="textAreaContent" editable="false" prefHeight="250.0" prefWidth="500.0"/>
-        <ProgressBar fx:id="progressBar" layoutY="250.0" prefHeight="50.0" prefWidth="500.0" progress="0.0"/>
+        <TextArea fx:id="textAreaContent" editable="false" prefHeight="210.0" prefWidth="330.0">
+         <font>
+            <Font size="14.0" />
+         </font></TextArea>
+        <ProgressBar fx:id="progressBar" layoutY="210.0" prefHeight="50.0" prefWidth="330.0" progress="0.0" />
+      <Label fx:id="labelProcess" alignment="CENTER" layoutX="146.0" layoutY="223.0" style="-fx-effect: dropshadow(three-pass-box, #72b9da, 10.0,0, 0, 0);" text="10%" textAlignment="CENTER">
+         <font>
+            <Font name="System Bold" size="18.0" />
+         </font>
+      </Label>
     </children>
 </AnchorPane>

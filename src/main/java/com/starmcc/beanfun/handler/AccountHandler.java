@@ -2,15 +2,14 @@ package com.starmcc.beanfun.handler;
 
 import com.starmcc.beanfun.client.BeanfunClient;
 import com.starmcc.beanfun.constant.QsConstant;
+import com.starmcc.beanfun.manager.ThreadPoolManager;
 import com.starmcc.beanfun.model.ConfigModel;
 import com.starmcc.beanfun.model.client.Account;
 import com.starmcc.beanfun.model.client.BeanfunStringResult;
-import com.starmcc.beanfun.manager.ThreadPoolManager;
 import com.starmcc.beanfun.utils.AesTools;
-import com.starmcc.beanfun.utils.FileTools;
 import com.starmcc.beanfun.utils.DataTools;
+import com.starmcc.beanfun.utils.FileTools;
 import com.starmcc.beanfun.windows.FrameService;
-import com.sun.istack.internal.NotNull;
 import javafx.scene.control.Alert;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
@@ -69,7 +68,7 @@ public class AccountHandler {
      *
      * @param runnable 可运行
      */
-    public static void getDynamicPassword(Account account, @NotNull BiConsumer<String, String> runnable) {
+    public static void getDynamicPassword(Account account, BiConsumer<String, String> runnable) {
         ThreadPoolManager.execute(() -> {
             try {
                 BeanfunStringResult pwdResult = BeanfunClient.run().getDynamicPassword(account, QsConstant.beanfunModel.getToken());

@@ -2,12 +2,14 @@ package com.starmcc.beanfun.controller;
 
 import com.starmcc.beanfun.client.HttpClient;
 import com.starmcc.beanfun.constant.QsConstant;
+import com.starmcc.beanfun.manager.ThreadPoolManager;
 import com.starmcc.beanfun.model.client.UpdateModel;
 import com.starmcc.beanfun.utils.FileTools;
 import com.starmcc.beanfun.windows.FrameService;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.Alert;
+import javafx.scene.control.Label;
 import javafx.scene.control.ProgressBar;
 import javafx.scene.control.TextArea;
 import lombok.extern.slf4j.Slf4j;
@@ -30,11 +32,14 @@ public class UpdateController implements Initializable {
     private TextArea textAreaContent;
     @FXML
     private ProgressBar progressBar;
+    @FXML
+    private Label labelProcess;
 
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
         textAreaContent.setText(model.getContent());
+        labelProcess.setText("0%");
         try {
             this.download();
         } catch (Exception e) {
@@ -48,20 +53,24 @@ public class UpdateController implements Initializable {
      * @throws Exception 异常
      */
     private void download() throws Exception {
-        String fileName = QsConstant.PATH_APP + QsConstant.APP_NAME + ".exe.tmp";
-        HttpClient.getInstance().downloadFile(new URL(model.getUrl()), new File(fileName), (state, file, process, e) -> {
-            if (!state.isNormal()) {
-                FrameService.getInstance().runLater(() -> {
-                    QsConstant.alert("更新失败-" + state.toString(), Alert.AlertType.WARNING);
-                });
-                return;
-            }
-            progressBar.setProgress(process / 100);
-            if (state != HttpClient.Process.State.下载完毕) {
-                return;
-            }
-            this.downloadComplete(file);
+        String fileName = QsConstant.PATH_APP + "\\" + QsConstant.APP_NAME + ".exe.tmp";
+        ThreadPoolManager.execute(() -> {
+            HttpClient.getInstance().downloadFile(new URL(model.getUrl()), new File(fileName), (state, file, process, e) -> {
+                if (!state.isNormal()) {
+                    FrameService.getInstance().runLater(() -> {
+                        QsConstant.alert("更新失败-" + state.toString(), Alert.AlertType.WARNING);
+                    });
+                    return;
+                }
+                progressBar.setProgress(process / 100D);
+                labelProcess.setText(process + "%");
+                if (state != HttpClient.Process.State.下载完毕) {
+                    return;
+                }
+                this.downloadComplete(file);
+            });
         });
+
     }
 
 
@@ -72,22 +81,30 @@ public class UpdateController implements Initializable {
      */
     private void downloadComplete(File file) {
         // 构建Bat文件
+        String appExe = QsConstant.APP_NAME + ".exe";
         StringBuffer bat = new StringBuffer();
-        bat.append("@echo off\n");
-        bat.append("taskkill /f /im ").append(QsConstant.APP_NAME).append("\n");
-        bat.append("ping 1.1.1.1 -n 1 -w 3000\n");
-        bat.append("del /f \"").append(QsConstant.APP_NAME).append(".exe\"\n");
-        bat.append("ren \"").append(file.getPath()).append("\" \"").append(QsConstant.APP_NAME).append(".exe\"\n");
-        bat.append("start \"").append(QsConstant.APP_NAME).append(".exe\"\n");
+        bat.append("@echo off").append("\n");
+        // 先刪除旧的
+        bat.append("del /f ").append(QsConstant.APP_NAME).append(".exe.old").append("\n");
+        // 在将当前运行的改成旧的
+        bat.append("ren ").append(appExe).append(" ").append(QsConstant.APP_NAME).append(".exe.old").append("\n");
+        // 在新下载的改成QsBeanfun.exe
+        bat.append("ren ").append(file.getName()).append(" ").append(appExe).append("\n");
+        // 启动新的
+        bat.append("start .\\").append(appExe).append("\n");
+        // 删除自身
         bat.append("del %0");
+        //  bat.append("taskkill /f /im ").append(appExe).append("\n");
+
+        String batPath = QsConstant.PATH_APP + "\\update.bat";
         // 写入bat
-        String batPath = QsConstant.PATH_APP + "/update.bat";
         FileTools.writeFile(bat.toString(), batPath);
         try {
-            // 执行bat
-            new ProcessBuilder().command("cmd", "/c", batPath);
+            // 执行update.bat  /b隐藏运行
+            String[] cmd = {"cmd", "/c", "start", "/b", batPath};
+            Runtime.getRuntime().exec(cmd, null, new File(batPath).getParentFile());
         } catch (Exception e) {
-            log.error("运行异常 e={}", e.getMessage(), e);
+            log.error("Runtime error e={}", e.getMessage(), e);
         }
     }
 }

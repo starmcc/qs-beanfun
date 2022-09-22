@@ -7,6 +7,7 @@ import com.starmcc.beanfun.client.HttpClient;
 import com.starmcc.beanfun.constant.FXPageEnum;
 import com.starmcc.beanfun.constant.QsConstant;
 import com.starmcc.beanfun.controller.UpdateController;
+import com.starmcc.beanfun.model.JFXStage;
 import com.starmcc.beanfun.model.client.QsHttpResponse;
 import com.starmcc.beanfun.model.client.UpdateModel;
 import com.starmcc.beanfun.windows.FrameService;
@@ -16,6 +17,7 @@ import org.apache.commons.lang3.StringUtils;
 
 import java.util.Arrays;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 /**
@@ -76,6 +78,12 @@ public class UpdateManager {
             }
             UpdateController.model = finalModel;
             FrameService.getInstance().openWindow(FXPageEnum.更新页);
+            for (Map.Entry<String, JFXStage> entry : QsConstant.JFX_STAGE_DATA.entrySet()) {
+                if (StringUtils.equals(entry.getKey(), FXPageEnum.更新页.getFileName())) {
+                    continue;
+                }
+                entry.getValue().getStage().close();
+            }
         });
     }
 

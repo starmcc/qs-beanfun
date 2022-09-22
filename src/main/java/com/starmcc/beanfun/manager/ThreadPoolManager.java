@@ -1,7 +1,6 @@
 package com.starmcc.beanfun.manager;
 
 import com.starmcc.beanfun.model.thread.Runnable2;
-import com.sun.istack.internal.NotNull;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.concurrent.BasicThreadFactory;
 
@@ -41,7 +40,7 @@ public class ThreadPoolManager {
      *
      * @param runnable 可运行
      */
-    public synchronized static void execute(@NotNull Runnable2 runnable) {
+    public synchronized static void execute(Runnable2 runnable) {
         execute(runnable, true);
     }
 
@@ -51,7 +50,7 @@ public class ThreadPoolManager {
      * @param runnable 可运行
      * @param init     初始化
      */
-    public synchronized static void execute(@NotNull Runnable2 runnable, boolean init) {
+    public synchronized static void execute(Runnable2 runnable, boolean init) {
         if (init) {
             init();
         }
