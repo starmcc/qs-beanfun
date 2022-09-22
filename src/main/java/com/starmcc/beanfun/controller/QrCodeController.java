@@ -7,9 +7,9 @@ import com.starmcc.beanfun.constant.QsConstant;
 import com.starmcc.beanfun.model.client.BeanfunModel;
 import com.starmcc.beanfun.model.client.BeanfunQrCodeResult;
 import com.starmcc.beanfun.model.client.BeanfunStringResult;
-import com.starmcc.beanfun.thread.ThreadPoolManager;
-import com.starmcc.beanfun.thread.timer.AdvancedTimerMamager;
-import com.starmcc.beanfun.thread.timer.AdvancedTimerTask;
+import com.starmcc.beanfun.manager.ThreadPoolManager;
+import com.starmcc.beanfun.manager.AdvancedTimerMamager;
+import com.starmcc.beanfun.model.thread.timer.AdvancedTimerTask;
 import com.starmcc.beanfun.windows.FrameService;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
@@ -87,22 +87,24 @@ public class QrCodeController implements Initializable {
             ThreadPoolManager.execute(this::loadQrCode, false);
             return;
         }
-        String savePath = QsConstant.PATH_PLUGINS + "onlineQrCode.jpg";
-        HttpClient.getInstance().downloadFile(beanfunQrCodeResult.getQrImageUrl(), savePath, (state, file, process, e) -> {
-            if (state == HttpClient.Process.State.下载完毕) {
-                if (Objects.nonNull(file)) {
-                    this.startScanQrCode(file);
-                    return;
-                }
-                try {
-                    // 下载二维码出现问题 重新下载
-                    Thread.sleep(1000);
-                    ThreadPoolManager.execute(this::loadQrCode, false);
-                } catch (Exception ex) {
-                    log.error("error={}", e.getMessage(), e);
-                }
-            }
-        });
+        HttpClient.getInstance().downloadFile(
+                new URL(beanfunQrCodeResult.getQrImageUrl()),
+                new File(QsConstant.PATH_PLUGINS + "onlineQrCode.jpg"),
+                (state, file, process, e) -> {
+                    if (state == HttpClient.Process.State.下载完毕) {
+                        if (Objects.nonNull(file)) {
+                            this.startScanQrCode(file);
+                            return;
+                        }
+                        try {
+                            // 下载二维码出现问题 重新下载
+                            Thread.sleep(1000);
+                            ThreadPoolManager.execute(this::loadQrCode, false);
+                        } catch (Exception ex) {
+                            log.error("error={}", e.getMessage(), e);
+                        }
+                    }
+                });
     }
 
     /**
@@ -153,8 +155,8 @@ public class QrCodeController implements Initializable {
             QsConstant.beanfunModel.setToken(loginResult.getData());
             FrameService.getInstance().runLater(() -> {
                 try {
-                    FrameService.getInstance().openWindow(FXPageEnum.主界面);
-                    FrameService.getInstance().closeWindow(FXPageEnum.登录页面);
+                    FrameService.getInstance().openWindow(FXPageEnum.主页);
+                    FrameService.getInstance().closeWindow(FXPageEnum.登录页);
                     FrameService.getInstance().closeWindow(FXPageEnum.二维码登录);
                 } catch (Exception e) {
                     log.error("error = {}", e.getMessage(), e);

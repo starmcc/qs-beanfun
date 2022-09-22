@@ -1,10 +1,10 @@
 package com.starmcc.beanfun.handler;
 
 import com.starmcc.beanfun.constant.QsConstant;
-import com.starmcc.beanfun.thread.ThreadPoolManager;
-import com.starmcc.beanfun.thread.timer.AdvancedTimerMamager;
-import com.starmcc.beanfun.thread.timer.AdvancedTimerTask;
-import com.starmcc.beanfun.windows.RecordVideoManager;
+import com.starmcc.beanfun.manager.ThreadPoolManager;
+import com.starmcc.beanfun.manager.AdvancedTimerMamager;
+import com.starmcc.beanfun.model.thread.timer.AdvancedTimerTask;
+import com.starmcc.beanfun.manager.RecordVideoManager;
 import lombok.extern.slf4j.Slf4j;
 
 import java.io.File;

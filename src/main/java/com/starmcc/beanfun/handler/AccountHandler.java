@@ -5,7 +5,7 @@ import com.starmcc.beanfun.constant.QsConstant;
 import com.starmcc.beanfun.model.ConfigModel;
 import com.starmcc.beanfun.model.client.Account;
 import com.starmcc.beanfun.model.client.BeanfunStringResult;
-import com.starmcc.beanfun.thread.ThreadPoolManager;
+import com.starmcc.beanfun.manager.ThreadPoolManager;
 import com.starmcc.beanfun.utils.AesTools;
 import com.starmcc.beanfun.utils.FileTools;
 import com.starmcc.beanfun.utils.DataTools;

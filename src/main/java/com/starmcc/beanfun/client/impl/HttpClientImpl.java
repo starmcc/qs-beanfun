@@ -1,8 +1,8 @@
 package com.starmcc.beanfun.client.impl;
 
 import com.starmcc.beanfun.client.HttpClient;
-import com.starmcc.beanfun.model.ReqParams;
 import com.starmcc.beanfun.model.client.QsHttpResponse;
+import com.starmcc.beanfun.model.client.ReqParams;
 import com.starmcc.beanfun.windows.WindowService;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
@@ -96,10 +96,10 @@ public class HttpClientImpl extends HttpClient {
                 httpGet = new HttpGet(url);
             } else {
                 // 参数
-                StringBuilder params = new StringBuilder(url.replace("?", ""));
+                StringBuffer params = new StringBuffer(url.replace("?", ""));
                 int i = 0;
                 for (Map.Entry<String, String> entry : finalParams.getParams().entrySet()) {
-                    StringBuilder valParam = new StringBuilder();
+                    StringBuffer valParam = new StringBuffer();
                     valParam = i == 0 ? valParam.append("?") : valParam.append("&");
                     valParam.append(entry.getKey()).append("=").append(URLEncoder.encode(entry.getValue(), "utf-8"));
                     params.append(valParam.toString());
@@ -147,7 +147,7 @@ public class HttpClientImpl extends HttpClient {
     }
 
     @Override
-    public void downloadFile(String url, String savePath, HttpClient.Process process) {
+    public void downloadFile(URL url, File saveFile, HttpClient.Process process) {
         process.call(HttpClient.Process.State.准备开始, null, 0, null);
         InputStream inputStream = null;
         RandomAccessFile randomAccessFile = null;
@@ -157,12 +157,12 @@ public class HttpClientImpl extends HttpClient {
 
         try {
             process.call(HttpClient.Process.State.正在连接, null, unitProgress, null);
-            HttpHost httpHost = WindowService.getInstance().getPacScriptProxy(url);
+            HttpHost httpHost = WindowService.getInstance().getPacScriptProxy(url.toString());
             if (Objects.nonNull(httpHost)) {
                 Proxy proxy = new Proxy(Proxy.Type.HTTP, new InetSocketAddress(httpHost.getHostName(), httpHost.getPort()));
-                urlConnection = (HttpURLConnection) new URL(url).openConnection(proxy);
+                urlConnection = (HttpURLConnection) url.openConnection(proxy);
             } else {
-                urlConnection = (HttpURLConnection) new URL(url).openConnection();
+                urlConnection = (HttpURLConnection) url.openConnection();
             }
             urlConnection.setRequestMethod("GET");
             urlConnection.setConnectTimeout(10 * 1000);
@@ -186,15 +186,14 @@ public class HttpClientImpl extends HttpClient {
             int progres = 0;
             //获取文件
             int maxProgres = urlConnection.getContentLength();
-            File file = new File(savePath);
-            if (!file.getParentFile().exists()) {
-                file.getParentFile().mkdir();
+            if (!saveFile.getParentFile().exists()) {
+                saveFile.getParentFile().mkdir();
             }
-            if (file.exists()) {
-                file.delete();
+            if (saveFile.exists()) {
+                saveFile.delete();
             }
-            file.createNewFile();
-            randomAccessFile = new RandomAccessFile(file, "rwd");
+            saveFile.createNewFile();
+            randomAccessFile = new RandomAccessFile(saveFile, "rwd");
             //设置文件大小
             randomAccessFile.setLength(maxProgres);
             //将文件大小分成100分，每一分的大小为unit
@@ -214,7 +213,7 @@ public class HttpClientImpl extends HttpClient {
                 }
             }
             inputStream.close();
-            process.call(HttpClient.Process.State.下载完毕, new File(savePath), unitProgress, null);
+            process.call(HttpClient.Process.State.下载完毕, saveFile, unitProgress, null);
         } catch (Exception e) {
             process.call(HttpClient.Process.State.未知异常, null, unitProgress, e);
         } finally {
@@ -277,7 +276,7 @@ public class HttpClientImpl extends HttpClient {
     @Override
     public String readHttpFile(String urlAddress) {
         BufferedReader reader = null;
-        StringBuilder content = new StringBuilder();
+        StringBuffer content = new StringBuffer();
         try {
             URL url = new URL(urlAddress);
             String line = null;

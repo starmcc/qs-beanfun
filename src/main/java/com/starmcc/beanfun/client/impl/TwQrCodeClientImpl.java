@@ -5,7 +5,7 @@ import com.alibaba.fastjson.JSONObject;
 import com.starmcc.beanfun.client.BeanfunClient;
 import com.starmcc.beanfun.client.HttpClient;
 import com.starmcc.beanfun.client.QrCodeClient;
-import com.starmcc.beanfun.model.ReqParams;
+import com.starmcc.beanfun.model.client.ReqParams;
 import com.starmcc.beanfun.model.client.AbstractBeanfunResult;
 import com.starmcc.beanfun.model.client.BeanfunQrCodeResult;
 import com.starmcc.beanfun.model.client.BeanfunStringResult;

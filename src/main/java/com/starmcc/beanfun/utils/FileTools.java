@@ -13,6 +13,7 @@ import java.io.*;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.util.ArrayList;
+import java.util.Objects;
 
 /**
  * 文件工具
@@ -115,6 +116,44 @@ public class FileTools {
         } catch (Exception e) {
             log.error("文件写入异常 e={}", e.getMessage(), e);
             return false;
+        }
+    }
+
+    /**
+     * 写文件
+     *
+     * @param content  内容
+     * @param filePath 文件路径
+     */
+    public static void writeFile(String content, String filePath) {
+        Writer write = null;
+        try {
+            // 写到文件
+            File file = new File(filePath);
+            // 创建上级目录
+            if (!file.getParentFile().exists()) {
+                file.getParentFile().mkdirs();
+            }
+            // 如果文件存在，则删除文件
+            if (file.exists()) {
+                file.delete();
+            }
+            // 创建文件
+            file.createNewFile();
+            // 写入文件
+            write = new OutputStreamWriter(new FileOutputStream(file), StandardCharsets.UTF_8);
+            write.write(content);
+            write.flush();
+        } catch (Exception e) {
+            log.error("写入文件异常 e={}", e.getMessage(), e);
+        } finally {
+            try {
+                if (Objects.nonNull(write)) {
+                    write.close();
+                }
+            } catch (IOException e) {
+                log.error("关闭异常 e={}", e.getMessage(), e);
+            }
         }
     }
 }

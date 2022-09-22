@@ -143,7 +143,7 @@ public class JFXStage implements EventHandler<MouseEvent> {
         close.setPrefHeight(16);
         close.getStyleClass().add(CLOSE_CSS_CLASS);
         close.setOnMouseClicked(e -> {
-            if (page == FXPageEnum.登录页面 || page == FXPageEnum.主界面) {
+            if (page == FXPageEnum.登录页 || page == FXPageEnum.主页) {
                 FrameService.getInstance().exit();
                 return;
             }

@@ -4,13 +4,12 @@ import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
 import com.starmcc.beanfun.client.BeanfunClient;
 import com.starmcc.beanfun.client.HttpClient;
-import com.starmcc.beanfun.model.ReqParams;
+import com.starmcc.beanfun.model.client.ReqParams;
 import com.starmcc.beanfun.model.client.*;
 import com.starmcc.beanfun.utils.DataTools;
 import com.starmcc.beanfun.utils.RegexUtils;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
-import org.apache.http.cookie.Cookie;
 
 import java.net.URI;
 import java.text.SimpleDateFormat;

@@ -12,7 +12,7 @@ public class MD5 {
 
 
     private static String toHexString(byte[] b) {
-        StringBuilder sb = new StringBuilder(b.length * 2);
+        StringBuffer sb = new StringBuffer(b.length * 2);
         for (int i = 0; i < b.length; i++) {
             sb.append(HEX_DIGITS[(b[i] & 0xf0) >>> 4]);
             sb.append(HEX_DIGITS[b[i] & 0x0f]);

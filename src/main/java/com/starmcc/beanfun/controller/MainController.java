@@ -10,9 +10,9 @@ import com.starmcc.beanfun.model.QsTray;
 import com.starmcc.beanfun.model.client.Account;
 import com.starmcc.beanfun.model.client.BeanfunAccountResult;
 import com.starmcc.beanfun.model.client.BeanfunStringResult;
-import com.starmcc.beanfun.thread.ThreadPoolManager;
-import com.starmcc.beanfun.thread.timer.AdvancedTimerMamager;
-import com.starmcc.beanfun.thread.timer.AdvancedTimerTask;
+import com.starmcc.beanfun.manager.ThreadPoolManager;
+import com.starmcc.beanfun.manager.AdvancedTimerMamager;
+import com.starmcc.beanfun.model.thread.timer.AdvancedTimerTask;
 import com.starmcc.beanfun.utils.FileTools;
 import com.starmcc.beanfun.utils.RegexUtils;
 import com.starmcc.beanfun.windows.FrameService;
@@ -133,7 +133,7 @@ public class MainController implements Initializable {
     public void initialize(URL location, ResourceBundle resources) {
         FrameService.getInstance().runLater(() -> {
             // 托盘菜单
-            QsConstant.trayIcon = QsTray.init(QsConstant.JFX_STAGE_DATA.get(FXPageEnum.主界面).getStage());
+            QsConstant.trayIcon = QsTray.init(QsConstant.JFX_STAGE_DATA.get(FXPageEnum.主页).getStage());
             QsTray.show(QsConstant.trayIcon);
         });
         // 获取账号数据
@@ -292,8 +292,8 @@ public class MainController implements Initializable {
         FrameService.getInstance().runLater(() -> {
             try {
                 BeanfunClient.run().loginOut(QsConstant.beanfunModel.getToken());
-                FrameService.getInstance().openWindow(FXPageEnum.登录页面);
-                FrameService.getInstance().closeWindow(FXPageEnum.主界面);
+                FrameService.getInstance().openWindow(FXPageEnum.登录页);
+                FrameService.getInstance().closeWindow(FXPageEnum.主页);
             } catch (Exception e) {
                 log.error("登出异常 e={}", e.getMessage(), e);
             }
@@ -367,7 +367,7 @@ public class MainController implements Initializable {
         FileChooser fileChooser = new FileChooser();
         FileChooser.ExtensionFilter extFilter = new FileChooser.ExtensionFilter("新枫之谷启动程序(MapleStory.exe)", "MapleStory.exe");
         fileChooser.getExtensionFilters().add(extFilter);
-        File file = fileChooser.showOpenDialog(QsConstant.JFX_STAGE_DATA.get(FXPageEnum.主界面).getStage());
+        File file = fileChooser.showOpenDialog(QsConstant.JFX_STAGE_DATA.get(FXPageEnum.主页).getStage());
         if (Objects.isNull(file)) {
             return;
         }
@@ -493,7 +493,7 @@ public class MainController implements Initializable {
      */
     @FXML
     public void alwaysOnTopAction(ActionEvent actionEvent) {
-        QsConstant.JFX_STAGE_DATA.get(FXPageEnum.主界面).getStage().setAlwaysOnTop(checkMenuItemAlwaysOnTop.isSelected());
+        QsConstant.JFX_STAGE_DATA.get(FXPageEnum.主页).getStage().setAlwaysOnTop(checkMenuItemAlwaysOnTop.isSelected());
     }
 
 
@@ -562,14 +562,14 @@ public class MainController implements Initializable {
      */
     @FXML
     public void openToolsWindowAction(ActionEvent actionEvent) throws Exception {
-        FrameService.getInstance().openWindow(FXPageEnum.关于我, FXPageEnum.主界面);
+        FrameService.getInstance().openWindow(FXPageEnum.关于我, FXPageEnum.主页);
     }
 
     @FXML
     public void videoPathOpenAction(ActionEvent actionEvent) throws Exception {
         DirectoryChooser directoryChooser = new DirectoryChooser();
         directoryChooser.setTitle("录像目录");
-        File selectedfolder = directoryChooser.showDialog(QsConstant.JFX_STAGE_DATA.get(FXPageEnum.主界面).getStage());
+        File selectedfolder = directoryChooser.showDialog(QsConstant.JFX_STAGE_DATA.get(FXPageEnum.主页).getStage());
         if (Objects.isNull(selectedfolder)) {
             return;
         }
@@ -651,7 +651,7 @@ public class MainController implements Initializable {
         FileChooser fileChooser = new FileChooser();
         FileChooser.ExtensionFilter extFilter = new FileChooser.ExtensionFilter("FFmpeg.exe(*.exe)", "*.exe");
         fileChooser.getExtensionFilters().add(extFilter);
-        File file = fileChooser.showOpenDialog(QsConstant.JFX_STAGE_DATA.get(FXPageEnum.主界面).getStage());
+        File file = fileChooser.showOpenDialog(QsConstant.JFX_STAGE_DATA.get(FXPageEnum.主页).getStage());
         if (Objects.isNull(file)) {
             return;
         }

@@ -1,5 +1,6 @@
-package com.starmcc.beanfun.thread;
+package com.starmcc.beanfun.manager;
 
+import com.starmcc.beanfun.model.thread.Runnable2;
 import com.sun.istack.internal.NotNull;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.concurrent.BasicThreadFactory;

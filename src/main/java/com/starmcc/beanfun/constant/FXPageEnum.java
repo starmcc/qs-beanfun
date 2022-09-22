@@ -13,12 +13,13 @@ import java.util.function.Consumer;
  */
 @Getter
 public enum FXPageEnum {
-    登录页面("login", "QsBeanfun", false, false, true,
+    登录页("login", "QsBeanfun", false, false, true,
             jfxStage -> jfxStage.getRoot().getStylesheets().add(QsConstant.class.getResource("/static/css/login.css").toExternalForm())),
-    主界面("main", "QsBeanfun", true, true, true),
+    主页("main", "QsBeanfun", true, true, true),
     关于我("about", "About"),
     装备计算器("equipment", "Equipment"),
     二维码登录("qrCode", "QR-Code", true, false, true),
+    更新页("update", "auto-update", true, false, true),
     ;
 
     /**

@@ -1,14 +1,12 @@
 package com.starmcc.beanfun.controller;
 
-import com.starmcc.beanfun.client.UpdateClient;
 import com.starmcc.beanfun.constant.QsConstant;
-import com.starmcc.beanfun.model.UpdateModel;
-import com.starmcc.beanfun.thread.ThreadPoolManager;
+import com.starmcc.beanfun.manager.ThreadPoolManager;
+import com.starmcc.beanfun.manager.UpdateManager;
 import com.starmcc.beanfun.windows.FrameService;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
-import javafx.scene.control.Alert;
 import javafx.scene.control.Hyperlink;
 import javafx.scene.image.ImageView;
 import lombok.extern.slf4j.Slf4j;
@@ -44,25 +42,6 @@ public class AboutController implements Initializable {
 
     @FXML
     public void verifyVersionAction(ActionEvent actionEvent) {
-        ThreadPoolManager.execute(() -> {
-            UpdateModel versionModel = UpdateClient.getInstance().getVersionModel();
-            FrameService.getInstance().runLater(() -> {
-                switch (versionModel.getState()) {
-                    case 有新版本:
-                        if (QsConstant.confirmDialog("是否前往更新？", versionModel.getUpdateText())) {
-                            FrameService.getInstance().openWebUrl(QsConstant.GITHUB_URL + "/releases");
-                        }
-                        break;
-                    case 已是最新版本:
-                        QsConstant.alert("已经是最新版本", Alert.AlertType.INFORMATION);
-                        break;
-                    case 获取失败:
-                        QsConstant.alert("已经是最新版本", Alert.AlertType.INFORMATION);
-                        break;
-                    default:
-                        break;
-                }
-            });
-        });
+        ThreadPoolManager.execute(() -> UpdateManager.getInstance().verifyAppVersion(false));
     }
 }

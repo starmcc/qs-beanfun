@@ -4,7 +4,7 @@ import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
 import com.starmcc.beanfun.client.BeanfunClient;
 import com.starmcc.beanfun.client.HttpClient;
-import com.starmcc.beanfun.model.ReqParams;
+import com.starmcc.beanfun.model.client.ReqParams;
 import com.starmcc.beanfun.model.client.*;
 import com.starmcc.beanfun.utils.DataTools;
 import com.starmcc.beanfun.utils.RegexUtils;

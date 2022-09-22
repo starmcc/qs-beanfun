@@ -7,14 +7,10 @@ import javafx.scene.control.Alert;
 import javafx.scene.control.ButtonType;
 import javafx.scene.control.TextInputDialog;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.lang3.StringUtils;
 
 import java.awt.*;
 import java.math.BigDecimal;
-import java.util.Arrays;
-import java.util.List;
 import java.util.Optional;
-import java.util.stream.Collectors;
 
 
 /**
@@ -26,11 +22,13 @@ import java.util.stream.Collectors;
 @Slf4j
 public class QsConstant {
     public static final String APP_VERSION = "4.0.0";
-    public static final String PATH_PLUGINS = System.getProperties().getProperty("user.dir") + "\\qs-data\\";
-    public static final String PATH_EXE_FFMPEG = PATH_PLUGINS + "ffmpeg.exe";
+    public static final Integer APP_VERSION_INT = 301;
+    public static final String PATH_APP = System.getProperties().getProperty("user.dir");
+    public static final String PATH_PLUGINS = PATH_APP + "\\qs-data\\";
     public static final String PATH_APP_CONFIG = PATH_PLUGINS + "config.json";
     public static final String APP_NAME = "QsBeanfun";
-    public static final String GITHUB_API_URL = "https://api.github.com/repos/starmcc/qs-beanfun/releases/latest";
+    public static final String UPDATE_API_GITHUB = "https://api.github.com/repos/starmcc/qs-beanfun/releases/latest";
+    public static final String UPDATE_API_SERVER = "https://update.qstms.com/qs-beanfun/version.json";
     public static final String GITHUB_URL = "https://github.com/starmcc/qs-beanfun";
     public static final JFXStageData JFX_STAGE_DATA = new JFXStageData();
     public static TrayIcon trayIcon;
@@ -46,11 +44,7 @@ public class QsConstant {
      * @date 2022/03/22
      */
     public static enum Resources {
-        LR_PROC_EXE(PATH_PLUGINS + "lr/LRProc.exe", "lib/lr/LRProc.exe"),
-        LR_HOOKX64_DLL(PATH_PLUGINS + "lr/LRHookx64.dll", "lib/lr/LRHookx64.dll"),
-        LR_HOOKX32_DLL(PATH_PLUGINS + "lr/LRHookx32.dll", "lib/lr/LRHookx32.dll"),
-        LR_CONFIG_XML(PATH_PLUGINS + "lr/LRConfig.xml", "lib/lr/LRConfig.xml"),
-        LR_SUB_MENUS_DLL(PATH_PLUGINS + "lr/LRSubMenus.dll", "lib/lr/LRSubMenus.dll"),
+        LR_PROC_EXE(PATH_PLUGINS + "lr/LRProc.exe", "lib/lr/LRProc.exe"), LR_HOOKX64_DLL(PATH_PLUGINS + "lr/LRHookx64.dll", "lib/lr/LRHookx64.dll"), LR_HOOKX32_DLL(PATH_PLUGINS + "lr/LRHookx32.dll", "lib/lr/LRHookx32.dll"), LR_CONFIG_XML(PATH_PLUGINS + "lr/LRConfig.xml", "lib/lr/LRConfig.xml"), LR_SUB_MENUS_DLL(PATH_PLUGINS + "lr/LRSubMenus.dll", "lib/lr/LRSubMenus.dll"),
 
         ;
 
@@ -116,42 +110,4 @@ public class QsConstant {
         return alert.showAndWait().get() == ButtonType.OK;
     }
 
-    /**
-     * 获得数字版本
-     *
-     * @param name 名字
-     * @return {@link Long}
-     */
-    private static Long getNumberVersion(String name) {
-        if (StringUtils.isBlank(name)) {
-            return 0L;
-        }
-        String[] split = name.split("\\.");
-        List<String> versionList = Arrays.stream(split).collect(Collectors.toList());
-        while (versionList.size() < 3) {
-            versionList.add("0");
-        }
-        StringBuilder version = new StringBuilder();
-        for (String s : versionList) {
-            version.append(s);
-        }
-        return Long.parseLong(version.toString());
-    }
-
-
-    /**
-     * 检查新版本
-     *
-     * @param targetVersion 目标版本
-     * @return boolean 有新版本，返回true，否则false
-     */
-    public static boolean checkNewVersion(String targetVersion) {
-        Long numberVersion = getNumberVersion(APP_VERSION);
-        Long numberVersionTarget = getNumberVersion(targetVersion);
-        if (numberVersionTarget == 0) {
-            log.error("版本解析为0，解析失败 targetVersion={}", targetVersion);
-            return false;
-        }
-        return numberVersion.compareTo(numberVersionTarget) == -1;
-    }
 }

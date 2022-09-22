@@ -1,12 +1,13 @@
 package com.starmcc.beanfun.client;
 
 import com.starmcc.beanfun.client.impl.HttpClientImpl;
-import com.starmcc.beanfun.model.ReqParams;
 import com.starmcc.beanfun.model.client.QsHttpResponse;
+import com.starmcc.beanfun.model.client.ReqParams;
 import org.apache.http.client.CookieStore;
 
 import java.io.File;
 import java.net.URI;
+import java.net.URL;
 import java.util.Map;
 import java.util.Objects;
 
@@ -100,10 +101,10 @@ public abstract class HttpClient {
      * 下载文件
      *
      * @param url      url
-     * @param savePath 保存路径
-     * @param process  过程
+     * @param saveFile 保存文件
+     * @param process  下载回调函数
      */
-    public abstract void downloadFile(String url, String savePath, HttpClient.Process process);
+    public abstract void downloadFile(URL url, File saveFile, HttpClient.Process process);
 
     /**
      * 读取http文件
@@ -118,23 +119,29 @@ public abstract class HttpClient {
     public interface Process {
 
         public static enum State {
-            请求状态码异常(-3),
-            连接超时(-2),
-            未知异常(-1),
-            准备开始(0),
-            正在连接(1),
-            创建文件(2),
-            下载中(3),
-            下载完毕(4),
+            请求状态码异常(-3, false),
+            连接超时(-2, false),
+            未知异常(-1, false),
+            准备开始(0, true),
+            正在连接(1, true),
+            创建文件(2, true),
+            下载中(3, true),
+            下载完毕(4, true),
             ;
             private final int state;
+            private final boolean normal;
 
-            State(int state) {
+            State(int state, boolean normal) {
                 this.state = state;
+                this.normal = normal;
             }
 
             public int getState() {
                 return state;
+            }
+
+            public boolean isNormal() {
+                return normal;
             }
         }
 
@@ -146,6 +153,6 @@ public abstract class HttpClient {
          * @param process 过程
          * @param e       e
          */
-        void call(HttpClient.Process.State state, File file, Integer process, Exception e) ;
+        void call(HttpClient.Process.State state, File file, Integer process, Exception e);
     }
 }

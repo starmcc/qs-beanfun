@@ -8,7 +8,7 @@ import com.starmcc.beanfun.model.ConfigModel;
 import com.starmcc.beanfun.model.LoginType;
 import com.starmcc.beanfun.model.client.BeanfunModel;
 import com.starmcc.beanfun.model.client.BeanfunStringResult;
-import com.starmcc.beanfun.thread.ThreadPoolManager;
+import com.starmcc.beanfun.manager.ThreadPoolManager;
 import com.starmcc.beanfun.utils.AesTools;
 import com.starmcc.beanfun.utils.DataTools;
 import com.starmcc.beanfun.utils.FileTools;
@@ -205,7 +205,7 @@ public class LoginController implements Initializable {
     @FXML
     public void qrCodeClick() throws Exception {
 
-        FrameService.getInstance().openWindow(FXPageEnum.二维码登录, FXPageEnum.登录页面);
+        FrameService.getInstance().openWindow(FXPageEnum.二维码登录, FXPageEnum.登录页);
     }
 
     @FXML
@@ -215,7 +215,7 @@ public class LoginController implements Initializable {
 
     @FXML
     public void aboutAction(MouseEvent mouseEvent) throws Exception {
-        FrameService.getInstance().openWindow(FXPageEnum.关于我, FXPageEnum.登录页面);
+        FrameService.getInstance().openWindow(FXPageEnum.关于我, FXPageEnum.登录页);
     }
 
 
@@ -232,8 +232,8 @@ public class LoginController implements Initializable {
         }
         try {
             // 窗口显示
-            FrameService.getInstance().openWindow(FXPageEnum.主界面);
-            FrameService.getInstance().closeWindow(FXPageEnum.登录页面);
+            FrameService.getInstance().openWindow(FXPageEnum.主页);
+            FrameService.getInstance().closeWindow(FXPageEnum.登录页);
             FrameService.getInstance().closeWindow(FXPageEnum.二维码登录);
         } catch (Exception e) {
             log.error("loginSuccessGoMain e={}", e.getMessage(), e);

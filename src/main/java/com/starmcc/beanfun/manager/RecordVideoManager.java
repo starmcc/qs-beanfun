@@ -1,4 +1,4 @@
-package com.starmcc.beanfun.windows;
+package com.starmcc.beanfun.manager;
 
 import com.starmcc.beanfun.constant.QsConstant;
 import com.starmcc.beanfun.model.ConfigModel;
@@ -40,7 +40,7 @@ public class RecordVideoManager {
      * @param codeRate 编码速率
      * @param callback 回调
      */
-    public void start(ConfigModel.RecordVideo config, Consumer<String> callback) {
+    public synchronized void start(ConfigModel.RecordVideo config, Consumer<String> callback) {
         String command = recordVideoManager.buildFFmpegScript(config);
         recordVideoManager.exec(command, callback);
     }
@@ -50,7 +50,7 @@ public class RecordVideoManager {
      *
      * @throws IOException ioexception
      */
-    public void stop() {
+    public synchronized void stop() {
         try {
             if (Objects.isNull(recordVideoManager) || Objects.isNull(recordVideoManager.process)) {
                 return;
@@ -79,7 +79,7 @@ public class RecordVideoManager {
         recordVideoManager.nowFileName = recordVideoManager.buildFileName(config.getFolder());
         // ffmpeg 命令
         // ffmpeg.exe -f gdigrab -framerate 30 -i title="MapleStory" -pix_fmt yuv420p -c:v h264 -b:v 2500k -preset veryfast -y out.mp4
-        StringBuilder sbf = new StringBuilder();
+        StringBuffer sbf = new StringBuffer();
         sbf.append(config.getFfmpegPath());
         sbf.append(" -f gdigrab -framerate ").append(config.getFps());
         if (Objects.equals(config.getCaptureType(), ConfigModel.RecordVideo.CaptureTypeEnum.游戏窗口.getType())) {

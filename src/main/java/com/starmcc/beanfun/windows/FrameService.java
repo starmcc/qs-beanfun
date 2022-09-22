@@ -1,7 +1,7 @@
 package com.starmcc.beanfun.windows;
 
 import com.starmcc.beanfun.constant.FXPageEnum;
-import com.starmcc.beanfun.thread.Runnable2;
+import com.starmcc.beanfun.model.thread.Runnable2;
 import com.starmcc.beanfun.windows.impl.FrameServiceImpl;
 import javafx.stage.Stage;
 

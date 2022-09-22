@@ -1,7 +1,7 @@
 package com.starmcc.beanfun.api;
 
 import com.starmcc.beanfun.client.HttpClient;
-import com.starmcc.beanfun.model.ReqParams;
+import com.starmcc.beanfun.model.client.ReqParams;
 import com.starmcc.beanfun.model.client.QsHttpResponse;
 import com.starmcc.beanfun.utils.RegexUtils;
 import lombok.extern.slf4j.Slf4j;

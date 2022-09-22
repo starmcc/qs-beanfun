@@ -1,6 +1,5 @@
-package com.starmcc.beanfun.model;
+package com.starmcc.beanfun.model.client;
 
-import com.starmcc.beanfun.constant.QsConstant;
 import lombok.Data;
 
 import java.io.Serializable;
@@ -15,12 +14,12 @@ import java.io.Serializable;
 public class UpdateModel implements Serializable {
     private static final long serialVersionUID = -7379298032869785110L;
 
-    private String updateVersion;
-    private String nowVersion;
-    private String downloadUrl;
-    private String updateText;
     private State state;
-
+    private String version;
+    private String url;
+    private String content;
+    private Integer versionInt;
+    private String hash;
 
     public static enum State {
         /**
@@ -51,7 +50,6 @@ public class UpdateModel implements Serializable {
     public static UpdateModel build(State state) {
         UpdateModel model = new UpdateModel();
         model.setState(state);
-        model.setNowVersion(QsConstant.APP_VERSION);
         return model;
     }
 
