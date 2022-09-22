@@ -63,7 +63,7 @@ public class UpdateController implements Initializable {
                     return;
                 }
                 progressBar.setProgress(process / 100D);
-                labelProcess.setText(process + "%");
+                FrameService.getInstance().runLater(() -> labelProcess.setText(process + "%"));
                 if (state != HttpClient.Process.State.下载完毕) {
                     return;
                 }
@@ -90,11 +90,11 @@ public class UpdateController implements Initializable {
         bat.append("ren ").append(appExe).append(" ").append(QsConstant.APP_NAME).append(".exe.old").append("\n");
         // 在新下载的改成QsBeanfun.exe
         bat.append("ren ").append(file.getName()).append(" ").append(appExe).append("\n");
-        // 启动新的
-        bat.append("start .\\").append(appExe).append("\n");
+        // 杀掉旧的启动新的
+        bat.append("taskkill /f /im ").append(appExe).append(" && ")
+                .append("start .\\").append(appExe).append("\n");
         // 删除自身
         bat.append("del %0");
-        //  bat.append("taskkill /f /im ").append(appExe).append("\n");
 
         String batPath = QsConstant.PATH_APP + "\\update.bat";
         // 写入bat
