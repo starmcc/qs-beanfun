@@ -3,21 +3,18 @@ package com.starmcc.beanfun.utils;
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.TypeReference;
 import com.alibaba.fastjson.serializer.SerializerFeature;
-import com.starmcc.beanfun.QsBeanfunApplication;
 import com.starmcc.beanfun.constant.QsConstant;
 import com.starmcc.beanfun.model.ConfigModel;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 
 import java.io.*;
-import java.net.URL;
+import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
-import java.nio.file.Files;
 import java.util.ArrayList;
-import java.util.Enumeration;
 import java.util.Objects;
 import java.util.zip.ZipEntry;
-import java.util.zip.ZipFile;
+import java.util.zip.ZipInputStream;
 
 /**
  * 文件工具
@@ -32,56 +29,41 @@ public class FileTools {
      * 解压缩资源文件
      *
      * @param resourceFile 资源文件
-     * @return {@link String}
      */
-    public static String unzipResourceFile(QsConstant.PluginEnum resourceFile) {
-        final int buffer = 1024;
-        String name = "";
-        BufferedOutputStream dest = null;
-        BufferedInputStream is = null;
+    public static void unzipResourceFile(QsConstant.PluginEnum resourceFile) {
         try {
-            ZipEntry entry = null;
-            Enumeration<URL> resources = QsBeanfunApplication.class.getClassLoader().getResources(resourceFile.getSourcePath());
-            String path = resources.nextElement().getPath();
-            ZipFile zipfile = new ZipFile(path);
-            File targetFile = new File(resourceFile.getTargetPath());
-            if (!targetFile.exists()) {
-                targetFile.mkdirs();
-            }
-            Enumeration dir = zipfile.entries();
-            // 检查文件夹是否存在
-            while (dir.hasMoreElements()) {
-                entry = (ZipEntry) dir.nextElement();
-                String abc = targetFile.getPath() + "\\" + entry.getName();
-                File file = new File(abc).getParentFile();
-                if (!file.exists()) {
-                    file.mkdirs();
+            InputStream resourceAsStream = FileTools.class.getClassLoader().getResourceAsStream(resourceFile.getSourcePath());
+            ZipInputStream zipInputStream = new ZipInputStream(resourceAsStream, Charset.forName("gbk"));
+            //读取一个目录
+            ZipEntry nextEntry = zipInputStream.getNextEntry();
+            //不为空进入循环
+            while (nextEntry != null) {
+                String name = nextEntry.getName();
+                File file = new File(resourceFile.getTargetPath() + "\\" + name);
+                //如果是目录，创建目录
+                File parentFile = file.getParentFile();
+                if (!parentFile.exists()) {
+                    parentFile.mkdirs();
                 }
-            }
-            Enumeration e = zipfile.entries();
-            while (e.hasMoreElements()) {
-                entry = (ZipEntry) e.nextElement();
-                if (entry.isDirectory()) {
-                    continue;
-                } else {
-                    is = new BufferedInputStream(zipfile.getInputStream(entry));
-                    int count;
-                    byte[] dataByte = new byte[buffer];
-                    FileOutputStream fos = new FileOutputStream(targetFile.getPath() + "\\" + entry.getName());
-                    dest = new BufferedOutputStream(fos, buffer);
-                    while ((count = is.read(dataByte, 0, buffer)) != -1) {
-                        dest.write(dataByte, 0, count);
-                    }
-                    dest.flush();
-
+                //文件则写入具体的路径中
+                FileOutputStream fileOutputStream = new FileOutputStream(file);
+                BufferedOutputStream bufferedOutputStream = new BufferedOutputStream(fileOutputStream);
+                int n;
+                byte[] bytes = new byte[1024];
+                while ((n = zipInputStream.read(bytes)) != -1) {
+                    bufferedOutputStream.write(bytes, 0, n);
                 }
+                //关闭流
+                bufferedOutputStream.close();
+                fileOutputStream.close();
+                //关闭当前布姆
+                zipInputStream.closeEntry();
+                //读取下一个目录，作为循环条件
+                nextEntry = zipInputStream.getNextEntry();
             }
-        } catch (Exception e) {
-            log.error("unzip error={}", e.getMessage(), e);
-        } finally {
-            close(dest, is);
+        } catch (IOException e) {
+            log.error("IO error e={}", e.getMessage(), e);
         }
-        return name;
     }
 
     /**

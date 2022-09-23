@@ -43,6 +43,7 @@ public class InitApplication {
             }
             FileTools.unzipResourceFile(resource);
         }
+        QsConstant.LibEnum.NODE_DLL.copyFile();
         // 自动更新
         ThreadPoolManager.execute(() -> UpdateManager.getInstance().verifyAppVersion(true));
     }

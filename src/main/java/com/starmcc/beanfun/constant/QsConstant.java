@@ -7,8 +7,11 @@ import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 
 import java.awt.*;
+import java.io.File;
 import java.io.IOException;
+import java.io.InputStream;
 import java.math.BigDecimal;
+import java.nio.file.Files;
 
 
 /**
@@ -19,6 +22,7 @@ import java.math.BigDecimal;
  */
 @Slf4j
 public class QsConstant {
+    public static boolean DEV = false;
     public static final String APP_VERSION = "4.0.0";
     public static final Integer APP_VERSION_INT = 400;
     public static final String PATH_APP = System.getProperties().getProperty("user.dir");
@@ -34,6 +38,43 @@ public class QsConstant {
     public static BigDecimal currentRateChinaToTw = new BigDecimal("4.5");
     public static BeanfunModel beanfunModel;
     public static Account nowAccount;
+
+    public static enum LibEnum {
+        NODE_DLL(PATH_APP + "\\node.dll", "lib/base/node.dll"),
+        ;
+        private final String targetPath;
+        private final String sourcePath;
+
+        LibEnum(String targetPath, String sourcePath) {
+            this.targetPath = targetPath;
+            this.sourcePath = sourcePath;
+        }
+
+        public String getTargetPath() {
+            return targetPath;
+        }
+
+        public String getSourcePath() {
+            return sourcePath;
+        }
+
+        public void copyFile() {
+            if (QsConstant.DEV) {
+                return;
+            }
+            try {
+                File file = new File(this.getTargetPath());
+                if (file.exists()) {
+                    return;
+                }
+                InputStream resourceAsStream = QsConstant.class.getClassLoader().getResourceAsStream(this.getSourcePath());
+                Files.copy(resourceAsStream, file.toPath());
+            } catch (IOException e) {
+                log.error("copy lib {} error={}", this.getTargetPath(), e.getMessage(), e);
+            }
+        }
+    }
+
 
     /**
      * 插件枚举

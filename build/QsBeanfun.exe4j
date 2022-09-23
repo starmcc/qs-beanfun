@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<exe4j version="6.0.2" transformSequenceNumber="2">
-  <directoryPresets config="C:/Users/starc/Desktop/deploy" />
+<exe4j version="6.0.1" transformSequenceNumber="2">
+  <directoryPresets config="../src/main/resources/lib" />
   <application name="QsBeanfun" distributionSourceDir="../target">
     <languages>
       <principalLanguage id="en" customLocalizationFile="" />
@@ -16,12 +16,12 @@
       <versionLine x="20" y="40" text="version %VERSION%" fontSize="8" fontColor="0,0,0" bold="false" />
     </text>
   </splashScreen>
-  <java mainClass="com.starmcc.beanfun.QsBeanfunApplication" mainMode="1" vmParameters="-Dappdir=${EXE4J_EXEDIR}" arguments="" allowVMPassthroughParameters="true" preferredVM="client" bundleRuntime="true" minVersion="1.8" maxVersion="1.8" allowBetaVM="false" jdkOnly="false">
+  <java mainClass="com.starmcc.beanfun.QsBeanfunApplication" mainMode="1" vmParameters="-Dappdir=${EXE4J_EXEDIR}" arguments="" allowVMPassthroughParameters="true" preferredVM="client" bundleRuntime="true" minVersion="1.8" maxVersion="1.8" allowBetaVM="true" jdkOnly="false">
     <searchSequence>
+      <directory location="./jre" />
       <registry />
       <envVar name="JAVA_HOME" />
       <envVar name="JDK_HOME" />
-      <directory location="./jre" />
     </searchSequence>
     <classPath>
       <archive location="../target/qs-beanfun*.jar" failOnError="true" />
