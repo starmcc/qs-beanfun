@@ -10,6 +10,7 @@ import com.starmcc.beanfun.model.thread.timer.AdvancedTimerTask;
 import com.sun.jna.platform.win32.*;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.ArrayUtils;
+import org.apache.commons.lang3.BooleanUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.http.HttpHost;
 
@@ -225,11 +226,16 @@ public class WindowManagerImpl implements WindowManager {
         HttpHost httpHost = null;
         // 如果有自定义配置的代理，优先使用配置代理
         ConfigModel.ProxyConfig proxyConfig = QsConstant.config.getProxyConfig();
-        if (Objects.nonNull(proxyConfig) && StringUtils.isNotBlank(proxyConfig.getIp()) && Objects.nonNull(proxyConfig.getPort())) {
-            log.info("use proxy my custom value = {}", proxyConfig.toString());
-            return new HttpHost(proxyConfig.getIp(), proxyConfig.getPort());
+        if (Objects.nonNull(proxyConfig)) {
+            if (BooleanUtils.isTrue(proxyConfig.getBan())) {
+                log.info("禁止使用PAC代理");
+                return httpHost;
+            }
+            if (StringUtils.isNotBlank(proxyConfig.getIp()) && Objects.nonNull(proxyConfig.getPort())) {
+                log.info("use proxy my custom value = {}", proxyConfig.toString());
+                return new HttpHost(proxyConfig.getIp(), proxyConfig.getPort());
+            }
         }
-
         try {
             String path = "Software\\Microsoft\\Windows\\CurrentVersion\\Internet Settings";
             boolean exists = Advapi32Util.registryValueExists(WinReg.HKEY_CURRENT_USER, path, "AutoConfigURL", WinNT.KEY_READ);

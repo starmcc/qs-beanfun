@@ -128,8 +128,7 @@ public class ConfigModel {
          * @date 2022/09/22
          */
         public static enum CaptureTypeEnum {
-            游戏窗口(1),
-            全屏(2),
+            游戏窗口(1), 全屏(2),
             ;
             private final int type;
 
@@ -149,6 +148,14 @@ public class ConfigModel {
 
         private String ip;
         private Integer port;
+
+        private Boolean ban;
+
+        public ProxyConfig() {
+            this.ip = "";
+            // 默认自动使用PAC代理
+            this.ban = false;
+        }
 
         @Override
         public String toString() {
