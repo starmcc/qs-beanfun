@@ -47,7 +47,7 @@ public class GameHandler {
             }
             if (BooleanUtils.isTrue(QsConstant.config.getKillGamePatcher())) {
                 WindowManager.getInstance().stopAutoPatcher(process -> {
-                    FrameManager.getInstance().runLater(() -> QsConstant.alert("当前游戏版本不是最新版本\n已为您阻止自动更新!", Alert.AlertType.INFORMATION));
+                    FrameManager.getInstance().message("当前游戏版本不是最新版本\n已为您阻止自动更新!", Alert.AlertType.INFORMATION);
                 });
             }
         } catch (Exception e) {

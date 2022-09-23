@@ -2,11 +2,11 @@ package com.starmcc.beanfun.manager.impl;
 
 import com.starmcc.beanfun.client.HttpClient;
 import com.starmcc.beanfun.constant.QsConstant;
+import com.starmcc.beanfun.dll.CustomUser32;
 import com.starmcc.beanfun.manager.AdvancedTimerMamager;
+import com.starmcc.beanfun.manager.WindowManager;
 import com.starmcc.beanfun.model.ConfigModel;
 import com.starmcc.beanfun.model.thread.timer.AdvancedTimerTask;
-import com.starmcc.beanfun.manager.WindowManager;
-import com.starmcc.beanfun.dll.CustomUser32;
 import com.sun.jna.platform.win32.*;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.ArrayUtils;
@@ -39,6 +39,16 @@ public class WindowManagerImpl implements WindowManager {
     private static final byte VK_ENTER = 0x000D;
     private static final byte VK_ESCAPE = 0x001B;
     private static final byte VK_END = 0x0023;
+
+    @Override
+    public WinDef.HWND getMapleStoryHawd() {
+        return User32.INSTANCE.FindWindow("MapleStoryClassTW", "MapleStory");
+    }
+
+    @Override
+    public boolean checkMapleStoryRunning() {
+        return Objects.nonNull(this.getMapleStoryHawd());
+    }
 
     @Override
     public boolean checkVcRuntimeEnvironment() {
@@ -154,7 +164,7 @@ public class WindowManagerImpl implements WindowManager {
 
     @Override
     public boolean setMapleStoryForegroundWindow() {
-        WinDef.HWND hwnd = User32.INSTANCE.FindWindow("MapleStoryClassTW", "MapleStory");
+        WinDef.HWND hwnd = this.getMapleStoryHawd();
         if (hwnd == null) {
             return false;
         }
@@ -166,7 +176,7 @@ public class WindowManagerImpl implements WindowManager {
         int dpi = Toolkit.getDefaultToolkit().getScreenResolution();
         dpi = dpi / 96;
         // 获取句柄
-        WinDef.HWND hwnd = CustomUser32.INSTANCE.FindWindow("MapleStoryClassTW", "MapleStory");
+        WinDef.HWND hwnd = this.getMapleStoryHawd();
         // 前置游戏窗口
         CustomUser32.INSTANCE.SetForegroundWindow(hwnd);
         // 获取鼠标位置

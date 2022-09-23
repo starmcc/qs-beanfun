@@ -1,6 +1,7 @@
 package com.starmcc.beanfun.handler;
 
 import com.starmcc.beanfun.constant.QsConstant;
+import com.starmcc.beanfun.manager.FrameManager;
 import com.starmcc.beanfun.manager.WindowManager;
 import javafx.scene.control.Alert;
 import lombok.extern.slf4j.Slf4j;
@@ -46,13 +47,13 @@ public class AutoLunShaoHandler {
         Integer ranShaoKey = QsConstant.config.getRanShaoKey();
         if (Objects.isNull(lunHuiKey) || Objects.isNull(ranShaoKey)) {
             // 没有设置键位
-            QsConstant.alert("没有设置自动轮烧键位", Alert.AlertType.WARNING);
+            FrameManager.getInstance().message("没有设置自动轮烧键位", Alert.AlertType.WARNING);
             return false;
         }
         String lunHuiKeyStr = KeyEvent.getKeyText(lunHuiKey);
         String ranShaoKeyStr = KeyEvent.getKeyText(ranShaoKey);
         String tips = MessageFormat.format(RUN_TIPS, lunHuiKeyStr, ranShaoKeyStr);
-        if (!QsConstant.confirmDialog("自动轮烧", tips)) {
+        if (!FrameManager.getInstance().dialogConfirm("自动轮烧", tips)) {
             return false;
         }
         // 启动轮烧
@@ -102,7 +103,7 @@ public class AutoLunShaoHandler {
         tips.append("当前已运行:").append(getDateDHMS(time)).append("\n");
         tips.append("是否现在停止？");
         String title = "自动轮烧";
-        if (!QsConstant.confirmDialog(title, tips.toString())) {
+        if (!FrameManager.getInstance().dialogConfirm(title, tips.toString())) {
             return false;
         }
         // 停止轮烧

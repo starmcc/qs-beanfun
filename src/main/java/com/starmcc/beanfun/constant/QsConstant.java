@@ -66,48 +66,4 @@ public class QsConstant {
     }
 
 
-    /**
-     * 信息框
-     *
-     * @param msg       消息
-     * @param alertType 类型
-     */
-    public static void alert(String msg, Alert.AlertType alertType) {
-        final Alert alert = new Alert(alertType);
-        alert.setTitle("");
-        alert.setHeaderText("");
-        alert.setContentText(msg);
-        alert.showAndWait();
-
-    }
-
-
-    /**
-     * 文本输入框
-     *
-     * @param alertType 类型
-     */
-    public static String textDialog(String tips, String defaultText) {
-        TextInputDialog dialog = new TextInputDialog(defaultText);
-        dialog.setTitle("");
-        dialog.setHeaderText(tips);
-        Optional<String> s = dialog.showAndWait();
-        return s.isPresent() ? s.get() : "";
-    }
-
-
-    /**
-     * 确认对话框
-     *
-     * @param tips 提示
-     * @return boolean
-     */
-    public static boolean confirmDialog(String title, String tips) {
-        Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
-        alert.setTitle(title);
-        alert.setHeaderText("");
-        alert.setContentText(tips);
-        return alert.showAndWait().get() == ButtonType.OK;
-    }
-
 }

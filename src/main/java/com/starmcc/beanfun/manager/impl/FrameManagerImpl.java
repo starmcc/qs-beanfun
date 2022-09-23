@@ -5,15 +5,11 @@ import com.alibaba.fastjson.JSONObject;
 import com.starmcc.beanfun.client.HttpClient;
 import com.starmcc.beanfun.constant.FXPageEnum;
 import com.starmcc.beanfun.constant.QsConstant;
-import com.starmcc.beanfun.manager.AdvancedTimerMamager;
-import com.starmcc.beanfun.manager.RecordVideoManager;
-import com.starmcc.beanfun.manager.ThreadPoolManager;
+import com.starmcc.beanfun.dll.EService;
+import com.starmcc.beanfun.manager.*;
 import com.starmcc.beanfun.model.JFXStage;
 import com.starmcc.beanfun.model.QsTray;
 import com.starmcc.beanfun.model.thread.Runnable2;
-import com.starmcc.beanfun.manager.FrameManager;
-import com.starmcc.beanfun.manager.WindowManager;
-import com.starmcc.beanfun.dll.EService;
 import javafx.application.Platform;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
@@ -91,7 +87,6 @@ public class FrameManagerImpl implements FrameManager {
         this.killAllTask();
         AdvancedTimerMamager.shutdown();
         Platform.exit();
-        System.exit(0);
     }
 
     @Override
@@ -166,12 +161,13 @@ public class FrameManagerImpl implements FrameManager {
 
     @Override
     public void message(String msg, Alert.AlertType alertType) {
-        final Alert alert = new Alert(alertType);
-        alert.setTitle("");
-        alert.setHeaderText("");
-        alert.setContentText(msg);
-        alert.showAndWait();
-
+        this.runLater(() -> {
+            final Alert alert = new Alert(alertType);
+            alert.setTitle("");
+            alert.setHeaderText("");
+            alert.setContentText(msg);
+            alert.showAndWait();
+        });
     }
 
     @Override

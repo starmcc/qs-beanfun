@@ -1,6 +1,7 @@
 package com.starmcc.beanfun.manager;
 
 import com.starmcc.beanfun.manager.impl.WindowManagerImpl;
+import com.sun.jna.platform.win32.WinDef;
 import org.apache.http.HttpHost;
 
 import java.util.function.Consumer;
@@ -41,6 +42,20 @@ public interface WindowManager {
      * @return boolean
      */
     boolean setMapleStoryForegroundWindow();
+
+    /**
+     * 获取新枫之谷窗口句柄
+     *
+     * @return {@link WinDef.HWND}
+     */
+    WinDef.HWND getMapleStoryHawd();
+
+    /**
+     * 检查新枫之谷是否已启动
+     *
+     * @return {@link WinDef.HWND}
+     */
+    boolean checkMapleStoryRunning();
 
     /**
      * 自动输入账号密码

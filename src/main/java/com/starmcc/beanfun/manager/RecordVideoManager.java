@@ -42,6 +42,10 @@ public class RecordVideoManager {
      */
     public synchronized void start(ConfigModel.RecordVideo config, Consumer<String> callback) {
         String command = recordVideoManager.buildFFmpegScript(config);
+        // 如果是游戏窗口录制模式，前置游戏窗口
+        if (Objects.equals(config.getCaptureType(), ConfigModel.RecordVideo.CaptureTypeEnum.游戏窗口.getType())) {
+            WindowManager.getInstance().setMapleStoryForegroundWindow();
+        }
         recordVideoManager.exec(command, callback);
     }
 

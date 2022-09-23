@@ -2,10 +2,10 @@ package com.starmcc.beanfun.controller;
 
 import com.starmcc.beanfun.client.HttpClient;
 import com.starmcc.beanfun.constant.QsConstant;
+import com.starmcc.beanfun.manager.FrameManager;
 import com.starmcc.beanfun.manager.ThreadPoolManager;
 import com.starmcc.beanfun.model.client.UpdateModel;
 import com.starmcc.beanfun.utils.FileTools;
-import com.starmcc.beanfun.manager.FrameManager;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.Alert;
@@ -58,7 +58,7 @@ public class UpdateController implements Initializable {
             HttpClient.getInstance().downloadFile(new URL(model.getUrl()), new File(fileName), (state, file, process, e) -> {
                 if (!state.isNormal()) {
                     FrameManager.getInstance().runLater(() -> {
-                        QsConstant.alert("更新失败-" + state.toString(), Alert.AlertType.WARNING);
+                        FrameManager.getInstance().message("更新失败-" + state.toString(), Alert.AlertType.WARNING);
                     });
                     return;
                 }

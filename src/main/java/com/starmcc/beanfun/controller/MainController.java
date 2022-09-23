@@ -1,12 +1,14 @@
 package com.starmcc.beanfun.controller;
 
-import com.starmcc.beanfun.client.ThirdPartyApiClient;
 import com.starmcc.beanfun.client.BeanfunClient;
+import com.starmcc.beanfun.client.ThirdPartyApiClient;
 import com.starmcc.beanfun.constant.FXPageEnum;
 import com.starmcc.beanfun.constant.QsConstant;
 import com.starmcc.beanfun.handler.*;
 import com.starmcc.beanfun.manager.AdvancedTimerMamager;
+import com.starmcc.beanfun.manager.FrameManager;
 import com.starmcc.beanfun.manager.ThreadPoolManager;
+import com.starmcc.beanfun.manager.WindowManager;
 import com.starmcc.beanfun.model.ConfigModel;
 import com.starmcc.beanfun.model.QsTray;
 import com.starmcc.beanfun.model.client.Account;
@@ -15,8 +17,6 @@ import com.starmcc.beanfun.model.client.BeanfunStringResult;
 import com.starmcc.beanfun.model.thread.timer.AdvancedTimerTask;
 import com.starmcc.beanfun.utils.FileTools;
 import com.starmcc.beanfun.utils.RegexUtils;
-import com.starmcc.beanfun.manager.FrameManager;
-import com.starmcc.beanfun.manager.WindowManager;
 import javafx.application.Platform;
 import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
@@ -323,7 +323,7 @@ public class MainController implements Initializable {
                     WindowManager.getInstance().autoInputActPwd(id, password);
                 } catch (Exception e) {
                     log.error("error={}", e, e.getMessage());
-                    FrameManager.getInstance().runLater(() -> QsConstant.alert("自动输入异常", Alert.AlertType.ERROR));
+                    FrameManager.getInstance().message("自动输入异常", Alert.AlertType.ERROR);
                 }
             }
         });
@@ -333,14 +333,14 @@ public class MainController implements Initializable {
     @FXML
     public void startGameAction(ActionEvent actionEvent) {
         if (StringUtils.isBlank(textFieldGamePath.getText())) {
-            QsConstant.alert("请配置游戏路径!", Alert.AlertType.INFORMATION);
+            FrameManager.getInstance().message("请配置游戏路径!", Alert.AlertType.INFORMATION);
             gamePathOpenAction(actionEvent);
             return;
         }
         // 检查VC环境是否安装
         if (!WindowManager.getInstance().checkVcRuntimeEnvironment()) {
-            QsConstant.alert("请安装VC环境!", Alert.AlertType.INFORMATION);
-            boolean goDownload = QsConstant.confirmDialog("VcRuntime Error", "模拟繁体环境需要拥有VC环境,是否前往下载并安装?");
+            FrameManager.getInstance().message("请安装VC环境!", Alert.AlertType.INFORMATION);
+            boolean goDownload = FrameManager.getInstance().dialogConfirm("VcRuntime Error", "模拟繁体环境需要拥有VC环境,是否前往下载并安装?");
             if (goDownload) {
                 FrameManager.getInstance().openWebUrl("https://aka.ms/vs/17/release/vc_redist.x64.exe");
             }
@@ -376,7 +376,7 @@ public class MainController implements Initializable {
         }
         // 判断中文路径
         if (RegexUtils.test(RegexUtils.PTN_CHINA_STRING, path)) {
-            QsConstant.alert("路径中不能包含中文", Alert.AlertType.WARNING);
+            FrameManager.getInstance().message("路径中不能包含中文!", Alert.AlertType.WARNING);
             return;
         }
 
@@ -400,7 +400,7 @@ public class MainController implements Initializable {
      */
     @FXML
     public void addActAction(ActionEvent actionEvent) {
-        String name = QsConstant.textDialog("添加账号", "");
+        String name = FrameManager.getInstance().dialogText("添加账号", "");
         if (StringUtils.isBlank(name)) {
             return;
         }
@@ -409,16 +409,16 @@ public class MainController implements Initializable {
             try {
                 BeanfunStringResult result = BeanfunClient.run().addAccount(name);
                 if (!result.isSuccess()) {
-                    FrameManager.getInstance().runLater(() -> QsConstant.alert(result.getMsg(), Alert.AlertType.WARNING));
+                    FrameManager.getInstance().message(result.getMsg(), Alert.AlertType.WARNING);
                     return;
                 }
                 refeshAccounts(() -> {
-                    QsConstant.alert("创建成功!", Alert.AlertType.INFORMATION);
+                    FrameManager.getInstance().message("创建成功!", Alert.AlertType.INFORMATION);
                     buttonAddAct.setVisible(false);
                 });
             } catch (Exception e) {
                 log.error("添加账号异常 e={}", e.getMessage(), e);
-                FrameManager.getInstance().runLater(() -> QsConstant.alert("创建失败!", Alert.AlertType.WARNING));
+                FrameManager.getInstance().message("创建失败!", Alert.AlertType.WARNING);
             } finally {
                 buttonAddAct.setDisable(false);
             }
@@ -432,7 +432,7 @@ public class MainController implements Initializable {
      */
     @FXML
     public void editActAction(ActionEvent actionEvent) {
-        String newName = QsConstant.textDialog("编辑账号", QsConstant.nowAccount.getName());
+        String newName = FrameManager.getInstance().dialogText("编辑账号", QsConstant.nowAccount.getName());
         if (StringUtils.isBlank(newName)) {
             return;
         }
@@ -441,10 +441,10 @@ public class MainController implements Initializable {
             try {
                 BeanfunStringResult result = BeanfunClient.run().changeAccountName(id, newName);
                 if (!result.isSuccess()) {
-                    FrameManager.getInstance().runLater(() -> QsConstant.alert(result.getMsg(), Alert.AlertType.WARNING));
+                    FrameManager.getInstance().message(result.getMsg(), Alert.AlertType.WARNING);
                     return;
                 }
-                refeshAccounts(() -> QsConstant.alert("编辑成功!", Alert.AlertType.INFORMATION));
+                FrameManager.getInstance().message("编辑成功!", Alert.AlertType.INFORMATION);
             } catch (Exception e) {
                 log.error("编辑账号异常 e={}", e.getMessage(), e);
             }
@@ -604,6 +604,19 @@ public class MainController implements Initializable {
 
     @FXML
     public void recordVideoAction(ActionEvent actionEvent) {
+        if (Objects.equals(QsConstant.config.getRecordVideo().getCaptureType(), ConfigModel.RecordVideo.CaptureTypeEnum.游戏窗口.getType())
+                && buttonRecordVideo.isSelected()) {
+            // 如果是录制游戏窗口，且是开始录制状态，则检查游戏运行状态
+            boolean is = WindowManager.getInstance().checkMapleStoryRunning();
+            if (!is) {
+                // 如果游戏不存在，则不进行录制
+                buttonRecordVideo.setSelected(!buttonRecordVideo.isSelected());
+                FrameManager.getInstance().message("游戏并未运行,请运行游戏后再尝试录制!", Alert.AlertType.WARNING);
+                return;
+            }
+        }
+
+
         // 开始/结束录像
         if (buttonRecordVideo.isSelected()) {
             // 开始录制
@@ -614,7 +627,7 @@ public class MainController implements Initializable {
 
         if (!RecordVideoHandler.run(buttonRecordVideo.isSelected())) {
             buttonRecordVideo.setSelected(!buttonRecordVideo.isSelected());
-            if (QsConstant.confirmDialog("缺少依赖", "自动录像功能需要Ffmpeg.exe支持\n是否前往下载?")) {
+            if (FrameManager.getInstance().dialogConfirm("缺少依赖", "自动录像功能需要Ffmpeg.exe支持\n是否前往下载?")) {
                 FrameManager.getInstance().openWebUrl("https://ffmpeg.org/download.html");
             }
         }
@@ -641,7 +654,7 @@ public class MainController implements Initializable {
         for (File f : files) {
             delNum = f.delete() ? delNum++ : delNum;
         }
-        QsConstant.alert("已清理" + delNum + "个录像", Alert.AlertType.INFORMATION);
+        FrameManager.getInstance().message("已清理" + delNum + "个录像", Alert.AlertType.INFORMATION);
     }
 
 
@@ -677,7 +690,7 @@ public class MainController implements Initializable {
         if (actResult.isSuccess()) {
             QsConstant.beanfunModel.build(actResult);
         } else {
-            FrameManager.getInstance().runLater(() -> QsConstant.alert(actResult.getMsg(), Alert.AlertType.ERROR));
+            FrameManager.getInstance().message(actResult.getMsg(), Alert.AlertType.ERROR);
             return;
         }
 
@@ -685,10 +698,10 @@ public class MainController implements Initializable {
 
         if (!QsConstant.beanfunModel.isCertStatus()) {
             // 需要进阶认证
-            FrameManager.getInstance().runLater(() -> QsConstant.alert("请前往用户中心 -> 会员中心进行进阶认证!\n" + "做完进阶认证后请重新退出重新登录!", Alert.AlertType.INFORMATION));
+            FrameManager.getInstance().message("请前往用户中心 -> 会员中心进行进阶认证!\n" + "做完进阶认证后请重新退出重新登录!", Alert.AlertType.INFORMATION);
         } else if (QsConstant.beanfunModel.isNewAccount()) {
             // 需要创建账号
-            FrameManager.getInstance().runLater(() -> QsConstant.alert("新账号请点击创建账号!", Alert.AlertType.INFORMATION));
+            FrameManager.getInstance().message("新账号请点击创建账号!", Alert.AlertType.INFORMATION);
         }
 
         FrameManager.getInstance().runLater(() -> {

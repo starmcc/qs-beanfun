@@ -58,11 +58,11 @@ public class UpdateManager {
             model = manager.useServerUpdate();
         }
         if (!quiet && model.getState() == UpdateModel.State.已是最新版本) {
-            QsConstant.alert("已经是最新版本", Alert.AlertType.INFORMATION);
+            FrameManager.getInstance().message("已经是最新版本", Alert.AlertType.INFORMATION);
         }
 
         if (!quiet && model.getState() == UpdateModel.State.获取失败) {
-            QsConstant.alert("获取失败", Alert.AlertType.WARNING);
+            FrameManager.getInstance().message("获取失败", Alert.AlertType.WARNING);
         }
 
         if (model.getState() != UpdateModel.State.有新版本) {
@@ -72,7 +72,7 @@ public class UpdateManager {
         final UpdateModel finalModel = model;
         FrameManager.getInstance().runLater(() -> {
             String msg = finalModel.getContent() + "\n是否立刻更新?";
-            if (!QsConstant.confirmDialog("有新版本-" + finalModel.getVersion(), msg)) {
+            if (!FrameManager.getInstance().dialogConfirm("有新版本-" + finalModel.getVersion(), msg)) {
                 return;
             }
             UpdateController.model = finalModel;

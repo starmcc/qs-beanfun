@@ -4,6 +4,7 @@ import com.starmcc.beanfun.client.BeanfunClient;
 import com.starmcc.beanfun.constant.FXPageEnum;
 import com.starmcc.beanfun.constant.QsConstant;
 import com.starmcc.beanfun.handler.AccountHandler;
+import com.starmcc.beanfun.manager.FrameManager;
 import com.starmcc.beanfun.manager.ThreadPoolManager;
 import com.starmcc.beanfun.model.ComBoBoxListCell;
 import com.starmcc.beanfun.model.ConfigModel;
@@ -13,7 +14,6 @@ import com.starmcc.beanfun.model.client.BeanfunStringResult;
 import com.starmcc.beanfun.utils.AesTools;
 import com.starmcc.beanfun.utils.DataTools;
 import com.starmcc.beanfun.utils.FileTools;
-import com.starmcc.beanfun.manager.FrameManager;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
@@ -159,7 +159,7 @@ public class LoginController implements Initializable {
                 String pwd = passwordFieldPassword.getText();
                 BeanfunStringResult loginResult = BeanfunClient.run().login(act, pwd, process -> loginProcess = process);
                 if (!loginResult.isSuccess()) {
-                    FrameManager.getInstance().runLater(() -> QsConstant.alert(loginResult.getMsg(), Alert.AlertType.ERROR));
+                    FrameManager.getInstance().message(loginResult.getMsg(), Alert.AlertType.ERROR);
                     return;
                 }
                 loginProcess = 1;
@@ -170,10 +170,10 @@ public class LoginController implements Initializable {
                 FrameManager.getInstance().runLater(() -> loginSuccessGoMain());
             } catch (HttpHostConnectException e) {
                 log.info("login error e={}", e.getMessage(), e);
-                FrameManager.getInstance().runLater(() -> QsConstant.alert("连接超时,请检查网络环境", Alert.AlertType.ERROR));
+                FrameManager.getInstance().message("连接超时,请检查网络环境", Alert.AlertType.ERROR);
             } catch (Exception e) {
                 log.info("login error e={}", e.getMessage(), e);
-                FrameManager.getInstance().runLater(() -> QsConstant.alert("异常:" + e.getMessage(), Alert.AlertType.ERROR));
+                FrameManager.getInstance().message("error:" + e.getMessage(), Alert.AlertType.ERROR);
             } finally {
                 loginning(false);
             }
@@ -298,7 +298,7 @@ public class LoginController implements Initializable {
      */
     private void whetherToDeleteAccountRecord(String account) {
         String msg = "是否删除该账号[" + account + "]\n删除后无法恢复!";
-        boolean is = QsConstant.confirmDialog("删除账号记录", msg);
+        boolean is = FrameManager.getInstance().dialogConfirm("删除账号记录", msg);
         if (!is) {
             return;
         }

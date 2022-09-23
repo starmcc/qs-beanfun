@@ -1,8 +1,8 @@
 package com.starmcc.beanfun.manager;
 
 import com.starmcc.beanfun.constant.FXPageEnum;
-import com.starmcc.beanfun.model.thread.Runnable2;
 import com.starmcc.beanfun.manager.impl.FrameManagerImpl;
+import com.starmcc.beanfun.model.thread.Runnable2;
 import javafx.scene.control.Alert;
 import javafx.stage.Stage;
 
@@ -90,9 +90,9 @@ public interface FrameManager {
     void killAllTask();
 
     /**
-     * 消息框
+     * 消息框(自动主线程适配)
      *
-     * @param msg       味精
+     * @param msg       msg
      * @param alertType 警报类型
      */
     void message(String msg, Alert.AlertType alertType);
