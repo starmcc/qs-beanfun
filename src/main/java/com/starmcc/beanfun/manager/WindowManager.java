@@ -75,6 +75,21 @@ public interface WindowManager {
     HttpHost getPacScriptProxy(String url);
 
     /**
+     * 结束 NGS
+     * 命令：taskkill /f /im BlackXchg.aes
+     *
+     * @return boolean
+     */
+    boolean killBlackXchg();
+
+    /**
+     * 打开系统计算器
+     *
+     * @return boolean
+     */
+    boolean openSystemCalc();
+
+    /**
      * 获得实例
      *
      * @return {@link WindowManager}

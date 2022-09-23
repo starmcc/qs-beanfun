@@ -17,6 +17,7 @@ import javax.script.Invocable;
 import javax.script.ScriptEngine;
 import javax.script.ScriptEngineManager;
 import java.awt.*;
+import java.io.IOException;
 import java.net.URI;
 import java.util.Map;
 import java.util.Objects;
@@ -279,6 +280,31 @@ public class WindowManagerImpl implements WindowManager {
         return httpHost;
     }
 
+    @Override
+    public boolean killBlackXchg() {
+        try {
+            Runtime.getRuntime().exec("taskkill /f /im BlackXchg.aes");
+        } catch (IOException e) {
+            log.error("ngs error={}", e.getMessage(), e);
+            return false;
+        }
+        return true;
+    }
+
+    public static void main(String[] args) {
+        WindowManager.getInstance().killBlackXchg();
+    }
+
+    @Override
+    public boolean openSystemCalc() {
+        try {
+            Runtime.getRuntime().exec("calc");
+        } catch (IOException e) {
+            log.error("ngs error={}", e.getMessage(), e);
+            return false;
+        }
+        return true;
+    }
 
     private static void inputString(WinDef.HWND hwnd, String val) {
         char[] chars = val.toCharArray();

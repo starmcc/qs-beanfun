@@ -17,7 +17,6 @@ import com.starmcc.beanfun.model.client.BeanfunStringResult;
 import com.starmcc.beanfun.model.thread.timer.AdvancedTimerTask;
 import com.starmcc.beanfun.utils.FileTools;
 import com.starmcc.beanfun.utils.RegexUtils;
-import javafx.application.Platform;
 import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
@@ -127,6 +126,18 @@ public class MainController implements Initializable {
     private RadioButton radioButtonScreen;
     @FXML
     private TextField textFieldFFmpegPath;
+    @FXML
+    private MenuItem menuItemEquipment;
+    @FXML
+    private MenuItem menuItemNgs;
+    @FXML
+    private MenuItem menuItemSystemCalc;
+    @FXML
+    private MenuItem menuItemPaperDoll;
+    @FXML
+    private MenuItem menuItemAlliance;
+    @FXML
+    private MenuItem menuItemExit;
 
 
     @Override
@@ -199,15 +210,43 @@ public class MainController implements Initializable {
 
     private void initEvent() {
         // =========================== 导航菜单控件事件 ========================
-        FrameManager frameManager = FrameManager.getInstance();
-        menuItemOfficialTmsUrl.setOnAction(event -> frameManager.openWebUrl("https://maplestory.beanfun.com/main"));
-        menuItemHkNewBeanfunUrl.setOnAction(event -> frameManager.openWebUrl("https://bfweb.hk.beanfun.com/"));
-        menuItemTwBeanfunUrl.setOnAction(event -> frameManager.openWebUrl("https://tw.beanfun.com"));
-        menuItemTechbangUrl.setOnAction(event -> frameManager.openWebUrl("http://gametsg.techbang.com/maplestory/"));
-        menuItemBahamuteUrl.setOnAction(event -> frameManager.openWebUrl("https://forum.gamer.com.tw/A.php?bsn=7650/"));
-        qstmsUrlMenu.setOnAction(event -> frameManager.openWebUrl("https://www.qstms.com"));
-        tmsTieBaUrlMenu.setOnAction(event -> frameManager.openWebUrl("https://tieba.baidu.com/f?kw=%E6%96%B0%E6%9E%AB%E4%B9%8B%E8%B0%B7"));
-        qsbiliUrlMenu.setOnAction(event -> frameManager.openWebUrl("https://space.bilibili.com/391919722"));
+        menuItemOfficialTmsUrl.setOnAction(event -> FrameManager.getInstance().openWebUrl("https://maplestory.beanfun.com/main"));
+        menuItemHkNewBeanfunUrl.setOnAction(event -> FrameManager.getInstance().openWebUrl("https://bfweb.hk.beanfun.com/"));
+        menuItemTwBeanfunUrl.setOnAction(event -> FrameManager.getInstance().openWebUrl("https://tw.beanfun.com"));
+        menuItemTechbangUrl.setOnAction(event -> FrameManager.getInstance().openWebUrl("http://gametsg.techbang.com/maplestory/"));
+        menuItemBahamuteUrl.setOnAction(event -> FrameManager.getInstance().openWebUrl("https://forum.gamer.com.tw/A.php?bsn=7650/"));
+        qstmsUrlMenu.setOnAction(event -> FrameManager.getInstance().openWebUrl("https://www.qstms.com"));
+        tmsTieBaUrlMenu.setOnAction(event -> FrameManager.getInstance().openWebUrl("https://tieba.baidu.com/f?kw=%E6%96%B0%E6%9E%AB%E4%B9%8B%E8%B0%B7"));
+        qsbiliUrlMenu.setOnAction(event -> FrameManager.getInstance().openWebUrl("https://space.bilibili.com/391919722"));
+        menuItemEquipment.setOnAction(event -> {
+            try {
+                FrameManager.getInstance().openWindow(FXPageEnum.装备计算器);
+            } catch (Exception e) {
+                log.error("equipment open error e={}", e.getMessage(), e);
+                FrameManager.getInstance().message("打开装备窗失败!", Alert.AlertType.ERROR);
+            }
+        });
+        menuItemNgs.setOnAction(event -> {
+            if (FrameManager.getInstance().dialogConfirm("结束NGS", "是否结束NGS进程?")) {
+                WindowManager.getInstance().killBlackXchg();
+            }
+        });
+        menuItemSystemCalc.setOnAction(event -> WindowManager.getInstance().openSystemCalc());
+
+        menuItemExit.setOnAction(event -> {
+            try {
+                BeanfunClient.run().loginOut(QsConstant.beanfunModel.getToken());
+            } catch (Exception e) {
+                log.error("退出登录异常 e={}", e.getMessage(), e);
+            }
+            FrameManager.getInstance().exit();
+        });
+
+        menuItemPaperDoll.setOnAction(event -> {
+        });
+
+        menuItemAlliance.setOnAction(event -> {
+        });
 
 
         // =========================== 汇率控件事件 ========================
@@ -470,20 +509,6 @@ public class MainController implements Initializable {
         FrameManager.getInstance().openWebBrowser(jumpUrl);
     }
 
-    /**
-     * 退出应用程序操作
-     *
-     * @param actionEvent 行动事件
-     */
-    @FXML
-    public void exitApplicationAction(ActionEvent actionEvent) {
-        try {
-            BeanfunClient.run().loginOut(QsConstant.beanfunModel.getToken());
-        } catch (Exception e) {
-            log.error("退出登录异常 e={}", e.getMessage(), e);
-        }
-        Platform.exit();
-    }
 
     /**
      * 窗口置顶
@@ -493,17 +518,6 @@ public class MainController implements Initializable {
     @FXML
     public void alwaysOnTopAction(ActionEvent actionEvent) {
         QsConstant.JFX_STAGE_DATA.get(FXPageEnum.主页).getStage().setAlwaysOnTop(checkMenuItemAlwaysOnTop.isSelected());
-    }
-
-
-    /**
-     * 打开装备计算窗口菜单
-     *
-     * @param actionEvent 行动事件
-     */
-    @FXML
-    public void openEquipmentCalcWindowMenu(ActionEvent actionEvent) throws Exception {
-        FrameManager.getInstance().openWindow(FXPageEnum.装备计算器);
     }
 
     @FXML
@@ -616,6 +630,15 @@ public class MainController implements Initializable {
             }
         }
 
+        // 检查ffmpeg.exe是否存在
+        File file = new File(QsConstant.config.getRecordVideo().getFfmpegPath());
+        if (!file.exists()) {
+            buttonRecordVideo.setSelected(!buttonRecordVideo.isSelected());
+            if (FrameManager.getInstance().dialogConfirm("缺少依赖", "自动录像功能需要Ffmpeg.exe支持\n是否前往下载?")) {
+                FrameManager.getInstance().openWebUrl("https://ffmpeg.org/download.html");
+            }
+            return;
+        }
 
         // 开始/结束录像
         if (buttonRecordVideo.isSelected()) {
@@ -625,12 +648,7 @@ public class MainController implements Initializable {
             buttonRecordVideo.setText("开始录像");
         }
 
-        if (!RecordVideoHandler.run(buttonRecordVideo.isSelected())) {
-            buttonRecordVideo.setSelected(!buttonRecordVideo.isSelected());
-            if (FrameManager.getInstance().dialogConfirm("缺少依赖", "自动录像功能需要Ffmpeg.exe支持\n是否前往下载?")) {
-                FrameManager.getInstance().openWebUrl("https://ffmpeg.org/download.html");
-            }
-        }
+        RecordVideoHandler.run(buttonRecordVideo.isSelected());
     }
 
     @FXML

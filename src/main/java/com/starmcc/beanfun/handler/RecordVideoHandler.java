@@ -1,13 +1,12 @@
 package com.starmcc.beanfun.handler;
 
 import com.starmcc.beanfun.constant.QsConstant;
-import com.starmcc.beanfun.manager.ThreadPoolManager;
 import com.starmcc.beanfun.manager.AdvancedTimerMamager;
-import com.starmcc.beanfun.model.thread.timer.AdvancedTimerTask;
 import com.starmcc.beanfun.manager.RecordVideoManager;
+import com.starmcc.beanfun.manager.ThreadPoolManager;
+import com.starmcc.beanfun.model.thread.timer.AdvancedTimerTask;
 import lombok.extern.slf4j.Slf4j;
 
-import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -27,22 +26,15 @@ public class RecordVideoHandler {
 
     private static List<String> taskNames = new ArrayList<>();
 
-    public static boolean run(boolean status) {
-        // 检查ffmpeg.exe是否存在
-        File file = new File(QsConstant.config.getRecordVideo().getFfmpegPath());
-        if (!file.exists()) {
-            return false;
-        }
-
+    public static void run(boolean status) {
         if (!status) {
             // 停止录像，则删除任务
             AdvancedTimerMamager.getInstance().removeTask(taskNames);
             taskNames.clear();
             // 停止录像
             RecordVideoManager.getInstance().stop();
-            return true;
+            return;
         }
-
         // 定时任务，5分钟自动保存一次,然后再次录制
         String taskName = AdvancedTimerMamager.getInstance().addTask(new AdvancedTimerTask() {
             @Override
@@ -62,7 +54,7 @@ public class RecordVideoHandler {
             RecordVideoManager.getInstance().start(
                     QsConstant.config.getRecordVideo(), (str) -> log.debug("ffmpeg - {}", str));
         });
-        return true;
+        return;
     }
 
 

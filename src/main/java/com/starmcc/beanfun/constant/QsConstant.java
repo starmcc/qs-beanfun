@@ -3,14 +3,10 @@ package com.starmcc.beanfun.constant;
 import com.starmcc.beanfun.model.ConfigModel;
 import com.starmcc.beanfun.model.client.Account;
 import com.starmcc.beanfun.model.client.BeanfunModel;
-import javafx.scene.control.Alert;
-import javafx.scene.control.ButtonType;
-import javafx.scene.control.TextInputDialog;
 import lombok.extern.slf4j.Slf4j;
 
 import java.awt.*;
 import java.math.BigDecimal;
-import java.util.Optional;
 
 
 /**

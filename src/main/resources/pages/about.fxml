@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
+<?import javafx.scene.control.Button?>
 <?import javafx.scene.control.Hyperlink?>
 <?import javafx.scene.control.Separator?>
 <?import javafx.scene.image.Image?>
@@ -8,38 +9,69 @@
 <?import javafx.scene.text.Font?>
 <?import javafx.scene.text.Text?>
 
-<AnchorPane prefHeight="207.0" prefWidth="367.0" xmlns="http://javafx.com/javafx/8.0.171" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.starmcc.beanfun.controller.AboutController">
+<AnchorPane prefHeight="375.0" prefWidth="367.0" style="-fx-background-color: white;" xmlns="http://javafx.com/javafx/8.0.171" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.starmcc.beanfun.controller.AboutController">
     <children>
-        <Text fill="RED" layoutX="24.0" layoutY="95.0" strokeType="OUTSIDE" strokeWidth="0.0" text="本工具不是游戏橘子数位科技开发的客户端程序" wrappingWidth="319.240234375">
+        <Text fill="RED" layoutX="17.0" layoutY="95.0" strokeType="OUTSIDE" strokeWidth="0.0" text="本登录器不是游戏橘子数位科技开发的客户端程序" textAlignment="CENTER" wrappingWidth="332.240234375">
             <font>
                 <Font size="15.0" />
             </font>
         </Text>
-        <Text fill="#0062ff" layoutX="46.0" layoutY="123.0" strokeType="OUTSIDE" strokeWidth="0.0" text="关于使用本工具请确保下载途径是否安全" wrappingWidth="274.240234375">
+        <Text fill="#0062ff" layoutX="40.0" layoutY="125.0" strokeType="OUTSIDE" strokeWidth="0.0" text="关于使用本登录器请确保下载途径是否安全" textAlignment="CENTER" wrappingWidth="286.240234375">
             <font>
                 <Font size="15.0" />
             </font>
         </Text>
-        <Text layoutX="114.0" layoutY="188.0" strokeType="OUTSIDE" strokeWidth="0.0" text="联系开发者：" wrappingWidth="94.240234375">
+        <Text layoutX="121.0" layoutY="358.0" strokeType="OUTSIDE" strokeWidth="0.0" text="联系开发者：" wrappingWidth="94.240234375">
             <font>
                 <Font size="15.0" />
             </font>
         </Text>
-        <Separator disable="true" focusTraversable="false" layoutX="1.0" layoutY="158.0" prefHeight="2.0" prefWidth="366.0" />
-        <Hyperlink focusTraversable="false" layoutX="208.0" layoutY="168.0" onAction="#contactQqAction" text="QQ：1140526018">
+        <Separator disable="true" focusTraversable="false" layoutY="332.0" prefHeight="2.0" prefWidth="366.0" />
+        <Hyperlink focusTraversable="false" layoutX="215.0" layoutY="338.0" onAction="#contactQqAction" text="QQ：1140526018">
             <font>
                 <Font size="15.0" />
             </font>
         </Hyperlink>
-        <ImageView fx:id="logoImg" fitHeight="47.0" fitWidth="184.0" layoutX="23.0" layoutY="20.0" pickOnBounds="true" preserveRatio="true">
+        <ImageView fx:id="logoImg" fitHeight="47.0" fitWidth="184.0" layoutX="29.0" layoutY="17.0" pickOnBounds="true" preserveRatio="true">
          <image>
             <Image url="@../static/images/ico.png" />
          </image></ImageView>
-        <Text layoutX="87.0" layoutY="60.0" strokeType="OUTSIDE" strokeWidth="0.0" text="版本">
+        <Text layoutX="87.0" layoutY="57.0" strokeType="OUTSIDE" strokeWidth="0.0" text="版本">
             <font>
                 <Font size="15.0" />
             </font>
         </Text>
-        <Hyperlink fx:id="versionBtn" focusTraversable="false" layoutX="125.0" layoutY="44.0" onAction="#verifyVersionAction" prefHeight="21.0" prefWidth="67.0" text="0.0.0" textAlignment="CENTER" />
+        <Hyperlink fx:id="versionBtn" alignment="CENTER" contentDisplay="CENTER" focusTraversable="false" layoutX="117.0" layoutY="41.0" onAction="#verifyVersionAction" prefHeight="21.0" prefWidth="71.0" text="0.0.0" />
+      <Text fill="#8c00ff" layoutX="29.0" layoutY="155.0" strokeType="OUTSIDE" strokeWidth="0.0" text="使用本登录器造成的一切后果由使用者承担" textAlignment="CENTER" wrappingWidth="309.240234375">
+         <font>
+            <Font size="15.0" />
+         </font>
+      </Text>
+      <ImageView fitHeight="150.0" fitWidth="150.0" layoutX="188.0" layoutY="170.0" pickOnBounds="true" preserveRatio="true">
+         <image>
+            <Image url="@../static/images/sponsor.png" />
+         </image>
+      </ImageView>
+      <Text fill="#006aa8" layoutX="22.0" layoutY="268.0" strokeType="OUTSIDE" strokeWidth="0.0" text="如果您条件允许..." textAlignment="CENTER" wrappingWidth="129.240234375">
+         <font>
+            <Font size="15.0" />
+         </font>
+      </Text>
+      <Text fill="#26a619" layoutX="67.0" layoutY="305.0" strokeType="OUTSIDE" strokeWidth="0.0" text="望君赞赏" textAlignment="CENTER" wrappingWidth="108.24023367464542">
+         <font>
+            <Font size="25.0" />
+         </font>
+      </Text>
+      <Button layoutX="17.0" layoutY="339.0" mnemonicParsing="false" onAction="#gitHubBtnAction" prefHeight="28.0" prefWidth="83.0" text="开源GitHub" />
+      <Text fill="#ff4000" layoutX="12.0" layoutY="203.0" strokeType="OUTSIDE" strokeWidth="0.0" text="所有不怀好意的指责..." textAlignment="CENTER" wrappingWidth="150.00000132247806">
+         <font>
+            <Font size="15.0" />
+         </font>
+      </Text>
+      <Text fill="#ff4000" layoutX="54.0" layoutY="230.0" strokeType="OUTSIDE" strokeWidth="0.0" text="都需要时间去验证！">
+         <font>
+            <Font size="15.0" />
+         </font>
+      </Text>
     </children>
 </AnchorPane>
