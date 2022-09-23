@@ -242,11 +242,9 @@ public class MainController implements Initializable {
             FrameManager.getInstance().exit();
         });
 
-        menuItemPaperDoll.setOnAction(event -> {
-        });
+        menuItemPaperDoll.setOnAction(event -> QsConstant.PluginEnum.MAPLESTORY_EMULATOR.run());
 
-        menuItemAlliance.setOnAction(event -> {
-        });
+        menuItemAlliance.setOnAction(event -> QsConstant.PluginEnum.WAR_ALLIANCE_HTML.run());
 
 
         // =========================== 汇率控件事件 ========================

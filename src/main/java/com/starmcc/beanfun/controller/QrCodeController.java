@@ -89,7 +89,7 @@ public class QrCodeController implements Initializable {
         }
         HttpClient.getInstance().downloadFile(
                 new URL(beanfunQrCodeResult.getQrImageUrl()),
-                new File(QsConstant.PATH_PLUGINS + "onlineQrCode.jpg"),
+                new File(QsConstant.PATH_APP_PLUGINS + "onlineQrCode.jpg"),
                 (state, file, process, e) -> {
                     if (state == HttpClient.Process.State.下载完毕) {
                         if (Objects.nonNull(file)) {

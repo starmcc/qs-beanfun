@@ -8,6 +8,8 @@ import com.starmcc.beanfun.utils.FileTools;
 import javafx.scene.control.Alert;
 import lombok.extern.slf4j.Slf4j;
 
+import java.io.File;
+
 /**
  * 初始化应用程序
  *
@@ -33,12 +35,14 @@ public class InitApplication {
             FrameManager.getInstance().exit();
             return;
         }
-        // 释放LR所需文件
-        FileTools.copyResourceFile(QsConstant.Resources.LR_PROC_EXE);
-        FileTools.copyResourceFile(QsConstant.Resources.LR_HOOKX64_DLL);
-        FileTools.copyResourceFile(QsConstant.Resources.LR_HOOKX32_DLL);
-        FileTools.copyResourceFile(QsConstant.Resources.LR_CONFIG_XML);
-        FileTools.copyResourceFile(QsConstant.Resources.LR_SUB_MENUS_DLL);
+        // 写入依赖文件
+        for (QsConstant.PluginEnum resource : QsConstant.PluginEnum.values()) {
+            File file = new File(resource.getTargetPath());
+            if (file.exists()) {
+                continue;
+            }
+            FileTools.unzipResourceFile(resource);
+        }
         // 自动更新
         ThreadPoolManager.execute(() -> UpdateManager.getInstance().verifyAppVersion(true));
     }

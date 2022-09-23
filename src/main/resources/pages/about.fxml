@@ -52,26 +52,27 @@
             <Image url="@../static/images/sponsor.png" />
          </image>
       </ImageView>
-      <Text fill="#006aa8" layoutX="22.0" layoutY="268.0" strokeType="OUTSIDE" strokeWidth="0.0" text="如果您条件允许..." textAlignment="CENTER" wrappingWidth="129.240234375">
+      <Text fill="#006aa8" layoutX="22.0" layoutY="274.0" strokeType="OUTSIDE" strokeWidth="0.0" text="如果您条件允许..." textAlignment="CENTER" wrappingWidth="129.240234375">
          <font>
             <Font size="15.0" />
          </font>
       </Text>
-      <Text fill="#26a619" layoutX="67.0" layoutY="305.0" strokeType="OUTSIDE" strokeWidth="0.0" text="望君赞赏" textAlignment="CENTER" wrappingWidth="108.24023367464542">
+      <Text fill="#26a619" layoutX="76.0" layoutY="312.0" strokeType="OUTSIDE" strokeWidth="0.0" text="望君赞赏" textAlignment="CENTER" wrappingWidth="108.24023367464542">
          <font>
             <Font size="25.0" />
          </font>
       </Text>
       <Button layoutX="17.0" layoutY="339.0" mnemonicParsing="false" onAction="#gitHubBtnAction" prefHeight="28.0" prefWidth="83.0" text="开源GitHub" />
-      <Text fill="#ff4000" layoutX="12.0" layoutY="203.0" strokeType="OUTSIDE" strokeWidth="0.0" text="所有不怀好意的指责..." textAlignment="CENTER" wrappingWidth="150.00000132247806">
+      <Text fill="#ff4000" layoutX="11.0" layoutY="203.0" strokeType="OUTSIDE" strokeWidth="0.0" text="所有不怀好意的指责..." textAlignment="CENTER" wrappingWidth="150.00000132247806">
          <font>
             <Font size="15.0" />
          </font>
       </Text>
-      <Text fill="#ff4000" layoutX="54.0" layoutY="230.0" strokeType="OUTSIDE" strokeWidth="0.0" text="都需要时间去验证！">
+      <Text fill="#ff4000" layoutX="50.0" layoutY="232.0" strokeType="OUTSIDE" strokeWidth="0.0" text="都需要时间去验证！">
          <font>
             <Font size="15.0" />
          </font>
       </Text>
+      <Button layoutX="263.0" layoutY="40.0" mnemonicParsing="false" onAction="#resetConfigBtnAction" text="重置所有配置" />
     </children>
 </AnchorPane>

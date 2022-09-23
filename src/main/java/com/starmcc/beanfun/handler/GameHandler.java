@@ -35,8 +35,8 @@ public class GameHandler {
             gamePath = gamePath + " tw.login.maplestory.gamania.com 8484 BeanFun " + accountId + " " + password;
         }
 
-        String lrExe = QsConstant.Resources.LR_PROC_EXE.getTargetPath();
-        String lrDll = QsConstant.Resources.LR_HOOKX64_DLL.getTargetPath();
+        String lrExe = QsConstant.PluginEnum.LOCALE_REMULATOR.getMainPath();
+        String lrDll = QsConstant.PluginEnum.LOCALE_REMULATOR.getTargetPath() + "\\LRHookx64.dll";
         String[] cmd = {"cmd", "/c", lrExe + " tms \"" + lrDll + "\" " + gamePath};
         log.info("执行命令 runGame = {}", cmd[2]);
 

@@ -109,7 +109,7 @@ public class ConfigModel {
         public RecordVideo() {
             // 默认配置
             // 自身目录/video
-            this.folder = new File(QsConstant.PATH_PLUGINS + "recordVideo").getPath();
+            this.folder = new File(QsConstant.PATH_APP_PLUGINS + "recordVideo").getPath();
             // FPS 30
             this.fps = 30;
             // 码率 1800

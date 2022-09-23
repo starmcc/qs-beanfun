@@ -10,10 +10,14 @@ import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 
 import java.io.*;
+import java.net.URL;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.util.ArrayList;
+import java.util.Enumeration;
 import java.util.Objects;
+import java.util.zip.ZipEntry;
+import java.util.zip.ZipFile;
 
 /**
  * 文件工具
@@ -25,28 +29,136 @@ import java.util.Objects;
 public class FileTools {
 
     /**
-     * 资源文件生成(会重刷)
+     * 解压缩资源文件
      *
-     * @param rconstantResource rconstant资源
+     * @param resourceFile 资源文件
+     * @return {@link String}
      */
-    public static void copyResourceFile(QsConstant.Resources rconstantResource) {
+    public static String unzipResourceFile(QsConstant.PluginEnum resourceFile) {
+        final int buffer = 1024;
+        String name = "";
+        BufferedOutputStream dest = null;
+        BufferedInputStream is = null;
         try {
-            File targetFile = new File(rconstantResource.getTargetPath());
-            // 创建上级目录
-            if (!targetFile.getParentFile().exists()) {
-                targetFile.getParentFile().mkdirs();
+            ZipEntry entry = null;
+            Enumeration<URL> resources = QsBeanfunApplication.class.getClassLoader().getResources(resourceFile.getSourcePath());
+            String path = resources.nextElement().getPath();
+            ZipFile zipfile = new ZipFile(path);
+            File targetFile = new File(resourceFile.getTargetPath());
+            if (!targetFile.exists()) {
+                targetFile.mkdirs();
             }
-            // 如果文件存在，则删除文件
-            if (targetFile.exists()) {
-                if (targetFile.delete()) {
-                    copyResourceFile(rconstantResource);
-                    return;
+            Enumeration dir = zipfile.entries();
+            // 检查文件夹是否存在
+            while (dir.hasMoreElements()) {
+                entry = (ZipEntry) dir.nextElement();
+                String abc = targetFile.getPath() + "\\" + entry.getName();
+                File file = new File(abc).getParentFile();
+                if (!file.exists()) {
+                    file.mkdirs();
                 }
             }
-            InputStream resourceAsStream = QsBeanfunApplication.class.getClassLoader().getResourceAsStream(rconstantResource.getSourcePath());
-            Files.copy(resourceAsStream, targetFile.toPath());
+            Enumeration e = zipfile.entries();
+            while (e.hasMoreElements()) {
+                entry = (ZipEntry) e.nextElement();
+                if (entry.isDirectory()) {
+                    continue;
+                } else {
+                    is = new BufferedInputStream(zipfile.getInputStream(entry));
+                    int count;
+                    byte[] dataByte = new byte[buffer];
+                    FileOutputStream fos = new FileOutputStream(targetFile.getPath() + "\\" + entry.getName());
+                    dest = new BufferedOutputStream(fos, buffer);
+                    while ((count = is.read(dataByte, 0, buffer)) != -1) {
+                        dest.write(dataByte, 0, count);
+                    }
+                    dest.flush();
+
+                }
+            }
         } catch (Exception e) {
-            log.error("输出文件发生异常 e={}", e.getMessage(), e);
+            log.error("unzip error={}", e.getMessage(), e);
+        } finally {
+            close(dest, is);
+        }
+        return name;
+    }
+
+    /**
+     * 删除文件夹
+     *
+     * @param folder 文件夹
+     * @return boolean
+     */
+    public static boolean deleteFolder(File folder) {
+        // 如果dir不以文件分隔符结尾，自动添加文件分隔符
+        if ((!folder.exists()) || (!folder.isDirectory())) {
+            return false;
+        }
+        boolean flag = true;
+        File[] files = folder.listFiles();
+        for (int i = 0; i < files.length; i++) {
+            // 删除子文件
+            if (files[i].isFile()) {
+                flag = deleteFile(files[i]);
+                if (!flag) {
+                    break;
+                }
+            }
+            // 删除子文件夹
+            else if (files[i].isDirectory()) {
+                flag = deleteFolder(files[i]);
+                if (!flag) {
+                    break;
+                }
+            }
+        }
+        if (!flag) {
+            return false;
+        }
+        // 删除当前文件夹
+        if (folder.delete()) {
+            return true;
+        } else {
+            return false;
+        }
+    }
+
+
+    /**
+     * 删除文件
+     *
+     * @param file 文件
+     * @return boolean
+     */
+    public static boolean deleteFile(File file) {
+        // 如果文件路径只有单个文件
+        if (file.exists() && file.isFile()) {
+            if (file.delete()) {
+                return true;
+            } else {
+                return false;
+            }
+        } else {
+            return false;
+        }
+    }
+
+    /**
+     * 关闭
+     *
+     * @param acArr ac加勒比海盗
+     */
+    private static void close(AutoCloseable... acArr) {
+        for (AutoCloseable ac : acArr) {
+            if (Objects.isNull(ac)) {
+                continue;
+            }
+            try {
+                ac.close();
+            } catch (Exception e) {
+                log.error("ffmpeg e={}", e.getMessage(), e);
+            }
         }
     }
 
@@ -93,8 +205,7 @@ public class FileTools {
      * @return boolean
      */
     public static boolean saveConfig(Object jsonData) {
-        String content = JSON.toJSONString(jsonData, SerializerFeature.PrettyFormat, SerializerFeature.WriteMapNullValue,
-                SerializerFeature.WriteDateUseDateFormat);
+        String content = JSON.toJSONString(jsonData, SerializerFeature.PrettyFormat, SerializerFeature.WriteMapNullValue, SerializerFeature.WriteDateUseDateFormat);
         try {
             File file = new File(QsConstant.PATH_APP_CONFIG);
             // 创建上级目录
