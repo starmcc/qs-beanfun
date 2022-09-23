@@ -6,6 +6,8 @@ import com.starmcc.beanfun.model.thread.Runnable2;
 import javafx.scene.control.Alert;
 import javafx.stage.Stage;
 
+import java.util.concurrent.Callable;
+
 
 /**
  * 框架管理器
@@ -83,6 +85,14 @@ public interface FrameManager {
      * @param runnable2 runnable2
      */
     void runLater(Runnable2 runnable2);
+
+    /**
+     * JavaFx主线程运行(同步)
+     *
+     * @param callable 可调用
+     * @return {@link T}
+     */
+    <T> T runLater(Callable<T> callable);
 
     /**
      * 杀死所有内置线程和任务,并退出托盘

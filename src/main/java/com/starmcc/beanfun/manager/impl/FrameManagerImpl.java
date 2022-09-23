@@ -28,6 +28,8 @@ import java.net.URI;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
+import java.util.concurrent.Callable;
+import java.util.concurrent.FutureTask;
 import java.util.function.Consumer;
 
 /**
@@ -101,6 +103,17 @@ public class FrameManagerImpl implements FrameManager {
     }
 
     @Override
+    public <T> T runLater(Callable<T> callable) {
+        final FutureTask<T> query = new FutureTask<>(callable);
+        Platform.runLater(query);
+        try {
+            return callable.call();
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    @Override
     public void openWebUrl(String url) {
         try {
             Desktop desktop = Desktop.getDesktop();
@@ -167,25 +180,30 @@ public class FrameManagerImpl implements FrameManager {
             alert.setHeaderText("");
             alert.setContentText(msg);
             alert.showAndWait();
+            return "";
         });
     }
 
     @Override
     public String dialogText(String tips, String defaultText) {
-        TextInputDialog dialog = new TextInputDialog(defaultText);
-        dialog.setTitle("");
-        dialog.setHeaderText(tips);
-        Optional<String> s = dialog.showAndWait();
-        return s.isPresent() ? s.get() : "";
+        return this.runLater(() -> {
+            TextInputDialog dialog = new TextInputDialog(defaultText);
+            dialog.setTitle("");
+            dialog.setHeaderText(tips);
+            Optional<String> s = dialog.showAndWait();
+            return s.isPresent() ? s.get() : "";
+        });
     }
 
 
     @Override
     public boolean dialogConfirm(String title, String tips) {
-        Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
-        alert.setTitle(title);
-        alert.setHeaderText("");
-        alert.setContentText(tips);
-        return alert.showAndWait().get() == ButtonType.OK;
+        return this.runLater(() -> {
+            Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
+            alert.setTitle(title);
+            alert.setHeaderText("");
+            alert.setContentText(tips);
+            return alert.showAndWait().get() == ButtonType.OK;
+        });
     }
 }
