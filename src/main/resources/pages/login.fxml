@@ -79,7 +79,7 @@
                       <Cursor fx:constant="HAND" />
                   </cursor>
               </ImageView>
-            <ProgressBar fx:id="progressBar" layoutY="80.0" prefHeight="0.0" prefWidth="330.0" progress="0.0" style="-fx-min-height: 10; -fx-control-inner-background: palegreen; -fx-accent: ff6b6b; -fx-text-box-border: 0;" />
+            <ProgressBar fx:id="progressBar" styleClass="progress-bar" layoutY="80.0" prefHeight="0.0" prefWidth="330.0" progress="0.0" />
           </children>
       </AnchorPane>
    </children>

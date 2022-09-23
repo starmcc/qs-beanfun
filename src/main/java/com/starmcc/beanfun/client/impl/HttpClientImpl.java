@@ -3,7 +3,7 @@ package com.starmcc.beanfun.client.impl;
 import com.starmcc.beanfun.client.HttpClient;
 import com.starmcc.beanfun.model.client.QsHttpResponse;
 import com.starmcc.beanfun.model.client.ReqParams;
-import com.starmcc.beanfun.windows.WindowService;
+import com.starmcc.beanfun.manager.WindowManager;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.text.StringEscapeUtils;
@@ -32,6 +32,12 @@ import java.net.*;
 import java.nio.charset.Charset;
 import java.util.*;
 
+/**
+ * http客户端实现
+ *
+ * @author starmcc
+ * @date 2022/09/23
+ */
 @Slf4j
 public class HttpClientImpl extends HttpClient {
     private static final String USER_AGENT = "Mozilla/5.0 (Windows NT 10.0; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/55.0.2883.87 Safari/537.36";
@@ -157,7 +163,7 @@ public class HttpClientImpl extends HttpClient {
 
         try {
             process.call(HttpClient.Process.State.正在连接, null, unitProgress, null);
-            HttpHost httpHost = WindowService.getInstance().getPacScriptProxy(url.toString());
+            HttpHost httpHost = WindowManager.getInstance().getPacScriptProxy(url.toString());
             if (Objects.nonNull(httpHost)) {
                 Proxy proxy = new Proxy(Proxy.Type.HTTP, new InetSocketAddress(httpHost.getHostName(), httpHost.getPort()));
                 urlConnection = (HttpURLConnection) url.openConnection(proxy);
@@ -248,7 +254,7 @@ public class HttpClientImpl extends HttpClient {
         try {
             // 由客户端执行(发送)Get请求
             HttpUriRequest httpUriRequest = supplier.build();
-            HttpHost proxy = WindowService.getInstance().getPacScriptProxy(httpUriRequest.getURI().toString());
+            HttpHost proxy = WindowManager.getInstance().getPacScriptProxy(httpUriRequest.getURI().toString());
             httpClientBuilder.setProxy(proxy);
             HttpClientContext context = HttpClientContext.create();
             CloseableHttpClient httpClient = httpClientBuilder.build();

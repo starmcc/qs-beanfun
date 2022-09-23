@@ -5,6 +5,7 @@ import com.starmcc.beanfun.constant.FXPageEnum;
 import com.starmcc.beanfun.constant.QsConstant;
 import com.starmcc.beanfun.handler.AccountHandler;
 import com.starmcc.beanfun.manager.ThreadPoolManager;
+import com.starmcc.beanfun.model.ComBoBoxListCell;
 import com.starmcc.beanfun.model.ConfigModel;
 import com.starmcc.beanfun.model.LoginType;
 import com.starmcc.beanfun.model.client.BeanfunModel;
@@ -12,7 +13,7 @@ import com.starmcc.beanfun.model.client.BeanfunStringResult;
 import com.starmcc.beanfun.utils.AesTools;
 import com.starmcc.beanfun.utils.DataTools;
 import com.starmcc.beanfun.utils.FileTools;
-import com.starmcc.beanfun.windows.FrameService;
+import com.starmcc.beanfun.manager.FrameManager;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
@@ -20,6 +21,7 @@ import javafx.fxml.Initializable;
 import javafx.scene.control.*;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseEvent;
+import javafx.util.StringConverter;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.concurrent.BasicThreadFactory;
@@ -74,6 +76,18 @@ public class LoginController implements Initializable {
     }
 
     private void initBasic() {
+        comboBoxAccount.setCellFactory((view) -> new ComBoBoxListCell(this::whetherToDeleteAccountRecord));
+        comboBoxAccount.setConverter(new StringConverter<String>() {
+            @Override
+            public String toString(String object) {
+                return object;
+            }
+
+            @Override
+            public String fromString(String string) {
+                return string;
+            }
+        });
         checkBoxRemember.setSelected(QsConstant.config.getRecordActPwd());
         hyperlinkRegister.setFocusTraversable(false);
         hyperlinkForgetPwd.setFocusTraversable(false);
@@ -145,7 +159,7 @@ public class LoginController implements Initializable {
                 String pwd = passwordFieldPassword.getText();
                 BeanfunStringResult loginResult = BeanfunClient.run().login(act, pwd, process -> loginProcess = process);
                 if (!loginResult.isSuccess()) {
-                    FrameService.getInstance().runLater(() -> QsConstant.alert(loginResult.getMsg(), Alert.AlertType.ERROR));
+                    FrameManager.getInstance().runLater(() -> QsConstant.alert(loginResult.getMsg(), Alert.AlertType.ERROR));
                     return;
                 }
                 loginProcess = 1;
@@ -153,13 +167,13 @@ public class LoginController implements Initializable {
                 beanfunModel.setToken(loginResult.getData());
                 QsConstant.beanfunModel = beanfunModel;
                 // 登录成功后操作
-                FrameService.getInstance().runLater(() -> loginSuccessGoMain());
+                FrameManager.getInstance().runLater(() -> loginSuccessGoMain());
             } catch (HttpHostConnectException e) {
                 log.info("login error e={}", e.getMessage(), e);
-                FrameService.getInstance().runLater(() -> QsConstant.alert("连接超时,请检查网络环境", Alert.AlertType.ERROR));
+                FrameManager.getInstance().runLater(() -> QsConstant.alert("连接超时,请检查网络环境", Alert.AlertType.ERROR));
             } catch (Exception e) {
                 log.info("login error e={}", e.getMessage(), e);
-                FrameService.getInstance().runLater(() -> QsConstant.alert("异常:" + e.getMessage(), Alert.AlertType.ERROR));
+                FrameManager.getInstance().runLater(() -> QsConstant.alert("异常:" + e.getMessage(), Alert.AlertType.ERROR));
             } finally {
                 loginning(false);
             }
@@ -170,14 +184,14 @@ public class LoginController implements Initializable {
     @FXML
     public void registerAction() throws Exception {
         String jumpUrl = BeanfunClient.run().getWebUrlRegister();
-        FrameService.getInstance().openWebBrowser(jumpUrl);
+        FrameManager.getInstance().openWebBrowser(jumpUrl);
     }
 
 
     @FXML
     public void forgotPwdAction() throws Exception {
         String jumpUrl = BeanfunClient.run().getWebUrlForgotPwd();
-        FrameService.getInstance().openWebBrowser(jumpUrl);
+        FrameManager.getInstance().openWebBrowser(jumpUrl);
     }
 
     /**
@@ -204,17 +218,17 @@ public class LoginController implements Initializable {
     @FXML
     public void qrCodeClick() throws Exception {
 
-        FrameService.getInstance().openWindow(FXPageEnum.二维码登录, FXPageEnum.登录页);
+        FrameManager.getInstance().openWindow(FXPageEnum.二维码登录, FXPageEnum.登录页);
     }
 
     @FXML
     public void closeApplication() {
-        FrameService.getInstance().exit();
+        FrameManager.getInstance().exit();
     }
 
     @FXML
     public void aboutAction(MouseEvent mouseEvent) throws Exception {
-        FrameService.getInstance().openWindow(FXPageEnum.关于我, FXPageEnum.登录页);
+        FrameManager.getInstance().openWindow(FXPageEnum.关于我, FXPageEnum.登录页);
     }
 
 
@@ -225,17 +239,18 @@ public class LoginController implements Initializable {
      */
     private void loginSuccessGoMain() {
         loginning(false);
-        // 记录账密
+        // 记录账密 如果点了记住密码，则会记录密码，否则只记录账号
+        String act = comboBoxAccount.getValue();
+        String pwd = "";
         if (checkBoxRemember.isSelected()) {
-            String act = comboBoxAccount.getValue();
-            String pwd = passwordFieldPassword.getText();
-            AccountHandler.recordActPwd(act, pwd, choiceBoxLoginType.getValue());
+            pwd = passwordFieldPassword.getText();
         }
+        AccountHandler.recordActPwd(act, pwd, choiceBoxLoginType.getValue());
         try {
             // 窗口显示
-            FrameService.getInstance().openWindow(FXPageEnum.主页);
-            FrameService.getInstance().closeWindow(FXPageEnum.登录页);
-            FrameService.getInstance().closeWindow(FXPageEnum.二维码登录);
+            FrameManager.getInstance().openWindow(FXPageEnum.主页);
+            FrameManager.getInstance().closeWindow(FXPageEnum.登录页);
+            FrameManager.getInstance().closeWindow(FXPageEnum.二维码登录);
         } catch (Exception e) {
             log.error("loginSuccessGoMain e={}", e.getMessage(), e);
         }
@@ -276,5 +291,19 @@ public class LoginController implements Initializable {
             return StringUtils.equals(AesTools.dncode(key, actPwd.getAct()), act);
         }).findFirst();
         return optional.isPresent() ? AesTools.dncode(key, optional.get().getPwd()) : "";
+    }
+
+    /**
+     * 是否要删除账户记录
+     */
+    private void whetherToDeleteAccountRecord(String account) {
+        String msg = "是否删除该账号[" + account + "]\n删除后无法恢复!";
+        boolean is = QsConstant.confirmDialog("删除账号记录", msg);
+        if (!is) {
+            return;
+        }
+        AccountHandler.delActPwd(account, choiceBoxLoginType.getValue());
+
+        refeshAccounts();
     }
 }

@@ -1,11 +1,17 @@
-package com.starmcc.beanfun.windows;
+package com.starmcc.beanfun.manager;
 
-import com.starmcc.beanfun.windows.impl.WindowServiceImpl;
+import com.starmcc.beanfun.manager.impl.WindowManagerImpl;
 import org.apache.http.HttpHost;
 
 import java.util.function.Consumer;
 
-public interface WindowService {
+/**
+ * 窗口管理器
+ *
+ * @author starmcc
+ * @date 2022/09/23
+ */
+public interface WindowManager {
 
     /**
      * 检查vc运行环境
@@ -56,9 +62,9 @@ public interface WindowService {
     /**
      * 获得实例
      *
-     * @return {@link WindowService}
+     * @return {@link WindowManager}
      */
-    public static WindowService getInstance() {
-        return new WindowServiceImpl();
+    public static WindowManager getInstance() {
+        return new WindowManagerImpl();
     }
 }

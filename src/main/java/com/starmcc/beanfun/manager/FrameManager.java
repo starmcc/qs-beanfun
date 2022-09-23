@@ -1,23 +1,27 @@
-package com.starmcc.beanfun.windows;
+package com.starmcc.beanfun.manager;
 
 import com.starmcc.beanfun.constant.FXPageEnum;
 import com.starmcc.beanfun.model.thread.Runnable2;
-import com.starmcc.beanfun.windows.impl.FrameServiceImpl;
+import com.starmcc.beanfun.manager.impl.FrameManagerImpl;
+import javafx.scene.control.Alert;
 import javafx.stage.Stage;
 
+
 /**
+ * 框架管理器
+ *
  * @author starmcc
- * @date 2022/9/14 17:55
+ * @date 2022/09/23
  */
-public interface FrameService {
+public interface FrameManager {
 
     /**
      * 获得实例
      *
-     * @return {@link FrameService}
+     * @return {@link FrameManager}
      */
-    static FrameService getInstance() {
-        return new FrameServiceImpl();
+    static FrameManager getInstance() {
+        return new FrameManagerImpl();
     }
 
     /**
@@ -85,5 +89,29 @@ public interface FrameService {
      */
     void killAllTask();
 
+    /**
+     * 消息框
+     *
+     * @param msg       味精
+     * @param alertType 警报类型
+     */
+    void message(String msg, Alert.AlertType alertType);
 
+    /**
+     * 文本输入框
+     *
+     * @param tips        提示
+     * @param defaultText 默认文本
+     * @return {@link String}
+     */
+    String dialogText(String tips, String defaultText);
+
+    /**
+     * 询问对话框
+     *
+     * @param title 标题
+     * @param tips  提示
+     * @return boolean
+     */
+    boolean dialogConfirm(String title, String tips);
 }

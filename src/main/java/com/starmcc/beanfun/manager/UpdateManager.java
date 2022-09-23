@@ -10,7 +10,6 @@ import com.starmcc.beanfun.controller.UpdateController;
 import com.starmcc.beanfun.model.JFXStage;
 import com.starmcc.beanfun.model.client.QsHttpResponse;
 import com.starmcc.beanfun.model.client.UpdateModel;
-import com.starmcc.beanfun.windows.FrameService;
 import javafx.scene.control.Alert;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
@@ -71,13 +70,13 @@ public class UpdateManager {
         }
 
         final UpdateModel finalModel = model;
-        FrameService.getInstance().runLater(() -> {
+        FrameManager.getInstance().runLater(() -> {
             String msg = finalModel.getContent() + "\n是否立刻更新?";
             if (!QsConstant.confirmDialog("有新版本-" + finalModel.getVersion(), msg)) {
                 return;
             }
             UpdateController.model = finalModel;
-            FrameService.getInstance().openWindow(FXPageEnum.更新页);
+            FrameManager.getInstance().openWindow(FXPageEnum.更新页);
             for (Map.Entry<String, JFXStage> entry : QsConstant.JFX_STAGE_DATA.entrySet()) {
                 if (StringUtils.equals(entry.getKey(), FXPageEnum.更新页.getFileName())) {
                     continue;

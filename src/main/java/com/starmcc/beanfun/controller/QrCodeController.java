@@ -10,7 +10,7 @@ import com.starmcc.beanfun.model.client.BeanfunStringResult;
 import com.starmcc.beanfun.manager.ThreadPoolManager;
 import com.starmcc.beanfun.manager.AdvancedTimerMamager;
 import com.starmcc.beanfun.model.thread.timer.AdvancedTimerTask;
-import com.starmcc.beanfun.windows.FrameService;
+import com.starmcc.beanfun.manager.FrameManager;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.Label;
@@ -65,7 +65,7 @@ public class QrCodeController implements Initializable {
         if (ThreadPoolManager.isShutdown()) {
             return;
         }
-        FrameService.getInstance().runLater(() -> {
+        FrameManager.getInstance().runLater(() -> {
             Image image = new Image("static/images/loading.gif");
             imageViewQrCode.setImage(image);
             labelQrCodeTips.setText("二维码加载中");
@@ -113,7 +113,7 @@ public class QrCodeController implements Initializable {
      * @param file 文件
      */
     private void startScanQrCode(File file) {
-        FrameService.getInstance().runLater(() -> {
+        FrameManager.getInstance().runLater(() -> {
             Image image = new Image(file.toURI().toString());
             imageViewQrCode.setImage(image);
             labelQrCodeTips.setText("请扫描二维码登录");
@@ -141,7 +141,7 @@ public class QrCodeController implements Initializable {
         log.debug("扫码心跳 返回值 res={}", result);
         if (result == 1) {
             // 扫码成功
-            FrameService.getInstance().runLater(() -> {
+            FrameManager.getInstance().runLater(() -> {
                 labelQrCodeTips.setText("扫码成功,正在登录..");
                 labelQrCodeTips.setTextFill(Color.BLUE);
             });
@@ -153,11 +153,11 @@ public class QrCodeController implements Initializable {
 
             QsConstant.beanfunModel = new BeanfunModel();
             QsConstant.beanfunModel.setToken(loginResult.getData());
-            FrameService.getInstance().runLater(() -> {
+            FrameManager.getInstance().runLater(() -> {
                 try {
-                    FrameService.getInstance().openWindow(FXPageEnum.主页);
-                    FrameService.getInstance().closeWindow(FXPageEnum.登录页);
-                    FrameService.getInstance().closeWindow(FXPageEnum.二维码登录);
+                    FrameManager.getInstance().openWindow(FXPageEnum.主页);
+                    FrameManager.getInstance().closeWindow(FXPageEnum.登录页);
+                    FrameManager.getInstance().closeWindow(FXPageEnum.二维码登录);
                 } catch (Exception e) {
                     log.error("error = {}", e.getMessage(), e);
                 }

@@ -17,6 +17,12 @@ import org.apache.http.cookie.Cookie;
 
 import java.util.List;
 
+/**
+ * 台湾二维码客户端实现
+ *
+ * @author starmcc
+ * @date 2022/09/23
+ */
 @Slf4j
 public class TwQrCodeClientImpl extends QrCodeClient {
 

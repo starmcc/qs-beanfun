@@ -1,22 +1,22 @@
 package com.starmcc.beanfun.controller;
 
-import com.starmcc.beanfun.api.ThirdPartyApiClient;
+import com.starmcc.beanfun.client.ThirdPartyApiClient;
 import com.starmcc.beanfun.client.BeanfunClient;
 import com.starmcc.beanfun.constant.FXPageEnum;
 import com.starmcc.beanfun.constant.QsConstant;
 import com.starmcc.beanfun.handler.*;
+import com.starmcc.beanfun.manager.AdvancedTimerMamager;
+import com.starmcc.beanfun.manager.ThreadPoolManager;
 import com.starmcc.beanfun.model.ConfigModel;
 import com.starmcc.beanfun.model.QsTray;
 import com.starmcc.beanfun.model.client.Account;
 import com.starmcc.beanfun.model.client.BeanfunAccountResult;
 import com.starmcc.beanfun.model.client.BeanfunStringResult;
-import com.starmcc.beanfun.manager.ThreadPoolManager;
-import com.starmcc.beanfun.manager.AdvancedTimerMamager;
 import com.starmcc.beanfun.model.thread.timer.AdvancedTimerTask;
 import com.starmcc.beanfun.utils.FileTools;
 import com.starmcc.beanfun.utils.RegexUtils;
-import com.starmcc.beanfun.windows.FrameService;
-import com.starmcc.beanfun.windows.WindowService;
+import com.starmcc.beanfun.manager.FrameManager;
+import com.starmcc.beanfun.manager.WindowManager;
 import javafx.application.Platform;
 import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
@@ -131,7 +131,7 @@ public class MainController implements Initializable {
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
-        FrameService.getInstance().runLater(() -> {
+        FrameManager.getInstance().runLater(() -> {
             // 托盘菜单
             QsConstant.trayIcon = QsTray.init(QsConstant.JFX_STAGE_DATA.get(FXPageEnum.主页).getStage());
             QsTray.show(QsConstant.trayIcon);
@@ -199,15 +199,15 @@ public class MainController implements Initializable {
 
     private void initEvent() {
         // =========================== 导航菜单控件事件 ========================
-        FrameService frameService = FrameService.getInstance();
-        menuItemOfficialTmsUrl.setOnAction(event -> frameService.openWebUrl("https://maplestory.beanfun.com/main"));
-        menuItemHkNewBeanfunUrl.setOnAction(event -> frameService.openWebUrl("https://bfweb.hk.beanfun.com/"));
-        menuItemTwBeanfunUrl.setOnAction(event -> frameService.openWebUrl("https://tw.beanfun.com"));
-        menuItemTechbangUrl.setOnAction(event -> frameService.openWebUrl("http://gametsg.techbang.com/maplestory/"));
-        menuItemBahamuteUrl.setOnAction(event -> frameService.openWebUrl("https://forum.gamer.com.tw/A.php?bsn=7650/"));
-        qstmsUrlMenu.setOnAction(event -> frameService.openWebUrl("https://www.qstms.com"));
-        tmsTieBaUrlMenu.setOnAction(event -> frameService.openWebUrl("https://tieba.baidu.com/f?kw=%E6%96%B0%E6%9E%AB%E4%B9%8B%E8%B0%B7"));
-        qsbiliUrlMenu.setOnAction(event -> frameService.openWebUrl("https://space.bilibili.com/391919722"));
+        FrameManager frameManager = FrameManager.getInstance();
+        menuItemOfficialTmsUrl.setOnAction(event -> frameManager.openWebUrl("https://maplestory.beanfun.com/main"));
+        menuItemHkNewBeanfunUrl.setOnAction(event -> frameManager.openWebUrl("https://bfweb.hk.beanfun.com/"));
+        menuItemTwBeanfunUrl.setOnAction(event -> frameManager.openWebUrl("https://tw.beanfun.com"));
+        menuItemTechbangUrl.setOnAction(event -> frameManager.openWebUrl("http://gametsg.techbang.com/maplestory/"));
+        menuItemBahamuteUrl.setOnAction(event -> frameManager.openWebUrl("https://forum.gamer.com.tw/A.php?bsn=7650/"));
+        qstmsUrlMenu.setOnAction(event -> frameManager.openWebUrl("https://www.qstms.com"));
+        tmsTieBaUrlMenu.setOnAction(event -> frameManager.openWebUrl("https://tieba.baidu.com/f?kw=%E6%96%B0%E6%9E%AB%E4%B9%8B%E8%B0%B7"));
+        qsbiliUrlMenu.setOnAction(event -> frameManager.openWebUrl("https://space.bilibili.com/391919722"));
 
 
         // =========================== 汇率控件事件 ========================
@@ -225,7 +225,7 @@ public class MainController implements Initializable {
         // 获取汇率
         ThreadPoolManager.execute(() -> {
             QsConstant.currentRateChinaToTw = ThirdPartyApiClient.getCurrentRateChinaToTw();
-            FrameService.getInstance().runLater(() -> labelExchangeNow.setText(QsConstant.currentRateChinaToTw.toString()));
+            FrameManager.getInstance().runLater(() -> labelExchangeNow.setText(QsConstant.currentRateChinaToTw.toString()));
         });
 
         // =================== 轮烧按键配置控件事件 =====================
@@ -289,11 +289,11 @@ public class MainController implements Initializable {
 
     @FXML
     public void exitLoginAction() {
-        FrameService.getInstance().runLater(() -> {
+        FrameManager.getInstance().runLater(() -> {
             try {
                 BeanfunClient.run().loginOut(QsConstant.beanfunModel.getToken());
-                FrameService.getInstance().openWindow(FXPageEnum.登录页);
-                FrameService.getInstance().closeWindow(FXPageEnum.主页);
+                FrameManager.getInstance().openWindow(FXPageEnum.登录页);
+                FrameManager.getInstance().closeWindow(FXPageEnum.主页);
             } catch (Exception e) {
                 log.error("登出异常 e={}", e.getMessage(), e);
             }
@@ -313,17 +313,17 @@ public class MainController implements Initializable {
     public void getPasswordAction() {
         buttonGetPassword.setDisable(true);
         AccountHandler.getDynamicPassword(QsConstant.nowAccount, (id, password) -> {
-            FrameService.getInstance().runLater(() -> {
+            FrameManager.getInstance().runLater(() -> {
                 textFieldDynamicPwd.setText(password);
                 buttonGetPassword.setDisable(false);
             });
             // 自动输入
             if (QsConstant.config.getAutoInput() && StringUtils.isNotBlank(password)) {
                 try {
-                    WindowService.getInstance().autoInputActPwd(id, password);
+                    WindowManager.getInstance().autoInputActPwd(id, password);
                 } catch (Exception e) {
                     log.error("error={}", e, e.getMessage());
-                    FrameService.getInstance().runLater(() -> QsConstant.alert("自动输入异常", Alert.AlertType.ERROR));
+                    FrameManager.getInstance().runLater(() -> QsConstant.alert("自动输入异常", Alert.AlertType.ERROR));
                 }
             }
         });
@@ -338,12 +338,11 @@ public class MainController implements Initializable {
             return;
         }
         // 检查VC环境是否安装
-        boolean vcRuntimeEnvironment = WindowService.getInstance().checkVcRuntimeEnvironment();
-        if (!vcRuntimeEnvironment) {
+        if (!WindowManager.getInstance().checkVcRuntimeEnvironment()) {
             QsConstant.alert("请安装VC环境!", Alert.AlertType.INFORMATION);
             boolean goDownload = QsConstant.confirmDialog("VcRuntime Error", "模拟繁体环境需要拥有VC环境,是否前往下载并安装?");
             if (goDownload) {
-                FrameService.getInstance().openWebUrl("https://aka.ms/vs/17/release/vc_redist.x64.exe");
+                FrameManager.getInstance().openWebUrl("https://aka.ms/vs/17/release/vc_redist.x64.exe");
             }
             return;
         }
@@ -352,7 +351,7 @@ public class MainController implements Initializable {
             buttonGetPassword.setDisable(true);
             AccountHandler.getDynamicPassword(QsConstant.nowAccount, (id, password) -> {
                 GameHandler.runGame(textFieldGamePath.getText(), id, password);
-                FrameService.getInstance().runLater(() -> {
+                FrameManager.getInstance().runLater(() -> {
                     textFieldDynamicPwd.setText(password);
                     buttonGetPassword.setDisable(false);
                 });
@@ -410,7 +409,7 @@ public class MainController implements Initializable {
             try {
                 BeanfunStringResult result = BeanfunClient.run().addAccount(name);
                 if (!result.isSuccess()) {
-                    FrameService.getInstance().runLater(() -> QsConstant.alert(result.getMsg(), Alert.AlertType.WARNING));
+                    FrameManager.getInstance().runLater(() -> QsConstant.alert(result.getMsg(), Alert.AlertType.WARNING));
                     return;
                 }
                 refeshAccounts(() -> {
@@ -419,7 +418,7 @@ public class MainController implements Initializable {
                 });
             } catch (Exception e) {
                 log.error("添加账号异常 e={}", e.getMessage(), e);
-                FrameService.getInstance().runLater(() -> QsConstant.alert("创建失败!", Alert.AlertType.WARNING));
+                FrameManager.getInstance().runLater(() -> QsConstant.alert("创建失败!", Alert.AlertType.WARNING));
             } finally {
                 buttonAddAct.setDisable(false);
             }
@@ -442,7 +441,7 @@ public class MainController implements Initializable {
             try {
                 BeanfunStringResult result = BeanfunClient.run().changeAccountName(id, newName);
                 if (!result.isSuccess()) {
-                    FrameService.getInstance().runLater(() -> QsConstant.alert(result.getMsg(), Alert.AlertType.WARNING));
+                    FrameManager.getInstance().runLater(() -> QsConstant.alert(result.getMsg(), Alert.AlertType.WARNING));
                     return;
                 }
                 refeshAccounts(() -> QsConstant.alert("编辑成功!", Alert.AlertType.INFORMATION));
@@ -455,20 +454,20 @@ public class MainController implements Initializable {
     @FXML
     public void memberTopUpAction(ActionEvent actionEvent) throws Exception {
         String jumpUrl = BeanfunClient.run().getWebUrlMemberTopUp(QsConstant.beanfunModel.getToken());
-        FrameService.getInstance().openWebBrowser(jumpUrl);
+        FrameManager.getInstance().openWebBrowser(jumpUrl);
     }
 
 
     @FXML
     public void memberCenterAction(ActionEvent actionEvent) throws Exception {
         String jumpUrl = BeanfunClient.run().getWebUrlMemberCenter(QsConstant.beanfunModel.getToken());
-        FrameService.getInstance().openWebBrowser(jumpUrl);
+        FrameManager.getInstance().openWebBrowser(jumpUrl);
     }
 
     @FXML
     public void serviceCenterAction(ActionEvent actionEvent) throws Exception {
         String jumpUrl = BeanfunClient.run().getWebUrlServiceCenter();
-        FrameService.getInstance().openWebBrowser(jumpUrl);
+        FrameManager.getInstance().openWebBrowser(jumpUrl);
     }
 
     /**
@@ -504,7 +503,7 @@ public class MainController implements Initializable {
      */
     @FXML
     public void openEquipmentCalcWindowMenu(ActionEvent actionEvent) throws Exception {
-        FrameService.getInstance().openWindow(FXPageEnum.装备计算器);
+        FrameManager.getInstance().openWindow(FXPageEnum.装备计算器);
     }
 
     @FXML
@@ -524,7 +523,7 @@ public class MainController implements Initializable {
         // 获取汇率
         ThreadPoolManager.execute(() -> {
             QsConstant.currentRateChinaToTw = ThirdPartyApiClient.getCurrentRateChinaToTw();
-            FrameService.getInstance().runLater(() -> labelExchangeNow.setText(QsConstant.currentRateChinaToTw.toString()));
+            FrameManager.getInstance().runLater(() -> labelExchangeNow.setText(QsConstant.currentRateChinaToTw.toString()));
         });
     }
 
@@ -539,12 +538,12 @@ public class MainController implements Initializable {
         if (checkMenuItemAutoLunShao.isSelected()) {
             // 需要启动
             if (!AutoLunShaoHandler.start()) {
-                FrameService.getInstance().runLater(() -> checkMenuItemAutoLunShao.setSelected(false));
+                FrameManager.getInstance().runLater(() -> checkMenuItemAutoLunShao.setSelected(false));
             }
         } else {
             // 需要停止
             if (!AutoLunShaoHandler.stop()) {
-                FrameService.getInstance().runLater(() -> checkMenuItemAutoLunShao.setSelected(true));
+                FrameManager.getInstance().runLater(() -> checkMenuItemAutoLunShao.setSelected(true));
             }
         }
     }
@@ -562,7 +561,7 @@ public class MainController implements Initializable {
      */
     @FXML
     public void openToolsWindowAction(ActionEvent actionEvent) throws Exception {
-        FrameService.getInstance().openWindow(FXPageEnum.关于我, FXPageEnum.主页);
+        FrameManager.getInstance().openWindow(FXPageEnum.关于我, FXPageEnum.主页);
     }
 
     @FXML
@@ -616,7 +615,7 @@ public class MainController implements Initializable {
         if (!RecordVideoHandler.run(buttonRecordVideo.isSelected())) {
             buttonRecordVideo.setSelected(!buttonRecordVideo.isSelected());
             if (QsConstant.confirmDialog("缺少依赖", "自动录像功能需要Ffmpeg.exe支持\n是否前往下载?")) {
-                FrameService.getInstance().openWebUrl("https://ffmpeg.org/download.html");
+                FrameManager.getInstance().openWebUrl("https://ffmpeg.org/download.html");
             }
         }
     }
@@ -666,7 +665,7 @@ public class MainController implements Initializable {
 
     @FXML
     public void downloadFFmpegAction(ActionEvent actionEvent) {
-        FrameService.getInstance().openWebUrl("https://ffmpeg.org/download.html");
+        FrameManager.getInstance().openWebUrl("https://ffmpeg.org/download.html");
     }
     // =============================================== 私有方法 =================================
 
@@ -678,7 +677,7 @@ public class MainController implements Initializable {
         if (actResult.isSuccess()) {
             QsConstant.beanfunModel.build(actResult);
         } else {
-            FrameService.getInstance().runLater(() -> QsConstant.alert(actResult.getMsg(), Alert.AlertType.ERROR));
+            FrameManager.getInstance().runLater(() -> QsConstant.alert(actResult.getMsg(), Alert.AlertType.ERROR));
             return;
         }
 
@@ -686,13 +685,13 @@ public class MainController implements Initializable {
 
         if (!QsConstant.beanfunModel.isCertStatus()) {
             // 需要进阶认证
-            FrameService.getInstance().runLater(() -> QsConstant.alert("请前往用户中心 -> 会员中心进行进阶认证!\n" + "做完进阶认证后请重新退出重新登录!", Alert.AlertType.INFORMATION));
+            FrameManager.getInstance().runLater(() -> QsConstant.alert("请前往用户中心 -> 会员中心进行进阶认证!\n" + "做完进阶认证后请重新退出重新登录!", Alert.AlertType.INFORMATION));
         } else if (QsConstant.beanfunModel.isNewAccount()) {
             // 需要创建账号
-            FrameService.getInstance().runLater(() -> QsConstant.alert("新账号请点击创建账号!", Alert.AlertType.INFORMATION));
+            FrameManager.getInstance().runLater(() -> QsConstant.alert("新账号请点击创建账号!", Alert.AlertType.INFORMATION));
         }
 
-        FrameService.getInstance().runLater(() -> {
+        FrameManager.getInstance().runLater(() -> {
             ObservableList<Account> options = FXCollections.observableArrayList();
             options.clear();
             QsConstant.beanfunModel.getAccountList().forEach(account -> options.add(account));
@@ -710,11 +709,11 @@ public class MainController implements Initializable {
      * 更新点数
      */
     private void updatePoints() {
-        FrameService.getInstance().runLater(() -> buttonUpdatePoints.setDisable(true));
+        FrameManager.getInstance().runLater(() -> buttonUpdatePoints.setDisable(true));
         // 获取游戏点数
         ThreadPoolManager.execute(() -> {
             String pointsText = getPointsText();
-            FrameService.getInstance().runLater(() -> {
+            FrameManager.getInstance().runLater(() -> {
                 labelActPoint.setText(pointsText);
                 buttonUpdatePoints.setDisable(false);
             });

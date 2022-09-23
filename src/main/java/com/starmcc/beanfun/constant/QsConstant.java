@@ -22,7 +22,7 @@ import java.util.Optional;
 @Slf4j
 public class QsConstant {
     public static final String APP_VERSION = "4.0.0";
-    public static final Integer APP_VERSION_INT = 301;
+    public static final Integer APP_VERSION_INT = 400;
     public static final String PATH_APP = System.getProperties().getProperty("user.dir");
     public static final String PATH_PLUGINS = PATH_APP + "\\qs-data\\";
     public static final String PATH_APP_CONFIG = PATH_PLUGINS + "config.json";

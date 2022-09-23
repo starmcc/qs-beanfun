@@ -1,7 +1,7 @@
 package com.starmcc.beanfun.handler;
 
 import com.starmcc.beanfun.constant.QsConstant;
-import com.starmcc.beanfun.windows.WindowService;
+import com.starmcc.beanfun.manager.WindowManager;
 import javafx.scene.control.Alert;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.concurrent.BasicThreadFactory;
@@ -64,7 +64,7 @@ public class AutoLunShaoHandler {
             // 开始按键轮回
             try {
                 // 自动聚焦游戏
-                WindowService.getInstance().setMapleStoryForegroundWindow();
+                WindowManager.getInstance().setMapleStoryForegroundWindow();
                 new Robot().keyPress(lunHuiKey);
                 log.info("自动轮烧按下了[{}]键", lunHuiKeyStr);
             } catch (Exception e) {
@@ -75,7 +75,7 @@ public class AutoLunShaoHandler {
             // 开始按键燃烧
             try {
                 // 自动聚焦游戏
-                WindowService.getInstance().setMapleStoryForegroundWindow();
+                WindowManager.getInstance().setMapleStoryForegroundWindow();
                 new Robot().keyPress(ranShaoKey);
                 log.info("自动轮烧按下了[{}]键", ranShaoKeyStr);
             } catch (Exception e) {

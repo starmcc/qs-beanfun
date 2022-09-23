@@ -1,22 +1,25 @@
-package com.starmcc.beanfun.windows.impl;
+package com.starmcc.beanfun.manager.impl;
 
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.starmcc.beanfun.client.HttpClient;
 import com.starmcc.beanfun.constant.FXPageEnum;
 import com.starmcc.beanfun.constant.QsConstant;
+import com.starmcc.beanfun.manager.AdvancedTimerMamager;
 import com.starmcc.beanfun.manager.RecordVideoManager;
+import com.starmcc.beanfun.manager.ThreadPoolManager;
 import com.starmcc.beanfun.model.JFXStage;
 import com.starmcc.beanfun.model.QsTray;
 import com.starmcc.beanfun.model.thread.Runnable2;
-import com.starmcc.beanfun.manager.ThreadPoolManager;
-import com.starmcc.beanfun.manager.AdvancedTimerMamager;
-import com.starmcc.beanfun.windows.FrameService;
-import com.starmcc.beanfun.windows.WindowService;
-import com.starmcc.beanfun.windows.dll.EService;
+import com.starmcc.beanfun.manager.FrameManager;
+import com.starmcc.beanfun.manager.WindowManager;
+import com.starmcc.beanfun.dll.EService;
 import javafx.application.Platform;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
+import javafx.scene.control.Alert;
+import javafx.scene.control.ButtonType;
+import javafx.scene.control.TextInputDialog;
 import javafx.scene.image.Image;
 import javafx.stage.Stage;
 import lombok.extern.slf4j.Slf4j;
@@ -28,14 +31,17 @@ import java.awt.*;
 import java.net.URI;
 import java.util.List;
 import java.util.Objects;
+import java.util.Optional;
 import java.util.function.Consumer;
 
 /**
+ * 框架管理器实现
+ *
  * @author starmcc
- * @date 2022/9/14 17:55
+ * @date 2022/09/23
  */
 @Slf4j
-public class FrameServiceImpl implements FrameService {
+public class FrameManagerImpl implements FrameManager {
     @Override
     public void openWindow(FXPageEnum page, FXPageEnum parentPage) throws Exception {
         openWindow(page, QsConstant.JFX_STAGE_DATA.get(parentPage).getStage(), page.getBuildMethod());
@@ -85,6 +91,7 @@ public class FrameServiceImpl implements FrameService {
         this.killAllTask();
         AdvancedTimerMamager.shutdown();
         Platform.exit();
+        System.exit(0);
     }
 
     @Override
@@ -117,7 +124,7 @@ public class FrameServiceImpl implements FrameService {
         if (Objects.nonNull(parentStage)) {
             stage.initOwner(parentStage);
         }
-        Parent parent = FXMLLoader.load(FrameServiceImpl.class.getResource(page.buildPath()));
+        Parent parent = FXMLLoader.load(FrameManagerImpl.class.getResource(page.buildPath()));
         JFXStage jfxStage = JFXStage.of(stage, parent);
         // 构建外部方法
         if (Objects.nonNull(build)) {
@@ -148,11 +155,41 @@ public class FrameServiceImpl implements FrameService {
             obj.put("val", cookie.getValue());
             jsonArr.add(obj);
         }
-        HttpHost proxyHttpHost = WindowService.getInstance().getPacScriptProxy(url);
+        HttpHost proxyHttpHost = WindowManager.getInstance().getPacScriptProxy(url);
         String agent = "";
         if (Objects.nonNull(proxyHttpHost)) {
             agent = proxyHttpHost.getHostName() + ":" + proxyHttpHost.getPort();
         }
         EService.INSTANCE.openBrowser(url, "", jsonArr.toJSONString());
+    }
+
+
+    @Override
+    public void message(String msg, Alert.AlertType alertType) {
+        final Alert alert = new Alert(alertType);
+        alert.setTitle("");
+        alert.setHeaderText("");
+        alert.setContentText(msg);
+        alert.showAndWait();
+
+    }
+
+    @Override
+    public String dialogText(String tips, String defaultText) {
+        TextInputDialog dialog = new TextInputDialog(defaultText);
+        dialog.setTitle("");
+        dialog.setHeaderText(tips);
+        Optional<String> s = dialog.showAndWait();
+        return s.isPresent() ? s.get() : "";
+    }
+
+
+    @Override
+    public boolean dialogConfirm(String title, String tips) {
+        Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
+        alert.setTitle(title);
+        alert.setHeaderText("");
+        alert.setContentText(tips);
+        return alert.showAndWait().get() == ButtonType.OK;
     }
 }

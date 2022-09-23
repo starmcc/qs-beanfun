@@ -1,4 +1,4 @@
-package com.starmcc.beanfun.api;
+package com.starmcc.beanfun.client;
 
 import com.starmcc.beanfun.client.HttpClient;
 import com.starmcc.beanfun.model.client.ReqParams;

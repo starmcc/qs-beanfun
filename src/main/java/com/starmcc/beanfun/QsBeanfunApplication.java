@@ -1,9 +1,8 @@
 package com.starmcc.beanfun;
 
 import com.starmcc.beanfun.constant.FXPageEnum;
-import com.starmcc.beanfun.manager.ThreadPoolManager;
-import com.starmcc.beanfun.manager.UpdateManager;
-import com.starmcc.beanfun.windows.FrameService;
+import com.starmcc.beanfun.constant.QsConstant;
+import com.starmcc.beanfun.manager.FrameManager;
 import javafx.application.Application;
 import javafx.application.Platform;
 import javafx.stage.Stage;
@@ -25,7 +24,7 @@ public class QsBeanfunApplication extends Application {
         Runtime.getRuntime().addShutdownHook(new Thread() {
             @Override
             public void run() {
-                FrameService.getInstance().exit();
+                FrameManager.getInstance().exit();
             }
         });
     }
@@ -49,9 +48,8 @@ public class QsBeanfunApplication extends Application {
         InitApplication.initApp();
         // ====================== 加载界面 ======================
         Platform.setImplicitExit(false);
-        FrameService.getInstance().openWindow(FXPageEnum.登录页, primaryStage);
-        log.info("QsBeanfun 启动成功..");
-        ThreadPoolManager.execute(() -> UpdateManager.getInstance().verifyAppVersion(true));
+        FrameManager.getInstance().openWindow(FXPageEnum.登录页, primaryStage);
+        log.info("QsBeanfun" + QsConstant.APP_VERSION + "启动成功..");
     }
 
 

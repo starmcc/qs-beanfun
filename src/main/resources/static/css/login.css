@@ -1,15 +1,21 @@
 .title-close:hover {
     -fx-image: url("../images/login_close_1.png");
 }
+
 .title-close {
     -fx-image: url("../images/login_close_0.png");
 }
 
-
-
 .title-about:hover {
     -fx-image: url("../images/login_about_1.png");
 }
+
 .title-about {
     -fx-image: url("../images/login_about_0.png");
+}
+
+.progress-bar {
+    -fx-min-height: 10;
+    -fx-accent: #ff6b6b;
+    -fx-text-box-border: transparent;
 }

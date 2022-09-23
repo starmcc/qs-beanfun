@@ -5,7 +5,7 @@ import com.starmcc.beanfun.constant.QsConstant;
 import com.starmcc.beanfun.manager.ThreadPoolManager;
 import com.starmcc.beanfun.model.client.UpdateModel;
 import com.starmcc.beanfun.utils.FileTools;
-import com.starmcc.beanfun.windows.FrameService;
+import com.starmcc.beanfun.manager.FrameManager;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.Alert;
@@ -57,13 +57,13 @@ public class UpdateController implements Initializable {
         ThreadPoolManager.execute(() -> {
             HttpClient.getInstance().downloadFile(new URL(model.getUrl()), new File(fileName), (state, file, process, e) -> {
                 if (!state.isNormal()) {
-                    FrameService.getInstance().runLater(() -> {
+                    FrameManager.getInstance().runLater(() -> {
                         QsConstant.alert("更新失败-" + state.toString(), Alert.AlertType.WARNING);
                     });
                     return;
                 }
                 progressBar.setProgress(process / 100D);
-                FrameService.getInstance().runLater(() -> labelProcess.setText(process + "%"));
+                FrameManager.getInstance().runLater(() -> labelProcess.setText(process + "%"));
                 if (state != HttpClient.Process.State.下载完毕) {
                     return;
                 }

@@ -1,4 +1,4 @@
-package com.starmcc.beanfun.windows.dll;
+package com.starmcc.beanfun.dll;
 
 import com.sun.jna.Library;
 import com.sun.jna.Native;

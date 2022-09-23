@@ -4,7 +4,6 @@ import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
 import com.starmcc.beanfun.client.BeanfunClient;
 import com.starmcc.beanfun.client.HttpClient;
-import com.starmcc.beanfun.model.client.ReqParams;
 import com.starmcc.beanfun.model.client.*;
 import com.starmcc.beanfun.utils.DataTools;
 import com.starmcc.beanfun.utils.RegexUtils;
@@ -18,6 +17,12 @@ import java.util.List;
 import java.util.Objects;
 import java.util.function.Consumer;
 
+/**
+ * twbeanfun客户端实现
+ *
+ * @author starmcc
+ * @date 2022/09/23
+ */
 @Slf4j
 public class TWBeanfunClientImpl extends BeanfunClient {
 

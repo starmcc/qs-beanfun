@@ -1,9 +1,10 @@
 package com.starmcc.beanfun;
 
 import com.starmcc.beanfun.constant.QsConstant;
+import com.starmcc.beanfun.manager.FrameManager;
+import com.starmcc.beanfun.manager.ThreadPoolManager;
+import com.starmcc.beanfun.manager.UpdateManager;
 import com.starmcc.beanfun.utils.FileTools;
-import com.starmcc.beanfun.windows.FrameService;
-import javafx.application.Platform;
 import javafx.scene.control.Alert;
 import lombok.extern.slf4j.Slf4j;
 
@@ -28,9 +29,8 @@ public class InitApplication {
             StringBuffer msg = new StringBuffer();
             msg.append("读取配置异常,请检查以下路径文件,尝试删除该文件重新打开!\n");
             msg.append(QsConstant.PATH_APP_CONFIG);
-            FrameService.getInstance().runLater(() -> QsConstant.alert(msg.toString(), Alert.AlertType.ERROR));
-            Platform.exit();
-            System.exit(0);
+            FrameManager.getInstance().runLater(() -> QsConstant.alert(msg.toString(), Alert.AlertType.ERROR));
+            FrameManager.getInstance().exit();
             return;
         }
         // 释放LR所需文件
@@ -39,6 +39,8 @@ public class InitApplication {
         FileTools.copyResourceFile(QsConstant.Resources.LR_HOOKX32_DLL);
         FileTools.copyResourceFile(QsConstant.Resources.LR_CONFIG_XML);
         FileTools.copyResourceFile(QsConstant.Resources.LR_SUB_MENUS_DLL);
+        // 自动更新
+        ThreadPoolManager.execute(() -> UpdateManager.getInstance().verifyAppVersion(true));
     }
 
 

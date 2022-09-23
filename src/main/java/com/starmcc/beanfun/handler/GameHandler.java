@@ -1,8 +1,8 @@
 package com.starmcc.beanfun.handler;
 
 import com.starmcc.beanfun.constant.QsConstant;
-import com.starmcc.beanfun.windows.FrameService;
-import com.starmcc.beanfun.windows.WindowService;
+import com.starmcc.beanfun.manager.FrameManager;
+import com.starmcc.beanfun.manager.WindowManager;
 import javafx.scene.control.Alert;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.BooleanUtils;
@@ -43,11 +43,11 @@ public class GameHandler {
         try {
             Runtime.getRuntime().exec(cmd, null, new File(gamePath).getParentFile());
             if (BooleanUtils.isTrue(QsConstant.config.getKillStartPalyWindow())) {
-                WindowService.getInstance().closeMapleStoryStart();
+                WindowManager.getInstance().closeMapleStoryStart();
             }
             if (BooleanUtils.isTrue(QsConstant.config.getKillGamePatcher())) {
-                WindowService.getInstance().stopAutoPatcher(process -> {
-                    FrameService.getInstance().runLater(() -> QsConstant.alert("当前游戏版本不是最新版本\n已为您阻止自动更新!", Alert.AlertType.INFORMATION));
+                WindowManager.getInstance().stopAutoPatcher(process -> {
+                    FrameManager.getInstance().runLater(() -> QsConstant.alert("当前游戏版本不是最新版本\n已为您阻止自动更新!", Alert.AlertType.INFORMATION));
                 });
             }
         } catch (Exception e) {

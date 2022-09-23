@@ -10,7 +10,7 @@ import com.starmcc.beanfun.model.client.BeanfunStringResult;
 import com.starmcc.beanfun.utils.AesTools;
 import com.starmcc.beanfun.utils.DataTools;
 import com.starmcc.beanfun.utils.FileTools;
-import com.starmcc.beanfun.windows.FrameService;
+import com.starmcc.beanfun.manager.FrameManager;
 import javafx.scene.control.Alert;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
@@ -29,6 +29,32 @@ import java.util.function.BiConsumer;
 @Slf4j
 public class AccountHandler {
 
+    /**
+     * 删除记录账号
+     *
+     * @param account   账户
+     * @param loginType 登录类型
+     */
+    public static void delActPwd(String account, LoginType loginType) {
+        List<ConfigModel.ActPwd> actPwds = QsConstant.config.getActPwds();
+        if (DataTools.collectionIsEmpty(actPwds)) {
+            return;
+        }
+        Iterator<ConfigModel.ActPwd> iterator = actPwds.iterator();
+        while (iterator.hasNext()) {
+            ConfigModel.ActPwd actPwd = iterator.next();
+            if (!Objects.equals(actPwd.getType(), loginType.getType())) {
+                continue;
+            }
+            final String key = DataTools.getComputerUniqueId();
+            String act = AesTools.dncode(key, actPwd.getAct());
+            if (StringUtils.equals(act, account)) {
+                iterator.remove();
+                break;
+            }
+        }
+        FileTools.saveConfig(QsConstant.config);
+    }
 
     /**
      * 记录账密配置
@@ -76,7 +102,7 @@ public class AccountHandler {
             try {
                 BeanfunStringResult pwdResult = BeanfunClient.run().getDynamicPassword(account, QsConstant.beanfunModel.getToken());
                 if (!pwdResult.isSuccess()) {
-                    FrameService.getInstance().runLater(() -> QsConstant.alert(pwdResult.getMsg(), Alert.AlertType.ERROR));
+                    FrameManager.getInstance().runLater(() -> QsConstant.alert(pwdResult.getMsg(), Alert.AlertType.ERROR));
                 }
                 log.debug("动态密码 ={}", pwdResult.getData());
                 if (Objects.isNull(account)) {
@@ -87,7 +113,7 @@ public class AccountHandler {
 
             } catch (Exception e) {
                 log.error("获取密码失败 e={}", e.getMessage(), e);
-                FrameService.getInstance().runLater(() -> QsConstant.alert("获取动态密码异常:" + e.getMessage(), Alert.AlertType.ERROR));
+                FrameManager.getInstance().runLater(() -> QsConstant.alert("获取动态密码异常:" + e.getMessage(), Alert.AlertType.ERROR));
             }
         });
     }

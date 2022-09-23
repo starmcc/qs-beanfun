@@ -16,9 +16,12 @@ import java.text.SimpleDateFormat;
 import java.util.*;
 import java.util.function.Consumer;
 
+
 /**
- * @Author starmcc
- * @Date 2022/6/2 12:30
+ * hkbeanfun客户端实现
+ *
+ * @author starmcc
+ * @date 2022/09/23
  */
 @Slf4j
 public class HKBeanfunClientImpl extends BeanfunClient {

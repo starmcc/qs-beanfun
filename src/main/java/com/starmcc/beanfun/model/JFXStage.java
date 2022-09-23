@@ -1,7 +1,7 @@
 package com.starmcc.beanfun.model;
 
 import com.starmcc.beanfun.constant.FXPageEnum;
-import com.starmcc.beanfun.windows.FrameService;
+import com.starmcc.beanfun.manager.FrameManager;
 import javafx.event.EventHandler;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
@@ -144,10 +144,10 @@ public class JFXStage implements EventHandler<MouseEvent> {
         close.getStyleClass().add(CLOSE_CSS_CLASS);
         close.setOnMouseClicked(e -> {
             if (page == FXPageEnum.登录页 || page == FXPageEnum.主页) {
-                FrameService.getInstance().exit();
+                FrameManager.getInstance().exit();
                 return;
             }
-            FrameService.getInstance().closeWindow(page);
+            FrameManager.getInstance().closeWindow(page);
         });
 
         if (page.getShowMinButton()) {

@@ -3,7 +3,7 @@ package com.starmcc.beanfun.controller;
 import com.starmcc.beanfun.constant.QsConstant;
 import com.starmcc.beanfun.manager.ThreadPoolManager;
 import com.starmcc.beanfun.manager.UpdateManager;
-import com.starmcc.beanfun.windows.FrameService;
+import com.starmcc.beanfun.manager.FrameManager;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
@@ -36,7 +36,7 @@ public class AboutController implements Initializable {
 
     @FXML
     public void contactQqAction(ActionEvent actionEvent) {
-        FrameService.getInstance().openWebUrl("http://wpa.qq.com/msgrd?v=3&uin=1140526018&site=qq&menu=yes");
+        FrameManager.getInstance().openWebUrl("http://wpa.qq.com/msgrd?v=3&uin=1140526018&site=qq&menu=yes");
     }
 
 

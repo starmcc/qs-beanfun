@@ -1,12 +1,12 @@
-package com.starmcc.beanfun.windows.impl;
+package com.starmcc.beanfun.manager.impl;
 
 import com.starmcc.beanfun.client.HttpClient;
 import com.starmcc.beanfun.constant.QsConstant;
-import com.starmcc.beanfun.model.ConfigModel;
 import com.starmcc.beanfun.manager.AdvancedTimerMamager;
+import com.starmcc.beanfun.model.ConfigModel;
 import com.starmcc.beanfun.model.thread.timer.AdvancedTimerTask;
-import com.starmcc.beanfun.windows.WindowService;
-import com.starmcc.beanfun.windows.dll.CustomUser32;
+import com.starmcc.beanfun.manager.WindowManager;
+import com.starmcc.beanfun.dll.CustomUser32;
 import com.sun.jna.platform.win32.*;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.ArrayUtils;
@@ -22,14 +22,15 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.function.Consumer;
 
+
 /**
- * 窗口服务impl
+ * 窗口管理器实现
  *
  * @author starmcc
- * @date 2022/05/04
+ * @date 2022/09/23
  */
 @Slf4j
-public class WindowServiceImpl implements WindowService {
+public class WindowManagerImpl implements WindowManager {
 
     private static final int WM_KEYDOWN = 0X100;
     private static final int WM_LBUTTONDOWN = 0x0201;
@@ -43,9 +44,15 @@ public class WindowServiceImpl implements WindowService {
     public boolean checkVcRuntimeEnvironment() {
         boolean is = false;
         String path = "SOFTWARE\\WOW6432Node\\Microsoft\\Windows\\CurrentVersion\\Uninstall\\";
+        boolean exists = Advapi32Util.registryKeyExists(WinReg.HKEY_LOCAL_MACHINE, path, WinNT.KEY_READ);
+        if (!exists) {
+            // 如果找不到该key，则不进行校验
+            return true;
+        }
         String[] softwares = Advapi32Util.registryGetKeys(WinReg.HKEY_LOCAL_MACHINE, path, WinNT.KEY_READ);
         if (ArrayUtils.isEmpty(softwares)) {
-            return is;
+            // 如果获取不到软件列表,则不进行校验
+            return true;
         }
         for (String software : softwares) {
             Map<String, Object> map = Advapi32Util.registryGetValues(WinReg.HKEY_LOCAL_MACHINE, path + software, WinNT.KEY_READ);
@@ -214,7 +221,11 @@ public class WindowServiceImpl implements WindowService {
 
         try {
             String path = "Software\\Microsoft\\Windows\\CurrentVersion\\Internet Settings";
-            String proxyUrl = Advapi32Util.registryGetStringValue(WinReg.HKEY_CURRENT_USER, path, "AutoConfigURL");
+            boolean exists = Advapi32Util.registryValueExists(WinReg.HKEY_CURRENT_USER, path, "AutoConfigURL", WinNT.KEY_READ);
+            if (!exists) {
+                return httpHost;
+            }
+            String proxyUrl = Advapi32Util.registryGetStringValue(WinReg.HKEY_CURRENT_USER, path, "AutoConfigURL", WinNT.KEY_READ);
             if (StringUtils.isBlank(proxyUrl)) {
                 log.info("not pac proxy");
                 return httpHost;
