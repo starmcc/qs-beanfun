@@ -2,7 +2,7 @@ package com.starmcc.beanfun.manager;
 
 import com.starmcc.beanfun.constant.FXPageEnum;
 import com.starmcc.beanfun.manager.impl.FrameManagerImpl;
-import com.starmcc.beanfun.model.thread.Runnable2;
+import com.starmcc.beanfun.model.thread.ThrowRunnable;
 import javafx.scene.control.Alert;
 import javafx.stage.Stage;
 
@@ -82,9 +82,9 @@ public interface FrameManager {
     /**
      * JavaFx主线程运行
      *
-     * @param runnable2 runnable2
+     * @param throwRunnable runnable2
      */
-    void runLater(Runnable2 runnable2);
+    void runLater(ThrowRunnable throwRunnable);
 
     /**
      * JavaFx主线程运行(同步)

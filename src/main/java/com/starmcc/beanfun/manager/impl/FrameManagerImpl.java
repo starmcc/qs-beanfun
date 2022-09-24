@@ -9,7 +9,7 @@ import com.starmcc.beanfun.dll.EService;
 import com.starmcc.beanfun.manager.*;
 import com.starmcc.beanfun.model.JFXStage;
 import com.starmcc.beanfun.model.QsTray;
-import com.starmcc.beanfun.model.thread.Runnable2;
+import com.starmcc.beanfun.model.thread.ThrowRunnable;
 import javafx.application.Platform;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
@@ -26,10 +26,9 @@ import org.apache.http.cookie.Cookie;
 import java.awt.*;
 import java.net.URI;
 import java.util.List;
-import java.util.Objects;
-import java.util.Optional;
+import java.util.*;
 import java.util.concurrent.Callable;
-import java.util.concurrent.FutureTask;
+import java.util.concurrent.CountDownLatch;
 import java.util.function.Consumer;
 
 /**
@@ -92,20 +91,45 @@ public class FrameManagerImpl implements FrameManager {
     }
 
     @Override
-    public void runLater(Runnable2 runnable2) {
-        Platform.runLater(() -> {
-            try {
-                runnable2.run();
-            } catch (Exception e) {
-                throw new RuntimeException(e);
-            }
-        });
+    public void runLater(ThrowRunnable throwRunnable) {
+        if (Platform.isFxApplicationThread()) {
+            throwRunnable(throwRunnable);
+            return;
+        }
+        Platform.runLater(() -> throwRunnable(throwRunnable));
+    }
+
+    private synchronized static void throwRunnable(ThrowRunnable throwRunnable) {
+        try {
+            throwRunnable.run();
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
     }
 
     @Override
     public <T> T runLater(Callable<T> callable) {
-        final FutureTask<T> query = new FutureTask<>(callable);
-        Platform.runLater(query);
+        if (Platform.isFxApplicationThread()) {
+            return throwCallable(callable);
+        }
+        final CountDownLatch doneLatch = new CountDownLatch(1);
+        final Map<String, T> result = new HashMap<>(16);
+        Platform.runLater(() -> {
+            try {
+                result.put("result", throwCallable(callable));
+            } finally {
+                doneLatch.countDown();
+            }
+        });
+        try {
+            doneLatch.await();
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+        return result.get("result");
+    }
+
+    private static <T> T throwCallable(Callable<T> callable) {
         try {
             return callable.call();
         } catch (Exception e) {
@@ -179,8 +203,8 @@ public class FrameManagerImpl implements FrameManager {
             alert.setTitle("");
             alert.setHeaderText("");
             alert.setContentText(msg);
-            alert.showAndWait();
-            return "";
+            alert.show();
+            return null;
         });
     }
 

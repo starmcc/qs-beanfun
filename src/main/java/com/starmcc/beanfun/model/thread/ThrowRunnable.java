@@ -7,7 +7,7 @@ package com.starmcc.beanfun.model.thread;
  * @date 2022/09/21
  */
 @FunctionalInterface
-public interface Runnable2 {
+public interface ThrowRunnable {
     /**
      * 运行
      *
