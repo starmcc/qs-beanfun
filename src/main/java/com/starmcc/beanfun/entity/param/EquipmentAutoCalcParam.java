@@ -1,4 +1,4 @@
-package com.starmcc.beanfun.model;
+package com.starmcc.beanfun.entity.param;
 
 import com.starmcc.beanfun.constant.CalcConstant;
 import lombok.Data;

@@ -1,7 +1,7 @@
 package com.starmcc.beanfun.manager;
 
 import com.starmcc.beanfun.constant.QsConstant;
-import com.starmcc.beanfun.model.ConfigModel;
+import com.starmcc.beanfun.entity.model.ConfigModel;
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 

@@ -5,16 +5,14 @@ import com.starmcc.beanfun.client.ThirdPartyApiClient;
 import com.starmcc.beanfun.constant.FXPageEnum;
 import com.starmcc.beanfun.constant.QsConstant;
 import com.starmcc.beanfun.handler.*;
-import com.starmcc.beanfun.manager.AdvancedTimerMamager;
-import com.starmcc.beanfun.manager.FrameManager;
-import com.starmcc.beanfun.manager.ThreadPoolManager;
-import com.starmcc.beanfun.manager.WindowManager;
-import com.starmcc.beanfun.model.ConfigModel;
-import com.starmcc.beanfun.model.QsTray;
-import com.starmcc.beanfun.model.client.Account;
-import com.starmcc.beanfun.model.client.BeanfunAccountResult;
-import com.starmcc.beanfun.model.client.BeanfunStringResult;
-import com.starmcc.beanfun.model.thread.timer.AdvancedTimerTask;
+import com.starmcc.beanfun.manager.*;
+import com.starmcc.beanfun.entity.model.ConfigModel;
+import com.starmcc.beanfun.entity.model.LoadingPage;
+import com.starmcc.beanfun.entity.model.QsTray;
+import com.starmcc.beanfun.entity.client.Account;
+import com.starmcc.beanfun.entity.client.BeanfunAccountResult;
+import com.starmcc.beanfun.entity.client.BeanfunStringResult;
+import com.starmcc.beanfun.manager.impl.AdvancedTimerTask;
 import com.starmcc.beanfun.utils.FileTools;
 import com.starmcc.beanfun.utils.RegexUtils;
 import javafx.beans.value.ObservableValue;
@@ -74,10 +72,6 @@ public class MainController implements Initializable {
     private TextField textFieldRmbInput;
     @FXML
     private TextField textFieldXtbInput;
-    @FXML
-    private Button buttonGetPassword;
-    @FXML
-    private Button buttonUpdatePoints;
     @FXML
     private Button buttonAddAct;
     @FXML
@@ -147,32 +141,36 @@ public class MainController implements Initializable {
             QsConstant.trayIcon = QsTray.init(QsConstant.JFX_STAGE_DATA.get(FXPageEnum.主页).getStage());
             QsTray.show(QsConstant.trayIcon);
         });
-        // 获取账号数据
-        ThreadPoolManager.execute(() -> refeshAccounts(null));
-        try {
-            this.initEvent();
-            this.initData();
-        } catch (Exception e) {
-            log.error("error={}", e.getMessage(), e);
-        }
-        // 开始心跳 5分钟心跳一次保持登录状态
-        AdvancedTimerMamager.getInstance().addTask(new AdvancedTimerTask() {
-            @Override
-            public void start() throws Exception {
-                BeanfunClient.run().heartbeat();
+        // 加载页面
+        LoadingPage.taskAsync(FXPageEnum.主页, "加载中..", () -> {
+            // 获取账号数据
+            refeshAccounts(null);
+            try {
+                this.initEvent();
+                this.initData();
+            } catch (Exception e) {
+                log.error("error={}", e.getMessage(), e);
             }
-        }, 0, 1000 * 60 * 5);
+            // 开始心跳 5分钟心跳一次保持登录状态
+            AdvancedTimerMamager.getInstance().addTask(new AdvancedTimerTask() {
+                @Override
+                public void start() throws Exception {
+                    BeanfunClient.run().heartbeat();
+                }
+            }, 0, 1000 * 60 * 5);
+        });
+
     }
 
     private void initData() throws Exception {
         // 基础状态设置
-        checkBoxPassInput.setSelected(QsConstant.config.getPassInput());
-        checkBoxKillPlayStartWindow.setSelected(QsConstant.config.getKillStartPalyWindow());
+        checkBoxPassInput.setSelected(BooleanUtils.isTrue(QsConstant.config.getPassInput()));
+        checkBoxKillPlayStartWindow.setSelected(BooleanUtils.isTrue(QsConstant.config.getKillStartPalyWindow()));
         textFieldGamePath.setText(QsConstant.config.getGamePath());
         buttonAddAct.setVisible(QsConstant.beanfunModel.isNewAccount());
         menuItemAddAct.setVisible(QsConstant.beanfunModel.isNewAccount());
-        checkBoxKillGamePatcher.setVisible(QsConstant.config.getKillGamePatcher());
-        checkBoxAutoInput.setSelected(QsConstant.config.getAutoInput());
+        checkBoxKillGamePatcher.setVisible(BooleanUtils.isTrue(QsConstant.config.getKillGamePatcher()));
+        checkBoxAutoInput.setSelected(BooleanUtils.isTrue(QsConstant.config.getAutoInput()));
 
         // 轮烧配置
         Integer lunHuiKey = QsConstant.config.getLunHuiKey();
@@ -326,20 +324,16 @@ public class MainController implements Initializable {
 
     @FXML
     public void exitLoginAction() {
-        FrameManager.getInstance().runLater(() -> {
-            try {
-                BeanfunClient.run().loginOut(QsConstant.beanfunModel.getToken());
-                FrameManager.getInstance().openWindow(FXPageEnum.登录页);
-                FrameManager.getInstance().closeWindow(FXPageEnum.主页);
-            } catch (Exception e) {
-                log.error("登出异常 e={}", e.getMessage(), e);
-            }
+        LoadingPage.taskAsync(FXPageEnum.主页, "正在退出登录..", () -> {
+            BeanfunClient.run().loginOut(QsConstant.beanfunModel.getToken());
+            FrameManager.getInstance().openWindow(FXPageEnum.登录页);
+            FrameManager.getInstance().closeWindow(FXPageEnum.主页);
         });
     }
 
     @FXML
     public void changeAccountNowAction() {
-        accountInfoRefresh();
+        LoadingPage.taskAsync(FXPageEnum.主页, "变更账户..", () -> this.accountInfoRefresh());
     }
 
 
@@ -347,22 +341,22 @@ public class MainController implements Initializable {
      * 获取密码操作
      */
     @FXML
-    public void getPasswordAction() {
-        buttonGetPassword.setDisable(true);
-        AccountHandler.getDynamicPassword(QsConstant.nowAccount, (id, password) -> {
-            FrameManager.getInstance().runLater(() -> {
-                textFieldDynamicPwd.setText(password);
-                buttonGetPassword.setDisable(false);
-            });
-            // 自动输入
-            if (QsConstant.config.getAutoInput() && StringUtils.isNotBlank(password)) {
-                try {
-                    WindowManager.getInstance().autoInputActPwd(id, password);
-                } catch (Exception e) {
-                    log.error("error={}", e, e.getMessage());
-                    FrameManager.getInstance().message("自动输入异常", Alert.AlertType.ERROR);
+    public void getDynamicPasswordAction() {
+        LoadingPage.taskAsync(FXPageEnum.主页, "获取动态密码..", () -> {
+            AccountHandler.getDynamicPassword(QsConstant.nowAccount, (id, password) -> {
+                FrameManager.getInstance().runLater(() -> textFieldDynamicPwd.setText(password));
+                // 自动输入 并检查游戏是否存在
+                if (BooleanUtils.isTrue(QsConstant.config.getAutoInput())
+                        && StringUtils.isNotBlank(password)
+                        && WindowManager.getInstance().checkMapleStoryRunning()) {
+                    try {
+                        WindowManager.getInstance().autoInputActPwd(id, password);
+                    } catch (Exception e) {
+                        log.error("error={}", e, e.getMessage());
+                        FrameManager.getInstance().message("自动输入异常", Alert.AlertType.ERROR);
+                    }
                 }
-            }
+            });
         });
     }
 
@@ -385,13 +379,18 @@ public class MainController implements Initializable {
         }
         // 启动游戏 如果免输入模式，组装账密
         if (BooleanUtils.isTrue(QsConstant.config.getPassInput())) {
-            buttonGetPassword.setDisable(true);
-            AccountHandler.getDynamicPassword(QsConstant.nowAccount, (id, password) -> {
-                GameHandler.runGame(textFieldGamePath.getText(), id, password);
-                FrameManager.getInstance().runLater(() -> {
-                    textFieldDynamicPwd.setText(password);
-                    buttonGetPassword.setDisable(false);
-                });
+            LoadingPage.taskAsync(FXPageEnum.主页, "正在获取动态密码...", () -> {
+                try {
+                    AccountHandler.getDynamicPassword(QsConstant.nowAccount, (id, password) -> {
+                        GameHandler.runGame(textFieldGamePath.getText(), id, password);
+                        FrameManager.getInstance().runLater(() -> {
+                            textFieldDynamicPwd.setText(password);
+                        });
+                    });
+                } catch (Exception e) {
+                    log.error("获取密码失败 e={}", e.getMessage(), e);
+                    FrameManager.getInstance().message("获取动态密码异常:" + e.getMessage(), Alert.AlertType.ERROR);
+                }
             });
         } else {
             GameHandler.runGame(textFieldGamePath.getText(), null, null);
@@ -428,7 +427,11 @@ public class MainController implements Initializable {
      */
     @FXML
     public void updatePointsAction(ActionEvent actionEvent) {
-        this.updatePoints();
+        LoadingPage.taskAsync(FXPageEnum.主页, "获取游戏点数...", () -> {
+            // 获取游戏点数
+            String pointsText = getPointsText();
+            FrameManager.getInstance().runLater(() -> labelActPoint.setText(pointsText));
+        });
     }
 
 
@@ -441,27 +444,19 @@ public class MainController implements Initializable {
         if (StringUtils.isBlank(name)) {
             return;
         }
-        buttonAddAct.setDisable(true);
-        ThreadPoolManager.execute(() -> {
+        LoadingPage.taskAsync(FXPageEnum.主页, "添加账号..", () -> {
             try {
                 BeanfunStringResult result = BeanfunClient.run().addAccount(name);
-                if (!result.isSuccess()) {
+                if (result.isSuccess()) {
+                    refeshAccounts(() -> FrameManager.getInstance().runLater(() -> buttonAddAct.setVisible(false)));
+                } else {
                     FrameManager.getInstance().message(result.getMsg(), Alert.AlertType.WARNING);
-                    return;
                 }
-                refeshAccounts(() -> {
-                    FrameManager.getInstance().message("创建成功!", Alert.AlertType.INFORMATION);
-                    FrameManager.getInstance().runLater(() -> buttonAddAct.setVisible(false));
-                });
             } catch (Exception e) {
                 log.error("添加账号异常 e={}", e.getMessage(), e);
                 FrameManager.getInstance().message("创建失败!", Alert.AlertType.WARNING);
-            } finally {
-                buttonAddAct.setDisable(false);
             }
         });
-
-
     }
 
     /**
@@ -473,15 +468,12 @@ public class MainController implements Initializable {
         if (StringUtils.isBlank(newName)) {
             return;
         }
-
-        ThreadPoolManager.execute(() -> {
+        LoadingPage.taskAsync(FXPageEnum.主页, "编辑账号..", () -> {
             try {
                 BeanfunStringResult result = BeanfunClient.run().changeAccountName(QsConstant.nowAccount.getId(), newName);
                 if (!result.isSuccess()) {
                     FrameManager.getInstance().message(result.getMsg(), Alert.AlertType.WARNING);
-                    return;
                 }
-                refeshAccounts(() -> FrameManager.getInstance().message("编辑成功!", Alert.AlertType.INFORMATION));
             } catch (Exception e) {
                 log.error("编辑账号异常 e={}", e.getMessage(), e);
             }
@@ -533,7 +525,7 @@ public class MainController implements Initializable {
     @FXML
     public void updateRateAction(ActionEvent actionEvent) {
         // 获取汇率
-        ThreadPoolManager.execute(() -> {
+        LoadingPage.taskAsync(FXPageEnum.主页, "更新汇率..", () -> {
             QsConstant.currentRateChinaToTw = ThirdPartyApiClient.getCurrentRateChinaToTw();
             FrameManager.getInstance().runLater(() -> labelExchangeNow.setText(QsConstant.currentRateChinaToTw.toString()));
         });
@@ -698,6 +690,7 @@ public class MainController implements Initializable {
     }
     // =============================================== 私有方法 =================================
 
+
     /**
      * 初始化账户组合框
      */
@@ -730,22 +723,6 @@ public class MainController implements Initializable {
             if (Objects.nonNull(runnable)) {
                 runnable.run();
             }
-        });
-    }
-
-
-    /**
-     * 更新点数
-     */
-    private void updatePoints() {
-        FrameManager.getInstance().runLater(() -> buttonUpdatePoints.setDisable(true));
-        // 获取游戏点数
-        ThreadPoolManager.execute(() -> {
-            String pointsText = getPointsText();
-            FrameManager.getInstance().runLater(() -> {
-                labelActPoint.setText(pointsText);
-                buttonUpdatePoints.setDisable(false);
-            });
         });
     }
 
@@ -793,7 +770,8 @@ public class MainController implements Initializable {
         }
         textFieldActId.setText(QsConstant.nowAccount.getId());
         // 获取游戏点数
-        this.updatePoints();
+        String pointsText = this.getPointsText();
+        FrameManager.getInstance().runLater(() -> labelActPoint.setText(pointsText));
     }
 
 }

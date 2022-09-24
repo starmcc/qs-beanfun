@@ -3,11 +3,10 @@ package com.starmcc.beanfun.handler;
 import com.starmcc.beanfun.client.BeanfunClient;
 import com.starmcc.beanfun.constant.QsConstant;
 import com.starmcc.beanfun.manager.FrameManager;
-import com.starmcc.beanfun.manager.ThreadPoolManager;
-import com.starmcc.beanfun.model.ConfigModel;
-import com.starmcc.beanfun.model.LoginType;
-import com.starmcc.beanfun.model.client.Account;
-import com.starmcc.beanfun.model.client.BeanfunStringResult;
+import com.starmcc.beanfun.entity.model.ConfigModel;
+import com.starmcc.beanfun.entity.LoginType;
+import com.starmcc.beanfun.entity.client.Account;
+import com.starmcc.beanfun.entity.client.BeanfunStringResult;
 import com.starmcc.beanfun.utils.AesTools;
 import com.starmcc.beanfun.utils.DataTools;
 import com.starmcc.beanfun.utils.FileTools;
@@ -98,23 +97,20 @@ public class AccountHandler {
      * @param runnable 可运行
      */
     public static void getDynamicPassword(Account account, BiConsumer<String, String> runnable) {
-        ThreadPoolManager.execute(() -> {
-            try {
-                BeanfunStringResult pwdResult = BeanfunClient.run().getDynamicPassword(account, QsConstant.beanfunModel.getToken());
-                if (!pwdResult.isSuccess()) {
-                    FrameManager.getInstance().message(pwdResult.getMsg(), Alert.AlertType.ERROR);
-                }
-                log.debug("动态密码 ={}", pwdResult.getData());
-                if (Objects.isNull(account)) {
-                    runnable.accept(null, pwdResult.getData());
-                } else {
-                    runnable.accept(account.getId(), pwdResult.getData());
-                }
-
-            } catch (Exception e) {
-                log.error("获取密码失败 e={}", e.getMessage(), e);
-                FrameManager.getInstance().message("获取动态密码异常:" + e.getMessage(), Alert.AlertType.ERROR);
+        try {
+            BeanfunStringResult pwdResult = BeanfunClient.run().getDynamicPassword(account, QsConstant.beanfunModel.getToken());
+            if (!pwdResult.isSuccess()) {
+                FrameManager.getInstance().message(pwdResult.getMsg(), Alert.AlertType.ERROR);
             }
-        });
+            log.debug("动态密码 ={}", pwdResult.getData());
+            if (Objects.isNull(account)) {
+                runnable.accept(null, pwdResult.getData());
+            } else {
+                runnable.accept(account.getId(), pwdResult.getData());
+            }
+        } catch (Exception e) {
+            log.error("error={}", e, e.getMessage());
+            FrameManager.getInstance().message("自动输入异常", Alert.AlertType.ERROR);
+        }
     }
 }

@@ -1,8 +1,8 @@
 package com.starmcc.beanfun.client;
 
 import com.starmcc.beanfun.client.impl.HttpClientImpl;
-import com.starmcc.beanfun.model.client.QsHttpResponse;
-import com.starmcc.beanfun.model.client.ReqParams;
+import com.starmcc.beanfun.entity.client.QsHttpResponse;
+import com.starmcc.beanfun.entity.client.ReqParams;
 import org.apache.http.client.CookieStore;
 
 import java.io.File;

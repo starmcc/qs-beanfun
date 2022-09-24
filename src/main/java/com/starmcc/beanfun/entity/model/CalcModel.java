@@ -1,4 +1,4 @@
-package com.starmcc.beanfun.model;
+package com.starmcc.beanfun.entity.model;
 
 import lombok.Builder;
 import lombok.Data;

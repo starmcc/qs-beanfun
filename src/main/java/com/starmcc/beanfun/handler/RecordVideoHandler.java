@@ -4,7 +4,7 @@ import com.starmcc.beanfun.constant.QsConstant;
 import com.starmcc.beanfun.manager.AdvancedTimerMamager;
 import com.starmcc.beanfun.manager.RecordVideoManager;
 import com.starmcc.beanfun.manager.ThreadPoolManager;
-import com.starmcc.beanfun.model.thread.timer.AdvancedTimerTask;
+import com.starmcc.beanfun.manager.impl.AdvancedTimerTask;
 import lombok.extern.slf4j.Slf4j;
 
 import java.util.ArrayList;

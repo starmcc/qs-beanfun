@@ -5,12 +5,13 @@ import com.starmcc.beanfun.constant.FXPageEnum;
 import com.starmcc.beanfun.constant.QsConstant;
 import com.starmcc.beanfun.handler.AccountHandler;
 import com.starmcc.beanfun.manager.FrameManager;
+import com.starmcc.beanfun.entity.model.LoadingPage;
 import com.starmcc.beanfun.manager.ThreadPoolManager;
-import com.starmcc.beanfun.model.ComBoBoxListCell;
-import com.starmcc.beanfun.model.ConfigModel;
-import com.starmcc.beanfun.model.LoginType;
-import com.starmcc.beanfun.model.client.BeanfunModel;
-import com.starmcc.beanfun.model.client.BeanfunStringResult;
+import com.starmcc.beanfun.entity.model.ComBoBoxListCell;
+import com.starmcc.beanfun.entity.model.ConfigModel;
+import com.starmcc.beanfun.entity.LoginType;
+import com.starmcc.beanfun.entity.client.BeanfunModel;
+import com.starmcc.beanfun.entity.client.BeanfunStringResult;
 import com.starmcc.beanfun.utils.AesTools;
 import com.starmcc.beanfun.utils.DataTools;
 import com.starmcc.beanfun.utils.FileTools;
@@ -23,6 +24,7 @@ import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseEvent;
 import javafx.util.StringConverter;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.BooleanUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.concurrent.BasicThreadFactory;
 import org.apache.http.conn.HttpHostConnectException;
@@ -34,7 +36,6 @@ import java.util.Optional;
 import java.util.ResourceBundle;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.ScheduledThreadPoolExecutor;
-import java.util.concurrent.TimeUnit;
 
 
 /**
@@ -61,12 +62,7 @@ public class LoginController implements Initializable {
     @FXML
     private Hyperlink hyperlinkForgetPwd;
     @FXML
-    private ProgressBar progressBar;
-    @FXML
     private ImageView imageViewQrCode;
-
-
-    private boolean loginTask = false;
     private double loginProcess = 0D;
 
     @Override
@@ -88,7 +84,7 @@ public class LoginController implements Initializable {
                 return string;
             }
         });
-        checkBoxRemember.setSelected(QsConstant.config.getRecordActPwd());
+        checkBoxRemember.setSelected(BooleanUtils.isTrue(QsConstant.config.getRecordActPwd()));
         hyperlinkRegister.setFocusTraversable(false);
         hyperlinkForgetPwd.setFocusTraversable(false);
         checkBoxRemember.setFocusTraversable(false);
@@ -142,15 +138,6 @@ public class LoginController implements Initializable {
 
         ScheduledExecutorService executorService = new ScheduledThreadPoolExecutor(1,
                 new BasicThreadFactory.Builder().namingPattern("LoginController-schedule-pool-%d").daemon(true).build());
-        executorService.scheduleAtFixedRate(() -> {
-            if (progressBar.getProgress() < 1 && progressBar.getProgress() < loginProcess) {
-                progressBar.setProgress(progressBar.getProgress() + 0.01D);
-            }
-            if (loginTask) {
-                return;
-            }
-            executorService.shutdown();
-        }, 0, 50, TimeUnit.MILLISECONDS);
 
         // 执行登录方法
         ThreadPoolManager.execute(() -> {
@@ -271,9 +258,10 @@ public class LoginController implements Initializable {
         imageViewQrCode.setDisable(state);
         buttonLogin.setDisable(state);
         if (state) {
-            progressBar.setProgress(0);
+            LoadingPage.open(FXPageEnum.登录页, "正在登录..");
+        } else {
+            LoadingPage.close(FXPageEnum.登录页);
         }
-        loginTask = state;
         choiceBoxLoginType.setDisable(state);
     }
 

@@ -1,4 +1,4 @@
-package com.starmcc.beanfun.model;
+package com.starmcc.beanfun.entity.model;
 
 import com.starmcc.beanfun.constant.FXPageEnum;
 import com.starmcc.beanfun.manager.FrameManager;

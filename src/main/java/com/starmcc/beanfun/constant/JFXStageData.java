@@ -1,6 +1,6 @@
 package com.starmcc.beanfun.constant;
 
-import com.starmcc.beanfun.model.JFXStage;
+import com.starmcc.beanfun.entity.model.JFXStage;
 
 import java.util.HashMap;
 

@@ -1,6 +1,7 @@
-package com.starmcc.beanfun.model;
+package com.starmcc.beanfun.entity.model;
 
 import com.starmcc.beanfun.constant.QsConstant;
+import com.starmcc.beanfun.entity.LoginType;
 import lombok.Data;
 
 import java.io.File;
@@ -27,7 +28,6 @@ public class ConfigModel {
     private Integer loginType;
     private RecordVideo recordVideo;
     private List<ActPwd> actPwds;
-
     private ProxyConfig proxyConfig;
 
     public ConfigModel() {
@@ -47,7 +47,7 @@ public class ConfigModel {
         this.loginType = LoginType.TypeEnum.HK.getType();
         // 关闭
         this.killGamePatcher = true;
-        // 不置顶
+        // 不自动输入
         this.passInput = false;
         // 录像配置
         this.recordVideo = new RecordVideo();
@@ -148,7 +148,6 @@ public class ConfigModel {
 
         private String ip;
         private Integer port;
-
         private Boolean ban;
 
         public ProxyConfig() {

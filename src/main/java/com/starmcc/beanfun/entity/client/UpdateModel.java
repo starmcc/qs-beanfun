@@ -1,4 +1,4 @@
-package com.starmcc.beanfun.model.client;
+package com.starmcc.beanfun.entity.client;
 
 import lombok.Data;
 

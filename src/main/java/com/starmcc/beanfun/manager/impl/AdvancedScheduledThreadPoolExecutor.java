@@ -1,4 +1,4 @@
-package com.starmcc.beanfun.model.thread.timer;
+package com.starmcc.beanfun.manager.impl;
 
 import java.util.concurrent.RunnableScheduledFuture;
 import java.util.concurrent.ScheduledThreadPoolExecutor;

@@ -1,9 +1,9 @@
 package com.starmcc.beanfun.handler;
 
 import com.starmcc.beanfun.constant.CalcConstant;
-import com.starmcc.beanfun.model.CalcModel;
-import com.starmcc.beanfun.model.EquipmentAutoCalcParam;
-import com.starmcc.beanfun.model.EquipmentCalcParam;
+import com.starmcc.beanfun.entity.model.CalcModel;
+import com.starmcc.beanfun.entity.param.EquipmentAutoCalcParam;
+import com.starmcc.beanfun.entity.param.EquipmentCalcParam;
 import lombok.Data;
 import lombok.extern.slf4j.Slf4j;
 

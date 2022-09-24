@@ -1,4 +1,4 @@
-package com.starmcc.beanfun.model.thread;
+package com.starmcc.beanfun.entity.thread;
 
 /**
  * runnable2

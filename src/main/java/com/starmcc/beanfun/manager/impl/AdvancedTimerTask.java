@@ -1,4 +1,4 @@
-package com.starmcc.beanfun.model.thread.timer;
+package com.starmcc.beanfun.manager.impl;
 
 import lombok.Data;
 import lombok.extern.slf4j.Slf4j;

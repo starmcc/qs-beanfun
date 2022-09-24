@@ -1,8 +1,8 @@
 package com.starmcc.beanfun.constant;
 
-import com.starmcc.beanfun.model.ConfigModel;
-import com.starmcc.beanfun.model.client.Account;
-import com.starmcc.beanfun.model.client.BeanfunModel;
+import com.starmcc.beanfun.entity.model.ConfigModel;
+import com.starmcc.beanfun.entity.client.Account;
+import com.starmcc.beanfun.entity.client.BeanfunModel;
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 

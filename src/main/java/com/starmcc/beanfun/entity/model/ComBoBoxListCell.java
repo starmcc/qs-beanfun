@@ -1,4 +1,4 @@
-package com.starmcc.beanfun.model;
+package com.starmcc.beanfun.entity.model;
 
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;

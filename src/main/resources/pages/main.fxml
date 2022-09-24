@@ -20,124 +20,124 @@
 <?import javafx.scene.text.Font?>
 <?import javafx.scene.text.Text?>
 
-<VBox prefHeight="300.0" prefWidth="400.0" xmlns="http://javafx.com/javafx/8.0.171" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.starmcc.beanfun.controller.MainController">
+<AnchorPane xmlns="http://javafx.com/javafx/8.0.171" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.starmcc.beanfun.controller.MainController">
     <children>
-        <MenuBar VBox.vgrow="NEVER">
-            <menus>
-                <Menu mnemonicParsing="false" text="主菜单">
-                    <items>
-                        <CheckMenuItem fx:id="checkMenuItemAlwaysOnTop" mnemonicParsing="false" onAction="#alwaysOnTopAction" text="窗口置顶" />
-                        <CheckMenuItem fx:id="checkMenuItemAutoLunShao" mnemonicParsing="false" onAction="#autoLunShaoAction" text="自动轮烧" />
-                  <MenuItem fx:id="menuItemNgs" mnemonicParsing="false" text="强制结束NGS进程" />
-                        <MenuItem fx:id="menuItemEquipment" mnemonicParsing="false" text="装备计算器" />
-                        <MenuItem fx:id="menuItemPaperDoll" mnemonicParsing="false" text="纸娃娃系统" />
-                        <MenuItem fx:id="menuItemAlliance" mnemonicParsing="false" text="联盟摆放模拟器" />
-                  <MenuItem fx:id="menuItemSystemCalc" mnemonicParsing="false" text="系统计算器" />
-                        <MenuItem fx:id="menuItemExit" mnemonicParsing="false" text="退出" />
-                    </items>
-                </Menu>
-                <Menu mnemonicParsing="false" text="用户中心">
-                    <items>
-                        <MenuItem fx:id="menuItemAddAct" mnemonicParsing="false" onAction="#addActAction" text="创建账号" />
-                        <MenuItem mnemonicParsing="false" onAction="#editActAction" text="编辑当前账号" />
-                        <MenuItem mnemonicParsing="false" onAction="#memberCenterAction" text="会员中心" />
-                        <MenuItem mnemonicParsing="false" onAction="#memberTopUpAction" text="充值中心" />
-                        <MenuItem mnemonicParsing="false" onAction="#serviceCenterAction" text="客服中心" />
-                    </items>
-                </Menu>
-                <Menu mnemonicParsing="false" text="快速导航">
-                    <items>
-                        <MenuItem fx:id="menuItemOfficialTmsUrl" mnemonicParsing="false" text="新枫之谷台服官网" />
-                        <MenuItem fx:id="menuItemHkNewBeanfunUrl" mnemonicParsing="false" text="新香港橘子官网" />
-                        <MenuItem fx:id="menuItemTwBeanfunUrl" mnemonicParsing="false" text="台湾橘子官网" />
-                        <MenuItem fx:id="menuItemTechbangUrl" mnemonicParsing="false" text="透视镜" />
-                        <MenuItem fx:id="menuItemBahamuteUrl" mnemonicParsing="false" text="巴哈姆特" />
-                        <MenuItem fx:id="qstmsUrlMenu" mnemonicParsing="false" text="秋水文献库" />
-                        <MenuItem fx:id="tmsTieBaUrlMenu" mnemonicParsing="false" text="新枫之谷贴吧" />
-                        <MenuItem fx:id="qsbiliUrlMenu" mnemonicParsing="false" text="秋水小梦B站主页" />
-                    </items>
-                </Menu>
-                <Menu mnemonicParsing="false" text="关于...">
-                    <items>
-                        <MenuItem mnemonicParsing="false" onAction="#openToolsWindowAction" text="工具说明" />
-                    </items>
-                </Menu>
-            </menus>
-        </MenuBar>
-        <AnchorPane maxHeight="-1.0" maxWidth="-1.0" prefHeight="-1.0" prefWidth="-1.0" VBox.vgrow="ALWAYS">
+        <VBox prefHeight="300.0" prefWidth="400.0">
             <children>
-                <TabPane layoutX="35.0" layoutY="52.0" prefHeight="374.0" prefWidth="446.0" tabClosingPolicy="UNAVAILABLE" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+                <MenuBar VBox.vgrow="NEVER">
+                    <menus>
+                        <Menu mnemonicParsing="false" text="主菜单">
+                            <items>
+                                <CheckMenuItem fx:id="checkMenuItemAlwaysOnTop" mnemonicParsing="false" onAction="#alwaysOnTopAction" text="窗口置顶" />
+                                <CheckMenuItem fx:id="checkMenuItemAutoLunShao" mnemonicParsing="false" onAction="#autoLunShaoAction" text="自动轮烧" />
+                                <MenuItem fx:id="menuItemNgs" mnemonicParsing="false" text="强制结束NGS进程" />
+                                <MenuItem fx:id="menuItemEquipment" mnemonicParsing="false" text="装备计算器" />
+                                <MenuItem fx:id="menuItemPaperDoll" mnemonicParsing="false" text="纸娃娃系统" />
+                                <MenuItem fx:id="menuItemAlliance" mnemonicParsing="false" text="联盟摆放模拟器" />
+                                <MenuItem fx:id="menuItemSystemCalc" mnemonicParsing="false" text="系统计算器" />
+                                <MenuItem fx:id="menuItemExit" mnemonicParsing="false" text="退出" />
+                            </items>
+                        </Menu>
+                        <Menu mnemonicParsing="false" text="用户中心">
+                            <items>
+                                <MenuItem fx:id="menuItemAddAct" mnemonicParsing="false" onAction="#addActAction" text="创建账号" />
+                                <MenuItem mnemonicParsing="false" onAction="#editActAction" text="编辑当前账号" />
+                                <MenuItem mnemonicParsing="false" onAction="#memberCenterAction" text="会员中心" />
+                                <MenuItem mnemonicParsing="false" onAction="#memberTopUpAction" text="充值中心" />
+                                <MenuItem mnemonicParsing="false" onAction="#serviceCenterAction" text="客服中心" />
+                            </items>
+                        </Menu>
+                        <Menu mnemonicParsing="false" text="快速导航">
+                            <items>
+                                <MenuItem fx:id="menuItemOfficialTmsUrl" mnemonicParsing="false" text="新枫之谷台服官网" />
+                                <MenuItem fx:id="menuItemHkNewBeanfunUrl" mnemonicParsing="false" text="新香港橘子官网" />
+                                <MenuItem fx:id="menuItemTwBeanfunUrl" mnemonicParsing="false" text="台湾橘子官网" />
+                                <MenuItem fx:id="menuItemTechbangUrl" mnemonicParsing="false" text="透视镜" />
+                                <MenuItem fx:id="menuItemBahamuteUrl" mnemonicParsing="false" text="巴哈姆特" />
+                                <MenuItem fx:id="qstmsUrlMenu" mnemonicParsing="false" text="秋水文献库" />
+                                <MenuItem fx:id="tmsTieBaUrlMenu" mnemonicParsing="false" text="新枫之谷贴吧" />
+                                <MenuItem fx:id="qsbiliUrlMenu" mnemonicParsing="false" text="秋水小梦B站主页" />
+                            </items>
+                        </Menu>
+                        <Menu mnemonicParsing="false" text="关于...">
+                            <items>
+                                <MenuItem mnemonicParsing="false" onAction="#openToolsWindowAction" text="工具说明" />
+                            </items>
+                        </Menu>
+                    </menus>
+                </MenuBar>
+                <TabPane prefHeight="374.0" prefWidth="446.0" tabClosingPolicy="UNAVAILABLE">
                     <tabs>
                         <Tab text="常规">
                             <content>
                                 <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="324.0" prefWidth="446.0">
                                     <children>
 
-                                        <Button fx:id="buttonAddAct" layoutX="308.0" layoutY="55.0" mnemonicParsing="false" onAction="#addActAction" prefHeight="30.0" prefWidth="80.0" text="创建账号" textFill="#0071fc">
+                                        <Button fx:id="buttonAddAct" layoutX="308.0" layoutY="53.0" mnemonicParsing="false" onAction="#addActAction" prefHeight="30.0" prefWidth="80.0" text="创建账号" textFill="#0071fc">
                                             <font>
                                                 <Font size="15.0" />
                                             </font>
                                         </Button>
-                                        <Button fx:id="outLogin" layoutX="308.0" layoutY="18.0" mnemonicParsing="false" onAction="#exitLoginAction" text="退出登录">
+                                        <Button layoutX="308.0" layoutY="16.0" mnemonicParsing="false" onAction="#exitLoginAction" text="退出登录">
                                             <font>
                                                 <Font size="15.0" />
                                             </font>
                                         </Button>
-                                        <Label layoutX="14.0" layoutY="21.0" text="账号">
+                                        <Label layoutX="14.0" layoutY="19.0" text="账号">
                                             <font>
                                                 <Font size="15.0" />
                                             </font>
                                         </Label>
-                                        <Label layoutX="14.0" layoutY="58.0" text="乐豆">
+                                        <Label layoutX="14.0" layoutY="56.0" text="乐豆">
                                             <font>
                                                 <Font size="15.0" />
                                             </font>
                                         </Label>
-                                        <Label fx:id="labelActPoint" alignment="CENTER" layoutX="54.0" layoutY="58.0" prefHeight="15.0" prefWidth="152.0" text="0" textFill="#f85fc3">
+                                        <Label fx:id="labelActPoint" alignment="CENTER" layoutX="54.0" layoutY="56.0" prefHeight="15.0" prefWidth="152.0" text="0" textFill="#f85fc3">
                                             <font>
                                                 <Font size="15.0" />
                                             </font>
                                         </Label>
-                                        <Label layoutX="14.0" layoutY="94.0" text="状态">
+                                        <Label layoutX="14.0" layoutY="92.0" text="状态">
                                             <font>
                                                 <Font size="15.0" />
                                             </font>
                                         </Label>
-                                        <Label fx:id="labelActStatus" alignment="CENTER" layoutX="54.0" layoutY="94.0" prefHeight="15.0" prefWidth="152.0" text="正常" textFill="#18ab05">
+                                        <Label fx:id="labelActStatus" alignment="CENTER" layoutX="54.0" layoutY="92.0" prefHeight="15.0" prefWidth="152.0" text="正常" textFill="#18ab05">
                                             <font>
                                                 <Font size="15.0" />
                                             </font>
                                         </Label>
-                                        <Label layoutX="14.0" layoutY="127.0" text="注册">
+                                        <Label layoutX="14.0" layoutY="125.0" text="注册">
                                             <font>
                                                 <Font size="15.0" />
                                             </font>
                                         </Label>
-                                        <Label fx:id="labelActCreateTime" alignment="CENTER" layoutX="54.0" layoutY="127.0" prefHeight="15.0" prefWidth="152.0" text="1970-11-11 00:00:00">
+                                        <Label fx:id="labelActCreateTime" alignment="CENTER" layoutX="54.0" layoutY="125.0" prefHeight="15.0" prefWidth="152.0" text="1970-11-11 00:00:00">
                                             <font>
                                                 <Font size="15.0" />
                                             </font>
                                         </Label>
-                                        <TextField fx:id="textFieldActId" editable="false" layoutX="207.0" layoutY="168.0" prefHeight="33.0" prefWidth="182.0" />
-                                        <TextField fx:id="textFieldDynamicPwd" editable="false" layoutX="207.0" layoutY="205.0" prefHeight="33.0" prefWidth="182.0" />
-                                        <Button fx:id="buttonUpdatePoints" layoutX="219.0" layoutY="18.0" mnemonicParsing="false" onAction="#updatePointsAction" prefHeight="30.0" prefWidth="80.0" text="更新点数">
+                                        <TextField fx:id="textFieldActId" editable="false" layoutX="209.0" layoutY="166.0" prefHeight="33.0" prefWidth="180.0" />
+                                        <TextField fx:id="textFieldDynamicPwd" editable="false" layoutX="209.0" layoutY="203.0" prefHeight="33.0" prefWidth="180.0" />
+                                        <Button layoutX="219.0" layoutY="16.0" mnemonicParsing="false" onAction="#updatePointsAction" prefHeight="30.0" prefWidth="80.0" text="更新点数">
                                             <font>
                                                 <Font size="15.0" />
                                             </font>
                                         </Button>
-                                        <Button fx:id="startGameBtn" layoutX="9.0" layoutY="169.0" mnemonicParsing="false" onAction="#startGameAction" prefHeight="66.0" prefWidth="193.0" text="启动游戏(32/64bit)">
+                                        <Button fx:id="startGameBtn" layoutX="9.0" layoutY="167.0" mnemonicParsing="false" onAction="#startGameAction" prefHeight="66.0" prefWidth="193.0" text="启动游戏(32/64bit)">
                                             <font>
                                                 <Font size="15.0" />
                                             </font>
                                         </Button>
-                                        <ToggleButton fx:id="buttonRecordVideo" layoutX="308.0" layoutY="91.0" mnemonicParsing="false" onAction="#recordVideoAction" prefHeight="30.0" prefWidth="80.0" text="开始录像" />
-                                        <CheckBox fx:id="checkBoxAutoInput" layoutX="224.0" layoutY="139.0" mnemonicParsing="false" onAction="#autoInputAction" prefHeight="16.0" prefWidth="78.0" text="自动输入" />
-                                        <Button fx:id="buttonGetPassword" layoutX="307.0" layoutY="125.0" mnemonicParsing="false" onAction="#getPasswordAction" prefHeight="35.0" prefWidth="82.0" text="获取密码">
+                                        <ToggleButton fx:id="buttonRecordVideo" layoutX="308.0" layoutY="89.0" mnemonicParsing="false" onAction="#recordVideoAction" prefHeight="30.0" prefWidth="80.0" text="开始录像" />
+                                        <CheckBox fx:id="checkBoxAutoInput" layoutX="224.0" layoutY="137.0" mnemonicParsing="false" onAction="#autoInputAction" prefHeight="16.0" prefWidth="78.0" text="自动输入" />
+                                        <Button layoutX="307.0" layoutY="123.0" mnemonicParsing="false" onAction="#getDynamicPasswordAction" prefHeight="35.0" prefWidth="82.0" text="获取密码">
                                             <font>
                                                 <Font size="15.0" />
                                             </font>
                                         </Button>
-                                        <ChoiceBox fx:id="choiceBoxActList" layoutX="55.0" layoutY="21.0" onDragDetected="#changeAccountNowAction" prefHeight="23.0" prefWidth="156.0" />
+                                        <ChoiceBox fx:id="choiceBoxActList" layoutX="55.0" layoutY="19.0" onDragDetected="#changeAccountNowAction" prefHeight="23.0" prefWidth="156.0" />
                                     </children>
                                 </AnchorPane>
                             </content>
@@ -233,61 +233,61 @@
                             <content>
                                 <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0">
                                     <children>
-                                        <Label layoutX="98.0" layoutY="29.0" prefHeight="15.0" prefWidth="130.0" text="默认使用低配进行录制" />
-                                        <Label layoutX="21.0" layoutY="27.0" prefHeight="15.0" prefWidth="65.0" text="推荐配置：" textFill="RED">
+                                        <Label layoutX="98.0" layoutY="24.0" prefHeight="15.0" prefWidth="130.0" text="默认使用低配进行录制" />
+                                        <Label layoutX="21.0" layoutY="22.0" prefHeight="15.0" prefWidth="65.0" text="推荐配置：" textFill="RED">
                                             <font>
                                                 <Font name="System Bold" size="13.0" />
                                             </font>
                                         </Label>
-                                        <Label layoutX="38.0" layoutY="55.0" prefHeight="18.0" prefWidth="150.0" text="30FPS,1800码率 | 低配" textFill="#09a426">
+                                        <Label layoutX="38.0" layoutY="50.0" prefHeight="18.0" prefWidth="150.0" text="30FPS,1800码率 | 低配" textFill="#09a426">
                                             <font>
                                                 <Font size="13.0" />
                                             </font>
                                         </Label>
-                                        <Label layoutX="38.0" layoutY="81.0" prefHeight="18.0" prefWidth="150.0" text="60FPS,2500码率 | 中配" textFill="#cd4100">
+                                        <Label layoutX="38.0" layoutY="76.0" prefHeight="18.0" prefWidth="150.0" text="60FPS,2500码率 | 中配" textFill="#cd4100">
                                             <font>
                                                 <Font size="13.0" />
                                             </font>
                                         </Label>
-                                        <Label layoutX="38.0" layoutY="107.0" prefHeight="18.0" prefWidth="150.0" text="90FPS,3500码率 | 高配" textFill="#ff5227">
+                                        <Label layoutX="38.0" layoutY="102.0" prefHeight="18.0" prefWidth="150.0" text="90FPS,3500码率 | 高配" textFill="#ff5227">
                                             <font>
                                                 <Font size="13.0" />
                                             </font>
                                         </Label>
-                                        <Label layoutX="21.0" layoutY="211.0" text="视频目录：">
+                                        <Label layoutX="21.0" layoutY="206.0" text="视频目录">
                                             <font>
                                                 <Font size="14.0" />
                                             </font>
                                         </Label>
-                                        <TextField fx:id="textFieldVideoPath" editable="false" layoutX="97.0" layoutY="205.0" prefHeight="33.0" prefWidth="219.0" />
-                                        <Button layoutX="322.0" layoutY="203.0" mnemonicParsing="false" onAction="#videoPathOpenAction" prefHeight="34.0" prefWidth="66.0" text="打开">
+                                        <TextField fx:id="textFieldVideoPath" editable="false" layoutX="94.0" layoutY="200.0" prefHeight="33.0" prefWidth="219.0" />
+                                        <Button layoutX="322.0" layoutY="198.0" mnemonicParsing="false" onAction="#videoPathOpenAction" prefHeight="34.0" prefWidth="66.0" text="打开">
                                             <font>
                                                 <Font size="15.0" />
                                             </font>
                                         </Button>
-                                        <ChoiceBox fx:id="choiceBoxVideoFps" layoutX="277.0" layoutY="60.0" onDragDetected="#selectVideoFpsAction" prefHeight="23.0" prefWidth="109.0" />
-                                        <Label layoutX="241.0" layoutY="64.0" text="FPS" />
-                                        <Label layoutX="241.0" layoutY="99.0" text="码率" />
-                                        <ComboBox fx:id="comboBoxVideoCodeRate" editable="true" layoutX="278.0" layoutY="95.0" onDragDetected="#selectVideoCodeRateAction" prefHeight="23.0" prefWidth="109.0" />
-                                        <Button layoutX="275.0" layoutY="20.0" mnemonicParsing="false" onAction="#clearRecordVideoAction" prefHeight="30.0" prefWidth="115.0" text="清空视频数据">
+                                        <ChoiceBox fx:id="choiceBoxVideoFps" layoutX="277.0" layoutY="64.0" onDragDetected="#selectVideoFpsAction" prefHeight="23.0" prefWidth="109.0" />
+                                        <Label layoutX="241.0" layoutY="68.0" text="FPS" />
+                                        <Label layoutX="241.0" layoutY="103.0" text="码率" />
+                                        <ComboBox fx:id="comboBoxVideoCodeRate" editable="true" layoutX="278.0" layoutY="99.0" onDragDetected="#selectVideoCodeRateAction" prefHeight="23.0" prefWidth="109.0" />
+                                        <Button layoutX="275.0" layoutY="24.0" mnemonicParsing="false" onAction="#clearRecordVideoAction" prefHeight="30.0" prefWidth="111.0" text="清空视频数据">
                                             <font>
                                                 <Font size="15.0" />
                                             </font>
                                         </Button>
-                              <RadioButton fx:id="radioButtonGame" layoutX="275.0" layoutY="133.0" mnemonicParsing="false" text="游戏" />
-                              <RadioButton fx:id="radioButtonScreen" layoutX="332.0" layoutY="133.0" mnemonicParsing="false" text="全屏" />
-                              <Label layoutX="25.0" layoutY="173.0" text="FFmpeg：">
-                                 <font>
-                                    <Font size="14.0" />
-                                 </font>
-                              </Label>
-                              <TextField fx:id="textFieldFFmpegPath" editable="false" layoutX="97.0" layoutY="166.0" prefHeight="33.0" prefWidth="219.0" />
-                              <Button layoutX="322.0" layoutY="166.0" mnemonicParsing="false" onAction="#ffmpegOpenAction" prefHeight="34.0" prefWidth="66.0" text="打开">
-                                 <font>
-                                    <Font size="15.0" />
-                                 </font>
-                              </Button>
-                              <Button layoutX="17.0" layoutY="131.0" mnemonicParsing="false" onAction="#downloadFFmpegAction" prefHeight="30.0" prefWidth="115.0" text="前往下载FFmpeg" />
+                                        <RadioButton fx:id="radioButtonGame" layoutX="275.0" layoutY="137.0" mnemonicParsing="false" text="游戏" />
+                                        <RadioButton fx:id="radioButtonScreen" layoutX="332.0" layoutY="137.0" mnemonicParsing="false" text="全屏" />
+                                        <Label layoutX="25.0" layoutY="168.0" text="FFmpeg">
+                                            <font>
+                                                <Font size="14.0" />
+                                            </font>
+                                        </Label>
+                                        <TextField fx:id="textFieldFFmpegPath" editable="false" layoutX="94.0" layoutY="161.0" prefHeight="33.0" prefWidth="219.0" />
+                                        <Button layoutX="322.0" layoutY="161.0" mnemonicParsing="false" onAction="#ffmpegOpenAction" prefHeight="34.0" prefWidth="66.0" text="打开">
+                                            <font>
+                                                <Font size="15.0" />
+                                            </font>
+                                        </Button>
+                                        <Button layoutX="17.0" layoutY="126.0" mnemonicParsing="false" onAction="#downloadFFmpegAction" prefHeight="30.0" prefWidth="115.0" text="前往下载FFmpeg" />
                                     </children>
                                 </AnchorPane>
                             </content>
@@ -295,6 +295,6 @@
                     </tabs>
                 </TabPane>
             </children>
-        </AnchorPane>
+        </VBox>
     </children>
-</VBox>
+</AnchorPane>

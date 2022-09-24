@@ -4,7 +4,7 @@ import com.starmcc.beanfun.client.HttpClient;
 import com.starmcc.beanfun.constant.QsConstant;
 import com.starmcc.beanfun.manager.FrameManager;
 import com.starmcc.beanfun.manager.ThreadPoolManager;
-import com.starmcc.beanfun.model.client.UpdateModel;
+import com.starmcc.beanfun.entity.client.UpdateModel;
 import com.starmcc.beanfun.utils.FileTools;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;

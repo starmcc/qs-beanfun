@@ -1,8 +1,8 @@
 package com.starmcc.beanfun.client;
 
 import com.starmcc.beanfun.client.impl.TwQrCodeClientImpl;
-import com.starmcc.beanfun.model.client.BeanfunQrCodeResult;
-import com.starmcc.beanfun.model.client.BeanfunStringResult;
+import com.starmcc.beanfun.entity.client.BeanfunQrCodeResult;
+import com.starmcc.beanfun.entity.client.BeanfunStringResult;
 
 import java.util.Objects;
 

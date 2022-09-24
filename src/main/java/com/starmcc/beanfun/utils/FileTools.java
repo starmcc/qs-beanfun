@@ -4,7 +4,7 @@ import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.TypeReference;
 import com.alibaba.fastjson.serializer.SerializerFeature;
 import com.starmcc.beanfun.constant.QsConstant;
-import com.starmcc.beanfun.model.ConfigModel;
+import com.starmcc.beanfun.entity.model.ConfigModel;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 

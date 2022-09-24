@@ -2,8 +2,8 @@ package com.starmcc.beanfun.client.impl;
 
 import com.starmcc.beanfun.client.HttpClient;
 import com.starmcc.beanfun.manager.WindowManager;
-import com.starmcc.beanfun.model.client.QsHttpResponse;
-import com.starmcc.beanfun.model.client.ReqParams;
+import com.starmcc.beanfun.entity.client.QsHttpResponse;
+import com.starmcc.beanfun.entity.client.ReqParams;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.text.StringEscapeUtils;

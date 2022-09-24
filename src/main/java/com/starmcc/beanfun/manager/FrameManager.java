@@ -2,7 +2,7 @@ package com.starmcc.beanfun.manager;
 
 import com.starmcc.beanfun.constant.FXPageEnum;
 import com.starmcc.beanfun.manager.impl.FrameManagerImpl;
-import com.starmcc.beanfun.model.thread.ThrowRunnable;
+import com.starmcc.beanfun.entity.thread.ThrowRunnable;
 import javafx.scene.control.Alert;
 import javafx.stage.Stage;
 
