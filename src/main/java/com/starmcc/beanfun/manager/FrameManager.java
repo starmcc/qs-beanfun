@@ -6,8 +6,6 @@ import com.starmcc.beanfun.model.thread.ThrowRunnable;
 import javafx.scene.control.Alert;
 import javafx.stage.Stage;
 
-import java.util.concurrent.Callable;
-
 
 /**
  * 框架管理器
@@ -86,13 +84,6 @@ public interface FrameManager {
      */
     void runLater(ThrowRunnable throwRunnable);
 
-    /**
-     * JavaFx主线程运行(同步)
-     *
-     * @param callable 可调用
-     * @return {@link T}
-     */
-    <T> T runLater(Callable<T> callable);
 
     /**
      * 杀死所有内置线程和任务,并退出托盘
@@ -100,7 +91,15 @@ public interface FrameManager {
     void killAllTask();
 
     /**
-     * 消息框(自动主线程适配)
+     * 消息框(同步)
+     *
+     * @param msg       msg
+     * @param alertType 警报类型
+     */
+    void messageSync(String msg, Alert.AlertType alertType);
+
+    /**
+     * 消息框(主线程适配)
      *
      * @param msg       msg
      * @param alertType 警报类型

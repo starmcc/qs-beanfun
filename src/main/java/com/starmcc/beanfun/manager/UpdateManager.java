@@ -59,10 +59,12 @@ public class UpdateManager {
         }
         if (!quiet && model.getState() == UpdateModel.State.已是最新版本) {
             FrameManager.getInstance().message("已经是最新版本", Alert.AlertType.INFORMATION);
+            return;
         }
 
         if (!quiet && model.getState() == UpdateModel.State.获取失败) {
             FrameManager.getInstance().message("获取失败", Alert.AlertType.WARNING);
+            return;
         }
 
         if (model.getState() != UpdateModel.State.有新版本) {

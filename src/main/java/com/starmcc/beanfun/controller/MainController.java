@@ -370,13 +370,13 @@ public class MainController implements Initializable {
     @FXML
     public void startGameAction(ActionEvent actionEvent) {
         if (StringUtils.isBlank(textFieldGamePath.getText())) {
-            FrameManager.getInstance().message("请配置游戏路径!", Alert.AlertType.INFORMATION);
+            FrameManager.getInstance().messageSync("请配置游戏路径!", Alert.AlertType.INFORMATION);
             gamePathOpenAction(actionEvent);
             return;
         }
         // 检查VC环境是否安装
         if (!WindowManager.getInstance().checkVcRuntimeEnvironment()) {
-            FrameManager.getInstance().message("请安装VC环境!", Alert.AlertType.INFORMATION);
+            FrameManager.getInstance().messageSync("请安装VC环境!", Alert.AlertType.INFORMATION);
             boolean goDownload = FrameManager.getInstance().dialogConfirm("VcRuntime Error", "模拟繁体环境需要拥有VC环境,是否前往下载并安装?");
             if (goDownload) {
                 FrameManager.getInstance().openWebUrl("https://aka.ms/vs/17/release/vc_redist.x64.exe");
@@ -413,7 +413,7 @@ public class MainController implements Initializable {
         }
         // 判断中文路径
         if (RegexUtils.test(RegexUtils.PTN_CHINA_STRING, path)) {
-            FrameManager.getInstance().message("路径中不能包含中文!", Alert.AlertType.WARNING);
+            FrameManager.getInstance().messageSync("路径中不能包含中文!", Alert.AlertType.WARNING);
             return;
         }
 
@@ -451,7 +451,7 @@ public class MainController implements Initializable {
                 }
                 refeshAccounts(() -> {
                     FrameManager.getInstance().message("创建成功!", Alert.AlertType.INFORMATION);
-                    buttonAddAct.setVisible(false);
+                    FrameManager.getInstance().runLater(() -> buttonAddAct.setVisible(false));
                 });
             } catch (Exception e) {
                 log.error("添加账号异常 e={}", e.getMessage(), e);
@@ -473,15 +473,15 @@ public class MainController implements Initializable {
         if (StringUtils.isBlank(newName)) {
             return;
         }
-        String id = QsConstant.nowAccount.getId();
+
         ThreadPoolManager.execute(() -> {
             try {
-                BeanfunStringResult result = BeanfunClient.run().changeAccountName(id, newName);
+                BeanfunStringResult result = BeanfunClient.run().changeAccountName(QsConstant.nowAccount.getId(), newName);
                 if (!result.isSuccess()) {
                     FrameManager.getInstance().message(result.getMsg(), Alert.AlertType.WARNING);
                     return;
                 }
-                FrameManager.getInstance().message("编辑成功!", Alert.AlertType.INFORMATION);
+                refeshAccounts(() -> FrameManager.getInstance().message("编辑成功!", Alert.AlertType.INFORMATION));
             } catch (Exception e) {
                 log.error("编辑账号异常 e={}", e.getMessage(), e);
             }
@@ -623,7 +623,7 @@ public class MainController implements Initializable {
             if (!is) {
                 // 如果游戏不存在，则不进行录制
                 buttonRecordVideo.setSelected(!buttonRecordVideo.isSelected());
-                FrameManager.getInstance().message("游戏并未运行,请运行游戏后再尝试录制!", Alert.AlertType.WARNING);
+                FrameManager.getInstance().messageSync("游戏并未运行,请运行游戏后再尝试录制!", Alert.AlertType.WARNING);
                 return;
             }
         }
@@ -670,7 +670,7 @@ public class MainController implements Initializable {
         for (File f : files) {
             delNum = f.delete() ? delNum++ : delNum;
         }
-        FrameManager.getInstance().message("已清理" + delNum + "个录像", Alert.AlertType.INFORMATION);
+        FrameManager.getInstance().messageSync("已清理" + delNum + "个录像", Alert.AlertType.INFORMATION);
     }
 
 
@@ -714,10 +714,10 @@ public class MainController implements Initializable {
 
         if (!QsConstant.beanfunModel.isCertStatus()) {
             // 需要进阶认证
-            FrameManager.getInstance().message("请前往用户中心 -> 会员中心进行进阶认证!\n" + "做完进阶认证后请重新退出重新登录!", Alert.AlertType.INFORMATION);
+            FrameManager.getInstance().messageSync("请前往用户中心 -> 会员中心进行进阶认证!\n" + "做完进阶认证后请重新退出重新登录!", Alert.AlertType.INFORMATION);
         } else if (QsConstant.beanfunModel.isNewAccount()) {
             // 需要创建账号
-            FrameManager.getInstance().message("新账号请点击创建账号!", Alert.AlertType.INFORMATION);
+            FrameManager.getInstance().messageSync("新账号请点击创建账号!", Alert.AlertType.INFORMATION);
         }
 
         FrameManager.getInstance().runLater(() -> {

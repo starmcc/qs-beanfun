@@ -62,7 +62,7 @@ public class AboutController implements Initializable {
         }
         is = FileTools.deleteFolder(file);
         if (!is) {
-            FrameManager.getInstance().message("所有配置重置失败!", Alert.AlertType.ERROR);
+            FrameManager.getInstance().messageSync("所有配置重置失败!", Alert.AlertType.ERROR);
             return;
         }
         FrameManager.getInstance().exit();

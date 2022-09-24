@@ -26,9 +26,8 @@ import org.apache.http.cookie.Cookie;
 import java.awt.*;
 import java.net.URI;
 import java.util.List;
-import java.util.*;
-import java.util.concurrent.Callable;
-import java.util.concurrent.CountDownLatch;
+import java.util.Objects;
+import java.util.Optional;
 import java.util.function.Consumer;
 
 /**
@@ -92,46 +91,12 @@ public class FrameManagerImpl implements FrameManager {
 
     @Override
     public void runLater(ThrowRunnable throwRunnable) {
-        if (Platform.isFxApplicationThread()) {
-            throwRunnable(throwRunnable);
-            return;
-        }
         Platform.runLater(() -> throwRunnable(throwRunnable));
     }
 
-    private synchronized static void throwRunnable(ThrowRunnable throwRunnable) {
+    private static void throwRunnable(ThrowRunnable throwRunnable) {
         try {
             throwRunnable.run();
-        } catch (Exception e) {
-            throw new RuntimeException(e);
-        }
-    }
-
-    @Override
-    public <T> T runLater(Callable<T> callable) {
-        if (Platform.isFxApplicationThread()) {
-            return throwCallable(callable);
-        }
-        final CountDownLatch doneLatch = new CountDownLatch(1);
-        final Map<String, T> result = new HashMap<>(16);
-        Platform.runLater(() -> {
-            try {
-                result.put("result", throwCallable(callable));
-            } finally {
-                doneLatch.countDown();
-            }
-        });
-        try {
-            doneLatch.await();
-        } catch (Exception e) {
-            throw new RuntimeException(e);
-        }
-        return result.get("result");
-    }
-
-    private static <T> T throwCallable(Callable<T> callable) {
-        try {
-            return callable.call();
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
@@ -197,37 +162,35 @@ public class FrameManagerImpl implements FrameManager {
 
 
     @Override
+    public void messageSync(String msg, Alert.AlertType alertType) {
+        final Alert alert = new Alert(alertType);
+        alert.setTitle("");
+        alert.setHeaderText("");
+        alert.setContentText(msg);
+        alert.showAndWait();
+    }
+
+    @Override
     public void message(String msg, Alert.AlertType alertType) {
-        this.runLater(() -> {
-            final Alert alert = new Alert(alertType);
-            alert.setTitle("");
-            alert.setHeaderText("");
-            alert.setContentText(msg);
-            alert.show();
-            return null;
-        });
+        this.runLater(() -> this.messageSync(msg, alertType));
     }
 
     @Override
     public String dialogText(String tips, String defaultText) {
-        return this.runLater(() -> {
-            TextInputDialog dialog = new TextInputDialog(defaultText);
-            dialog.setTitle("");
-            dialog.setHeaderText(tips);
-            Optional<String> s = dialog.showAndWait();
-            return s.isPresent() ? s.get() : "";
-        });
+        TextInputDialog dialog = new TextInputDialog(defaultText);
+        dialog.setTitle("");
+        dialog.setHeaderText(tips);
+        Optional<String> s = dialog.showAndWait();
+        return s.isPresent() ? s.get() : "";
     }
 
 
     @Override
     public boolean dialogConfirm(String title, String tips) {
-        return this.runLater(() -> {
-            Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
-            alert.setTitle(title);
-            alert.setHeaderText("");
-            alert.setContentText(tips);
-            return alert.showAndWait().get() == ButtonType.OK;
-        });
+        Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
+        alert.setTitle(title);
+        alert.setHeaderText("");
+        alert.setContentText(tips);
+        return alert.showAndWait().get() == ButtonType.OK;
     }
 }
