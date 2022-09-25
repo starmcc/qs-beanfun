@@ -2,11 +2,11 @@ package com.starmcc.beanfun.handler;
 
 import com.starmcc.beanfun.client.BeanfunClient;
 import com.starmcc.beanfun.constant.QsConstant;
-import com.starmcc.beanfun.manager.FrameManager;
-import com.starmcc.beanfun.entity.model.ConfigModel;
 import com.starmcc.beanfun.entity.LoginType;
 import com.starmcc.beanfun.entity.client.Account;
 import com.starmcc.beanfun.entity.client.BeanfunStringResult;
+import com.starmcc.beanfun.entity.model.ConfigModel;
+import com.starmcc.beanfun.manager.FrameManager;
 import com.starmcc.beanfun.utils.AesTools;
 import com.starmcc.beanfun.utils.DataTools;
 import com.starmcc.beanfun.utils.FileTools;
@@ -71,7 +71,8 @@ public class AccountHandler {
             while (iterator.hasNext()) {
                 ConfigModel.ActPwd next = iterator.next();
                 String dncodeAct = AesTools.dncode(key, next.getAct());
-                if (StringUtils.equals(dncodeAct, account)) {
+                if (StringUtils.equals(dncodeAct, account)
+                        && Objects.equals(next.getType(), loginType.getType())) {
                     iterator.remove();
                 }
             }
