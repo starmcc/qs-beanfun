@@ -29,18 +29,18 @@ public class GameHandler {
      * @param killStartPalyWindow 关闭开始窗口
      */
     public static void runGame(String gamePath, String accountId, String password) {
+        String runParam = "./MapleStory.exe";
         if (BooleanUtils.isTrue(QsConstant.config.getPassInput())
                 && StringUtils.isNotBlank(accountId)
                 && StringUtils.isNotBlank(password)) {
-            gamePath = gamePath + " tw.login.maplestory.gamania.com 8484 BeanFun " + accountId + " " + password;
+            runParam = runParam + " tw.login.maplestory.gamania.com 8484 BeanFun " + accountId + " " + password;
         }
 
         String lrExe = QsConstant.PluginEnum.LOCALE_REMULATOR.getMainPath();
         String lrDll = QsConstant.PluginEnum.LOCALE_REMULATOR.getTargetPath() + "\\LRHookx64.dll";
-        String[] cmd = {"cmd", "/c", lrExe + " tms \"" + lrDll + "\" " + gamePath};
-        log.info("执行命令 runGame = {}", cmd[2]);
-
+        String cmd = "\"" + lrExe + "\" tms \"" + lrDll + "\" " + runParam;
         try {
+            log.info("执行命令 runGame = {}", cmd);
             Runtime.getRuntime().exec(cmd, null, new File(gamePath).getParentFile());
             if (BooleanUtils.isTrue(QsConstant.config.getKillStartPalyWindow())) {
                 WindowManager.getInstance().closeMapleStoryStart();

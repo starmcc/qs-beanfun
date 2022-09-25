@@ -374,6 +374,10 @@ public class MainController implements Initializable {
             FrameManager.getInstance().messageSync("请配置游戏路径!", Alert.AlertType.INFORMATION);
             gamePathOpenAction(actionEvent);
             return;
+        } else if (!new File(textFieldGamePath.getText()).exists()) {
+            // 文件不存在重新选择目录
+            gamePathOpenAction(actionEvent);
+            return;
         }
         // 检查VC环境是否安装
         if (!WindowManager.getInstance().checkVcRuntimeEnvironment()) {
