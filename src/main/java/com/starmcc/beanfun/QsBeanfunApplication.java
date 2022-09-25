@@ -7,7 +7,6 @@ import javafx.application.Application;
 import javafx.application.Platform;
 import javafx.stage.Stage;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.StringUtils;
 
 
@@ -40,9 +39,8 @@ public class QsBeanfunApplication extends Application {
      * @param args args
      */
     public static void main(String[] args) {
-        System.setProperty("https.protocols", "TLSv1,TLSv1.1,TLSv1.2");
         for (String arg : args) {
-            if (StringUtils.equals(args[0], "dev")){
+            if (StringUtils.equals(args[0], "dev")) {
                 QsConstant.DEV = true;
                 break;
             }

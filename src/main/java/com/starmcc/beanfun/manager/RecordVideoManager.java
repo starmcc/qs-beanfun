@@ -2,6 +2,7 @@ package com.starmcc.beanfun.manager;
 
 import com.starmcc.beanfun.constant.QsConstant;
 import com.starmcc.beanfun.entity.model.ConfigModel;
+import com.starmcc.beanfun.utils.SystemTools;
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 
@@ -153,27 +154,9 @@ public class RecordVideoManager {
         } catch (IOException e) {
             log.error("ffmpeg e={}", e.getMessage(), e);
         } finally {
-            recordVideoManager.close(br, isr, inputStream);
+            SystemTools.close(br, isr, inputStream);
         }
     }
 
-
-    /**
-     * 关闭
-     *
-     * @param acArr ac加勒比海盗
-     */
-    private void close(AutoCloseable... acArr) {
-        for (AutoCloseable ac : acArr) {
-            if (Objects.isNull(ac)) {
-                continue;
-            }
-            try {
-                ac.close();
-            } catch (Exception e) {
-                log.error("ffmpeg e={}", e.getMessage(), e);
-            }
-        }
-    }
 
 }

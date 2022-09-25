@@ -1,6 +1,7 @@
 package com.starmcc.beanfun.controller;
 
 import com.starmcc.beanfun.constant.QsConstant;
+import com.starmcc.beanfun.entity.model.ConfigModel;
 import com.starmcc.beanfun.manager.FrameManager;
 import com.starmcc.beanfun.manager.ThreadPoolManager;
 import com.starmcc.beanfun.manager.UpdateManager;
@@ -9,11 +10,14 @@ import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.Alert;
+import javafx.scene.control.CheckBox;
 import javafx.scene.control.Hyperlink;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.BooleanUtils;
 
 import java.io.File;
 import java.net.URL;
+import java.util.Objects;
 import java.util.ResourceBundle;
 
 /**
@@ -27,11 +31,27 @@ public class AboutController implements Initializable {
 
 
     @FXML
+    private CheckBox checkBoxPacSwitch;
+    @FXML
     private Hyperlink versionBtn;
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
         versionBtn.setText(QsConstant.APP_VERSION);
+        if (Objects.nonNull(QsConstant.config.getProxyConfig())) {
+            checkBoxPacSwitch.setSelected(!BooleanUtils.isTrue(QsConstant.config.getProxyConfig().getBan()));
+        }
+        checkBoxPacSwitch.setOnAction(event -> {
+            ConfigModel.ProxyConfig proxyConfig = null;
+            if (Objects.isNull(QsConstant.config.getProxyConfig())) {
+                proxyConfig = new ConfigModel.ProxyConfig();
+            } else {
+                proxyConfig = QsConstant.config.getProxyConfig();
+            }
+            proxyConfig.setBan(!checkBoxPacSwitch.isSelected());
+            QsConstant.config.setProxyConfig(proxyConfig);
+            FileTools.saveConfig(QsConstant.config);
+        });
     }
 
     @FXML

@@ -77,12 +77,10 @@ public class DataTools {
         } catch (Exception e) {
             throw new Exception(e);
         } finally {
-            if (sc != null) {
-                try {
-                    sc.close();
-                } catch (Exception e) {
-                    throw new Exception(e);
-                }
+            try {
+                SystemTools.closeThrow(sc);
+            } catch (Exception e) {
+                throw new Exception(e);
             }
         }
         return sb.toString();

@@ -106,15 +106,6 @@ public abstract class HttpClient {
      */
     public abstract void downloadFile(URL url, File saveFile, HttpClient.Process process);
 
-    /**
-     * 读取http文件
-     *
-     * @param urlAddress url地址
-     * @return {@link String}
-     */
-    public abstract String readHttpFile(String urlAddress);
-
-
     @FunctionalInterface
     public interface Process {
 

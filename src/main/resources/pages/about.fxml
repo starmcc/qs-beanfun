@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 <?import javafx.scene.control.Button?>
+<?import javafx.scene.control.CheckBox?>
 <?import javafx.scene.control.Hyperlink?>
 <?import javafx.scene.control.Separator?>
 <?import javafx.scene.image.Image?>
@@ -9,40 +10,40 @@
 <?import javafx.scene.text.Font?>
 <?import javafx.scene.text.Text?>
 
-<AnchorPane prefHeight="375.0" prefWidth="367.0" style="-fx-background-color: white;" xmlns="http://javafx.com/javafx/8.0.171" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.starmcc.beanfun.controller.AboutController">
+<AnchorPane prefHeight="380.0" prefWidth="370.0" style="-fx-background-color: white;" xmlns="http://javafx.com/javafx/8.0.171" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.starmcc.beanfun.controller.AboutController">
     <children>
-        <Text fill="RED" layoutX="17.0" layoutY="95.0" strokeType="OUTSIDE" strokeWidth="0.0" text="本登录器不是游戏橘子数位科技开发的客户端程序" textAlignment="CENTER" wrappingWidth="332.240234375">
+        <Text fill="RED" layoutX="22.0" layoutY="95.0" strokeType="OUTSIDE" strokeWidth="0.0" text="本登录器不是游戏橘子数位科技开发的客户端程序" textAlignment="CENTER" wrappingWidth="332.240234375">
             <font>
                 <Font size="15.0" />
             </font>
         </Text>
-        <Text fill="#0062ff" layoutX="40.0" layoutY="125.0" strokeType="OUTSIDE" strokeWidth="0.0" text="关于使用本登录器请确保下载途径是否安全" textAlignment="CENTER" wrappingWidth="286.240234375">
+        <Text fill="#0062ff" layoutX="45.0" layoutY="127.0" strokeType="OUTSIDE" strokeWidth="0.0" text="关于使用本登录器请确保下载途径是否安全" textAlignment="CENTER" wrappingWidth="286.240234375">
             <font>
                 <Font size="15.0" />
             </font>
         </Text>
-        <Text layoutX="121.0" layoutY="358.0" strokeType="OUTSIDE" strokeWidth="0.0" text="联系开发者：" wrappingWidth="94.240234375">
+        <Text layoutX="121.0" layoutY="360.0" strokeType="OUTSIDE" strokeWidth="0.0" text="联系开发者：" wrappingWidth="94.240234375">
             <font>
                 <Font size="15.0" />
             </font>
         </Text>
         <Separator disable="true" focusTraversable="false" layoutY="332.0" prefHeight="2.0" prefWidth="366.0" />
-        <Hyperlink focusTraversable="false" layoutX="215.0" layoutY="338.0" onAction="#contactQqAction" text="QQ：1140526018">
+        <Hyperlink focusTraversable="false" layoutX="215.0" layoutY="340.0" onAction="#contactQqAction" text="QQ：1140526018">
             <font>
                 <Font size="15.0" />
             </font>
         </Hyperlink>
-        <ImageView fx:id="logoImg" fitHeight="47.0" fitWidth="184.0" layoutX="29.0" layoutY="17.0" pickOnBounds="true" preserveRatio="true">
+        <ImageView fx:id="logoImg" fitHeight="47.0" fitWidth="184.0" layoutX="24.0" layoutY="16.0" pickOnBounds="true" preserveRatio="true">
          <image>
             <Image url="@../static/images/ico.png" />
          </image></ImageView>
-        <Text layoutX="87.0" layoutY="57.0" strokeType="OUTSIDE" strokeWidth="0.0" text="版本">
+        <Text layoutX="82.0" layoutY="56.0" strokeType="OUTSIDE" strokeWidth="0.0" text="版本">
             <font>
                 <Font size="15.0" />
             </font>
         </Text>
-        <Hyperlink fx:id="versionBtn" alignment="CENTER" contentDisplay="CENTER" focusTraversable="false" layoutX="117.0" layoutY="41.0" onAction="#verifyVersionAction" prefHeight="21.0" prefWidth="71.0" text="0.0.0" />
-      <Text fill="#8c00ff" layoutX="29.0" layoutY="155.0" strokeType="OUTSIDE" strokeWidth="0.0" text="使用本登录器造成的一切后果由使用者承担" textAlignment="CENTER" wrappingWidth="309.240234375">
+        <Hyperlink fx:id="versionBtn" alignment="CENTER" contentDisplay="CENTER" focusTraversable="false" layoutX="112.0" layoutY="40.0" onAction="#verifyVersionAction" prefHeight="21.0" prefWidth="71.0" text="0.0.0" />
+      <Text fill="#8c00ff" layoutX="33.0" layoutY="158.0" strokeType="OUTSIDE" strokeWidth="0.0" text="使用本登录器造成的一切后果由使用者承担" textAlignment="CENTER" wrappingWidth="309.240234375">
          <font>
             <Font size="15.0" />
          </font>
@@ -62,7 +63,7 @@
             <Font size="25.0" />
          </font>
       </Text>
-      <Button layoutX="17.0" layoutY="339.0" mnemonicParsing="false" onAction="#gitHubBtnAction" prefHeight="28.0" prefWidth="83.0" text="开源GitHub" />
+      <Button layoutX="17.0" layoutY="341.0" mnemonicParsing="false" onAction="#gitHubBtnAction" prefHeight="28.0" prefWidth="83.0" text="开源GitHub" />
       <Text fill="#ff4000" layoutX="11.0" layoutY="203.0" strokeType="OUTSIDE" strokeWidth="0.0" text="所有不怀好意的指责..." textAlignment="CENTER" wrappingWidth="150.00000132247806">
          <font>
             <Font size="15.0" />
@@ -73,6 +74,7 @@
             <Font size="15.0" />
          </font>
       </Text>
-      <Button layoutX="263.0" layoutY="40.0" mnemonicParsing="false" onAction="#resetConfigBtnAction" text="重置所有配置" />
+      <Button layoutX="258.0" layoutY="39.0" mnemonicParsing="false" onAction="#resetConfigBtnAction" text="重置所有配置" />
+      <CheckBox fx:id="checkBoxPacSwitch" layoutX="249.0" layoutY="15.0" mnemonicParsing="false" prefHeight="16.0" prefWidth="101.0" text="适配PAC代理" />
     </children>
 </AnchorPane>

@@ -224,67 +224,19 @@ public class WindowManagerImpl implements WindowManager {
             }
             if (StringUtils.isNotBlank(proxyConfig.getIp()) && Objects.nonNull(proxyConfig.getPort())) {
                 log.info("use proxy my custom value = {}", proxyConfig.toString());
-                return new HttpHost(proxyConfig.getIp(), proxyConfig.getPort(), uri.getScheme());
+                return new HttpHost(proxyConfig.getIp(), proxyConfig.getPort(), "http");
             }
         }
         String agent = EService.INSTANCE.getPACScriptAgent(uri.toString());
         if (StringUtils.isBlank(agent)) {
             return null;
         }
-        String[] split1 = agent.split(":");
-        if (ArrayUtils.isEmpty(split1) || split1.length < 2) {
+        String[] split = agent.split(":");
+        if (ArrayUtils.isEmpty(split) || split.length < 2) {
             return null;
         }
         log.info("使用PAC代理={}", agent);
-        return new HttpHost(split1[0], Integer.valueOf(split1[1]), uri.getScheme());
-        /*try {
-            String path = "Software\\Microsoft\\Windows\\CurrentVersion\\Internet Settings";
-            boolean exists = Advapi32Util.registryValueExists(WinReg.HKEY_CURRENT_USER, path, "AutoConfigURL", WinNT.KEY_READ);
-            if (!exists) {
-                return httpHost;
-            }
-            String proxyUrl = Advapi32Util.registryGetStringValue(WinReg.HKEY_CURRENT_USER, path, "AutoConfigURL", WinNT.KEY_READ);
-            if (StringUtils.isBlank(proxyUrl)) {
-                log.info("not pac proxy");
-                return httpHost;
-            }
-            String pacScript = HttpClient.getInstance().readHttpFile(proxyUrl);
-            if (StringUtils.isBlank(pacScript)) {
-                log.info("read pac proxy file is null");
-                return httpHost;
-            }
-            ScriptEngine engine = new ScriptEngineManager().getEngineByName("JavaScript");
-            engine.eval(pacScript);
-            //调用js中的方法
-            URI uri = new URI(url);
-            Object test2 = ((Invocable) engine).invokeFunction("FindProxyForURL", uri.toString(), uri.getHost());
-            if (Objects.isNull(test2)) {
-                log.info("url:{} runing FindProxyForURL is null result", url);
-                return httpHost;
-            }
-            String pac = String.valueOf(test2);
-            log.info("pac={}", pac);
-            // DIRECT 不代理
-            if (StringUtils.indexOf(pac, "DIRECT") >= 0) {
-                return httpHost;
-            }
-            String[] split = pac.split(";");
-            for (String pxy : split) {
-                String[] pxyArr = pxy.trim().split(" ");
-                if (ArrayUtils.isEmpty(pxyArr) || pxyArr.length < 2) {
-                    continue;
-                }
-                if (!StringUtils.equals(pxyArr[0].trim(), "PROXY")) {
-                    continue;
-                }
-                String[] address = pxyArr[1].trim().split(":");
-                httpHost = new HttpHost(address[0], Integer.valueOf(address[1]));
-                break;
-            }
-        } catch (Exception e) {
-            log.error("proxy error = {}", e.getMessage(), e);
-        }
-        return httpHost;*/
+        return new HttpHost(split[0], Integer.valueOf(split[1]), "http");
     }
 
     @Override

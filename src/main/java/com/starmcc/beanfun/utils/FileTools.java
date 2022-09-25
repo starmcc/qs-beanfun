@@ -12,7 +12,6 @@ import java.io.*;
 import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
-import java.util.Objects;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
 
@@ -127,24 +126,6 @@ public class FileTools {
     }
 
     /**
-     * 关闭
-     *
-     * @param acArr ac加勒比海盗
-     */
-    private static void close(AutoCloseable... acArr) {
-        for (AutoCloseable ac : acArr) {
-            if (Objects.isNull(ac)) {
-                continue;
-            }
-            try {
-                ac.close();
-            } catch (Exception e) {
-                log.error("ffmpeg e={}", e.getMessage(), e);
-            }
-        }
-    }
-
-    /**
      * 读取配置
      *
      * @return {@link String}
@@ -240,13 +221,7 @@ public class FileTools {
         } catch (Exception e) {
             log.error("写入文件异常 e={}", e.getMessage(), e);
         } finally {
-            try {
-                if (Objects.nonNull(write)) {
-                    write.close();
-                }
-            } catch (IOException e) {
-                log.error("关闭异常 e={}", e.getMessage(), e);
-            }
+            SystemTools.close(write);
         }
     }
 }

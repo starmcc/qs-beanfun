@@ -4,6 +4,7 @@ import com.starmcc.beanfun.client.HttpClient;
 import com.starmcc.beanfun.entity.client.QsHttpResponse;
 import com.starmcc.beanfun.entity.client.ReqParams;
 import com.starmcc.beanfun.manager.WindowManager;
+import com.starmcc.beanfun.utils.SystemTools;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.text.StringEscapeUtils;
@@ -27,7 +28,9 @@ import org.apache.http.message.BasicHeader;
 import org.apache.http.message.BasicNameValuePair;
 import org.apache.http.util.EntityUtils;
 
-import java.io.*;
+import java.io.File;
+import java.io.InputStream;
+import java.io.RandomAccessFile;
 import java.net.*;
 import java.nio.charset.Charset;
 import java.util.*;
@@ -224,12 +227,7 @@ public class HttpClientImpl extends HttpClient {
             process.call(HttpClient.Process.State.未知异常, null, unitProgress, e);
         } finally {
             try {
-                if (null != inputStream) {
-                    inputStream.close();
-                }
-                if (null != randomAccessFile) {
-                    randomAccessFile.close();
-                }
+                SystemTools.closeThrow(inputStream, randomAccessFile);
             } catch (Exception e) {
                 process.call(HttpClient.Process.State.未知异常, null, unitProgress, e);
             }
@@ -243,6 +241,13 @@ public class HttpClientImpl extends HttpClient {
      * @return {@link String}
      */
     private QsHttpResponse request(SupplierCustom supplier) throws Exception {
+        HttpUriRequest httpUriRequest = null;
+        try {
+            httpUriRequest = supplier.build();
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+
         QsHttpResponse qsHttpResponse = new QsHttpResponse();
         HttpClientBuilder httpClientBuilder = HttpClientBuilder.create();
         List<Header> headers = new ArrayList<>();
@@ -251,14 +256,16 @@ public class HttpClientImpl extends HttpClient {
         httpClientBuilder.setRedirectStrategy(new LaxRedirectStrategy());
         httpClientBuilder.setDefaultCookieStore(COOKIE_STORE);
         httpClientBuilder.setUserAgent(USER_AGENT);
+        // 代理设置
+        HttpHost proxy = WindowManager.getInstance().getPacScriptProxy(httpUriRequest.getURI());
+        httpClientBuilder.setProxy(proxy);
+        CloseableHttpClient httpClient = null;
+        CloseableHttpResponse response = null;
         try {
-            // 由客户端执行(发送)Get请求
-            HttpUriRequest httpUriRequest = supplier.build();
-            HttpHost proxy = WindowManager.getInstance().getPacScriptProxy(httpUriRequest.getURI());
-            httpClientBuilder.setProxy(proxy);
+            // 由客户端执行(发送)请求
             HttpClientContext context = HttpClientContext.create();
-            CloseableHttpClient httpClient = httpClientBuilder.build();
-            CloseableHttpResponse response = httpClient.execute(httpUriRequest, context);
+            httpClient = httpClientBuilder.build();
+            response = httpClient.execute(httpUriRequest, context);
             // 从响应模型中获取响应实体
             qsHttpResponse.setRedirectLocations(context.getRedirectLocations());
             qsHttpResponse.setCode(response.getStatusLine().getStatusCode());
@@ -274,46 +281,21 @@ public class HttpClientImpl extends HttpClient {
             log.error("请求异常 e={}", e.getMessage(), e);
             qsHttpResponse.setCode(500);
             qsHttpResponse.setContent(e.getMessage());
+        } finally {
+            SystemTools.close(httpClient, response);
         }
         return qsHttpResponse.build();
     }
 
 
-    @Override
-    public String readHttpFile(String urlAddress) {
-        BufferedReader reader = null;
-        StringBuffer content = new StringBuffer();
-        try {
-            URL url = new URL(urlAddress);
-            String line = null;
-//            CookieHandler.setDefault(new CookieManager(null, CookiePolicy.ACCEPT_ALL));
-            HttpURLConnection connection = (HttpURLConnection) url.openConnection();
-            connection.setRequestMethod("GET");
-            connection.setConnectTimeout(10 * 1000);
-            connection.setReadTimeout(10 * 1000);
-            connection.connect();
-            reader = new BufferedReader(new InputStreamReader(connection.getInputStream(), "UTF-8"));
-            while ((line = reader.readLine()) != null) {
-                content.append(line + "\n");
-            }
-            connection.disconnect();
-        } catch (Exception e) {
-            e.printStackTrace();
-        } finally {
-            if (reader != null) {
-                try {
-                    reader.close();
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
-            }
-        }
-        return content.toString();
-    }
-
-
     @FunctionalInterface
     public static interface SupplierCustom {
+        /**
+         * 构建
+         *
+         * @return {@link HttpUriRequest}
+         * @throws Exception 异常
+         */
         HttpUriRequest build() throws Exception;
     }
 
