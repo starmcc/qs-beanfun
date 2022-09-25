@@ -2,9 +2,9 @@ package com.starmcc.beanfun.entity.model;
 
 import com.starmcc.beanfun.constant.FXPageEnum;
 import com.starmcc.beanfun.constant.QsConstant;
+import com.starmcc.beanfun.entity.thread.ThrowRunnable;
 import com.starmcc.beanfun.manager.FrameManager;
 import com.starmcc.beanfun.manager.ThreadPoolManager;
-import com.starmcc.beanfun.entity.thread.ThrowRunnable;
 import javafx.geometry.Pos;
 import javafx.scene.control.Label;
 import javafx.scene.image.Image;

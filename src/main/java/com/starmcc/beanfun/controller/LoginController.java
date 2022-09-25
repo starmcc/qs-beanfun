@@ -3,15 +3,14 @@ package com.starmcc.beanfun.controller;
 import com.starmcc.beanfun.client.BeanfunClient;
 import com.starmcc.beanfun.constant.FXPageEnum;
 import com.starmcc.beanfun.constant.QsConstant;
-import com.starmcc.beanfun.handler.AccountHandler;
-import com.starmcc.beanfun.manager.FrameManager;
-import com.starmcc.beanfun.entity.model.LoadingPage;
-import com.starmcc.beanfun.manager.ThreadPoolManager;
-import com.starmcc.beanfun.entity.model.ComBoBoxListCell;
-import com.starmcc.beanfun.entity.model.ConfigModel;
 import com.starmcc.beanfun.entity.LoginType;
 import com.starmcc.beanfun.entity.client.BeanfunModel;
 import com.starmcc.beanfun.entity.client.BeanfunStringResult;
+import com.starmcc.beanfun.entity.model.ComBoBoxListCell;
+import com.starmcc.beanfun.entity.model.ConfigModel;
+import com.starmcc.beanfun.entity.model.LoadingPage;
+import com.starmcc.beanfun.handler.AccountHandler;
+import com.starmcc.beanfun.manager.FrameManager;
 import com.starmcc.beanfun.utils.AesTools;
 import com.starmcc.beanfun.utils.DataTools;
 import com.starmcc.beanfun.utils.FileTools;
@@ -21,12 +20,11 @@ import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.*;
 import javafx.scene.image.ImageView;
+import javafx.scene.input.KeyCode;
 import javafx.scene.input.MouseEvent;
-import javafx.util.StringConverter;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.BooleanUtils;
 import org.apache.commons.lang3.StringUtils;
-import org.apache.commons.lang3.concurrent.BasicThreadFactory;
 import org.apache.http.conn.HttpHostConnectException;
 
 import java.net.URL;
@@ -34,8 +32,6 @@ import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.ResourceBundle;
-import java.util.concurrent.ScheduledExecutorService;
-import java.util.concurrent.ScheduledThreadPoolExecutor;
 
 
 /**
@@ -54,8 +50,6 @@ public class LoginController implements Initializable {
     @FXML
     private PasswordField passwordFieldPassword;
     @FXML
-    private Button buttonLogin;
-    @FXML
     private CheckBox checkBoxRemember;
     @FXML
     private Hyperlink hyperlinkRegister;
@@ -69,24 +63,24 @@ public class LoginController implements Initializable {
     public void initialize(URL location, ResourceBundle resources) {
         initBasic();
         refeshAccounts();
+        // 初始化完后如果密码框有内容则获取焦点
+        if (StringUtils.isNotBlank(passwordFieldPassword.getText())) {
+            passwordFieldPassword.requestFocus();
+        }
     }
 
     private void initBasic() {
         comboBoxAccount.setCellFactory((view) -> new ComBoBoxListCell(this::whetherToDeleteAccountRecord));
-        comboBoxAccount.setConverter(new StringConverter<String>() {
-            @Override
-            public String toString(String object) {
-                return object;
-            }
-
-            @Override
-            public String fromString(String string) {
-                return string;
+        passwordFieldPassword.setOnKeyPressed(event -> {
+            if (event.getCode() == KeyCode.ENTER) {
+                this.loginAction();
             }
         });
         checkBoxRemember.setSelected(BooleanUtils.isTrue(QsConstant.config.getRecordActPwd()));
         hyperlinkRegister.setFocusTraversable(false);
         hyperlinkForgetPwd.setFocusTraversable(false);
+        imageViewQrCode.setFocusTraversable(false);
+        choiceBoxLoginType.setFocusTraversable(false);
         checkBoxRemember.setFocusTraversable(false);
         Integer configLoginType = QsConstant.config.getLoginType();
         LoginType selectLoginType = new LoginType();
@@ -130,18 +124,14 @@ public class LoginController implements Initializable {
     public void selectAccountAction() {
         String selectedItem = comboBoxAccount.getSelectionModel().getSelectedItem();
         passwordFieldPassword.setText(this.getPasswordByAccount(selectedItem));
+        passwordFieldPassword.requestFocus();
     }
 
     @FXML
     public void loginAction() {
-        loginning(true);
-
-        ScheduledExecutorService executorService = new ScheduledThreadPoolExecutor(1,
-                new BasicThreadFactory.Builder().namingPattern("LoginController-schedule-pool-%d").daemon(true).build());
-
-        // 执行登录方法
-        ThreadPoolManager.execute(() -> {
+        LoadingPage.taskAsync(FXPageEnum.登录页, "正在登录..", () -> {
             try {
+                // 执行登录方法
                 String act = comboBoxAccount.getValue();
                 String pwd = passwordFieldPassword.getText();
                 BeanfunStringResult loginResult = BeanfunClient.run().login(act, pwd, process -> loginProcess = process);
@@ -161,10 +151,7 @@ public class LoginController implements Initializable {
             } catch (Exception e) {
                 log.info("login error e={}", e.getMessage(), e);
                 FrameManager.getInstance().message("error:" + e.getMessage(), Alert.AlertType.ERROR);
-            } finally {
-                loginning(false);
             }
-
         });
     }
 
@@ -225,7 +212,6 @@ public class LoginController implements Initializable {
      * 登录成功前往主界面
      */
     private void loginSuccessGoMain() {
-        loginning(false);
         // 记录账密 如果点了记住密码，则会记录密码，否则只记录账号
         String act = comboBoxAccount.getValue();
         String pwd = "";
@@ -241,28 +227,6 @@ public class LoginController implements Initializable {
         } catch (Exception e) {
             log.error("loginSuccessGoMain e={}", e.getMessage(), e);
         }
-    }
-
-
-    /**
-     * 登录中
-     *
-     * @param state 状态
-     */
-    private void loginning(boolean state) {
-        hyperlinkRegister.setDisable(state);
-        hyperlinkForgetPwd.setDisable(state);
-        checkBoxRemember.setDisable(state);
-        comboBoxAccount.setDisable(state);
-        passwordFieldPassword.setDisable(state);
-        imageViewQrCode.setDisable(state);
-        buttonLogin.setDisable(state);
-        if (state) {
-            LoadingPage.open(FXPageEnum.登录页, "正在登录..");
-        } else {
-            LoadingPage.close(FXPageEnum.登录页);
-        }
-        choiceBoxLoginType.setDisable(state);
     }
 
 

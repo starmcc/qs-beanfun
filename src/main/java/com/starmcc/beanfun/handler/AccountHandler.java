@@ -63,21 +63,22 @@ public class AccountHandler {
      * @param loginType type
      */
     public static void recordActPwd(String account, String password, LoginType loginType) {
+        // 加密储存
+        final String key = DataTools.getComputerUniqueId();
         List<ConfigModel.ActPwd> actPwds = QsConstant.config.getActPwds();
         if (DataTools.collectionIsNotEmpty(actPwds)) {
             Iterator<ConfigModel.ActPwd> iterator = actPwds.iterator();
             while (iterator.hasNext()) {
                 ConfigModel.ActPwd next = iterator.next();
-                if (StringUtils.equals(next.getAct(), account)) {
+                String dncodeAct = AesTools.dncode(key, next.getAct());
+                if (StringUtils.equals(dncodeAct, account)) {
                     iterator.remove();
-                    break;
                 }
             }
         }
         try {
             ConfigModel.ActPwd actPwd = new ConfigModel.ActPwd();
-            // 加密储存
-            final String key = DataTools.getComputerUniqueId();
+
             account = AesTools.encode(key, account);
             password = AesTools.encode(key, password);
             actPwd.setAct(account);

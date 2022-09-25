@@ -4,14 +4,17 @@ import com.starmcc.beanfun.client.BeanfunClient;
 import com.starmcc.beanfun.client.ThirdPartyApiClient;
 import com.starmcc.beanfun.constant.FXPageEnum;
 import com.starmcc.beanfun.constant.QsConstant;
-import com.starmcc.beanfun.handler.*;
-import com.starmcc.beanfun.manager.*;
-import com.starmcc.beanfun.entity.model.ConfigModel;
-import com.starmcc.beanfun.entity.model.LoadingPage;
-import com.starmcc.beanfun.entity.model.QsTray;
 import com.starmcc.beanfun.entity.client.Account;
 import com.starmcc.beanfun.entity.client.BeanfunAccountResult;
 import com.starmcc.beanfun.entity.client.BeanfunStringResult;
+import com.starmcc.beanfun.entity.model.ConfigModel;
+import com.starmcc.beanfun.entity.model.LoadingPage;
+import com.starmcc.beanfun.entity.model.QsTray;
+import com.starmcc.beanfun.handler.*;
+import com.starmcc.beanfun.manager.AdvancedTimerMamager;
+import com.starmcc.beanfun.manager.FrameManager;
+import com.starmcc.beanfun.manager.ThreadPoolManager;
+import com.starmcc.beanfun.manager.WindowManager;
 import com.starmcc.beanfun.manager.impl.AdvancedTimerTask;
 import com.starmcc.beanfun.utils.FileTools;
 import com.starmcc.beanfun.utils.RegexUtils;
@@ -136,15 +139,13 @@ public class MainController implements Initializable {
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
+        // 加载页面
         FrameManager.getInstance().runLater(() -> {
             // 托盘菜单
             QsConstant.trayIcon = QsTray.init(QsConstant.JFX_STAGE_DATA.get(FXPageEnum.主页).getStage());
             QsTray.show(QsConstant.trayIcon);
-        });
-        // 加载页面
-        LoadingPage.taskAsync(FXPageEnum.主页, "加载中..", () -> {
             // 获取账号数据
-            refeshAccounts(null);
+            LoadingPage.taskAsync(FXPageEnum.主页, "加载中..", () -> refeshAccounts(null));
             try {
                 this.initEvent();
                 this.initData();
@@ -152,13 +153,17 @@ public class MainController implements Initializable {
                 log.error("error={}", e.getMessage(), e);
             }
             // 开始心跳 5分钟心跳一次保持登录状态
+            final int delay = 1000 * 60 * 5;
+            // 10分钟后开始
+            final int waitTime = 1000 * 60 * 10;
             AdvancedTimerMamager.getInstance().addTask(new AdvancedTimerTask() {
                 @Override
                 public void start() throws Exception {
                     BeanfunClient.run().heartbeat();
                 }
-            }, 0, 1000 * 60 * 5);
+            }, waitTime, delay);
         });
+
 
     }
 

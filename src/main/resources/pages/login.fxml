@@ -66,7 +66,7 @@
                 <Cursor fx:constant="DEFAULT" />
             </cursor>
         </Hyperlink>
-        <Button fx:id="buttonLogin" layoutX="39.0" layoutY="194.0" mnemonicParsing="false" onAction="#loginAction" prefHeight="35.0" prefWidth="255.0" text="登录" />
+        <Button layoutX="39.0" layoutY="194.0" mnemonicParsing="false" onAction="#loginAction" prefHeight="35.0" prefWidth="255.0" text="登录" />
         <ImageView fx:id="imageViewQrCode" fitHeight="26.0" fitWidth="26.0" layoutX="303.0" layoutY="223.0" onMouseClicked="#qrCodeClick" pickOnBounds="true" preserveRatio="true">
             <image>
                 <Image url="@../static/images/二维码.png" />
