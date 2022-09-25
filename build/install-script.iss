@@ -2,7 +2,7 @@
 ; SEE THE DOCUMENTATION FOR DETAILS ON CREATING INNO SETUP SCRIPT FILES!
 
 #define MyAppName "QsBeanfun"
-#define MyAppVersion "3.0.1"
+#define MyAppVersion "4.0.0"
 #define MyAppPublisher "starmcc"
 #define MyAppURL "https://github.com/starmcc/qs-beanfun"
 #define MyAppExeName "QsBeanfun.exe"
@@ -20,16 +20,19 @@ AppPublisher={#MyAppPublisher}
 AppPublisherURL={#MyAppURL}
 AppSupportURL={#MyAppURL}
 AppUpdatesURL={#MyAppURL}
-DefaultDirName={pf}\{#MyAppName}
+DefaultDirName={autopf}\{#MyAppName}
 DisableProgramGroupPage=yes
-LicenseFile=.\LISTENCE.txt
+LicenseFile=..\LICENSE
 OutputDir=..\target\
 OutputBaseFilename=QsBeanfun-install
-SetupIconFile=.\ico.ico
+SetupIconFile=ico.ico
 Compression=lzma
 SolidCompression=yes
+WizardSmallImageFile=small.bmp
 
-[Languages]
+[Languages]                                       
+Name: "cn"; MessagesFile: "ChineseSimplified.isl"
+Name: "tw"; MessagesFile: "ChineseTraditional.isl"
 Name: "english"; MessagesFile: "compiler:Default.isl"
 
 [Tasks]
@@ -38,7 +41,7 @@ Name: "quicklaunchicon"; Description: "{cm:CreateQuickLaunchIcon}"; GroupDescrip
 
 [Files]
 Source: "..\target\QsBeanfun.exe"; DestDir: "{app}"; Flags: ignoreversion
-Source: ".\jre\*"; DestDir: "{app}\{#MyJreName}"; Flags: ignoreversion recursesubdirs createallsubdirs
+;Source: ".\jre\*"; DestDir: "{app}\{#MyJreName}"; Flags: ignoreversion recursesubdirs createallsubdirs
 ; NOTE: Don't use "Flags: ignoreversion" on any shared system files
 
 [Icons]
