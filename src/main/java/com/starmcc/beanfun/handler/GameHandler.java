@@ -33,7 +33,7 @@ public class GameHandler {
         if (BooleanUtils.isTrue(QsConstant.config.getPassInput())
                 && StringUtils.isNotBlank(accountId)
                 && StringUtils.isNotBlank(password)) {
-            runParam = runParam + " tw.login.maplestory.gamania.com 8484 BeanFun " + accountId + " " + password;
+            runParam = runParam + " tw.login.maplestory.beanfun.com 8484 BeanFun " + accountId + " " + password;
         }
 
         String lrExe = QsConstant.PluginEnum.LOCALE_REMULATOR.getMainPath();
