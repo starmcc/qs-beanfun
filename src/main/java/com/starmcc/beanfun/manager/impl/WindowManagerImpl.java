@@ -213,11 +213,6 @@ public class WindowManagerImpl implements WindowManager {
         postEventKey(hwnd, WM_KEYDOWN, VK_ENTER);
     }
 
-    /**
-     * 获取pac代理
-     *
-     * @return {@link HttpHost}
-     */
     @Override
     public HttpHost getPacScriptProxy(URI uri) {
         // 如果有自定义配置的代理，优先使用配置代理
