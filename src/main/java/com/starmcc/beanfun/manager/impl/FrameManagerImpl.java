@@ -152,7 +152,7 @@ public class FrameManagerImpl implements FrameManager {
             obj.put("val", cookie.getValue());
             jsonArr.add(obj);
         }
-        HttpHost proxyHttpHost = WindowManager.getInstance().getPacScriptProxy(url);
+        HttpHost proxyHttpHost = WindowManager.getInstance().getPacScriptProxy(URI.create(url));
         String agent = "";
         if (Objects.nonNull(proxyHttpHost)) {
             agent = proxyHttpHost.getHostName() + ":" + proxyHttpHost.getPort();

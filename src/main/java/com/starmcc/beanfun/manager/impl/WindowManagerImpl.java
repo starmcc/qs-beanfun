@@ -15,6 +15,7 @@ import org.apache.http.HttpHost;
 
 import java.awt.*;
 import java.io.IOException;
+import java.net.URI;
 import java.util.Map;
 import java.util.Objects;
 import java.util.function.Consumer;
@@ -218,7 +219,7 @@ public class WindowManagerImpl implements WindowManager {
      * @return {@link HttpHost}
      */
     @Override
-    public HttpHost getPacScriptProxy(String url) {
+    public HttpHost getPacScriptProxy(URI uri) {
         // 如果有自定义配置的代理，优先使用配置代理
         ConfigModel.ProxyConfig proxyConfig = QsConstant.config.getProxyConfig();
         if (Objects.nonNull(proxyConfig)) {
@@ -228,10 +229,10 @@ public class WindowManagerImpl implements WindowManager {
             }
             if (StringUtils.isNotBlank(proxyConfig.getIp()) && Objects.nonNull(proxyConfig.getPort())) {
                 log.info("use proxy my custom value = {}", proxyConfig.toString());
-                return new HttpHost(proxyConfig.getIp(), proxyConfig.getPort());
+                return new HttpHost(proxyConfig.getIp(), proxyConfig.getPort(), uri.getScheme());
             }
         }
-        String agent = EService.INSTANCE.getPACScriptAgent(url);
+        String agent = EService.INSTANCE.getPACScriptAgent(uri.toString());
         if (StringUtils.isBlank(agent)) {
             return null;
         }
@@ -240,7 +241,7 @@ public class WindowManagerImpl implements WindowManager {
             return null;
         }
         log.info("使用PAC代理={}", agent);
-        return new HttpHost(split1[0], Integer.valueOf(split1[1]));
+        return new HttpHost(split1[0], Integer.valueOf(split1[1]), uri.getScheme());
         /*try {
             String path = "Software\\Microsoft\\Windows\\CurrentVersion\\Internet Settings";
             boolean exists = Advapi32Util.registryValueExists(WinReg.HKEY_CURRENT_USER, path, "AutoConfigURL", WinNT.KEY_READ);

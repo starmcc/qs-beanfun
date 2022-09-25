@@ -163,7 +163,7 @@ public class HttpClientImpl extends HttpClient {
 
         try {
             process.call(HttpClient.Process.State.正在连接, null, unitProgress, null);
-            HttpHost httpHost = WindowManager.getInstance().getPacScriptProxy(url.toString());
+            HttpHost httpHost = WindowManager.getInstance().getPacScriptProxy(url.toURI());
             if (Objects.nonNull(httpHost)) {
                 Proxy proxy = new Proxy(Proxy.Type.HTTP, new InetSocketAddress(httpHost.getHostName(), httpHost.getPort()));
                 urlConnection = (HttpURLConnection) url.openConnection(proxy);
@@ -237,7 +237,7 @@ public class HttpClientImpl extends HttpClient {
     }
 
     /**
-     * 请求(不会自动重定向)
+     * 请求
      *
      * @param supplier 供应
      * @return {@link String}
@@ -254,7 +254,7 @@ public class HttpClientImpl extends HttpClient {
         try {
             // 由客户端执行(发送)Get请求
             HttpUriRequest httpUriRequest = supplier.build();
-            HttpHost proxy = WindowManager.getInstance().getPacScriptProxy(httpUriRequest.getURI().toString());
+            HttpHost proxy = WindowManager.getInstance().getPacScriptProxy(httpUriRequest.getURI());
             httpClientBuilder.setProxy(proxy);
             HttpClientContext context = HttpClientContext.create();
             CloseableHttpClient httpClient = httpClientBuilder.build();
