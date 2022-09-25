@@ -1,11 +1,11 @@
 package com.starmcc.beanfun.manager.impl;
 
-import com.starmcc.beanfun.client.HttpClient;
 import com.starmcc.beanfun.constant.QsConstant;
 import com.starmcc.beanfun.dll.CustomUser32;
+import com.starmcc.beanfun.dll.EService;
+import com.starmcc.beanfun.entity.model.ConfigModel;
 import com.starmcc.beanfun.manager.AdvancedTimerMamager;
 import com.starmcc.beanfun.manager.WindowManager;
-import com.starmcc.beanfun.entity.model.ConfigModel;
 import com.sun.jna.platform.win32.*;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.ArrayUtils;
@@ -13,12 +13,8 @@ import org.apache.commons.lang3.BooleanUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.http.HttpHost;
 
-import javax.script.Invocable;
-import javax.script.ScriptEngine;
-import javax.script.ScriptEngineManager;
 import java.awt.*;
 import java.io.IOException;
-import java.net.URI;
 import java.util.Map;
 import java.util.Objects;
 import java.util.function.Consumer;
@@ -223,20 +219,29 @@ public class WindowManagerImpl implements WindowManager {
      */
     @Override
     public HttpHost getPacScriptProxy(String url) {
-        HttpHost httpHost = null;
         // 如果有自定义配置的代理，优先使用配置代理
         ConfigModel.ProxyConfig proxyConfig = QsConstant.config.getProxyConfig();
         if (Objects.nonNull(proxyConfig)) {
             if (BooleanUtils.isTrue(proxyConfig.getBan())) {
                 log.info("禁止使用PAC代理");
-                return httpHost;
+                return null;
             }
             if (StringUtils.isNotBlank(proxyConfig.getIp()) && Objects.nonNull(proxyConfig.getPort())) {
                 log.info("use proxy my custom value = {}", proxyConfig.toString());
                 return new HttpHost(proxyConfig.getIp(), proxyConfig.getPort());
             }
         }
-        try {
+        String agent = EService.INSTANCE.getPACScriptAgent(url);
+        if (StringUtils.isBlank(agent)) {
+            return null;
+        }
+        String[] split1 = agent.split(":");
+        if (ArrayUtils.isEmpty(split1) || split1.length < 2) {
+            return null;
+        }
+        log.info("使用PAC代理={}", agent);
+        return new HttpHost(split1[0], Integer.valueOf(split1[1]));
+        /*try {
             String path = "Software\\Microsoft\\Windows\\CurrentVersion\\Internet Settings";
             boolean exists = Advapi32Util.registryValueExists(WinReg.HKEY_CURRENT_USER, path, "AutoConfigURL", WinNT.KEY_READ);
             if (!exists) {
@@ -283,7 +288,7 @@ public class WindowManagerImpl implements WindowManager {
         } catch (Exception e) {
             log.error("proxy error = {}", e.getMessage(), e);
         }
-        return httpHost;
+        return httpHost;*/
     }
 
     @Override

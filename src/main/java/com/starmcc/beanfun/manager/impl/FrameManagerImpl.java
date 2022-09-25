@@ -157,7 +157,7 @@ public class FrameManagerImpl implements FrameManager {
         if (Objects.nonNull(proxyHttpHost)) {
             agent = proxyHttpHost.getHostName() + ":" + proxyHttpHost.getPort();
         }
-        EService.INSTANCE.openBrowser(url, "", jsonArr.toJSONString());
+        EService.INSTANCE.openBrowser(url, agent, jsonArr.toJSONString());
     }
 
 

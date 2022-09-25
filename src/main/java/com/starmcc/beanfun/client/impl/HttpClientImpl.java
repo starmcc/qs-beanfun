@@ -1,9 +1,9 @@
 package com.starmcc.beanfun.client.impl;
 
 import com.starmcc.beanfun.client.HttpClient;
-import com.starmcc.beanfun.manager.WindowManager;
 import com.starmcc.beanfun.entity.client.QsHttpResponse;
 import com.starmcc.beanfun.entity.client.ReqParams;
+import com.starmcc.beanfun.manager.WindowManager;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.text.StringEscapeUtils;
@@ -17,7 +17,6 @@ import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.client.methods.HttpUriRequest;
 import org.apache.http.client.protocol.HttpClientContext;
-import org.apache.http.conn.ConnectionKeepAliveStrategy;
 import org.apache.http.cookie.Cookie;
 import org.apache.http.impl.client.BasicCookieStore;
 import org.apache.http.impl.client.CloseableHttpClient;
@@ -32,7 +31,6 @@ import java.io.*;
 import java.net.*;
 import java.nio.charset.Charset;
 import java.util.*;
-import java.util.concurrent.TimeUnit;
 
 /**
  * http客户端实现
@@ -246,16 +244,10 @@ public class HttpClientImpl extends HttpClient {
      */
     private QsHttpResponse request(SupplierCustom supplier) throws Exception {
         QsHttpResponse qsHttpResponse = new QsHttpResponse();
-        ConnectionKeepAliveStrategy keepAliveStrategy = (response, context) -> 10;
         HttpClientBuilder httpClientBuilder = HttpClientBuilder.create();
         List<Header> headers = new ArrayList<>();
         headers.add(new BasicHeader("Accept-Encoding", "identity"));
         httpClientBuilder.setDefaultHeaders(headers);
-        //设置这两项，会开启定时任务清理过期和闲置的连接
-        httpClientBuilder.evictExpiredConnections();
-        //只能空闲10秒
-        httpClientBuilder.evictIdleConnections(10, TimeUnit.SECONDS);
-        httpClientBuilder.setKeepAliveStrategy(keepAliveStrategy);
         httpClientBuilder.setRedirectStrategy(new LaxRedirectStrategy());
         httpClientBuilder.setDefaultCookieStore(COOKIE_STORE);
         httpClientBuilder.setUserAgent(USER_AGENT);

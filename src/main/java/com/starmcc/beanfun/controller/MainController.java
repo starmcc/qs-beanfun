@@ -331,8 +331,10 @@ public class MainController implements Initializable {
     public void exitLoginAction() {
         LoadingPage.taskAsync(FXPageEnum.主页, "正在退出登录..", () -> {
             BeanfunClient.run().loginOut(QsConstant.beanfunModel.getToken());
-            FrameManager.getInstance().openWindow(FXPageEnum.登录页);
-            FrameManager.getInstance().closeWindow(FXPageEnum.主页);
+            FrameManager.getInstance().runLater(() -> {
+                FrameManager.getInstance().openWindow(FXPageEnum.登录页);
+                FrameManager.getInstance().closeWindow(FXPageEnum.主页);
+            });
         });
     }
 
@@ -478,7 +480,9 @@ public class MainController implements Initializable {
                 BeanfunStringResult result = BeanfunClient.run().changeAccountName(QsConstant.nowAccount.getId(), newName);
                 if (!result.isSuccess()) {
                     FrameManager.getInstance().message(result.getMsg(), Alert.AlertType.WARNING);
+                    return;
                 }
+                refeshAccounts(null);
             } catch (Exception e) {
                 log.error("编辑账号异常 e={}", e.getMessage(), e);
             }
