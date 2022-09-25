@@ -83,6 +83,18 @@ I don't have a lot of energy to do it
 
 [详见编译教程](./build/README.md)
 
+## 安全
+
+每次发布Release都会贴出工具的(Hash)哈希值
+
+请各位下载工具后校验Hash值是否安全
+
+怎么查询哈希值？
+```
+certutil -hashfile 该程序路径
+```
+回车后会出现hash值。
+
 ## 结语
 
 1. 所有不怀好意的指责，都需要时间去验证。
