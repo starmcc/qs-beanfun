@@ -100,11 +100,11 @@
                             <goal>launch4j</goal>
                         </goals>
                         <configuration>
-                            <!--运行方式，控制台-->
+                            <!--运行方式-->
                             <headerType>gui</headerType>
                             <!--输出的exe文件-->
                             <outfile>${project.build.directory}/QsBeanfun.exe</outfile>
-                            <!--输出的jar-->
+                            <!--需要打包的Jar文件-->
                             <jar>${project.build.directory}/${artifactId}.jar</jar>
                             <classPath>
                                 <mainClass>com.starmcc.beanfun.QsBeanfunApplication</mainClass>
