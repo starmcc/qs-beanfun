@@ -172,8 +172,6 @@ public class MainController implements Initializable {
         checkBoxPassInput.setSelected(BooleanUtils.isTrue(QsConstant.config.getPassInput()));
         checkBoxKillPlayStartWindow.setSelected(BooleanUtils.isTrue(QsConstant.config.getKillStartPalyWindow()));
         textFieldGamePath.setText(QsConstant.config.getGamePath());
-        buttonAddAct.setVisible(QsConstant.beanfunModel.isNewAccount());
-        menuItemAddAct.setVisible(QsConstant.beanfunModel.isNewAccount());
         checkBoxKillGamePatcher.setVisible(BooleanUtils.isTrue(QsConstant.config.getKillGamePatcher()));
         checkBoxAutoInput.setSelected(BooleanUtils.isTrue(QsConstant.config.getAutoInput()));
 
@@ -720,11 +718,14 @@ public class MainController implements Initializable {
 
         if (!QsConstant.beanfunModel.isCertStatus()) {
             // 需要进阶认证
-            FrameManager.getInstance().messageSync("请前往用户中心 -> 会员中心进行进阶认证!\n" + "做完进阶认证后请重新退出重新登录!", Alert.AlertType.INFORMATION);
+            FrameManager.getInstance().message("请前往用户中心 -> 会员中心进行进阶认证!\n" + "做完进阶认证后请重新退出重新登录!", Alert.AlertType.INFORMATION);
         } else if (QsConstant.beanfunModel.isNewAccount()) {
             // 需要创建账号
-            FrameManager.getInstance().messageSync("新账号请点击创建账号!", Alert.AlertType.INFORMATION);
+            FrameManager.getInstance().message("新账号请点击创建账号!", Alert.AlertType.INFORMATION);
         }
+
+        buttonAddAct.setVisible(QsConstant.beanfunModel.isNewAccount());
+        menuItemAddAct.setVisible(QsConstant.beanfunModel.isNewAccount());
 
         FrameManager.getInstance().runLater(() -> {
             ObservableList<Account> options = FXCollections.observableArrayList();
