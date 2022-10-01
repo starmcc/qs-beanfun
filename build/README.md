@@ -1,14 +1,12 @@
 # 编译相关
 
-## 1. 下载 Jre 环境
+## 1. 下载 JDK 环境
 
-下载`JRE1.8 32位`环境，注意必须是`32位`，保存到`build/jre`目录中。
+下载`JDK1.8 32位`环境，注意必须是`32位`，将`JDK`中的`JRE`复制到`build/jre`目录中。
 
-[**JRE1.8 32位 Offline Installer**](https://www.oracle.com/java/technologies/downloads/#jre8-windows)
+[**JRE1.8 32位 Offline Installer**](https://www.oracle.com/java/technologies/downloads/#java8-windows)
 
-![image](./help/1.png)
-
-![image](./help/2.png)
+![image](./help/help.png)
 
 ## 2. Maven 编译 package
 

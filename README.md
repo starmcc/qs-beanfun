@@ -26,9 +26,7 @@ I don't have a lot of energy to do it
 
 可下载`QsBeanfun.exe`直接运行或自行编译运行`jar`即可。
 
-这里可以下载运行环境哦
-
-[JRE1.8 32位 Offline Installer](https://www.oracle.com/java/technologies/downloads/#jre8-windows)
+[JDK1.8 32位 Offline Installer](https://www.oracle.com/java/technologies/downloads/#java8-windows)
 
 ---
 
