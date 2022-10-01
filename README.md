@@ -18,17 +18,17 @@ I don't have a lot of energy to do it
 
 [**Releases-点击进入下载页面**](https://github.com/starmcc/qs-beanfun/releases)
 
-**请下载`QsBeanfun-install.exe`进行安装即可。**
+**请下载最新`QsBeanfun-install.exe`进行安装即可。**
 
 ---
 
-如果您是Java开发人员，拥有 **JRE1.8 x86(32bit)** 支持。
+如果您是Java开发人员，拥有 **JRE1.8 x86(32bit)** 或 `JDK` 支持。
 
-可下载`QsBeanfun.exe`直接运行即可
+可下载`QsBeanfun.exe`直接运行或自行编译运行`jar`即可。
 
 这里可以下载运行环境哦
 
-[**JRE1.8 32位 Offline Installer**](https://www.oracle.com/java/technologies/downloads/#jre8-windows)
+[JRE1.8 32位 Offline Installer](https://www.oracle.com/java/technologies/downloads/#jre8-windows)
 
 ---
 
@@ -59,8 +59,8 @@ I don't have a lot of energy to do it
 
 ## 运行环境
 
-- Windows7 以上，以windows10为测试标准
-- [**JRE1.8 x86-32位 (已内置)**](https://www.oracle.com/java/technologies/downloads/#jre8-windows)
+- `Windows7`以上，以`Win10`为上线标准。
+- [JRE1.8 x86-32位 (Install包已内置)](https://www.oracle.com/java/technologies/downloads/#jre8-windows)
 - [Microsoft Visual C++ Redistributable VC环境](https://aka.ms/vs/17/release/vc_redist.x64.exe)
 
 ## 依赖
@@ -87,9 +87,11 @@ I don't have a lot of energy to do it
 请各位下载工具后校验Hash值是否安全
 
 怎么查询哈希值？
+
 ```
 certutil -hashfile 该程序路径
 ```
+
 回车后会出现hash值。
 
 ## 结语
