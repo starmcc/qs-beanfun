@@ -75,11 +75,8 @@ I don't have a lot of energy to do it
 
 ## 编译
 
-1. maven 编译 Jar
-2. exe4j 将 Jar 打包为 exe
-3. Resource Hacker 修改 exe 清单管理员模式
-    - `level=requireAdministrator`
-4. inno Setup 打包 qs-beanfun-install.exe 安装包(将Jre一并打包)
+1. maven 编译 exe
+2. inno Setup 打包 qs-beanfun-install.exe 安装包(将Jre一并打包)
 
 [详见编译教程](./build/README.md)
 

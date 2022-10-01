@@ -79,8 +79,8 @@ public class AutoLunShaoHandler {
                 // 自动聚焦游戏
                 WindowManager.getInstance().setMapleStoryForegroundWindow();
                 // 开始按键轮回
-                new Robot().keyPress(lunHuiKey);
-                log.info("自动轮烧按下了[{}]键", lunHuiKeyStr);
+                new Robot().keyPress(ranShaoKey);
+                log.info("自动轮烧按下了[{}]键", ranShaoKeyStr);
             }
         }, 7000, RAN_SHAO);
         taskNames.add(rsTaskName);

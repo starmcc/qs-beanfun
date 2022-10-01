@@ -6,7 +6,7 @@
 
     <groupId>com.starmcc.beanfun</groupId>
     <artifactId>qs-beanfun</artifactId>
-    <version>4.0.1</version>
+    <version>4.0.3</version>
 
     <properties>
         <maven.compiler.source>8</maven.compiler.source>
@@ -14,7 +14,7 @@
         <version.lombok>1.18.10</version.lombok>
         <version.fastJson>1.2.75</version.fastJson>
         <version.jna>5.10.0</version.jna>
-        <version.httpclient>4.5.5</version.httpclient>
+        <version.httpclient>4.5.13</version.httpclient>
         <version.commons-text>1.9</version.commons-text>
         <version.logback-classic>1.2.3</version.logback-classic>
         <version.jna-platform-jpms>5.10.0</version.jna-platform-jpms>
@@ -66,6 +66,7 @@
         </dependency>
     </dependencies>
     <build>
+        <finalName>${artifactId}</finalName>
         <plugins>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
@@ -78,12 +79,50 @@
                             <goal>shade</goal>
                         </goals>
                         <configuration>
+                            <finalName>${artifactId}</finalName>
                             <transformers>
                                 <transformer
                                         implementation="org.apache.maven.plugins.shade.resource.ManifestResourceTransformer">
                                     <mainClass>com.starmcc.beanfun.QsBeanfunApplication</mainClass>
                                 </transformer>
                             </transformers>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+            <plugin>
+                <groupId>com.akathist.maven.plugins.launch4j</groupId>
+                <artifactId>launch4j-maven-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <phase>package</phase>
+                        <goals>
+                            <goal>launch4j</goal>
+                        </goals>
+                        <configuration>
+                            <!--运行方式，控制台-->
+                            <headerType>gui</headerType>
+                            <!--输出的exe文件-->
+                            <outfile>${project.build.directory}/QsBeanfun.exe</outfile>
+                            <!--输出的jar-->
+                            <jar>${project.build.directory}/${artifactId}.jar</jar>
+                            <classPath>
+                                <mainClass>com.starmcc.beanfun.QsBeanfunApplication</mainClass>
+                            </classPath>
+                            <icon>./build/ico.ico</icon>
+                            <manifest>./build/exe.manifest</manifest>
+                            <downloadUrl>https://www.oracle.com/java/technologies/downloads/#jre8-windows
+                            </downloadUrl>
+                            <!--配置jre-->
+                            <jre>
+                                <minVersion>1.8.0</minVersion>
+                                <bundledJre64Bit>false</bundledJre64Bit>
+                                <bundledJreAsFallback>false</bundledJreAsFallback>
+                                <minVersion>1.8.0</minVersion>
+                                <jdkPreference>preferJre</jdkPreference>
+                                <runtimeBits>32</runtimeBits>
+                                <path>./jre</path>
+                            </jre>
                         </configuration>
                     </execution>
                 </executions>

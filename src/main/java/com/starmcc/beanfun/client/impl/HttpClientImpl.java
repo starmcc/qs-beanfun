@@ -265,6 +265,8 @@ public class HttpClientImpl extends HttpClient {
             // 由客户端执行(发送)请求
             HttpClientContext context = HttpClientContext.create();
             httpClient = httpClientBuilder.build();
+            System.setProperty("jdk.tls.useExtendedMasterSecret", "false");
+            System.setProperty("https.protocols", "TLSv1,TLSv1.1,TLSv1.2");
             response = httpClient.execute(httpUriRequest, context);
             // 从响应模型中获取响应实体
             qsHttpResponse.setRedirectLocations(context.getRedirectLocations());
