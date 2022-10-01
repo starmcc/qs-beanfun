@@ -2,7 +2,7 @@
 
 ## 1. 下载 Jre 环境
 
-下载`JRE1.8 32位`环境，注意必须是32位，保存到`deploy/jre`目录中。
+下载`JRE1.8 32位`环境，注意必须是32位，保存到`build/jre`目录中。
 
 [**JRE1.8 32位 Offline Installer**](https://www.oracle.com/java/technologies/downloads/#jre8-windows)
 
