@@ -5,6 +5,7 @@ import com.starmcc.beanfun.entity.LoginType;
 import lombok.Data;
 
 import java.io.File;
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -15,7 +16,9 @@ import java.util.List;
  * @date 2022/09/21
  */
 @Data
-public class ConfigModel {
+public class ConfigModel implements Serializable {
+
+    private static final long serialVersionUID = 7433412132480861916L;
 
     private Boolean recordActPwd;
     private String gamePath;
@@ -59,7 +62,8 @@ public class ConfigModel {
 
 
     @Data
-    public static class ActPwd {
+    public static class ActPwd implements Serializable {
+        private static final long serialVersionUID = -2963079081098248669L;
         private String act;
         private String pwd;
         private Integer type;
@@ -84,7 +88,8 @@ public class ConfigModel {
      * @date 2022/09/22
      */
     @Data
-    public static class RecordVideo {
+    public static class RecordVideo implements Serializable {
+        private static final long serialVersionUID = 4984160868883374046L;
         /**
          * 文件夹
          */
@@ -144,8 +149,9 @@ public class ConfigModel {
 
 
     @Data
-    public static class ProxyConfig {
+    public static class ProxyConfig implements Serializable {
 
+        private static final long serialVersionUID = -2103248701734060691L;
         private String ip;
         private Integer port;
         private Boolean ban;

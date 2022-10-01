@@ -7,7 +7,6 @@ import com.starmcc.beanfun.entity.client.Account;
 import com.starmcc.beanfun.entity.client.BeanfunStringResult;
 import com.starmcc.beanfun.entity.model.ConfigModel;
 import com.starmcc.beanfun.manager.FrameManager;
-import com.starmcc.beanfun.utils.AesTools;
 import com.starmcc.beanfun.utils.DataTools;
 import com.starmcc.beanfun.utils.FileTools;
 import javafx.scene.control.Alert;
@@ -45,9 +44,7 @@ public class AccountHandler {
             if (!Objects.equals(actPwd.getType(), loginType.getType())) {
                 continue;
             }
-            final String key = DataTools.getComputerUniqueId();
-            String act = AesTools.dncode(key, actPwd.getAct());
-            if (StringUtils.equals(act, account)) {
+            if (StringUtils.equals(actPwd.getAct(), account)) {
                 iterator.remove();
                 break;
             }
@@ -63,30 +60,13 @@ public class AccountHandler {
      * @param loginType type
      */
     public static void recordActPwd(String account, String password, LoginType loginType) {
-        // 加密储存
-        final String key = DataTools.getComputerUniqueId();
-        List<ConfigModel.ActPwd> actPwds = QsConstant.config.getActPwds();
-        if (DataTools.collectionIsNotEmpty(actPwds)) {
-            Iterator<ConfigModel.ActPwd> iterator = actPwds.iterator();
-            while (iterator.hasNext()) {
-                ConfigModel.ActPwd next = iterator.next();
-                String dncodeAct = AesTools.dncode(key, next.getAct());
-                if (StringUtils.equals(dncodeAct, account)
-                        && Objects.equals(next.getType(), loginType.getType())) {
-                    iterator.remove();
-                }
-            }
-        }
+        delActPwd(account, loginType);
         try {
             ConfigModel.ActPwd actPwd = new ConfigModel.ActPwd();
-
-            account = AesTools.encode(key, account);
-            password = AesTools.encode(key, password);
             actPwd.setAct(account);
             actPwd.setPwd(password);
             actPwd.setType(loginType.getType());
-            actPwds.add(0, actPwd);
-            QsConstant.config.setActPwds(actPwds);
+            QsConstant.config.getActPwds().add(0, actPwd);
             FileTools.saveConfig(QsConstant.config);
         } catch (Exception e) {
             log.error("异常 e={}", e.getMessage(), e);

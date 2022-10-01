@@ -11,7 +11,6 @@ import com.starmcc.beanfun.entity.model.ConfigModel;
 import com.starmcc.beanfun.entity.model.LoadingPage;
 import com.starmcc.beanfun.handler.AccountHandler;
 import com.starmcc.beanfun.manager.FrameManager;
-import com.starmcc.beanfun.utils.AesTools;
 import com.starmcc.beanfun.utils.DataTools;
 import com.starmcc.beanfun.utils.FileTools;
 import javafx.collections.ObservableList;
@@ -98,19 +97,13 @@ public class LoginController implements Initializable {
     private void refeshAccounts() {
         ObservableList<String> items = comboBoxAccount.getItems();
         items.clear();
-        List<ConfigModel.ActPwd> actPwds = QsConstant.config.getActPwds();
-        final String key = DataTools.getComputerUniqueId();
         LoginType selectedItem = choiceBoxLoginType.getSelectionModel().getSelectedItem();
         // 解密
-        for (ConfigModel.ActPwd item : actPwds) {
+        for (ConfigModel.ActPwd item : QsConstant.config.getActPwds()) {
             if (!Objects.equals(item.getType(), selectedItem.getType())) {
                 continue;
             }
-            try {
-                items.add(AesTools.dncode(key, item.getAct()));
-            } catch (Exception e) {
-                log.error("解密异常 e={}", e.getMessage(), e);
-            }
+            items.add(item.getAct());
         }
         if (DataTools.collectionIsNotEmpty(items)) {
             comboBoxAccount.getSelectionModel().selectFirst();
@@ -236,13 +229,10 @@ public class LoginController implements Initializable {
             return "";
         }
         final String key = DataTools.getComputerUniqueId();
-        Optional<ConfigModel.ActPwd> optional = actPwds.stream().filter(actPwd -> {
-            if (!Objects.equals(QsConstant.config.getLoginType(), actPwd.getType())) {
-                return false;
-            }
-            return StringUtils.equals(AesTools.dncode(key, actPwd.getAct()), act);
-        }).findFirst();
-        return optional.isPresent() ? AesTools.dncode(key, optional.get().getPwd()) : "";
+        Optional<ConfigModel.ActPwd> optional = actPwds.stream()
+                .filter(actPwd -> Objects.equals(QsConstant.config.getLoginType(), actPwd.getType()))
+                .findFirst();
+        return optional.isPresent() ? optional.get().getPwd() : "";
     }
 
     /**

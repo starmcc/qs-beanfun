@@ -66,78 +66,78 @@
                         </Menu>
                     </menus>
                 </MenuBar>
-                <TabPane prefHeight="374.0" prefWidth="446.0" tabClosingPolicy="UNAVAILABLE">
+                <TabPane tabClosingPolicy="UNAVAILABLE">
                     <tabs>
                         <Tab text="常规">
                             <content>
-                                <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="324.0" prefWidth="446.0">
+                                <AnchorPane>
                                     <children>
 
-                                        <Button fx:id="buttonAddAct" layoutX="308.0" layoutY="53.0" mnemonicParsing="false" onAction="#addActAction" prefHeight="30.0" prefWidth="80.0" text="创建账号" textFill="#0071fc">
+                                        <Button fx:id="buttonAddAct" layoutX="309.0" layoutY="53.0" mnemonicParsing="false" onAction="#addActAction" prefHeight="30.0" prefWidth="80.0" text="创建账号" textFill="#0071fc">
                                             <font>
                                                 <Font size="15.0" />
                                             </font>
                                         </Button>
-                                        <Button layoutX="308.0" layoutY="16.0" mnemonicParsing="false" onAction="#exitLoginAction" text="退出登录">
+                                        <Button layoutX="309.0" layoutY="16.0" mnemonicParsing="false" onAction="#exitLoginAction" text="退出登录">
                                             <font>
                                                 <Font size="15.0" />
                                             </font>
                                         </Button>
-                                        <Label layoutX="14.0" layoutY="19.0" text="账号">
+                                        <Label layoutX="15.0" layoutY="20.0" text="账号">
                                             <font>
                                                 <Font size="15.0" />
                                             </font>
                                         </Label>
-                                        <Label layoutX="14.0" layoutY="56.0" text="乐豆">
+                                        <Label layoutX="15.0" layoutY="58.0" text="乐豆">
                                             <font>
                                                 <Font size="15.0" />
                                             </font>
                                         </Label>
-                                        <Label fx:id="labelActPoint" alignment="CENTER" layoutX="54.0" layoutY="56.0" prefHeight="15.0" prefWidth="152.0" text="0" textFill="#f85fc3">
+                                        <Label fx:id="labelActPoint" alignment="CENTER" layoutX="55.0" layoutY="58.0" prefHeight="15.0" prefWidth="152.0" text="0" textFill="#f85fc3">
                                             <font>
                                                 <Font size="15.0" />
                                             </font>
                                         </Label>
-                                        <Label layoutX="14.0" layoutY="92.0" text="状态">
+                                        <Label layoutX="15.0" layoutY="96.0" text="状态">
                                             <font>
                                                 <Font size="15.0" />
                                             </font>
                                         </Label>
-                                        <Label fx:id="labelActStatus" alignment="CENTER" layoutX="54.0" layoutY="92.0" prefHeight="15.0" prefWidth="152.0" text="正常" textFill="#18ab05">
+                                        <Label fx:id="labelActStatus" alignment="CENTER" layoutX="55.0" layoutY="96.0" prefHeight="15.0" prefWidth="152.0" text="正常" textFill="#18ab05">
                                             <font>
                                                 <Font size="15.0" />
                                             </font>
                                         </Label>
-                                        <Label layoutX="14.0" layoutY="125.0" text="注册">
+                                        <Label layoutX="15.0" layoutY="134.0" text="注册">
                                             <font>
                                                 <Font size="15.0" />
                                             </font>
                                         </Label>
-                                        <Label fx:id="labelActCreateTime" alignment="CENTER" layoutX="54.0" layoutY="125.0" prefHeight="15.0" prefWidth="152.0" text="1970-11-11 00:00:00">
+                                        <Label fx:id="labelActCreateTime" alignment="CENTER" layoutX="55.0" layoutY="134.0" prefHeight="15.0" prefWidth="152.0" text="1970-11-11 00:00:00">
                                             <font>
                                                 <Font size="15.0" />
                                             </font>
                                         </Label>
-                                        <TextField fx:id="textFieldActId" editable="false" layoutX="209.0" layoutY="166.0" prefHeight="33.0" prefWidth="180.0" />
-                                        <TextField fx:id="textFieldDynamicPwd" editable="false" layoutX="209.0" layoutY="203.0" prefHeight="33.0" prefWidth="180.0" />
-                                        <Button layoutX="219.0" layoutY="16.0" mnemonicParsing="false" onAction="#updatePointsAction" prefHeight="30.0" prefWidth="80.0" text="更新点数">
+                                        <TextField fx:id="textFieldActId" editable="false" layoutX="210.0" layoutY="169.0" prefHeight="33.0" prefWidth="180.0" />
+                                        <TextField fx:id="textFieldDynamicPwd" editable="false" layoutX="210.0" layoutY="206.0" prefHeight="33.0" prefWidth="180.0" />
+                                        <Button layoutX="220.0" layoutY="16.0" mnemonicParsing="false" onAction="#updatePointsAction" prefHeight="30.0" prefWidth="80.0" text="更新点数">
                                             <font>
                                                 <Font size="15.0" />
                                             </font>
                                         </Button>
-                                        <Button fx:id="startGameBtn" layoutX="9.0" layoutY="167.0" mnemonicParsing="false" onAction="#startGameAction" prefHeight="66.0" prefWidth="193.0" text="启动游戏(32/64bit)">
+                                        <Button fx:id="startGameBtn" layoutX="10.0" layoutY="170.0" mnemonicParsing="false" onAction="#startGameAction" prefHeight="66.0" prefWidth="193.0" text="启动游戏(32/64bit)">
                                             <font>
                                                 <Font size="15.0" />
                                             </font>
                                         </Button>
-                                        <ToggleButton fx:id="buttonRecordVideo" layoutX="308.0" layoutY="89.0" mnemonicParsing="false" onAction="#recordVideoAction" prefHeight="30.0" prefWidth="80.0" text="开始录像" />
-                                        <CheckBox fx:id="checkBoxAutoInput" layoutX="224.0" layoutY="137.0" mnemonicParsing="false" onAction="#autoInputAction" prefHeight="16.0" prefWidth="78.0" text="自动输入" />
-                                        <Button layoutX="307.0" layoutY="123.0" mnemonicParsing="false" onAction="#getDynamicPasswordAction" prefHeight="35.0" prefWidth="82.0" text="获取密码">
+                                        <ToggleButton fx:id="buttonRecordVideo" layoutX="309.0" layoutY="90.0" mnemonicParsing="false" onAction="#recordVideoAction" prefHeight="30.0" prefWidth="80.0" text="开始录像" />
+                                        <CheckBox fx:id="checkBoxAutoInput" layoutX="225.0" layoutY="138.0" mnemonicParsing="false" onAction="#autoInputAction" prefHeight="16.0" prefWidth="78.0" text="自动输入" />
+                                        <Button layoutX="308.0" layoutY="127.0" mnemonicParsing="false" onAction="#getDynamicPasswordAction" prefHeight="35.0" prefWidth="82.0" text="获取密码">
                                             <font>
                                                 <Font size="15.0" />
                                             </font>
                                         </Button>
-                                        <ChoiceBox fx:id="choiceBoxActList" layoutX="55.0" layoutY="19.0" onDragDetected="#changeAccountNowAction" prefHeight="23.0" prefWidth="156.0" />
+                                        <ChoiceBox fx:id="choiceBoxActList" layoutX="56.0" layoutY="20.0" onDragDetected="#changeAccountNowAction" prefHeight="23.0" prefWidth="156.0" />
                                     </children>
                                 </AnchorPane>
                             </content>
@@ -171,17 +171,17 @@
                                                 <Font size="15.0" />
                                             </font>
                                         </Label>
-                                        <Label layoutX="109.0" layoutY="88.0" prefHeight="20.0" prefWidth="75.0" text="当前汇率：">
+                                        <Label layoutX="157.0" layoutY="89.0" prefHeight="20.0" prefWidth="75.0" text="当前汇率：">
                                             <font>
                                                 <Font size="15.0" />
                                             </font>
                                         </Label>
-                                        <Label fx:id="labelExchangeNow" layoutX="198.0" layoutY="88.0" prefHeight="20.0" prefWidth="95.0" text="0" textFill="#bf6a6a">
+                                        <Label fx:id="labelExchangeNow" layoutX="246.0" layoutY="89.0" prefHeight="20.0" prefWidth="95.0" text="0" textFill="#bf6a6a">
                                             <font>
                                                 <Font size="15.0" />
                                             </font>
                                         </Label>
-                                        <Button layoutX="25.0" layoutY="84.0" mnemonicParsing="false" onAction="#updateRateAction" text="更新汇率" />
+                                        <Button layoutX="77.0" layoutY="88.0" mnemonicParsing="false" onAction="#updateRateAction" text="更新汇率" />
                                     </children>
                                 </AnchorPane>
                             </content>
@@ -195,7 +195,7 @@
                                                 <Font size="15.0" />
                                             </font>
                                         </TextField>
-                                        <CheckBox fx:id="checkBoxPassInput" layoutX="145.0" layoutY="105.0" mnemonicParsing="false" onAction="#passInputAction" prefHeight="21.0" prefWidth="109.0" text="免输入模式">
+                                        <CheckBox fx:id="checkBoxPassInput" layoutX="250.0" layoutY="138.0" mnemonicParsing="false" onAction="#passInputAction" prefHeight="21.0" prefWidth="109.0" text="免输入模式">
                                             <font>
                                                 <Font size="15.0" />
                                             </font>
@@ -211,16 +211,16 @@
                                             </font>
                                         </Button>
                                         <Separator layoutX="2.0" layoutY="92.0" prefHeight="2.0" prefWidth="400.0" />
-                                        <TextField fx:id="textFieldLunHui" editable="false" layoutX="328.0" layoutY="156.0" prefHeight="23.0" prefWidth="51.0" />
-                                        <Label layoutX="275.0" layoutY="160.0" text="轮回热键" />
-                                        <Label layoutX="275.0" layoutY="197.0" text="燃烧热键" />
-                                        <TextField fx:id="textFieldRanShao" editable="false" layoutX="328.0" layoutY="193.0" prefHeight="23.0" prefWidth="51.0" />
-                                        <CheckBox fx:id="checkBoxKillPlayStartWindow" layoutX="14.0" layoutY="105.0" mnemonicParsing="false" onAction="#killPlayWindowAction" prefHeight="21.0" prefWidth="124.0" text="关闭Play窗口">
+                                        <TextField fx:id="textFieldLunHui" editable="false" layoutX="67.0" layoutY="105.0" prefHeight="23.0" prefWidth="51.0" />
+                                        <Label layoutX="14.0" layoutY="109.0" text="轮回热键" />
+                                        <Label layoutX="124.0" layoutY="109.0" text="燃烧热键" />
+                                        <TextField fx:id="textFieldRanShao" editable="false" layoutX="177.0" layoutY="105.0" prefHeight="23.0" prefWidth="51.0" />
+                                        <CheckBox fx:id="checkBoxKillPlayStartWindow" layoutX="250.0" layoutY="106.0" mnemonicParsing="false" onAction="#killPlayWindowAction" prefHeight="21.0" prefWidth="124.0" text="关闭Play窗口">
                                             <font>
                                                 <Font size="15.0" />
                                             </font>
                                         </CheckBox>
-                                        <CheckBox fx:id="checkBoxKillGamePatcher" layoutX="263.0" layoutY="105.0" mnemonicParsing="false" onAction="#killGamePatcherAction" prefHeight="21.0" prefWidth="123.0" text="阻止游戏更新">
+                                        <CheckBox fx:id="checkBoxKillGamePatcher" layoutX="250.0" layoutY="172.0" mnemonicParsing="false" onAction="#killGamePatcherAction" prefHeight="21.0" prefWidth="123.0" text="阻止游戏更新">
                                             <font>
                                                 <Font size="15.0" />
                                             </font>
@@ -233,56 +233,56 @@
                             <content>
                                 <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0">
                                     <children>
-                                        <Label layoutX="98.0" layoutY="24.0" prefHeight="15.0" prefWidth="130.0" text="默认使用低配进行录制" />
-                                        <Label layoutX="21.0" layoutY="22.0" prefHeight="15.0" prefWidth="65.0" text="推荐配置：" textFill="RED">
+                                        <Label layoutX="98.0" layoutY="20.0" prefHeight="15.0" prefWidth="130.0" text="默认使用低配进行录制" />
+                                        <Label layoutX="21.0" layoutY="18.0" prefHeight="15.0" prefWidth="65.0" text="推荐配置：" textFill="RED">
                                             <font>
                                                 <Font name="System Bold" size="13.0" />
                                             </font>
                                         </Label>
-                                        <Label layoutX="38.0" layoutY="50.0" prefHeight="18.0" prefWidth="150.0" text="30FPS,1800码率 | 低配" textFill="#09a426">
+                                        <Label layoutX="38.0" layoutY="46.0" prefHeight="18.0" prefWidth="150.0" text="30FPS,1800码率 | 低配" textFill="#09a426">
                                             <font>
                                                 <Font size="13.0" />
                                             </font>
                                         </Label>
-                                        <Label layoutX="38.0" layoutY="76.0" prefHeight="18.0" prefWidth="150.0" text="60FPS,2500码率 | 中配" textFill="#cd4100">
+                                        <Label layoutX="38.0" layoutY="72.0" prefHeight="18.0" prefWidth="150.0" text="60FPS,2500码率 | 中配" textFill="#cd4100">
                                             <font>
                                                 <Font size="13.0" />
                                             </font>
                                         </Label>
-                                        <Label layoutX="38.0" layoutY="102.0" prefHeight="18.0" prefWidth="150.0" text="90FPS,3500码率 | 高配" textFill="#ff5227">
+                                        <Label layoutX="38.0" layoutY="98.0" prefHeight="18.0" prefWidth="150.0" text="90FPS,3500码率 | 高配" textFill="#ff5227">
                                             <font>
                                                 <Font size="13.0" />
                                             </font>
                                         </Label>
-                                        <Label layoutX="21.0" layoutY="206.0" text="视频目录">
+                                        <Label layoutX="21.0" layoutY="212.0" text="视频目录">
                                             <font>
                                                 <Font size="14.0" />
                                             </font>
                                         </Label>
-                                        <TextField fx:id="textFieldVideoPath" editable="false" layoutX="94.0" layoutY="200.0" prefHeight="33.0" prefWidth="219.0" />
-                                        <Button layoutX="322.0" layoutY="198.0" mnemonicParsing="false" onAction="#videoPathOpenAction" prefHeight="34.0" prefWidth="66.0" text="打开">
+                                        <TextField fx:id="textFieldVideoPath" editable="false" layoutX="94.0" layoutY="206.0" prefHeight="33.0" prefWidth="219.0" />
+                                        <Button layoutX="322.0" layoutY="204.0" mnemonicParsing="false" onAction="#videoPathOpenAction" prefHeight="34.0" prefWidth="66.0" text="打开">
                                             <font>
                                                 <Font size="15.0" />
                                             </font>
                                         </Button>
-                                        <ChoiceBox fx:id="choiceBoxVideoFps" layoutX="277.0" layoutY="64.0" onDragDetected="#selectVideoFpsAction" prefHeight="23.0" prefWidth="109.0" />
-                                        <Label layoutX="241.0" layoutY="68.0" text="FPS" />
-                                        <Label layoutX="241.0" layoutY="103.0" text="码率" />
-                                        <ComboBox fx:id="comboBoxVideoCodeRate" editable="true" layoutX="278.0" layoutY="99.0" onDragDetected="#selectVideoCodeRateAction" prefHeight="23.0" prefWidth="109.0" />
-                                        <Button layoutX="275.0" layoutY="24.0" mnemonicParsing="false" onAction="#clearRecordVideoAction" prefHeight="30.0" prefWidth="111.0" text="清空视频数据">
+                                        <ChoiceBox fx:id="choiceBoxVideoFps" layoutX="277.0" layoutY="54.0" onDragDetected="#selectVideoFpsAction" prefHeight="23.0" prefWidth="109.0" />
+                                        <Label layoutX="241.0" layoutY="58.0" text="FPS" />
+                                        <Label layoutX="241.0" layoutY="93.0" text="码率" />
+                                        <ComboBox fx:id="comboBoxVideoCodeRate" editable="true" layoutX="278.0" layoutY="89.0" onDragDetected="#selectVideoCodeRateAction" prefHeight="23.0" prefWidth="109.0" />
+                                        <Button layoutX="275.0" layoutY="14.0" mnemonicParsing="false" onAction="#clearRecordVideoAction" prefHeight="30.0" prefWidth="111.0" text="清空视频数据">
                                             <font>
                                                 <Font size="15.0" />
                                             </font>
                                         </Button>
-                                        <RadioButton fx:id="radioButtonGame" layoutX="275.0" layoutY="137.0" mnemonicParsing="false" text="游戏" />
-                                        <RadioButton fx:id="radioButtonScreen" layoutX="332.0" layoutY="137.0" mnemonicParsing="false" text="全屏" />
-                                        <Label layoutX="25.0" layoutY="168.0" text="FFmpeg">
+                                        <RadioButton fx:id="radioButtonGame" layoutX="275.0" layoutY="127.0" mnemonicParsing="false" text="游戏" />
+                                        <RadioButton fx:id="radioButtonScreen" layoutX="332.0" layoutY="127.0" mnemonicParsing="false" text="全屏" />
+                                        <Label layoutX="25.0" layoutY="174.0" text="FFmpeg">
                                             <font>
                                                 <Font size="14.0" />
                                             </font>
                                         </Label>
-                                        <TextField fx:id="textFieldFFmpegPath" editable="false" layoutX="94.0" layoutY="161.0" prefHeight="33.0" prefWidth="219.0" />
-                                        <Button layoutX="322.0" layoutY="161.0" mnemonicParsing="false" onAction="#ffmpegOpenAction" prefHeight="34.0" prefWidth="66.0" text="打开">
+                                        <TextField fx:id="textFieldFFmpegPath" editable="false" layoutX="94.0" layoutY="167.0" prefHeight="33.0" prefWidth="219.0" />
+                                        <Button layoutX="322.0" layoutY="167.0" mnemonicParsing="false" onAction="#ffmpegOpenAction" prefHeight="34.0" prefWidth="66.0" text="打开">
                                             <font>
                                                 <Font size="15.0" />
                                             </font>

@@ -11,7 +11,7 @@ import org.apache.commons.lang3.StringUtils;
 import java.io.*;
 import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
-import java.util.ArrayList;
+import java.util.Objects;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
 
@@ -132,43 +132,66 @@ public class FileTools {
      */
     public static ConfigModel readConfig() {
         ConfigModel configModel = new ConfigModel();
+        Reader reader = null;
         try {
             File jsonFile = new File(QsConstant.PATH_APP_CONFIG);
             if (!jsonFile.exists()) {
+                FileTools.saveConfig(configModel);
                 return configModel;
             }
             FileReader fileReader = new FileReader(jsonFile);
-            Reader reader = new InputStreamReader(new FileInputStream(jsonFile), "utf-8");
+            reader = new InputStreamReader(new FileInputStream(jsonFile), "utf-8");
             int ch = 0;
             StringBuffer sb = new StringBuffer();
             while ((ch = reader.read()) != -1) {
                 sb.append((char) ch);
             }
-            fileReader.close();
-            reader.close();
-            String jsonStr = sb.toString();
-            if (StringUtils.isNotEmpty(jsonStr)) {
-                configModel = JSON.parseObject(jsonStr, new TypeReference<ConfigModel>() {
-                });
+            configModel = JSON.parseObject(sb.toString(), new TypeReference<ConfigModel>() {
+            });
+            if (Objects.isNull(configModel)) {
+                configModel = new ConfigModel();
+                FileTools.saveConfig(configModel);
             }
-            if (DataTools.collectionIsEmpty(configModel.getActPwds())) {
-                configModel.setActPwds(new ArrayList<>());
-            }
-            FileTools.saveConfig(configModel);
+            dncodeAccount(configModel);
         } catch (IOException e) {
             log.error("文件读取异常 e={}", e.getMessage(), e);
+        } finally {
+            SystemTools.close(reader);
         }
         return configModel;
     }
 
     /**
+     * 解密账号(地址引用)
+     *
+     * @param configModel 配置模型
+     */
+    private static void dncodeAccount(ConfigModel configModel) {
+        final String key = DataTools.getComputerUniqueId();
+        if (DataTools.collectionIsEmpty(configModel.getActPwds())) {
+            return;
+        }
+        for (ConfigModel.ActPwd actPwd : configModel.getActPwds()) {
+            if (StringUtils.indexOf(actPwd.getAct(), "@") == -1) {
+                // 需要解密
+                System.out.println(actPwd.getAct());
+                System.out.println(AesTools.dncode(key, actPwd.getAct()));
+                actPwd.setAct(AesTools.dncode(key, actPwd.getAct()));
+                actPwd.setPwd(AesTools.dncode(key, actPwd.getPwd()));
+            }
+        }
+    }
+
+    /**
      * 保存配置
      *
-     * @param jsonData json数据
+     * @param model json数据
      * @return boolean
      */
-    public static boolean saveConfig(Object jsonData) {
-        String content = JSON.toJSONString(jsonData, SerializerFeature.PrettyFormat, SerializerFeature.WriteMapNullValue, SerializerFeature.WriteDateUseDateFormat);
+    public static boolean saveConfig(ConfigModel model) {
+        ConfigModel copyConfig = encodeAndCopyAccount(model);
+        // 账号加密
+        String content = JSON.toJSONString(copyConfig, SerializerFeature.PrettyFormat, SerializerFeature.WriteMapNullValue, SerializerFeature.WriteDateUseDateFormat);
         try {
             File file = new File(QsConstant.PATH_APP_CONFIG);
             // 创建上级目录
@@ -191,6 +214,43 @@ public class FileTools {
             log.error("文件写入异常 e={}", e.getMessage(), e);
             return false;
         }
+    }
+
+    /**
+     * 深拷贝一份新的配置数据并且加密账号
+     *
+     * @param model 模型
+     * @return {@link ConfigModel}
+     */
+    private static ConfigModel encodeAndCopyAccount(ConfigModel model) {
+        final String key = DataTools.getComputerUniqueId();
+        // 深拷贝，不影响原对象
+        ConfigModel configModel = deepCopy(model, ConfigModel.class);
+        if (DataTools.collectionIsEmpty(configModel.getActPwds())) {
+            return configModel;
+        }
+        for (ConfigModel.ActPwd actPwd : configModel.getActPwds()) {
+            if (StringUtils.indexOf(actPwd.getAct(), "@") >= 0) {
+                // 需要加密
+                actPwd.setAct(AesTools.encode(key, actPwd.getAct()));
+                actPwd.setPwd(AesTools.encode(key, actPwd.getPwd()));
+            }
+        }
+        return configModel;
+    }
+
+    /**
+     * 深拷贝
+     *
+     * @param source t
+     * @param clamm  clamm
+     * @return {@link T}
+     */
+    public static <T> T deepCopy(T source, Class<T> clamm) {
+        if (Objects.isNull(source)) {
+            return source;
+        }
+        return JSON.parseObject(JSON.toJSONString(source), clamm);
     }
 
     /**

@@ -6,6 +6,12 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * beanfun模型
+ *
+ * @author starmcc
+ * @date 2022/10/01
+ */
 @Data
 public class BeanfunModel implements Serializable {
 

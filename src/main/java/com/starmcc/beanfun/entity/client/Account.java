@@ -2,10 +2,19 @@ package com.starmcc.beanfun.entity.client;
 
 import lombok.Data;
 
+import java.io.Serializable;
 import java.util.Date;
 
+/**
+ * 账户
+ *
+ * @author starmcc
+ * @date 2022/10/01
+ */
 @Data
-public class Account {
+public class Account implements Serializable {
+
+    private static final long serialVersionUID = -5173758017991977906L;
 
     private String id;
     private Boolean status;

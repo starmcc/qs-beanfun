@@ -4,11 +4,20 @@ package com.starmcc.beanfun.entity.client;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 
+import java.io.Serializable;
 import java.util.LinkedHashMap;
 import java.util.Objects;
 
+/**
+ * 请求参数
+ *
+ * @author starmcc
+ * @date 2022/10/01
+ */
 @Data
-public class ReqParams {
+public class ReqParams implements Serializable {
+
+    private static final long serialVersionUID = -2545571665235760281L;
 
     private LinkedHashMap<String, String> params;
     private LinkedHashMap<String, String> headers;
@@ -18,7 +27,7 @@ public class ReqParams {
         return new ReqParams();
     }
 
-    public ReqParams(){
+    public ReqParams() {
         this.params = new LinkedHashMap<>();
         this.headers = new LinkedHashMap<>();
     }

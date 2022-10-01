@@ -1,20 +1,21 @@
 package com.starmcc.beanfun.handler;
 
 import com.starmcc.beanfun.constant.QsConstant;
+import com.starmcc.beanfun.manager.AdvancedTimerMamager;
 import com.starmcc.beanfun.manager.FrameManager;
 import com.starmcc.beanfun.manager.WindowManager;
+import com.starmcc.beanfun.manager.impl.AdvancedTimerTask;
 import javafx.scene.control.Alert;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.lang3.concurrent.BasicThreadFactory;
 
 import java.awt.*;
 import java.awt.event.KeyEvent;
 import java.text.MessageFormat;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 import java.util.Objects;
-import java.util.concurrent.ScheduledExecutorService;
-import java.util.concurrent.ScheduledThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
 
 /**
@@ -26,8 +27,6 @@ import java.util.concurrent.TimeUnit;
 @Slf4j
 public class AutoLunShaoHandler {
 
-    private static ScheduledExecutorService EXECUTOR_SERVICE = null;
-
     private static final long LUN_HUI = 1001 * 60 * 2;
     private static final long RAN_SHAO = 1002 * 60 * 3;
 
@@ -38,6 +37,8 @@ public class AutoLunShaoHandler {
             "燃烧技能放置在[{1}]键\n" +
             "点击确定后，将在5秒后启动...\n" +
             "再次点击会停止,会显示使用时长";
+
+    private static List<String> taskNames = new ArrayList<>();
 
     /**
      * 开始
@@ -59,30 +60,30 @@ public class AutoLunShaoHandler {
         // 启动轮烧
         log.info("正在启动自动轮烧 键位{}轮回，{}燃烧", lunHuiKeyStr, ranShaoKeyStr);
         runTime = new Date();
-        createThreadPool();
+        AdvancedTimerMamager.getInstance().removeTask(taskNames);
         // 5秒后开始
-        EXECUTOR_SERVICE.scheduleAtFixedRate(() -> {
-            // 开始按键轮回
-            try {
+        String lhTaskName = AdvancedTimerMamager.getInstance().addTask(new AdvancedTimerTask() {
+            @Override
+            public void start() throws Exception {
                 // 自动聚焦游戏
                 WindowManager.getInstance().setMapleStoryForegroundWindow();
+                // 开始按键轮回
                 new Robot().keyPress(lunHuiKey);
                 log.info("自动轮烧按下了[{}]键", lunHuiKeyStr);
-            } catch (Exception e) {
-                log.error("按键B异常 e={}", e.getMessage(), e);
             }
-        }, 5000, LUN_HUI, TimeUnit.MILLISECONDS);
-        EXECUTOR_SERVICE.scheduleAtFixedRate(() -> {
-            // 开始按键燃烧
-            try {
+        }, 5000, LUN_HUI);
+        taskNames.add(lhTaskName);
+        String rsTaskName = AdvancedTimerMamager.getInstance().addTask(new AdvancedTimerTask() {
+            @Override
+            public void start() throws Exception {
                 // 自动聚焦游戏
                 WindowManager.getInstance().setMapleStoryForegroundWindow();
-                new Robot().keyPress(ranShaoKey);
-                log.info("自动轮烧按下了[{}]键", ranShaoKeyStr);
-            } catch (Exception e) {
-                log.error("按键B异常 e={}", e.getMessage(), e);
+                // 开始按键轮回
+                new Robot().keyPress(lunHuiKey);
+                log.info("自动轮烧按下了[{}]键", lunHuiKeyStr);
             }
-        }, 7000, RAN_SHAO, TimeUnit.MILLISECONDS);
+        }, 7000, RAN_SHAO);
+        taskNames.add(rsTaskName);
         return true;
     }
 
@@ -107,23 +108,10 @@ public class AutoLunShaoHandler {
             return false;
         }
         // 停止轮烧
-        EXECUTOR_SERVICE.shutdown();
-        EXECUTOR_SERVICE = null;
+        AdvancedTimerMamager.getInstance().removeTask(taskNames);
         runTime = null;
         log.info("关闭自动轮烧");
         return true;
-    }
-
-
-    /**
-     * 创建线程池
-     */
-    private static void createThreadPool() {
-        if (Objects.nonNull(EXECUTOR_SERVICE) && !EXECUTOR_SERVICE.isShutdown()) {
-            return;
-        }
-        EXECUTOR_SERVICE = new ScheduledThreadPoolExecutor(2,
-                new BasicThreadFactory.Builder().namingPattern("AutoLunShaoHandler-schedule-pool-%d").daemon(true).build());
     }
 
 
