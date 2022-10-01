@@ -174,8 +174,6 @@ public class FileTools {
         for (ConfigModel.ActPwd actPwd : configModel.getActPwds()) {
             if (StringUtils.indexOf(actPwd.getAct(), "@") == -1) {
                 // 需要解密
-                System.out.println(actPwd.getAct());
-                System.out.println(AesTools.dncode(key, actPwd.getAct()));
                 actPwd.setAct(AesTools.dncode(key, actPwd.getAct()));
                 actPwd.setPwd(AesTools.dncode(key, actPwd.getPwd()));
             }
