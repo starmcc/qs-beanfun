@@ -2,9 +2,9 @@ package com.starmcc.beanfun.controller;
 
 import com.starmcc.beanfun.client.HttpClient;
 import com.starmcc.beanfun.constant.QsConstant;
+import com.starmcc.beanfun.entity.client.UpdateModel;
 import com.starmcc.beanfun.manager.FrameManager;
 import com.starmcc.beanfun.manager.ThreadPoolManager;
-import com.starmcc.beanfun.entity.client.UpdateModel;
 import com.starmcc.beanfun.utils.FileTools;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
@@ -101,7 +101,7 @@ public class UpdateController implements Initializable {
         FileTools.writeFile(bat.toString(), batPath);
         try {
             // 执行update.bat  /b隐藏运行
-            String[] cmd = {"cmd", "/c", "start", "/b", batPath};
+            String[] cmd = {"cmd", "/c", "start", "/b", ".\\update.bat"};
             Runtime.getRuntime().exec(cmd, null, new File(batPath).getParentFile());
         } catch (Exception e) {
             log.error("Runtime error e={}", e.getMessage(), e);
