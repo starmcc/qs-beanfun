@@ -95,9 +95,9 @@ public class UpdateController implements Initializable {
         bat.append(")\n");
         // 在将当前运行的改成旧的
         bat.append("ren ").append(appExe).append(" ").append(appExe).append(".old").append("\n");
-        // 在新下载的改成QsBeanfun.exe
+        // 新下载的改成QsBeanfun.exe
         bat.append("ren ").append(file.getName()).append(" ").append(appExe).append("\n");
-        // 杀掉旧的启动新的
+        // 重新启动
         bat.append("start ").append(appExe).append("\n");
         bat.append("exit");
         String batPath = QsConstant.PATH_APP + "\\update.bat";
