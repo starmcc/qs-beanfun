@@ -135,7 +135,8 @@ public class MainController implements Initializable {
     private MenuItem menuItemAlliance;
     @FXML
     private MenuItem menuItemExit;
-
+    @FXML
+    private CheckBox checkBoxCheckAppUpdate;
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
@@ -167,6 +168,11 @@ public class MainController implements Initializable {
 
     }
 
+    /**
+     * 初始化数据
+     *
+     * @throws Exception 异常
+     */
     private void initData() throws Exception {
         // 基础状态设置
         checkBoxPassInput.setSelected(BooleanUtils.isTrue(QsConstant.config.getPassInput()));
@@ -209,7 +215,27 @@ public class MainController implements Initializable {
     }
 
 
+    /**
+     * 初始化事件
+     */
     private void initEvent() {
+        // =========================== 配置事件 ===========================
+        checkBoxKillGamePatcher.setOnAction(event -> {
+            QsConstant.config.setKillGamePatcher(checkBoxKillGamePatcher.isSelected());
+            FileTools.saveConfig(QsConstant.config);
+        });
+        checkBoxPassInput.setOnAction(event -> {
+            QsConstant.config.setPassInput(checkBoxPassInput.isSelected());
+            FileTools.saveConfig(QsConstant.config);
+        });
+        checkBoxKillPlayStartWindow.setOnAction(event -> {
+            QsConstant.config.setKillStartPalyWindow(checkBoxKillPlayStartWindow.isSelected());
+            FileTools.saveConfig(QsConstant.config);
+        });
+        checkBoxCheckAppUpdate.setOnAction(event -> {
+            QsConstant.config.setCheckAppUpdate(checkBoxCheckAppUpdate.isSelected());
+            FileTools.saveConfig(QsConstant.config);
+        });
         // =========================== 导航菜单控件事件 ========================
         menuItemOfficialTmsUrl.setOnAction(event -> FrameManager.getInstance().openWebUrl("https://maplestory.beanfun.com/main"));
         menuItemHkNewBeanfunUrl.setOnAction(event -> FrameManager.getInstance().openWebUrl("https://bfweb.hk.beanfun.com/"));
@@ -521,12 +547,6 @@ public class MainController implements Initializable {
         QsConstant.JFX_STAGE_DATA.get(FXPageEnum.主页).getStage().setAlwaysOnTop(checkMenuItemAlwaysOnTop.isSelected());
     }
 
-    @FXML
-    public void passInputAction(ActionEvent actionEvent) {
-        QsConstant.config.setPassInput(checkBoxPassInput.isSelected());
-        FileTools.saveConfig(QsConstant.config);
-    }
-
 
     /**
      * 更新汇率
@@ -561,12 +581,6 @@ public class MainController implements Initializable {
                 FrameManager.getInstance().runLater(() -> checkMenuItemAutoLunShao.setSelected(true));
             }
         }
-    }
-
-    @FXML
-    public void killPlayWindowAction(ActionEvent actionEvent) {
-        QsConstant.config.setKillStartPalyWindow(checkBoxKillPlayStartWindow.isSelected());
-        FileTools.saveConfig(QsConstant.config);
     }
 
     /**
@@ -610,12 +624,6 @@ public class MainController implements Initializable {
         FileTools.saveConfig(QsConstant.config);
     }
 
-
-    @FXML
-    public void killGamePatcherAction(ActionEvent actionEvent) {
-        QsConstant.config.setKillGamePatcher(checkBoxKillGamePatcher.isSelected());
-        FileTools.saveConfig(QsConstant.config);
-    }
 
     @FXML
     public void recordVideoAction(ActionEvent actionEvent) {

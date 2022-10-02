@@ -7,6 +7,7 @@ import com.starmcc.beanfun.manager.UpdateManager;
 import com.starmcc.beanfun.utils.FileTools;
 import javafx.scene.control.Alert;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.BooleanUtils;
 
 import java.io.File;
 
@@ -44,8 +45,10 @@ public class InitApplication {
             FileTools.unzipResourceFile(resource);
         }
         QsConstant.LibEnum.NODE_DLL.copyFile();
-        // 自动更新
-        ThreadPoolManager.execute(() -> UpdateManager.getInstance().verifyAppVersion(true));
+        // 自动检查更新
+        if (BooleanUtils.isTrue(QsConstant.config.getCheckAppUpdate())) {
+            ThreadPoolManager.execute(() -> UpdateManager.getInstance().verifyAppVersion(true));
+        }
     }
 
 

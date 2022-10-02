@@ -25,6 +25,7 @@ public class ConfigModel implements Serializable {
     private Integer lunHuiKey;
     private Integer ranShaoKey;
     private Boolean killStartPalyWindow;
+    private Boolean checkAppUpdate;
     private Boolean killGamePatcher;
     private Boolean autoInput;
     private Boolean passInput;
@@ -58,6 +59,8 @@ public class ConfigModel implements Serializable {
         this.autoInput = true;
         // 代理配置
         this.proxyConfig = new ProxyConfig();
+        // 检查应用更新
+        this.checkAppUpdate = true;
     }
 
 
