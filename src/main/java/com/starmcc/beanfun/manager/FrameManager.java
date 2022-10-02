@@ -1,8 +1,8 @@
 package com.starmcc.beanfun.manager;
 
 import com.starmcc.beanfun.constant.FXPageEnum;
-import com.starmcc.beanfun.manager.impl.FrameManagerImpl;
 import com.starmcc.beanfun.entity.thread.ThrowRunnable;
+import com.starmcc.beanfun.manager.impl.FrameManagerImpl;
 import javafx.scene.control.Alert;
 import javafx.stage.Stage;
 
@@ -99,12 +99,30 @@ public interface FrameManager {
     void messageSync(String msg, Alert.AlertType alertType);
 
     /**
-     * 消息框(主线程适配)
+     * 消息框(同步)
      *
      * @param msg       msg
      * @param alertType 警报类型
+     * @param runnable  回调
+     */
+    void messageSync(String msg, Alert.AlertType alertType, Runnable runnable);
+
+    /**
+     * 消息框(主线程适配-异步)
+     *
+     * @param msg       消息
+     * @param alertType 警报类型
      */
     void message(String msg, Alert.AlertType alertType);
+
+    /**
+     * 消息框(主线程适配-异步)
+     *
+     * @param msg       消息
+     * @param alertType 警报类型
+     * @param runnable  回调
+     */
+    void message(String msg, Alert.AlertType alertType, Runnable runnable);
 
     /**
      * 文本输入框

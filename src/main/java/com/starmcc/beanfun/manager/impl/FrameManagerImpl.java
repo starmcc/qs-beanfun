@@ -6,10 +6,10 @@ import com.starmcc.beanfun.client.HttpClient;
 import com.starmcc.beanfun.constant.FXPageEnum;
 import com.starmcc.beanfun.constant.QsConstant;
 import com.starmcc.beanfun.dll.EService;
-import com.starmcc.beanfun.manager.*;
 import com.starmcc.beanfun.entity.model.JFXStage;
 import com.starmcc.beanfun.entity.model.QsTray;
 import com.starmcc.beanfun.entity.thread.ThrowRunnable;
+import com.starmcc.beanfun.manager.*;
 import javafx.application.Platform;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
@@ -162,17 +162,30 @@ public class FrameManagerImpl implements FrameManager {
 
 
     @Override
-    public void messageSync(String msg, Alert.AlertType alertType) {
+    public void messageSync(String msg, Alert.AlertType alertType, Runnable runnable) {
         final Alert alert = new Alert(alertType);
         alert.setTitle("");
         alert.setHeaderText("");
         alert.setContentText(msg);
         alert.showAndWait();
+        if (Objects.nonNull(runnable)) {
+            runnable.run();
+        }
+    }
+
+    @Override
+    public void messageSync(String msg, Alert.AlertType alertType) {
+        this.messageSync(msg, alertType, null);
     }
 
     @Override
     public void message(String msg, Alert.AlertType alertType) {
-        this.runLater(() -> this.messageSync(msg, alertType));
+        this.runLater(() -> this.messageSync(msg, alertType, null));
+    }
+
+    @Override
+    public void message(String msg, Alert.AlertType alertType, Runnable runnable) {
+        this.runLater(() -> this.messageSync(msg, alertType, runnable));
     }
 
     @Override

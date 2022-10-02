@@ -50,7 +50,6 @@ public class WindowManagerImpl implements WindowManager {
 
     @Override
     public boolean checkVcRuntimeEnvironment() {
-        boolean is = false;
         String path = "SOFTWARE\\WOW6432Node\\Microsoft\\Windows\\CurrentVersion\\Uninstall\\";
         boolean exists = Advapi32Util.registryKeyExists(WinReg.HKEY_LOCAL_MACHINE, path, WinNT.KEY_READ);
         if (!exists) {
@@ -70,13 +69,11 @@ public class WindowManagerImpl implements WindowManager {
             }
             String valStr = (String) val;
             log.debug("scan regedit uninstall app DisplayName={}", valStr);
-            if (StringUtils.indexOf(valStr, "Microsoft Visual C++ 20") >= 0
-                    && StringUtils.indexOf(valStr, "Runtime") >= 0) {
-                is = true;
-                break;
+            if (StringUtils.indexOf(valStr, "Microsoft Visual C++ 20") >= 0) {
+                return true;
             }
         }
-        return is;
+        return false;
     }
 
     @Override

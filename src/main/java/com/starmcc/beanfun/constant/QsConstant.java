@@ -1,8 +1,8 @@
 package com.starmcc.beanfun.constant;
 
-import com.starmcc.beanfun.entity.model.ConfigModel;
 import com.starmcc.beanfun.entity.client.Account;
 import com.starmcc.beanfun.entity.client.BeanfunModel;
+import com.starmcc.beanfun.entity.model.ConfigModel;
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 
@@ -23,8 +23,8 @@ import java.nio.file.Files;
 @Slf4j
 public class QsConstant {
     public static boolean DEV = false;
-    public static final String APP_VERSION = "4.0.3";
-    public static final Integer APP_VERSION_INT = 403;
+    public static final String APP_VERSION = "4.0.4";
+    public static final Integer APP_VERSION_INT = 404;
     public static final String PATH_APP = System.getProperties().getProperty("user.dir");
     public static final String PATH_APP_PLUGINS = PATH_APP + "\\qs-data\\";
     public static final String PATH_APP_CONFIG = PATH_APP_PLUGINS + "config.json";

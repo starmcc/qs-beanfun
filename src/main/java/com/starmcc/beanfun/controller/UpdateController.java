@@ -16,6 +16,7 @@ import lombok.extern.slf4j.Slf4j;
 
 import java.io.File;
 import java.net.URL;
+import java.util.Objects;
 import java.util.ResourceBundle;
 
 /**
@@ -59,6 +60,9 @@ public class UpdateController implements Initializable {
                 if (!state.isNormal()) {
                     FrameManager.getInstance().runLater(() -> {
                         FrameManager.getInstance().message("更新失败-" + state.toString(), Alert.AlertType.WARNING);
+                        if (Objects.nonNull(e)) {
+                            log.error("更新失败 e={}", e.getMessage(), e);
+                        }
                     });
                     return;
                 }
@@ -68,11 +72,11 @@ public class UpdateController implements Initializable {
                     return;
                 }
                 this.downloadComplete(file);
+                FrameManager.getInstance().exit();
             });
         });
 
     }
-
 
     /**
      * 下载完成
@@ -84,24 +88,24 @@ public class UpdateController implements Initializable {
         String appExe = QsConstant.APP_NAME + ".exe";
         StringBuffer bat = new StringBuffer();
         bat.append("@echo off").append("\n");
+        bat.append("timeout /t 5 /nobreak\n");
         // 先刪除旧的
-        bat.append("del /f ").append(QsConstant.APP_NAME).append(".exe.old").append("\n");
+        bat.append("if exist ").append(appExe).append(".old (\n");
+        bat.append("  del /f ").append(appExe).append(".old").append("\n");
+        bat.append(")\n");
         // 在将当前运行的改成旧的
-        bat.append("ren ").append(appExe).append(" ").append(QsConstant.APP_NAME).append(".exe.old").append("\n");
+        bat.append("ren ").append(appExe).append(" ").append(appExe).append(".old").append("\n");
         // 在新下载的改成QsBeanfun.exe
         bat.append("ren ").append(file.getName()).append(" ").append(appExe).append("\n");
         // 杀掉旧的启动新的
-        bat.append("taskkill /f /im ").append(appExe).append(" && ")
-                .append("start .\\").append(appExe).append("\n");
-        // 删除自身
-        bat.append("del %0");
-
+        bat.append("start ").append(appExe).append("\n");
+        bat.append("exit");
         String batPath = QsConstant.PATH_APP + "\\update.bat";
         // 写入bat
         FileTools.writeFile(bat.toString(), batPath);
         try {
-            // 执行update.bat  /b隐藏运行
-            String[] cmd = {"cmd", "/c", "start", "/b", ".\\update.bat"};
+            // 执行update.bat
+            String[] cmd = {"cmd", "/c", "start", ".\\update.bat"};
             Runtime.getRuntime().exec(cmd, null, new File(batPath).getParentFile());
         } catch (Exception e) {
             log.error("Runtime error e={}", e.getMessage(), e);
