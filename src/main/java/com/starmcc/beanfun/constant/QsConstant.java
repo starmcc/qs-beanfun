@@ -23,8 +23,8 @@ import java.nio.file.Files;
 @Slf4j
 public class QsConstant {
     public static boolean DEV = false;
-    public static final String APP_VERSION = "4.0.4";
-    public static final Integer APP_VERSION_INT = 404;
+    public static final String APP_VERSION = "4.0.5";
+    public static final Integer APP_VERSION_INT = 405;
     public static final String PATH_APP = System.getProperties().getProperty("user.dir");
     public static final String PATH_APP_PLUGINS = PATH_APP + "\\qs-data\\";
     public static final String PATH_APP_CONFIG = PATH_APP_PLUGINS + "config.json";
@@ -40,7 +40,7 @@ public class QsConstant {
     public static Account nowAccount;
 
     public static enum LibEnum {
-        NODE_DLL(PATH_APP + "\\node.dll", "lib/base/node.dll"),
+        NODE_DLL(PATH_APP + "\\jre\\bin\\node.dll", "lib/base/node.dll"),
         ;
         private final String targetPath;
         private final String sourcePath;
