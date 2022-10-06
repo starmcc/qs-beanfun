@@ -4,7 +4,6 @@ import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
 import com.starmcc.beanfun.client.BeanfunClient;
 import com.starmcc.beanfun.client.HttpClient;
-import com.starmcc.beanfun.entity.client.ReqParams;
 import com.starmcc.beanfun.entity.client.*;
 import com.starmcc.beanfun.utils.DataTools;
 import com.starmcc.beanfun.utils.RegexUtils;
@@ -28,6 +27,7 @@ public class HKBeanfunClientImpl extends BeanfunClient {
 
     @Override
     public String getSessionKey() throws Exception {
+        HttpClient.getInstance().getCookieStore().clear();
         String url = "https://bfweb.hk.beanfun.com/beanfun_block/bflogin/default.aspx";
         ReqParams params = ReqParams.getInstance().addParam("service", "999999_T0");
         QsHttpResponse qsHttpResponse = HttpClient.getInstance().get(url, params);
@@ -55,7 +55,6 @@ public class HKBeanfunClientImpl extends BeanfunClient {
         if (StringUtils.isEmpty(account) || StringUtils.isEmpty(password)) {
             return BeanfunStringResult.error(AbstractBeanfunResult.CodeEnum.ACT_PWD_IS_NULL);
         }
-
         // 1. 请求获取SessionKey
         String sessionKey = this.getSessionKey();
         process.accept(0.2);

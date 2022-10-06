@@ -28,6 +28,7 @@ public class TWBeanfunClientImpl extends BeanfunClient {
 
     @Override
     public String getSessionKey() throws Exception {
+        HttpClient.getInstance().getCookieStore().clear();
         String url = "https://tw.beanfun.com/beanfun_block/bflogin/default.aspx";
         ReqParams params = ReqParams.getInstance().addParam("service", "999999_T0");
         QsHttpResponse qsHttpResponse = HttpClient.getInstance().get(url, params);
