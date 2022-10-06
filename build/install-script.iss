@@ -29,6 +29,7 @@ SetupIconFile=ico.ico
 Compression=lzma
 SolidCompression=yes
 WizardSmallImageFile=small.bmp
+PrivilegesRequired=admin
 
 [Languages]                                       
 Name: "cn"; MessagesFile: "ChineseSimplified.isl"
