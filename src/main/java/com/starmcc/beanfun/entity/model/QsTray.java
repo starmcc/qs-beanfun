@@ -3,7 +3,6 @@ package com.starmcc.beanfun.entity.model;
 import com.starmcc.beanfun.QsBeanfunApplication;
 import com.starmcc.beanfun.constant.QsConstant;
 import com.starmcc.beanfun.manager.FrameManager;
-import javafx.application.Platform;
 import javafx.stage.Stage;
 import lombok.extern.slf4j.Slf4j;
 
@@ -51,8 +50,8 @@ public class QsTray {
         // 添加一个用于退出的按钮
         MenuItem exitOpen = new MenuItem("exit");
         exitOpen.addActionListener(actionEvent -> {
-            Platform.exit();
             remove(trayIcon);
+            FrameManager.getInstance().exit();
         });
         // 添加弹出菜单到托盘图标
         menu.add(exitOpen);
