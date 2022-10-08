@@ -280,7 +280,7 @@ public class LoginController implements Initializable {
                         } else {
                             return;
                         }
-                        tips += "\n" + nowProcess + "%";
+                        tips += "\n" + nowProcess.intValue() + "%";
                     }
                     label.setText(tips);
                 });
