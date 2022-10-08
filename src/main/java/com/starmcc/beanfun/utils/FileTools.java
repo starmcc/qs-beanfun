@@ -29,7 +29,7 @@ public class FileTools {
      *
      * @param resourceFile 资源文件
      */
-    public static void unzipResourceFile(QsConstant.PluginEnum resourceFile) {
+    public synchronized static void unzipResourceFile(QsConstant.PluginEnum resourceFile) {
         try {
             InputStream resourceAsStream = FileTools.class.getClassLoader().getResourceAsStream(resourceFile.getSourcePath());
             ZipInputStream zipInputStream = new ZipInputStream(resourceAsStream, Charset.forName("gbk"));
@@ -71,7 +71,7 @@ public class FileTools {
      * @param folder 文件夹
      * @return boolean
      */
-    public static boolean deleteFolder(File folder) {
+    public synchronized static boolean deleteFolder(File folder) {
         // 如果dir不以文件分隔符结尾，自动添加文件分隔符
         if ((!folder.exists()) || (!folder.isDirectory())) {
             return false;
@@ -112,7 +112,7 @@ public class FileTools {
      * @param file 文件
      * @return boolean
      */
-    public static boolean deleteFile(File file) {
+    public synchronized static boolean deleteFile(File file) {
         // 如果文件路径只有单个文件
         if (file.exists() && file.isFile()) {
             if (file.delete()) {
@@ -130,7 +130,7 @@ public class FileTools {
      *
      * @return {@link String}
      */
-    public static ConfigModel readConfig() {
+    public synchronized static ConfigModel readConfig() {
         ConfigModel configModel = new ConfigModel();
         Reader reader = null;
         try {
@@ -166,7 +166,7 @@ public class FileTools {
      *
      * @param configModel 配置模型
      */
-    private static void dncodeAccount(ConfigModel configModel) {
+    private synchronized static void dncodeAccount(ConfigModel configModel) {
         final String key = DataTools.getComputerUniqueId();
         if (DataTools.collectionIsEmpty(configModel.getActPwds())) {
             return;
@@ -186,7 +186,7 @@ public class FileTools {
      * @param model json数据
      * @return boolean
      */
-    public static boolean saveConfig(ConfigModel model) {
+    public synchronized static boolean saveConfig(ConfigModel model) {
         ConfigModel copyConfig = encodeAndCopyAccount(model);
         // 账号加密
         String content = JSON.toJSONString(copyConfig, SerializerFeature.PrettyFormat, SerializerFeature.WriteMapNullValue, SerializerFeature.WriteDateUseDateFormat);
@@ -220,7 +220,7 @@ public class FileTools {
      * @param model 模型
      * @return {@link ConfigModel}
      */
-    private static ConfigModel encodeAndCopyAccount(ConfigModel model) {
+    private synchronized static ConfigModel encodeAndCopyAccount(ConfigModel model) {
         final String key = DataTools.getComputerUniqueId();
         // 深拷贝，不影响原对象
         ConfigModel configModel = deepCopy(model, ConfigModel.class);
@@ -244,7 +244,7 @@ public class FileTools {
      * @param clamm  clamm
      * @return {@link T}
      */
-    public static <T> T deepCopy(T source, Class<T> clamm) {
+    public synchronized static <T> T deepCopy(T source, Class<T> clamm) {
         if (Objects.isNull(source)) {
             return source;
         }
@@ -257,7 +257,7 @@ public class FileTools {
      * @param content  内容
      * @param filePath 文件路径
      */
-    public static void writeFile(String content, String filePath) {
+    public synchronized static void writeFile(String content, String filePath) {
         Writer write = null;
         try {
             // 写到文件

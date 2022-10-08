@@ -19,17 +19,30 @@ public abstract class AdvancedTimerTask<T> implements Runnable {
     volatile ScheduledFuture<?> scheduledFuture = null;
 
     private T resources;
+    private Boolean printTime;
 
     private String taskName;
 
+    /**
+     * 开始
+     *
+     * @throws Exception 异常
+     */
     public abstract void start() throws Exception;
 
     public AdvancedTimerTask() {
+        this.resources = null;
+        this.printTime = true;
     }
 
 
     public AdvancedTimerTask(T resources) {
         this.resources = resources;
+    }
+
+    public AdvancedTimerTask(T resources, boolean printTime) {
+        this.resources = resources;
+        this.printTime = printTime;
     }
 
     @Override
@@ -40,7 +53,9 @@ public abstract class AdvancedTimerTask<T> implements Runnable {
         } catch (Exception e) {
             throw new RuntimeException(e);
         } finally {
-            log.info("task run time consuming {}/ms", System.currentTimeMillis() - startTime);
+            if (printTime) {
+                log.debug("task run time consuming {}/ms", System.currentTimeMillis() - startTime);
+            }
         }
 
     }

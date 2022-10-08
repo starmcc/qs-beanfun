@@ -116,7 +116,6 @@ public class HttpClientImpl extends HttpClient {
                 }
                 httpGet = new HttpGet(params.toString());
             }
-            log.info("请求URL = {}", httpGet.getURI().toString());
             for (Map.Entry<String, String> entry : finalParams.getHeaders().entrySet()) {
                 httpGet.setHeader(entry.getKey(), entry.getValue());
             }
@@ -261,12 +260,11 @@ public class HttpClientImpl extends HttpClient {
         httpClientBuilder.setProxy(proxy);
         CloseableHttpClient httpClient = null;
         CloseableHttpResponse response = null;
+        final long time = System.currentTimeMillis();
         try {
             // 由客户端执行(发送)请求
-            HttpClientContext context = HttpClientContext.create();
             httpClient = httpClientBuilder.build();
-            System.setProperty("jdk.tls.useExtendedMasterSecret", "false");
-            System.setProperty("https.protocols", "TLSv1,TLSv1.1,TLSv1.2");
+            HttpClientContext context = HttpClientContext.create();
             response = httpClient.execute(httpUriRequest, context);
             // 从响应模型中获取响应实体
             qsHttpResponse.setRedirectLocations(context.getRedirectLocations());
@@ -285,6 +283,7 @@ public class HttpClientImpl extends HttpClient {
             qsHttpResponse.setContent(e.getMessage());
         } finally {
             SystemTools.close(httpClient, response);
+            log.info("\n request url={} time={}/s", httpUriRequest.getURI().toString(), (System.currentTimeMillis() - time) / 1000D);
         }
         return qsHttpResponse.build();
     }

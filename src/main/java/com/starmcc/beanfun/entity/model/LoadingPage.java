@@ -2,7 +2,7 @@ package com.starmcc.beanfun.entity.model;
 
 import com.starmcc.beanfun.constant.FXPageEnum;
 import com.starmcc.beanfun.constant.QsConstant;
-import com.starmcc.beanfun.entity.thread.ThrowRunnable;
+import com.starmcc.beanfun.entity.thread.ThrowConsumer;
 import com.starmcc.beanfun.manager.FrameManager;
 import com.starmcc.beanfun.manager.ThreadPoolManager;
 import javafx.geometry.Pos;
@@ -16,6 +16,7 @@ import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
 import javafx.scene.text.TextAlignment;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 
 import java.util.HashMap;
@@ -28,44 +29,9 @@ import java.util.Objects;
  * @author starmcc
  * @date 2022/09/24
  */
+@Slf4j
 public class LoadingPage {
     private static final Map<String, Pane> PANE_MAP = new HashMap<>(16);
-
-
-    /**
-     * 打开
-     *
-     * @param pageEnum 页面枚举
-     */
-    public static void open(FXPageEnum pageEnum) {
-        task(pageEnum, null, null);
-    }
-
-    /**
-     * 打开
-     *
-     * @param pageEnum 页面枚举
-     * @param message  消息
-     * @return {@link Pane}
-     */
-    public static void open(FXPageEnum pageEnum, String message) {
-        task(pageEnum, message, null);
-    }
-
-    /**
-     * 异步任务
-     *
-     * @param pageEnum 页面枚举
-     * @param message  消息
-     * @param runnable 可运行
-     */
-    public static void taskAsync(FXPageEnum pageEnum, String message, ThrowRunnable runnable) {
-        task(pageEnum, message, null);
-        if (Objects.isNull(runnable)) {
-            return;
-        }
-        ThreadPoolManager.execute(() -> closeLoadingPageByTaskRunning(pageEnum, runnable));
-    }
 
 
     /**
@@ -75,21 +41,24 @@ public class LoadingPage {
      * @param message  消息
      * @return {@link Pane}
      */
-    public static void task(FXPageEnum pageEnum, String message, ThrowRunnable runnable) {
+    public static void task(FXPageEnum pageEnum, ThrowConsumer<Label> consumer) {
         Pane stagePane = getStageParentPane(pageEnum);
         if (Objects.isNull(stagePane)) {
             throw new RuntimeException("find pageEnum error");
         }
-        message = StringUtils.isBlank(message) ? "Loading.." : message;
-        Pane pane = buildBasicPage(message, stagePane);
+        String message = "Loading..";
+        Map<String, Object> map = buildBasicPage(message, stagePane);
+        Pane pane = (Pane) map.get("pane");
+        Label label = (Label) map.get("label");
         pane.setId(pageEnum.getFileName() + "-loading");
         PANE_MAP.put(pageEnum.getFileName(), pane);
         FrameManager.getInstance().runLater(() -> stagePane.getChildren().add(pane));
-        if (Objects.isNull(runnable)) {
+        if (Objects.isNull(consumer)) {
             return;
         }
-        closeLoadingPageByTaskRunning(pageEnum, runnable);
+        ThreadPoolManager.execute(() -> closeLoadingPageByTaskRunning(pageEnum, consumer, label));
     }
+
 
     /**
      * 关闭
@@ -119,11 +88,11 @@ public class LoadingPage {
      * @param pageEnum 页面枚举
      * @param runnable 可运行
      */
-    private static void closeLoadingPageByTaskRunning(FXPageEnum pageEnum, ThrowRunnable runnable) {
+    private static void closeLoadingPageByTaskRunning(FXPageEnum pageEnum, ThrowConsumer<Label> consumer, Label label) {
         try {
-            runnable.run();
+            consumer.run(label);
         } catch (Exception e) {
-            throw new RuntimeException(e);
+            log.error("error = {}", e.getMessage(), e);
         } finally {
             close(pageEnum);
         }
@@ -135,7 +104,7 @@ public class LoadingPage {
      *
      * @return {@link Pane}
      */
-    private static Pane buildBasicPage(String message, Pane stagePane) {
+    private static Map<String, Object> buildBasicPage(String message, Pane stagePane) {
         StackPane stackPane = new StackPane();
         stackPane.setPrefWidth(stagePane.getWidth());
         stackPane.setPrefHeight(stagePane.getHeight());
@@ -147,17 +116,18 @@ public class LoadingPage {
         imageView.setFitWidth(32);
         imageView.setFitHeight(32);
         vBox.getChildren().add(imageView);
-        if (StringUtils.isNotBlank(message)) {
-            Label label = new Label();
-            label.setAlignment(Pos.CENTER);
-            label.setText(message);
-            label.setFont(new Font(14));
-            label.setTextAlignment(TextAlignment.CENTER);
-            label.setTextFill(Color.WHITE);
-            vBox.getChildren().add(label);
-        }
+        Map<String, Object> map = new HashMap<>(16);
+        Label label = new Label();
+        label.setAlignment(Pos.CENTER);
+        label.setText(message);
+        label.setFont(new Font(14));
+        label.setTextAlignment(TextAlignment.CENTER);
+        label.setTextFill(Color.WHITE);
+        vBox.getChildren().add(label);
+        map.put("label", label);
         stackPane.getChildren().add(vBox);
-        return stackPane;
+        map.put("pane", stackPane);
+        return map;
     }
 
 

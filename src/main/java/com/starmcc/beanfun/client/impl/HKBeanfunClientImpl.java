@@ -55,6 +55,7 @@ public class HKBeanfunClientImpl extends BeanfunClient {
         if (StringUtils.isEmpty(account) || StringUtils.isEmpty(password)) {
             return BeanfunStringResult.error(AbstractBeanfunResult.CodeEnum.ACT_PWD_IS_NULL);
         }
+        process.accept(0.1);
         // 1. 请求获取SessionKey
         String sessionKey = this.getSessionKey();
         process.accept(0.2);
@@ -128,7 +129,7 @@ public class HKBeanfunClientImpl extends BeanfunClient {
 
         url = "https://bfweb.hk.beanfun.com/beanfun_block/bflogin/return.aspx";
         qsHttpResponse = HttpClient.getInstance().post(url, params);
-        process.accept(0.8);
+        process.accept(0.9);
         if (!qsHttpResponse.getSuccess()) {
             return BeanfunStringResult.error(AbstractBeanfunResult.CodeEnum.REQUEST_ERROR);
         }
@@ -136,7 +137,7 @@ public class HKBeanfunClientImpl extends BeanfunClient {
         if (StringUtils.isBlank(bfWebToken)) {
             return BeanfunStringResult.error(AbstractBeanfunResult.CodeEnum.REQUEST_ERROR);
         }
-
+        process.accept(1.0);
         return BeanfunStringResult.success(bfWebToken);
     }
 

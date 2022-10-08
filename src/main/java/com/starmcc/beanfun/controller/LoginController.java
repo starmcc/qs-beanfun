@@ -10,7 +10,9 @@ import com.starmcc.beanfun.entity.model.ComBoBoxListCell;
 import com.starmcc.beanfun.entity.model.ConfigModel;
 import com.starmcc.beanfun.entity.model.LoadingPage;
 import com.starmcc.beanfun.handler.AccountHandler;
+import com.starmcc.beanfun.manager.AdvancedTimerMamager;
 import com.starmcc.beanfun.manager.FrameManager;
+import com.starmcc.beanfun.manager.impl.AdvancedTimerTask;
 import com.starmcc.beanfun.utils.DataTools;
 import com.starmcc.beanfun.utils.FileTools;
 import javafx.collections.ObservableList;
@@ -27,10 +29,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.apache.http.conn.HttpHostConnectException;
 
 import java.net.URL;
-import java.util.List;
-import java.util.Objects;
-import java.util.Optional;
-import java.util.ResourceBundle;
+import java.util.*;
 
 
 /**
@@ -56,7 +55,6 @@ public class LoginController implements Initializable {
     private Hyperlink hyperlinkForgetPwd;
     @FXML
     private ImageView imageViewQrCode;
-    private double loginProcess = 0D;
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
@@ -98,7 +96,6 @@ public class LoginController implements Initializable {
         ObservableList<String> items = comboBoxAccount.getItems();
         items.clear();
         LoginType selectedItem = choiceBoxLoginType.getSelectionModel().getSelectedItem();
-        // 解密
         for (ConfigModel.ActPwd item : QsConstant.config.getActPwds()) {
             if (!Objects.equals(item.getType(), selectedItem.getType())) {
                 continue;
@@ -120,19 +117,25 @@ public class LoginController implements Initializable {
         passwordFieldPassword.requestFocus();
     }
 
+    /**
+     * 登录操作
+     */
     @FXML
     public void loginAction() {
-        LoadingPage.taskAsync(FXPageEnum.登录页, "正在登录..", () -> {
+        LoadingPage.task(FXPageEnum.登录页, (label) -> {
             try {
+                label.setText("正在登录..");
+                final Map<String, Double> map = new HashMap<>(16);
+                String taskName = buildTaskByLoadTips(label, map);
                 // 执行登录方法
-                String act = comboBoxAccount.getValue();
-                String pwd = passwordFieldPassword.getText();
-                BeanfunStringResult loginResult = BeanfunClient.run().login(act, pwd, process -> loginProcess = process);
+                BeanfunStringResult loginResult = BeanfunClient.run().login(
+                        comboBoxAccount.getValue(), passwordFieldPassword.getText(),
+                        process -> map.put("process", process * 100));
+                AdvancedTimerMamager.getInstance().removeTask(taskName);
                 if (!loginResult.isSuccess()) {
                     FrameManager.getInstance().message(loginResult.getMsg(), Alert.AlertType.ERROR);
                     return;
                 }
-                loginProcess = 1;
                 BeanfunModel beanfunModel = new BeanfunModel();
                 beanfunModel.setToken(loginResult.getData());
                 QsConstant.beanfunModel = beanfunModel;
@@ -228,9 +231,13 @@ public class LoginController implements Initializable {
         if (DataTools.collectionIsEmpty(actPwds)) {
             return "";
         }
-        final String key = DataTools.getComputerUniqueId();
         Optional<ConfigModel.ActPwd> optional = actPwds.stream()
-                .filter(actPwd -> Objects.equals(QsConstant.config.getLoginType(), actPwd.getType()))
+                .filter(actPwd -> {
+                    if (!Objects.equals(QsConstant.config.getLoginType(), actPwd.getType())) {
+                        return false;
+                    }
+                    return StringUtils.equals(actPwd.getAct(), act);
+                })
                 .findFirst();
         return optional.isPresent() ? optional.get().getPwd() : "";
     }
@@ -247,5 +254,37 @@ public class LoginController implements Initializable {
         AccountHandler.delActPwd(account, choiceBoxLoginType.getValue());
 
         refeshAccounts();
+    }
+
+
+    /**
+     * 构建任务-加载提示
+     *
+     * @param label 标签
+     * @param map   map
+     * @return {@link String}
+     */
+    private static String buildTaskByLoadTips(Label label, final Map<String, Double> map) {
+        map.put("nowProcess", 0D);
+        return AdvancedTimerMamager.getInstance().addTask(new AdvancedTimerTask(null, false) {
+            @Override
+            public void start() throws Exception {
+                FrameManager.getInstance().runLater(() -> {
+                    String tips = "正在登录..";
+                    Double maxProcess = map.get("process");
+                    Double nowProcess = map.get("nowProcess");
+                    if (Objects.nonNull(maxProcess)) {
+                        if (nowProcess < maxProcess) {
+                            nowProcess++;
+                            map.put("nowProcess", nowProcess);
+                        } else {
+                            return;
+                        }
+                        tips += "\n" + nowProcess + "%";
+                    }
+                    label.setText(tips);
+                });
+            }
+        }, 0, 100);
     }
 }

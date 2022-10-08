@@ -8,3 +8,4 @@ target/
 *.bak
 /build/jre/
 /qs-data/
+/jre/

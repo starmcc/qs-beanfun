@@ -146,7 +146,10 @@ public class MainController implements Initializable {
             QsConstant.trayIcon = QsTray.init(QsConstant.JFX_STAGE_DATA.get(FXPageEnum.主页).getStage());
             QsTray.show(QsConstant.trayIcon);
             // 获取账号数据
-            LoadingPage.taskAsync(FXPageEnum.主页, "加载中..", () -> refeshAccounts(null));
+            LoadingPage.task(FXPageEnum.主页, label -> {
+                label.setText("加载账号信息..");
+                refeshAccounts(null);
+            });
             try {
                 this.initEvent();
                 this.initData();
@@ -353,7 +356,8 @@ public class MainController implements Initializable {
 
     @FXML
     public void exitLoginAction() {
-        LoadingPage.taskAsync(FXPageEnum.主页, "正在退出登录..", () -> {
+        LoadingPage.task(FXPageEnum.主页, label -> {
+            label.setText("正在退出登录..");
             BeanfunClient.run().loginOut(QsConstant.beanfunModel.getToken());
             FrameManager.getInstance().runLater(() -> {
                 FrameManager.getInstance().openWindow(FXPageEnum.登录页);
@@ -364,7 +368,10 @@ public class MainController implements Initializable {
 
     @FXML
     public void changeAccountNowAction() {
-        LoadingPage.taskAsync(FXPageEnum.主页, "变更账户..", () -> this.accountInfoRefresh());
+        LoadingPage.task(FXPageEnum.主页, label -> {
+            label.setText("变更账户..");
+            this.accountInfoRefresh();
+        });
     }
 
 
@@ -373,7 +380,8 @@ public class MainController implements Initializable {
      */
     @FXML
     public void getDynamicPasswordAction() {
-        LoadingPage.taskAsync(FXPageEnum.主页, "获取动态密码..", () -> {
+        LoadingPage.task(FXPageEnum.主页, label -> {
+            label.setText("获取动态密码..");
             AccountHandler.getDynamicPassword(QsConstant.nowAccount, (id, password) -> {
                 FrameManager.getInstance().runLater(() -> textFieldDynamicPwd.setText(password));
                 // 自动输入 并检查游戏是否存在
@@ -414,7 +422,8 @@ public class MainController implements Initializable {
         }
         // 启动游戏 如果免输入模式，组装账密
         if (BooleanUtils.isTrue(QsConstant.config.getPassInput())) {
-            LoadingPage.taskAsync(FXPageEnum.主页, "正在获取动态密码...", () -> {
+            LoadingPage.task(FXPageEnum.主页, label -> {
+                label.setText("正在获取动态密码...");
                 try {
                     AccountHandler.getDynamicPassword(QsConstant.nowAccount, (id, password) -> {
                         GameHandler.runGame(textFieldGamePath.getText(), id, password);
@@ -462,7 +471,8 @@ public class MainController implements Initializable {
      */
     @FXML
     public void updatePointsAction(ActionEvent actionEvent) {
-        LoadingPage.taskAsync(FXPageEnum.主页, "获取游戏点数...", () -> {
+        LoadingPage.task(FXPageEnum.主页, label -> {
+            label.setText("获取游戏点数...");
             // 获取游戏点数
             String pointsText = getPointsText();
             FrameManager.getInstance().runLater(() -> labelActPoint.setText(pointsText));
@@ -479,7 +489,8 @@ public class MainController implements Initializable {
         if (StringUtils.isBlank(name)) {
             return;
         }
-        LoadingPage.taskAsync(FXPageEnum.主页, "添加账号..", () -> {
+        LoadingPage.task(FXPageEnum.主页, label -> {
+            label.setText("添加账号..");
             try {
                 BeanfunStringResult result = BeanfunClient.run().addAccount(name);
                 if (result.isSuccess()) {
@@ -503,7 +514,8 @@ public class MainController implements Initializable {
         if (StringUtils.isBlank(newName)) {
             return;
         }
-        LoadingPage.taskAsync(FXPageEnum.主页, "编辑账号..", () -> {
+        LoadingPage.task(FXPageEnum.主页, label -> {
+            label.setText("编辑账号..");
             try {
                 BeanfunStringResult result = BeanfunClient.run().changeAccountName(QsConstant.nowAccount.getId(), newName);
                 if (!result.isSuccess()) {
@@ -556,7 +568,8 @@ public class MainController implements Initializable {
     @FXML
     public void updateRateAction(ActionEvent actionEvent) {
         // 获取汇率
-        LoadingPage.taskAsync(FXPageEnum.主页, "更新汇率..", () -> {
+        LoadingPage.task(FXPageEnum.主页, label -> {
+            label.setText("更新汇率..");
             QsConstant.currentRateChinaToTw = ThirdPartyApiClient.getCurrentRateChinaToTw();
             FrameManager.getInstance().runLater(() -> labelExchangeNow.setText(QsConstant.currentRateChinaToTw.toString()));
         });

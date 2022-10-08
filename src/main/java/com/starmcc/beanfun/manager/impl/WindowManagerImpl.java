@@ -68,7 +68,6 @@ public class WindowManagerImpl implements WindowManager {
                 continue;
             }
             String valStr = (String) val;
-            log.debug("scan regedit uninstall app DisplayName={}", valStr);
             if (StringUtils.indexOf(valStr, "Microsoft Visual C++ 20") >= 0) {
                 return true;
             }

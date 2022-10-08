@@ -33,7 +33,7 @@ public class AccountHandler {
      * @param account   账户
      * @param loginType 登录类型
      */
-    public static void delActPwd(String account, LoginType loginType) {
+    public synchronized static void delActPwd(String account, LoginType loginType) {
         List<ConfigModel.ActPwd> actPwds = QsConstant.config.getActPwds();
         if (DataTools.collectionIsEmpty(actPwds)) {
             return;
@@ -49,6 +49,7 @@ public class AccountHandler {
                 break;
             }
         }
+        QsConstant.config.setActPwds(actPwds);
         FileTools.saveConfig(QsConstant.config);
     }
 
@@ -59,7 +60,7 @@ public class AccountHandler {
      * @param password  密码
      * @param loginType type
      */
-    public static void recordActPwd(String account, String password, LoginType loginType) {
+    public synchronized static void recordActPwd(String account, String password, LoginType loginType) {
         delActPwd(account, loginType);
         try {
             ConfigModel.ActPwd actPwd = new ConfigModel.ActPwd();

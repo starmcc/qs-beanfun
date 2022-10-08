@@ -80,7 +80,7 @@ public interface FrameManager {
     /**
      * JavaFx主线程运行
      *
-     * @param throwRunnable runnable2
+     * @param throwRunnable throwRunnable
      */
     void runLater(ThrowRunnable throwRunnable);
 
