@@ -31,7 +31,7 @@
                                 <CheckMenuItem fx:id="checkMenuItemAlwaysOnTop" mnemonicParsing="false" onAction="#alwaysOnTopAction" text="窗口置顶" />
                                 <CheckMenuItem fx:id="checkMenuItemAutoLunShao" mnemonicParsing="false" onAction="#autoLunShaoAction" text="自动轮烧" />
                                 <MenuItem fx:id="menuItemNgs" mnemonicParsing="false" text="强制结束NGS进程" />
-                                <MenuItem fx:id="menuItemEquipment" mnemonicParsing="false" text="装备计算器" />
+                                <MenuItem fx:id="menuItemEquipment" mnemonicParsing="false" text="装备卷轴计算器" />
                                 <MenuItem fx:id="menuItemPaperDoll" mnemonicParsing="false" text="纸娃娃系统" />
                                 <MenuItem fx:id="menuItemAlliance" mnemonicParsing="false" text="联盟摆放模拟器" />
                                 <MenuItem fx:id="menuItemSystemCalc" mnemonicParsing="false" text="系统计算器" />

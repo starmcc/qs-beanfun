@@ -24,6 +24,10 @@ public class EquipmentHandler {
     private static final String DEFAULT_TEXT = "自动模式";
 
     public static String autoCalc(EquipmentAutoCalcParam param) {
+        if (param.getReelNum() == 0 || param.getTotalAtk() == 0) {
+            // 上卷次数 = 0，或总攻击数 = 0 则不计算
+            return "请填写装备数据";
+        }
         int totalAtk = param.getTotalAtk() - param.getStarAtk();
         if (verifyIsReel(param, CalcConstant.Reel.RED卷)) {
             return "Red卷";
@@ -39,8 +43,8 @@ public class EquipmentHandler {
         }
 
         double reedAtk = verifyIsGlory(param);
-        if (reedAtk > 0D) {
-            return "荣耀卷-均:" + reedAtk;
+        if (reedAtk > Double.valueOf(0)) {
+            return "命运/荣耀:" + reedAtk;
         }
 
         return "未知类型";
@@ -61,8 +65,14 @@ public class EquipmentHandler {
         } else {
             reelAtk = param.getReelNum() * reel.getArmor();
         }
-        int totalAtk = param.getOriginAtk() + reelAtk;
+        int totalAtk = param.getOriginAtk();
+        if (param.getEquipmentType() == CalcConstant.EquipmentType.武器) {
+            totalAtk += reelAtk;
+        }
         totalAtk = calcStarAtk(totalAtk, param.getStarLevel(), param.getLevel(), param.getEquipmentType()) + param.getStarAtk();
+        if (param.getEquipmentType() != CalcConstant.EquipmentType.武器) {
+            totalAtk += reelAtk;
+        }
         return param.getTotalAtk() != 0 && param.getTotalAtk() == totalAtk;
     }
 
@@ -74,10 +84,8 @@ public class EquipmentHandler {
      */
     private static double verifyIsGlory(EquipmentAutoCalcParam param) {
         int totalAtk = 0;
-        // 1 = atk   2 = index
         List<TrainingModel> list = new ArrayList<>();
-
-        for (int i = 0; i < 11; i++) {
+        for (int i = 0; i < 10; i++) {
             int reelAtk = 0;
             if (param.getEquipmentType() == CalcConstant.EquipmentType.武器
                     || param.getEquipmentType() == CalcConstant.EquipmentType.心脏) {
@@ -85,9 +93,15 @@ public class EquipmentHandler {
             } else {
                 reelAtk = 5 + i;
             }
-
-            totalAtk = param.getReelNum() * reelAtk + param.getOriginAtk();
+            totalAtk = param.getOriginAtk();
+            if (param.getEquipmentType() == CalcConstant.EquipmentType.武器) {
+                // 武器需要加上卷的攻击去算
+                totalAtk += param.getReelNum() * reelAtk;
+            }
             totalAtk = calcStarAtk(totalAtk, param.getStarLevel(), param.getLevel(), param.getEquipmentType());
+            if (param.getEquipmentType() != CalcConstant.EquipmentType.武器) {
+                totalAtk += param.getReelNum() * reelAtk;
+            }
             int contrast = param.getTotalAtk() - totalAtk;
             list.add(new TrainingModel(contrast, reelAtk));
         }
@@ -112,7 +126,7 @@ public class EquipmentHandler {
 
         if (trainingModel.getAtk() != 0D) {
             double atk = (double) trainingModel.getAtk() / param.getReelNum();
-            return trainingModel.getReelAtk() + Double.parseDouble(String.format("%.2f", atk));
+            return Double.parseDouble(String.format("%.2f", atk + trainingModel.getReelAtk()));
         }
 
         return trainingModel.getReelAtk();
@@ -126,9 +140,8 @@ public class EquipmentHandler {
      */
     public static CalcModel calc(EquipmentCalcParam param) {
         // 获得卷轴攻击力
-        int reelAtk = 0;
         int reelNum = param.getGloryNum() + param.getBlackNum() + param.getVNum() + param.getXNum() + param.getRedNum();
-        reelAtk += param.getGloryNum() * param.getGloryValNum();
+        int reelAtk = param.getGloryNum() * param.getGloryValNum();
         if (param.getEquipmentType() == CalcConstant.EquipmentType.武器
                 || param.getEquipmentType() == CalcConstant.EquipmentType.心脏) {
             reelAtk += param.getBlackNum() * CalcConstant.Reel.黑卷.getWeapons();
@@ -137,15 +150,20 @@ public class EquipmentHandler {
             reelAtk += param.getRedNum() * CalcConstant.Reel.RED卷.getWeapons();
         } else {
             reelAtk += param.getBlackNum() * CalcConstant.Reel.黑卷.getArmor();
-            reelAtk += param.getVNum() * CalcConstant.Reel.V卷.getWeapons();
-            reelAtk += param.getXNum() * CalcConstant.Reel.X卷.getWeapons();
-            reelAtk += param.getRedNum() * CalcConstant.Reel.RED卷.getWeapons();
+            reelAtk += param.getVNum() * CalcConstant.Reel.V卷.getArmor();
+            reelAtk += param.getXNum() * CalcConstant.Reel.X卷.getArmor();
+            reelAtk += param.getRedNum() * CalcConstant.Reel.RED卷.getArmor();
         }
 
         // 使用原始攻击 + 卷轴攻击套用星力加成计算 武器吃加成! 获取总攻击数据
-        int totalAtk = param.getOriginAtk() + reelAtk;
+        int totalAtk = param.getOriginAtk();
+        if (param.getEquipmentType() == CalcConstant.EquipmentType.武器) {
+            totalAtk += reelAtk;
+        }
         totalAtk = calcStarAtk(totalAtk, param.getStarLevel(), param.getLevel(), param.getEquipmentType()) + param.getStarAtk();
-
+        if (param.getEquipmentType() != CalcConstant.EquipmentType.武器) {
+            totalAtk += reelAtk;
+        }
         // 获取附加攻击值
         int appendAtk = totalAtk - param.getOriginAtk() - param.getStarAtk();
 

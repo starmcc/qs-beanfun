@@ -23,8 +23,8 @@ import java.nio.file.Files;
 @Slf4j
 public class QsConstant {
     public static boolean DEV = false;
-    public static final String APP_VERSION = "4.0.7";
-    public static final Integer APP_VERSION_INT = 407;
+    public static final String APP_VERSION = "4.0.8";
+    public static final Integer APP_VERSION_INT = 408;
     public static final String PATH_APP = System.getProperties().getProperty("user.dir");
     public static final String PATH_APP_PLUGINS = PATH_APP + "\\qs-data\\";
     public static final String PATH_APP_CONFIG = PATH_APP_PLUGINS + "config.json";
@@ -66,6 +66,9 @@ public class QsConstant {
                 File file = new File(this.getTargetPath());
                 if (file.exists()) {
                     return;
+                }
+                if (!file.getParentFile().exists()) {
+                    file.getParentFile().mkdirs();
                 }
                 InputStream resourceAsStream = QsConstant.class.getClassLoader().getResourceAsStream(this.getSourcePath());
                 Files.copy(resourceAsStream, file.toPath());
