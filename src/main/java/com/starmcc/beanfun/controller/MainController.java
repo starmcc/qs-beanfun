@@ -181,8 +181,10 @@ public class MainController implements Initializable {
         checkBoxPassInput.setSelected(BooleanUtils.isTrue(QsConstant.config.getPassInput()));
         checkBoxKillPlayStartWindow.setSelected(BooleanUtils.isTrue(QsConstant.config.getKillStartPalyWindow()));
         textFieldGamePath.setText(QsConstant.config.getGamePath());
-        checkBoxKillGamePatcher.setVisible(BooleanUtils.isTrue(QsConstant.config.getKillGamePatcher()));
+        checkBoxKillGamePatcher.setSelected(BooleanUtils.isTrue(QsConstant.config.getKillGamePatcher()));
         checkBoxAutoInput.setSelected(BooleanUtils.isTrue(QsConstant.config.getAutoInput()));
+        checkBoxCheckAppUpdate.setSelected(BooleanUtils.isTrue(QsConstant.config.getCheckAppUpdate()));
+
 
         // 轮烧配置
         Integer lunHuiKey = QsConstant.config.getLunHuiKey();
