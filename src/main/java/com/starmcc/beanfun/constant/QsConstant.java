@@ -38,46 +38,6 @@ public class QsConstant {
     public static BeanfunModel beanfunModel;
     public static Account nowAccount;
 
-    public static enum LibEnum {
-        NODE_DLL(PATH_APP + "\\jre\\bin\\node.dll", "lib/base/node.dll"),
-        ;
-        private final String targetPath;
-        private final String sourcePath;
-
-        LibEnum(String targetPath, String sourcePath) {
-            this.targetPath = targetPath;
-            this.sourcePath = sourcePath;
-        }
-
-        public String getTargetPath() {
-            return targetPath;
-        }
-
-        public String getSourcePath() {
-            return sourcePath;
-        }
-
-        public void copyFile() {
-            if (QsConstant.DEV) {
-                return;
-            }
-            try {
-                File file = new File(this.getTargetPath());
-                if (file.exists()) {
-                    return;
-                }
-                if (!file.getParentFile().exists()) {
-                    file.getParentFile().mkdirs();
-                }
-                InputStream resourceAsStream = QsConstant.class.getClassLoader().getResourceAsStream(this.getSourcePath());
-                Files.copy(resourceAsStream, file.toPath());
-            } catch (IOException e) {
-                log.error("copy lib {} error={}", this.getTargetPath(), e.getMessage(), e);
-            }
-        }
-    }
-
-
     /**
      * 插件枚举
      *

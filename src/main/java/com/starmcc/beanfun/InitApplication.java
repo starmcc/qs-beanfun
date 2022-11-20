@@ -44,7 +44,6 @@ public class InitApplication {
             }
             FileTools.unzipResourceFile(resource);
         }
-        QsConstant.LibEnum.NODE_DLL.copyFile();
         // 自动检查更新
         if (BooleanUtils.isTrue(QsConstant.config.getCheckAppUpdate())) {
             ThreadPoolManager.execute(() -> UpdateManager.getInstance().verifyAppVersion(true));
