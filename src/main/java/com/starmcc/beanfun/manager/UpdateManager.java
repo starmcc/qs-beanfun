@@ -7,7 +7,6 @@ import com.starmcc.beanfun.client.HttpClient;
 import com.starmcc.beanfun.constant.FXPageEnum;
 import com.starmcc.beanfun.constant.QsConstant;
 import com.starmcc.beanfun.controller.UpdateController;
-import com.starmcc.beanfun.entity.model.JFXStage;
 import com.starmcc.beanfun.entity.client.QsHttpResponse;
 import com.starmcc.beanfun.entity.client.UpdateModel;
 import javafx.scene.control.Alert;
@@ -16,7 +15,6 @@ import org.apache.commons.lang3.StringUtils;
 
 import java.util.Arrays;
 import java.util.List;
-import java.util.Map;
 import java.util.stream.Collectors;
 
 /**
@@ -52,67 +50,35 @@ public class UpdateManager {
      * @param quiet 静默
      */
     public synchronized void verifyAppVersion(boolean quiet) {
-        UpdateModel model = manager.useServerUpdate();
-        if (model.getState() == UpdateModel.State.获取失败) {
-            // 如果服务器更新失败,使用github更新
-            model = manager.useServerUpdate();
-        }
-        if (!quiet && model.getState() == UpdateModel.State.已是最新版本) {
-            FrameManager.getInstance().message("已经是最新版本", Alert.AlertType.INFORMATION);
-            return;
-        }
-
-        if (!quiet && model.getState() == UpdateModel.State.获取失败) {
-            FrameManager.getInstance().message("获取失败", Alert.AlertType.WARNING);
-            return;
-        }
-
+        final UpdateModel model = manager.useGithubUpdate();
         if (model.getState() != UpdateModel.State.有新版本) {
-            return;
-        }
-
-        final UpdateModel finalModel = model;
-        FrameManager.getInstance().runLater(() -> {
-            String msg = finalModel.getContent() + "\n是否立刻更新?";
-            if (!FrameManager.getInstance().dialogConfirm("有新版本-" + finalModel.getVersion(), msg)) {
+            if (quiet) {
                 return;
             }
-            UpdateController.model = finalModel;
-            FrameManager.getInstance().openWindow(FXPageEnum.更新页);
-            for (Map.Entry<String, JFXStage> entry : QsConstant.JFX_STAGE_DATA.entrySet()) {
-                if (StringUtils.equals(entry.getKey(), FXPageEnum.更新页.getFileName())) {
-                    continue;
-                }
-                entry.getValue().getStage().close();
+            if (model.getState() == UpdateModel.State.获取失败) {
+                FrameManager.getInstance().message("Github网络连接超时,无法自动检查更新.", Alert.AlertType.WARNING);
+            } else if (model.getState() == UpdateModel.State.已是最新版本) {
+                FrameManager.getInstance().message("已经是最新版本", Alert.AlertType.INFORMATION);
             }
-        });
-    }
-
-    /**
-     * 使用服务器更新
-     *
-     * @return {@link UpdateModel}
-     */
-    private UpdateModel useServerUpdate() {
-        try {
-            QsHttpResponse qsHttpResponse = HttpClient.getInstance().get(QsConstant.UPDATE_API_SERVER);
-            if (!qsHttpResponse.getSuccess()) {
-                return UpdateModel.build(UpdateModel.State.获取失败);
-            }
-            String content = qsHttpResponse.getContent();
-            if (StringUtils.isBlank(content)) {
-                return UpdateModel.build(UpdateModel.State.获取失败);
-            }
-            UpdateModel model = JSON.parseObject(content, UpdateModel.class);
-            if (QsConstant.APP_VERSION_INT.compareTo(model.getVersionInt()) != -1) {
-                return UpdateModel.build(UpdateModel.State.已是最新版本);
-            }
-            model.setState(UpdateModel.State.有新版本);
-            return model;
-        } catch (Exception e) {
-            log.error("获取版本异常 e={}", e.getMessage(), e);
+            return;
         }
-        return UpdateModel.build(UpdateModel.State.获取失败);
+
+        // 有新版本
+        FrameManager.getInstance().runLater(() -> {
+            String msg = model.getContent() + "\n是否立刻更新?";
+            if (!FrameManager.getInstance().dialogConfirm("有新版本-" + model.getVersion(), msg)) {
+                return;
+            }
+            UpdateController.model = model;
+            FrameManager.getInstance().openWindow(FXPageEnum.更新页);
+            // 结束其他窗口
+//            for (Map.Entry<String, JFXStage> entry : QsConstant.JFX_STAGE_DATA.entrySet()) {
+//                if (StringUtils.equals(entry.getKey(), FXPageEnum.更新页.getFileName())) {
+//                    continue;
+//                }
+//                entry.getValue().getStage().close();
+//            }
+        });
     }
 
 
@@ -138,13 +104,13 @@ public class UpdateManager {
                 return UpdateModel.build(UpdateModel.State.获取失败);
             }
 
-            Integer numberVersionTarget = getNumberVersion(githubVersion);
-            if (numberVersionTarget == 0) {
+            Integer targetVersion = getNumberVersion(githubVersion);
+            if (targetVersion == 0) {
                 log.error("版本解析为0，解析失败 targetVersion={}", githubVersion);
                 return UpdateModel.build(UpdateModel.State.已是最新版本);
             }
-
-            if (QsConstant.APP_VERSION_INT.compareTo(numberVersionTarget) != -1) {
+            Integer nowVersion = getNumberVersion(QsConstant.APP_VERSION);
+            if (nowVersion.compareTo(targetVersion) != -1) {
                 return UpdateModel.build(UpdateModel.State.已是最新版本);
             }
 
@@ -166,7 +132,7 @@ public class UpdateManager {
             model.setVersion(githubVersion);
             model.setUrl(downloadUrl);
             model.setContent(tipsBf.toString());
-            model.setVersionInt(numberVersionTarget.intValue());
+            model.setVersionInt(targetVersion.intValue());
             return model;
         } catch (Exception e) {
             log.error("获取版本异常 e={}", e.getMessage(), e);
@@ -187,7 +153,8 @@ public class UpdateManager {
         }
         String[] split = name.split("\\.");
         List<String> versionList = Arrays.stream(split).collect(Collectors.toList());
-        while (versionList.size() < 3) {
+        int minNum = 3;
+        while (versionList.size() < minNum) {
             versionList.add("0");
         }
         StringBuffer version = new StringBuffer();

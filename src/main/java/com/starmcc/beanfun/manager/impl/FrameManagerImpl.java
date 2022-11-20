@@ -5,7 +5,6 @@ import com.alibaba.fastjson.JSONObject;
 import com.starmcc.beanfun.client.HttpClient;
 import com.starmcc.beanfun.constant.FXPageEnum;
 import com.starmcc.beanfun.constant.QsConstant;
-import com.starmcc.beanfun.dll.EService;
 import com.starmcc.beanfun.entity.model.JFXStage;
 import com.starmcc.beanfun.entity.model.QsTray;
 import com.starmcc.beanfun.entity.thread.ThrowRunnable;
@@ -157,7 +156,7 @@ public class FrameManagerImpl implements FrameManager {
         if (Objects.nonNull(proxyHttpHost)) {
             agent = proxyHttpHost.getHostName() + ":" + proxyHttpHost.getPort();
         }
-        EService.INSTANCE.openBrowser(url, agent, jsonArr.toJSONString());
+//        EService.INSTANCE.openBrowser(url, agent, jsonArr.toJSONString());
     }
 
 

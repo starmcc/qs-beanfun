@@ -1,8 +1,9 @@
 package com.starmcc.beanfun.manager.impl;
 
+import com.starmcc.beanfun.client.HttpClient;
 import com.starmcc.beanfun.constant.QsConstant;
 import com.starmcc.beanfun.dll.CustomUser32;
-import com.starmcc.beanfun.dll.EService;
+import com.starmcc.beanfun.entity.client.QsHttpResponse;
 import com.starmcc.beanfun.entity.model.ConfigModel;
 import com.starmcc.beanfun.manager.AdvancedTimerMamager;
 import com.starmcc.beanfun.manager.WindowManager;
@@ -12,7 +13,15 @@ import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.BooleanUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.http.HttpHost;
+import org.apache.http.client.methods.CloseableHttpResponse;
+import org.apache.http.client.methods.HttpGet;
+import org.apache.http.impl.client.CloseableHttpClient;
+import org.apache.http.impl.client.HttpClients;
+import org.apache.http.util.EntityUtils;
 
+import javax.script.Invocable;
+import javax.script.ScriptEngine;
+import javax.script.ScriptEngineManager;
 import java.awt.*;
 import java.io.IOException;
 import java.net.URI;
@@ -30,6 +39,10 @@ import java.util.function.Consumer;
 @Slf4j
 public class WindowManagerImpl implements WindowManager {
 
+    /**
+     * 扫描秒数
+     */
+    private static final int SCANNER_SECONDS = 1000 * 10;
     private static final int WM_KEYDOWN = 0X100;
     private static final int WM_LBUTTONDOWN = 0x0201;
     private static final byte VK_BACK = 0x0008;
@@ -92,7 +105,7 @@ public class WindowManagerImpl implements WindowManager {
                 } catch (Exception e) {
                     log.error("自动关闭Play窗口发生异常! e={}", e.getMessage(), e);
                 } finally {
-                    if (hwnd != null || System.currentTimeMillis() - time > 5000) {
+                    if (hwnd != null || System.currentTimeMillis() - time > SCANNER_SECONDS) {
                         // 进程句柄找到了或超过5秒，结束该任务
                         AdvancedTimerMamager.getInstance().removeTask(this.getTaskName());
                     }
@@ -119,8 +132,8 @@ public class WindowManagerImpl implements WindowManager {
                 } catch (Exception e) {
                     log.error("异常 e={}", e.getMessage(), e);
                 } finally {
-                    if (patcherPid != 0 || System.currentTimeMillis() - time > 5000) {
-                        // 进程PID找到了或超过5秒，结束该线程池
+                    if (patcherPid != 0 || System.currentTimeMillis() - time > SCANNER_SECONDS) {
+                        // 进程PID找到了或超过设置的等待秒数，结束该线程池
                         AdvancedTimerMamager.getInstance().removeTask(this.getTaskName());
                     }
                 }
@@ -223,7 +236,7 @@ public class WindowManagerImpl implements WindowManager {
                 return new HttpHost(proxyConfig.getIp(), proxyConfig.getPort(), "http");
             }
         }
-        String agent = EService.INSTANCE.getPACScriptAgent(uri.toString());
+        String agent = getPACScriptAgent(uri.toString());
         if (StringUtils.isBlank(agent)) {
             return null;
         }
@@ -234,6 +247,60 @@ public class WindowManagerImpl implements WindowManager {
         log.info("使用PAC代理={}", agent);
         return new HttpHost(split[0], Integer.valueOf(split[1]), "http");
     }
+
+
+    private static String getPACScriptAgent(String url) {
+        try {
+            String path = "Software\\Microsoft\\Windows\\CurrentVersion\\Internet Settings";
+            boolean exists = Advapi32Util.registryValueExists(WinReg.HKEY_CURRENT_USER, path, "AutoConfigURL", WinNT.KEY_READ);
+            if (!exists) {
+                return "";
+            }
+            String proxyUrl = Advapi32Util.registryGetStringValue(WinReg.HKEY_CURRENT_USER, path, "AutoConfigURL", WinNT.KEY_READ);
+            if (StringUtils.isBlank(proxyUrl)) {
+                log.info("not pac proxy");
+                return "";
+            }
+            CloseableHttpClient httpClient =  HttpClients.createDefault();
+            HttpGet httpGet = new HttpGet(proxyUrl);
+            CloseableHttpResponse execute = httpClient.execute(httpGet);
+            String pacScript = EntityUtils.toString(execute.getEntity());
+            if (StringUtils.isBlank(pacScript)) {
+                log.info("read pac proxy file is null");
+                return "";
+            }
+            ScriptEngine engine = new ScriptEngineManager().getEngineByName("JavaScript");
+            engine.eval(pacScript);
+            //调用js中的方法
+            URI uri = new URI(url);
+            Object runResult = ((Invocable) engine).invokeFunction("FindProxyForURL", uri.toString(), uri.getHost());
+            if (Objects.isNull(runResult)) {
+                log.info("url:{} runing FindProxyForURL is null result", url);
+                return "";
+            }
+            String pac = String.valueOf(runResult);
+            log.info("pac={}", pac);
+            // DIRECT 不代理
+            if (StringUtils.indexOf(pac, "DIRECT") >= 0) {
+                return "";
+            }
+            String[] split = pac.split(";");
+            for (String pxy : split) {
+                String[] pxyArr = pxy.trim().split(" ");
+                if (ArrayUtils.isEmpty(pxyArr) || pxyArr.length < 2) {
+                    continue;
+                }
+                if (!StringUtils.equals(pxyArr[0].trim(), "PROXY")) {
+                    continue;
+                }
+                return pxyArr[1].trim();
+            }
+        } catch (Exception e) {
+            log.error("proxy error = {}", e.getMessage(), e);
+        }
+        return "";
+    }
+
 
     @Override
     public boolean killBlackXchg() {
