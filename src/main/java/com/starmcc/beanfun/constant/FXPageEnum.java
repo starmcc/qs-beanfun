@@ -16,10 +16,11 @@ public enum FXPageEnum {
     登录页("login", "QsBeanfun", false, false, true,
             jfxStage -> jfxStage.getRoot().getStylesheets().add(QsConstant.class.getResource("/static/css/login.css").toExternalForm())),
     主页("main", "QsBeanfun", true, true, true),
-    关于我("about", "About"),
-    装备计算器("equipment", "Equipment"),
-    二维码登录("qrCode", "QR-Code", true, false, true),
-    更新页("update", "auto-update", true, false, true),
+    关于我("about", "关于.."),
+    装备计算器("equipment", "装备计算器"),
+    二维码登录("qrCode", "二维码登录", true, false, true),
+    更新页("update", "自动更新", true, false, true),
+    浏览器("browser", "浏览器", true, false),
     ;
 
     /**

@@ -327,7 +327,7 @@ public class MainController implements Initializable {
         // =================== 录像控件事件 =====================
         comboBoxVideoCodeRate.valueProperty().addListener((obsVal, oldVal, newVal) -> {
             // 只能输入数字
-            if (!RegexUtils.test(RegexUtils.PTN_NUMBER, newVal)) {
+            if (!RegexUtils.test(RegexUtils.Constant.COMMON_NUMBER, newVal)) {
                 comboBoxVideoCodeRate.setValue(oldVal);
                 return;
             }
@@ -457,7 +457,7 @@ public class MainController implements Initializable {
             return;
         }
         // 判断中文路径
-        if (RegexUtils.test(RegexUtils.PTN_CHINA_STRING, path)) {
+        if (RegexUtils.test(RegexUtils.Constant.COMMON_CHINA_STRING, path)) {
             FrameManager.getInstance().messageSync("路径中不能包含中文!", Alert.AlertType.WARNING);
             return;
         }

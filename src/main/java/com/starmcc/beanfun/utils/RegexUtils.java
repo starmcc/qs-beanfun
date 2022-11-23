@@ -47,6 +47,12 @@ public class RegexUtils {
         TW_GET_PWD_OTP_SECRET(Pattern.compile("var\\sm_strSecretCode\\s=\\s'(.*)'")),
         TW_GAME_POINTS(Pattern.compile("\"RemainPoint\"\\s:\\s\"(\\d+)\"")),
         TW_QRCODE_AKEY(Pattern.compile("akey=(.*)&authkey=(.*)&")),
+
+        // =============
+        COMMON_IP_ADDRESS(Pattern.compile("PROXY\\s(\\d+\\.\\d+\\.\\d+\\.\\d+:\\d+)")),
+        COMMON_CHINA_STRING(Pattern.compile("[\u4E00-\u9FFF]+")),
+        COMMON_NUMBER(Pattern.compile("^[0-9]*$")),
+        COMMON_RATE_POINTS(Pattern.compile("<p></td><td><p>(.*?)</p></td><td><p>")),
         ;
         private final Pattern pattern;
 
@@ -59,11 +65,6 @@ public class RegexUtils {
         }
 
     }
-
-    public static final Pattern PTN_CHINA_STRING = Pattern.compile("[\u4E00-\u9FFF]+");
-    public static final Pattern PTN_NUMBER = Pattern.compile("^[0-9]*$");
-    public static final Pattern PTN_RATE_POINTS = Pattern.compile("<p></td><td><p>(.*?)</p></td><td><p>");
-
 
     public static String getIndex(int group, int children, List<List<String>> list) {
 

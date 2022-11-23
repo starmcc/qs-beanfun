@@ -67,11 +67,9 @@ public class HttpClientImpl extends HttpClient {
         Map<String, String> cookieMap = new HashMap<>();
         List<Cookie> cookies = COOKIE_STORE.getCookies();
         for (Cookie cookie : cookies) {
-            if (StringUtils.isNotBlank(uri.getHost())) {
-                if (uri.getHost() == cookie.getDomain()) {
-                    cookieMap.put(cookie.getName(), cookie.getValue());
-                }
-            } else {
+            if (StringUtils.isBlank(uri.getHost())) {
+                cookieMap.put(cookie.getName(), cookie.getValue());
+            } else if (StringUtils.equals(uri.getHost(), cookie.getDomain())) {
                 cookieMap.put(cookie.getName(), cookie.getValue());
             }
         }

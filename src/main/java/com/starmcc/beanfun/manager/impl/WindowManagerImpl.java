@@ -1,12 +1,11 @@
 package com.starmcc.beanfun.manager.impl;
 
-import com.starmcc.beanfun.client.HttpClient;
 import com.starmcc.beanfun.constant.QsConstant;
 import com.starmcc.beanfun.dll.CustomUser32;
-import com.starmcc.beanfun.entity.client.QsHttpResponse;
 import com.starmcc.beanfun.entity.model.ConfigModel;
 import com.starmcc.beanfun.manager.AdvancedTimerMamager;
 import com.starmcc.beanfun.manager.WindowManager;
+import com.starmcc.beanfun.utils.RegexUtils;
 import com.sun.jna.platform.win32.*;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.ArrayUtils;
@@ -15,16 +14,13 @@ import org.apache.commons.lang3.StringUtils;
 import org.apache.http.HttpHost;
 import org.apache.http.client.methods.CloseableHttpResponse;
 import org.apache.http.client.methods.HttpGet;
-import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClients;
 import org.apache.http.util.EntityUtils;
 
-import javax.script.Invocable;
-import javax.script.ScriptEngine;
-import javax.script.ScriptEngineManager;
 import java.awt.*;
 import java.io.IOException;
 import java.net.URI;
+import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.function.Consumer;
@@ -261,17 +257,21 @@ public class WindowManagerImpl implements WindowManager {
                 log.info("not pac proxy");
                 return "";
             }
-            CloseableHttpClient httpClient =  HttpClients.createDefault();
             HttpGet httpGet = new HttpGet(proxyUrl);
-            CloseableHttpResponse execute = httpClient.execute(httpGet);
+            CloseableHttpResponse execute = HttpClients.createDefault().execute(httpGet);
             String pacScript = EntityUtils.toString(execute.getEntity());
             if (StringUtils.isBlank(pacScript)) {
                 log.info("read pac proxy file is null");
                 return "";
             }
-            ScriptEngine engine = new ScriptEngineManager().getEngineByName("JavaScript");
+            // 直接使用代理
+            List<List<String>> regex = RegexUtils.regex(RegexUtils.Constant.COMMON_IP_ADDRESS, pacScript);
+            String index = RegexUtils.getIndex(0, 1, regex);
+            return index;
+
+            //调用js中的方法 此处调用过慢
+            /*ScriptEngine engine = new ScriptEngineManager().getEngineByName("JavaScript");
             engine.eval(pacScript);
-            //调用js中的方法
             URI uri = new URI(url);
             Object runResult = ((Invocable) engine).invokeFunction("FindProxyForURL", uri.toString(), uri.getHost());
             if (Objects.isNull(runResult)) {
@@ -294,7 +294,7 @@ public class WindowManagerImpl implements WindowManager {
                     continue;
                 }
                 return pxyArr[1].trim();
-            }
+            }*/
         } catch (Exception e) {
             log.error("proxy error = {}", e.getMessage(), e);
         }

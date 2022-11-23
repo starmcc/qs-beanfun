@@ -1,10 +1,8 @@
 package com.starmcc.beanfun.manager.impl;
 
-import com.alibaba.fastjson.JSONArray;
-import com.alibaba.fastjson.JSONObject;
-import com.starmcc.beanfun.client.HttpClient;
 import com.starmcc.beanfun.constant.FXPageEnum;
 import com.starmcc.beanfun.constant.QsConstant;
+import com.starmcc.beanfun.controller.BrowserController;
 import com.starmcc.beanfun.entity.model.JFXStage;
 import com.starmcc.beanfun.entity.model.QsTray;
 import com.starmcc.beanfun.entity.thread.ThrowRunnable;
@@ -19,12 +17,9 @@ import javafx.scene.image.Image;
 import javafx.stage.Stage;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.http.HttpHost;
-import org.apache.http.client.CookieStore;
-import org.apache.http.cookie.Cookie;
 
 import java.awt.*;
 import java.net.URI;
-import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.function.Consumer;
@@ -141,22 +136,27 @@ public class FrameManagerImpl implements FrameManager {
 
     @Override
     public void openWebBrowser(String url) {
-        CookieStore cookieStore = HttpClient.getInstance().getCookieStore();
-        List<Cookie> cookies = cookieStore.getCookies();
-        JSONArray jsonArr = new JSONArray();
-        for (Cookie cookie : cookies) {
-            JSONObject obj = new JSONObject();
-            obj.put("domain", cookie.getDomain());
-            obj.put("key", cookie.getName());
-            obj.put("val", cookie.getValue());
-            jsonArr.add(obj);
-        }
+//        CookieStore cookieStore = HttpClient.getInstance().getCookieStore();
+//        List<Cookie> cookies = cookieStore.getCookies();
+//        JSONArray jsonArr = new JSONArray();
+//        for (Cookie cookie : cookies) {
+//            JSONObject obj = new JSONObject();
+//            obj.put("domain", cookie.getDomain());
+//            obj.put("key", cookie.getName());
+//            obj.put("val", cookie.getValue());
+//            jsonArr.add(obj);
+//        }
         HttpHost proxyHttpHost = WindowManager.getInstance().getPacScriptProxy(URI.create(url));
-        String agent = "";
-        if (Objects.nonNull(proxyHttpHost)) {
-            agent = proxyHttpHost.getHostName() + ":" + proxyHttpHost.getPort();
+//        String agent = "";
+//        if (Objects.nonNull(proxyHttpHost)) {
+//            agent = proxyHttpHost.getHostName() + ":" + proxyHttpHost.getPort();
+//        }
+        try {
+            BrowserController.url = url;
+            FrameManager.getInstance().runLater(() -> FrameManager.getInstance().openWindow(FXPageEnum.浏览器));
+        } catch (Exception e) {
+            log.error("打开浏览器发生异常 e={}", e.getMessage(), e);
         }
-//        EService.INSTANCE.openBrowser(url, agent, jsonArr.toJSONString());
     }
 
 

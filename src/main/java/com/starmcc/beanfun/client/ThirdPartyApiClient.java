@@ -1,7 +1,7 @@
 package com.starmcc.beanfun.client;
 
-import com.starmcc.beanfun.entity.client.ReqParams;
 import com.starmcc.beanfun.entity.client.QsHttpResponse;
+import com.starmcc.beanfun.entity.client.ReqParams;
 import com.starmcc.beanfun.utils.RegexUtils;
 import lombok.extern.slf4j.Slf4j;
 
@@ -32,7 +32,7 @@ public class ThirdPartyApiClient {
                 return BigDecimal.ZERO;
             }
             String html = qsHttpResponse.getContent();
-            List<List<String>> regex = RegexUtils.regex(RegexUtils.PTN_RATE_POINTS, html);
+            List<List<String>> regex = RegexUtils.regex(RegexUtils.Constant.COMMON_RATE_POINTS, html);
             String current = RegexUtils.getIndex(0, 1, regex);
             return new BigDecimal(current);
         } catch (Exception e) {
