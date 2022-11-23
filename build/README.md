@@ -2,9 +2,9 @@
 
 ## 1. 下载 JDK 环境
 
-下载`JDK1.8 32位`环境，注意必须是`32位`，将`JDK`中的`JRE`复制到`build/jre`目录中。
+下载`JDK1.8 64位`环境，将`JDK`中的`JRE`复制到`build/jre`目录中。
 
-[**JRE1.8 32位 Offline Installer**](https://www.oracle.com/java/technologies/downloads/#java8-windows)
+[**JRE1.8 64位 Offline Installer**](https://www.oracle.com/java/technologies/downloads/#java8-windows)
 
 ![image](./help/help.png)
 
@@ -12,7 +12,9 @@
 
 此为基础中的基础，不会的请合理运用搜索引擎查阅资料。
 
-执行`package`后，`Maven`将自动打包为`QsBeanfun.exe`。
+执行`package`后，`Maven`将自动使用`launch4j`打包为`QsBeanfun.exe`。
+
+> 您也可以使用`exe4j`自行打包，记得把`Maven`中的`launch4j`插件注释掉就可以啦。
 
 ## 3. Inno Setup 打包安装程序
 

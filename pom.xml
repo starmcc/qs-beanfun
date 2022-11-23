@@ -6,7 +6,7 @@
 
     <groupId>com.starmcc.beanfun</groupId>
     <artifactId>qs-beanfun</artifactId>
-    <version>4.0.8</version>
+    <version>4.1.0</version>
     <name>QsBeanfun</name>
 
     <properties>
@@ -126,7 +126,7 @@
                                 <bundledJre64Bit>false</bundledJre64Bit>
                                 <bundledJreAsFallback>false</bundledJreAsFallback>
                                 <jdkPreference>preferJre</jdkPreference>
-                                <runtimeBits>32</runtimeBits>
+                                <runtimeBits>64</runtimeBits>
                                 <path>./jre</path>
                                 <opts>
                                     <opt>-Dglass.win.minHiDPI=1</opt>
