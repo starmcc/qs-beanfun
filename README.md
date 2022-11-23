@@ -10,9 +10,9 @@
 
 **遵循MIT开源协议**，如遇到问题或 Bug 欢迎提交 Issues。
 
-Please forgive me for not writing this document in English
+Please forgive me for not writing this document in English.
 
-I don't have a lot of energy to do it
+I don't have a lot of energy to do it.
 
 ## 下载安装使用
 
@@ -22,11 +22,11 @@ I don't have a lot of energy to do it
 
 ---
 
-如果您是Java开发人员，拥有 **JRE1.8 x86(32bit)** 或 `JDK` 支持。
+如果您是Java开发人员，拥有 **JRE1.8 x64** 或 `JDK` 支持。
 
 可下载`QsBeanfun.exe`直接运行或自行编译运行`jar`即可。
 
-[JDK1.8 32位 Offline Installer](https://www.oracle.com/java/technologies/downloads/#java8-windows)
+[JDK1.8 64位 Offline Installer](https://www.oracle.com/java/technologies/downloads/#java8-windows)
 
 ---
 
