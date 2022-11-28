@@ -33,20 +33,41 @@ public class DataTools {
      * @return {@link String}
      */
     public static String getComputerUniqueId() {
-        String result = null;
-        try {
-            String cpu = runCmd(2, "wmic", "cpu", "get", "ProcessorId");
-            String hardDisk = runCmd(2, "wmic", "path", "win32_physicalmedia", "get", "serialnumber");
-            result = cpu + hardDisk;
-        } catch (Exception e) {
-            log.error("异常 e={}", e.getMessage(), e);
-        }
+        String result = getCpuId() + getHardDiskId();
         if (StringUtils.isBlank(result)) {
             return AES_DEFAULT_KEY;
         }
         return DigestUtils.md5Hex(result);
     }
 
+    /**
+     * 获取cpuId
+     *
+     * @return {@link String}
+     */
+    public static String getCpuId() {
+        try {
+            // wmic CPU get ProcessorID
+            return runCmd(2, "wmic", "CPU", "get", "ProcessorID");
+        } catch (Exception e) {
+            log.error("异常 e={}", e.getMessage(), e);
+        }
+        return "";
+    }
+
+    /**
+     * 获取硬盘id
+     *
+     * @return {@link String}
+     */
+    public static String getHardDiskId() {
+        try {
+            return runCmd(2, "wmic", "path", "win32_physicalmedia", "get", "serialnumber");
+        } catch (Exception e) {
+            log.error("异常 e={}", e.getMessage(), e);
+        }
+        return "";
+    }
 
     /**
      * 运行命令

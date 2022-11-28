@@ -16,6 +16,7 @@ import com.starmcc.beanfun.manager.FrameManager;
 import com.starmcc.beanfun.manager.ThreadPoolManager;
 import com.starmcc.beanfun.manager.WindowManager;
 import com.starmcc.beanfun.manager.impl.AdvancedTimerTask;
+import com.starmcc.beanfun.utils.DataTools;
 import com.starmcc.beanfun.utils.FileTools;
 import com.starmcc.beanfun.utils.RegexUtils;
 import javafx.beans.value.ObservableValue;
@@ -39,6 +40,7 @@ import java.math.BigDecimal;
 import java.net.URL;
 import java.text.MessageFormat;
 import java.text.SimpleDateFormat;
+import java.util.Base64;
 import java.util.Objects;
 import java.util.ResourceBundle;
 
@@ -107,6 +109,10 @@ public class MainController implements Initializable {
     private TextField textFieldRanShao;
     @FXML
     private TextField textFieldVideoPath;
+    @FXML
+    private Label labelRanshao;
+    @FXML
+    private Label labelLunhui;
     @FXML
     private ChoiceBox<Integer> choiceBoxVideoFps;
     @FXML
@@ -186,12 +192,6 @@ public class MainController implements Initializable {
         checkBoxCheckAppUpdate.setSelected(BooleanUtils.isTrue(QsConstant.config.getCheckAppUpdate()));
 
 
-        // 轮烧配置
-        Integer lunHuiKey = QsConstant.config.getLunHuiKey();
-        Integer ranShaoKey = QsConstant.config.getRanShaoKey();
-        textFieldLunHui.setText(KeyEvent.getKeyText(lunHuiKey));
-        textFieldRanShao.setText(KeyEvent.getKeyText(ranShaoKey));
-
         // 录像配置
         ConfigModel.RecordVideo recordVideo = QsConstant.config.getRecordVideo();
         ObservableList<Integer> fpsItems = FXCollections.observableArrayList();
@@ -217,6 +217,28 @@ public class MainController implements Initializable {
             radioButtonScreen.setSelected(true);
         }
         textFieldFFmpegPath.setText(recordVideo.getFfmpegPath());
+        // vip功能初始化
+        this.vipFeatureInit();
+    }
+
+    /**
+     * vip功能初始化
+     */
+    private void vipFeatureInit() {
+        String data = QsConstant.config.getVipSecrect();
+        // http://www.jsons.cn/base64/   wmic CPU get ProcessorID
+        String secrect = Base64.getEncoder().encodeToString(DataTools.getCpuId().getBytes());
+        boolean start = StringUtils.isNotBlank(data) && StringUtils.equals(secrect, data);
+        checkMenuItemAutoLunShao.setVisible(start);
+        labelLunhui.setVisible(start);
+        labelRanshao.setVisible(start);
+        textFieldLunHui.setVisible(start);
+        textFieldRanShao.setVisible(start);
+        if (start) {
+            // 轮烧配置
+            textFieldLunHui.setText(KeyEvent.getKeyText(QsConstant.config.getLunHuiKey()));
+            textFieldRanShao.setText(KeyEvent.getKeyText(QsConstant.config.getRanShaoKey()));
+        }
     }
 
 

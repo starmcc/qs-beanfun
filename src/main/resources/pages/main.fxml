@@ -211,9 +211,9 @@
                                             </font>
                                         </Button>
                                         <Separator layoutX="2.0" layoutY="94.0" prefHeight="2.0" prefWidth="400.0" />
+                                        <Label fx:id="labelLunhui" layoutX="165.0" layoutY="210.0" text="轮回热键" />
                                         <TextField fx:id="textFieldLunHui" editable="false" layoutX="218.0" layoutY="206.0" prefHeight="23.0" prefWidth="51.0" />
-                                        <Label layoutX="165.0" layoutY="210.0" text="轮回热键" />
-                                        <Label layoutX="275.0" layoutY="210.0" text="燃烧热键" />
+                                        <Label fx:id="labelRanshao" layoutX="275.0" layoutY="210.0" text="燃烧热键" />
                                         <TextField fx:id="textFieldRanShao" editable="false" layoutX="328.0" layoutY="206.0" prefHeight="23.0" prefWidth="51.0" />
                                         <CheckBox fx:id="checkBoxKillPlayStartWindow" layoutX="250.0" layoutY="111.0" mnemonicParsing="false" prefHeight="21.0" prefWidth="124.0" text="关闭Play窗口">
                                             <font>

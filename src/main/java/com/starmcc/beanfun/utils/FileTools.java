@@ -24,6 +24,28 @@ import java.util.zip.ZipInputStream;
 @Slf4j
 public class FileTools {
 
+    public synchronized static String readFile(File file) {
+        Reader reader = null;
+        try {
+            if (!file.exists()) {
+                return "";
+            }
+            FileReader fileReader = new FileReader(file);
+            reader = new InputStreamReader(new FileInputStream(file), "utf-8");
+            int ch = 0;
+            StringBuffer sb = new StringBuffer();
+            while ((ch = reader.read()) != -1) {
+                sb.append((char) ch);
+            }
+            return sb.toString();
+        } catch (IOException e) {
+            log.error("文件读取异常 e={}", e.getMessage(), e);
+        } finally {
+            SystemTools.close(reader);
+        }
+        return "";
+    }
+
     /**
      * 解压缩资源文件
      *
@@ -131,32 +153,22 @@ public class FileTools {
      * @return {@link String}
      */
     public synchronized static ConfigModel readConfig() {
-        ConfigModel configModel = new ConfigModel();
-        Reader reader = null;
+        ConfigModel configModel = null;
         try {
-            File jsonFile = new File(QsConstant.PATH_APP_CONFIG);
-            if (!jsonFile.exists()) {
-                FileTools.saveConfig(configModel);
-                return configModel;
+            File file = new File(QsConstant.PATH_APP_CONFIG);
+            String fileStr = readFile(file);
+            if (StringUtils.isNotBlank(fileStr)) {
+                configModel = JSON.parseObject(fileStr, new TypeReference<ConfigModel>() {
+                });
             }
-            FileReader fileReader = new FileReader(jsonFile);
-            reader = new InputStreamReader(new FileInputStream(jsonFile), "utf-8");
-            int ch = 0;
-            StringBuffer sb = new StringBuffer();
-            while ((ch = reader.read()) != -1) {
-                sb.append((char) ch);
-            }
-            configModel = JSON.parseObject(sb.toString(), new TypeReference<ConfigModel>() {
-            });
+        } catch (Exception e) {
+            log.error("文件读取异常 e={}", e.getMessage(), e);
+        } finally {
             if (Objects.isNull(configModel)) {
                 configModel = new ConfigModel();
                 FileTools.saveConfig(configModel);
             }
             dncodeAccount(configModel);
-        } catch (IOException e) {
-            log.error("文件读取异常 e={}", e.getMessage(), e);
-        } finally {
-            SystemTools.close(reader);
         }
         return configModel;
     }

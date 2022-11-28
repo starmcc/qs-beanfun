@@ -33,6 +33,7 @@ public class ConfigModel implements Serializable {
     private RecordVideo recordVideo;
     private List<ActPwd> actPwds;
     private ProxyConfig proxyConfig;
+    private String vipSecrect;
 
     public ConfigModel() {
         // 默认配置
@@ -61,6 +62,8 @@ public class ConfigModel implements Serializable {
         this.proxyConfig = new ProxyConfig();
         // 检查应用更新
         this.checkAppUpdate = true;
+        // vip密钥
+        this.vipSecrect = "";
     }
 
 
