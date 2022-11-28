@@ -87,12 +87,17 @@ PS: 需更换JRE环境64位
 - [LR区域模拟元件支持](https://github.com/InWILL/Locale_Remulator) 模拟繁体区域启动游戏
 - JxBrowser 第三方浏览器插件 [来源](https://blog.csdn.net/weixin_43852094/article/details/121157752) [官网](https://jxbrowser-support.teamdev.com/)
 
-## 编译
+## 开发/编译
 
-1. maven 编译 exe
-2. inno Setup 打包 qs-beanfun-install.exe 安装包(将Jre一并打包)
+1. 导入项目后，需要手动将`lib`目录下的第三方依赖打入本地仓库，否则报红。
+```
+mvn install:install-file -Dfile=./lib/jxbrowser-6.21.jar -DgroupId=com.teamdev.jxbrowser -DartifactId=jxbrowser -Dversion=6.21 -Dpackaging=jar
+mvn install:install-file -Dfile=./lib/jxbrowser-win64-6.21.jar -DgroupId=com.teamdev.jxbrowser -DartifactId=jxbrowser-win64 -Dversion=6.21 -Dpackaging=jar
+mvn install:install-file -Dfile=./lib/license-6.21.jar -DgroupId=com.teamdev.jxbrowser -DartifactId=license -Dversion=6.21 -Dpackaging=jar
+```
+请直接运行上述命令即可。
 
-[详见编译教程](./build/README.md)
+[编译详细教程](./build/README.md)
 
 ## 安全
 

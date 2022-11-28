@@ -66,6 +66,21 @@
             <artifactId>jna-platform-jpms</artifactId>
             <version>${version.jna-platform-jpms}</version>
         </dependency>
+        <dependency>
+            <groupId>com.teamdev.jxbrowser</groupId>
+            <artifactId>jxbrowser</artifactId>
+            <version>6.21</version>
+        </dependency>
+        <dependency>
+            <groupId>com.teamdev.jxbrowser</groupId>
+            <artifactId>jxbrowser-win64</artifactId>
+            <version>6.21</version>
+        </dependency>
+        <dependency>
+            <groupId>com.teamdev.jxbrowser</groupId>
+            <artifactId>license</artifactId>
+            <version>6.21</version>
+        </dependency>
     </dependencies>
     <build>
         <finalName>${artifactId}</finalName>
