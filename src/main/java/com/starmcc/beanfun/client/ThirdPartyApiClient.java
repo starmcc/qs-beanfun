@@ -4,6 +4,7 @@ import com.starmcc.beanfun.entity.client.QsHttpResponse;
 import com.starmcc.beanfun.entity.client.ReqParams;
 import com.starmcc.beanfun.utils.RegexUtils;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.StringUtils;
 
 import java.math.BigDecimal;
 import java.util.List;
@@ -34,7 +35,7 @@ public class ThirdPartyApiClient {
             String html = qsHttpResponse.getContent();
             List<List<String>> regex = RegexUtils.regex(RegexUtils.Constant.COMMON_RATE_POINTS, html);
             String current = RegexUtils.getIndex(0, 1, regex);
-            return new BigDecimal(current);
+            return StringUtils.isNotBlank(current) ? new BigDecimal(current) : BigDecimal.ZERO;
         } catch (Exception e) {
             log.error("获取实时汇率异常 e={}", e.getMessage(), e);
             return BigDecimal.ZERO;

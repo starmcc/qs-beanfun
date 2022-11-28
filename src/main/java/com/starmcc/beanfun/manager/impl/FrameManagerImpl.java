@@ -2,11 +2,14 @@ package com.starmcc.beanfun.manager.impl;
 
 import com.starmcc.beanfun.constant.FXPageEnum;
 import com.starmcc.beanfun.constant.QsConstant;
-import com.starmcc.beanfun.controller.BrowserController;
 import com.starmcc.beanfun.entity.model.JFXStage;
 import com.starmcc.beanfun.entity.model.QsTray;
 import com.starmcc.beanfun.entity.thread.ThrowRunnable;
-import com.starmcc.beanfun.manager.*;
+import com.starmcc.beanfun.manager.AdvancedTimerMamager;
+import com.starmcc.beanfun.manager.FrameManager;
+import com.starmcc.beanfun.manager.RecordVideoManager;
+import com.starmcc.beanfun.manager.ThreadPoolManager;
+import com.starmcc.beanfun.utils.JxBrowser;
 import javafx.application.Platform;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
@@ -16,7 +19,6 @@ import javafx.scene.control.TextInputDialog;
 import javafx.scene.image.Image;
 import javafx.stage.Stage;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.http.HttpHost;
 
 import java.awt.*;
 import java.net.URI;
@@ -136,24 +138,8 @@ public class FrameManagerImpl implements FrameManager {
 
     @Override
     public void openWebBrowser(String url) {
-//        CookieStore cookieStore = HttpClient.getInstance().getCookieStore();
-//        List<Cookie> cookies = cookieStore.getCookies();
-//        JSONArray jsonArr = new JSONArray();
-//        for (Cookie cookie : cookies) {
-//            JSONObject obj = new JSONObject();
-//            obj.put("domain", cookie.getDomain());
-//            obj.put("key", cookie.getName());
-//            obj.put("val", cookie.getValue());
-//            jsonArr.add(obj);
-//        }
-        HttpHost proxyHttpHost = WindowManager.getInstance().getPacScriptProxy(URI.create(url));
-//        String agent = "";
-//        if (Objects.nonNull(proxyHttpHost)) {
-//            agent = proxyHttpHost.getHostName() + ":" + proxyHttpHost.getPort();
-//        }
         try {
-            BrowserController.url = url;
-            FrameManager.getInstance().runLater(() -> FrameManager.getInstance().openWindow(FXPageEnum.浏览器));
+            JxBrowser.getInstance().open(url);
         } catch (Exception e) {
             log.error("打开浏览器发生异常 e={}", e.getMessage(), e);
         }

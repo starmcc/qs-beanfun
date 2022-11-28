@@ -21,7 +21,7 @@ import java.net.URL;
 import java.util.*;
 
 /**
- * 浏览器控制器
+ * 浏览器控制器 TODO 已废弃，现使用JxBrowser浏览器
  *
  * @author starmcc
  * @date 2022/11/24
@@ -50,6 +50,7 @@ public class BrowserController implements Initializable {
         }, false);
     }
 
+
     private void initEvent() {
         textUrl.setOnKeyPressed(event -> {
             if (event.getCode() != KeyCode.ENTER) {
@@ -62,8 +63,7 @@ public class BrowserController implements Initializable {
                 webEngine.load(url);
             });
         });
-        browser.getEngine().locationProperty().addListener((observable, oldValue, newValue) ->
-                FrameManager.getInstance().runLater(() -> textUrl.setText(newValue)));
+        browser.getEngine().locationProperty().addListener((observable, oldValue, newValue) -> FrameManager.getInstance().runLater(() -> textUrl.setText(newValue)));
     }
 
     /**

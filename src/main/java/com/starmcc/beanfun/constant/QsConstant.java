@@ -7,11 +7,8 @@ import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 
 import java.awt.*;
-import java.io.File;
 import java.io.IOException;
-import java.io.InputStream;
 import java.math.BigDecimal;
-import java.nio.file.Files;
 
 
 /**
@@ -46,9 +43,9 @@ public class QsConstant {
      */
     @Getter
     public static enum PluginEnum {
-        LOCALE_REMULATOR(PATH_APP_PLUGINS + "Locale_Remulator", "lib/Locale_Remulator.zip", "LRProc.exe"),
-        MAPLESTORY_EMULATOR(PATH_APP_PLUGINS + "MapleStoryEmulator", "lib/MapleStoryEmulator.zip", "MapleStoryEmulator.exe"),
-        WAR_ALLIANCE_HTML(PATH_APP_PLUGINS + "WarAllianceHtml", "lib/WarAllianceHtml.zip", "index.htm"),
+        LOCALE_REMULATOR(PATH_APP_PLUGINS + "Locale_Remulator", "bin/Locale_Remulator.zip", "LRProc.exe"),
+        MAPLESTORY_EMULATOR(PATH_APP_PLUGINS + "MapleStoryEmulator", "bin/MapleStoryEmulator.zip", "MapleStoryEmulator.exe"),
+        WAR_ALLIANCE_HTML(PATH_APP_PLUGINS + "WarAllianceHtml", "bin/WarAllianceHtml.zip", "index.htm"),
 
         ;
 
