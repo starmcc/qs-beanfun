@@ -10,6 +10,7 @@ import com.teamdev.jxbrowser.chromium.ba;
 import com.teamdev.jxbrowser.chromium.javafx.BrowserView;
 import javafx.scene.Scene;
 import javafx.scene.control.TextField;
+import javafx.scene.image.Image;
 import javafx.scene.input.KeyCode;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
@@ -96,6 +97,7 @@ public class JxBrowser {
         stage.setTitle(DEFAULT_TITLE);
         stage.setWidth(DEFAULT_WIDTH);
         stage.setHeight(DEFAULT_HEIGHT);
+        stage.getIcons().add(new Image("static/images/ico.png"));
         stage.setOnCloseRequest(event -> {
             // 使用线程异步关闭引擎
             ThreadPoolManager.execute(() -> browser.dispose());
