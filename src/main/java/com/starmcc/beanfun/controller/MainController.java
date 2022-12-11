@@ -763,7 +763,7 @@ public class MainController implements Initializable {
 
         if (!QsConstant.beanfunModel.isCertStatus()) {
             // 需要进阶认证
-            FrameManager.getInstance().message("请前往用户中心 -> 会员中心进行进阶认证!\n" + "做完进阶认证后请重新退出重新登录!", Alert.AlertType.INFORMATION);
+            FrameManager.getInstance().message("请前往用户中心 -> 会员中心进行进阶认证!\n" + "做完进阶认证后请退出登录器重新登录!", Alert.AlertType.INFORMATION);
         } else if (QsConstant.beanfunModel.isNewAccount()) {
             // 需要创建账号
             FrameManager.getInstance().message("新账号请点击创建账号!", Alert.AlertType.INFORMATION);
