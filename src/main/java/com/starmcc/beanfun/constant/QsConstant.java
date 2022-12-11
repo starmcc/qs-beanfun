@@ -20,7 +20,7 @@ import java.math.BigDecimal;
 @Slf4j
 public class QsConstant {
     public static boolean DEV = false;
-    public static final String APP_VERSION = "4.1.1";
+    public static final String APP_VERSION = "4.1.2";
     public static final String PATH_APP = System.getProperties().getProperty("user.dir");
     public static final String PATH_APP_PLUGINS = PATH_APP + "\\qs-data\\";
     public static final String PATH_APP_CONFIG = PATH_APP_PLUGINS + "config.json";

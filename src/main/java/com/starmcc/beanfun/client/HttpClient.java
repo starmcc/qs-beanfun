@@ -5,9 +5,7 @@ import com.starmcc.beanfun.entity.client.QsHttpResponse;
 import com.starmcc.beanfun.entity.client.ReqParams;
 import org.apache.http.client.CookieStore;
 
-import java.io.File;
 import java.net.URI;
-import java.net.URL;
 import java.util.Map;
 import java.util.Objects;
 
@@ -96,54 +94,4 @@ public abstract class HttpClient {
      */
     public abstract QsHttpResponse post(String url, ReqParams params) throws Exception;
 
-
-    /**
-     * 下载文件
-     *
-     * @param url      url
-     * @param saveFile 保存文件
-     * @param process  下载回调函数
-     */
-    public abstract void downloadFile(URL url, File saveFile, HttpClient.Process process);
-
-    @FunctionalInterface
-    public interface Process {
-
-        public static enum State {
-            请求状态码异常(-3, false),
-            连接超时(-2, false),
-            未知异常(-1, false),
-            准备开始(0, true),
-            正在连接(1, true),
-            创建文件(2, true),
-            下载中(3, true),
-            下载完毕(4, true),
-            ;
-            private final int state;
-            private final boolean normal;
-
-            State(int state, boolean normal) {
-                this.state = state;
-                this.normal = normal;
-            }
-
-            public int getState() {
-                return state;
-            }
-
-            public boolean isNormal() {
-                return normal;
-            }
-        }
-
-        /**
-         * 调用
-         *
-         * @param state   状态
-         * @param file    文件
-         * @param process 过程
-         * @param e       e
-         */
-        void call(HttpClient.Process.State state, File file, Integer process, Exception e);
-    }
 }

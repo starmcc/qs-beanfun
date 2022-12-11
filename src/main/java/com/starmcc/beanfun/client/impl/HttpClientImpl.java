@@ -12,6 +12,7 @@ import org.apache.http.Header;
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpHost;
 import org.apache.http.client.CookieStore;
+import org.apache.http.client.config.RequestConfig;
 import org.apache.http.client.entity.UrlEncodedFormEntity;
 import org.apache.http.client.methods.CloseableHttpResponse;
 import org.apache.http.client.methods.HttpGet;
@@ -28,10 +29,8 @@ import org.apache.http.message.BasicHeader;
 import org.apache.http.message.BasicNameValuePair;
 import org.apache.http.util.EntityUtils;
 
-import java.io.File;
-import java.io.InputStream;
-import java.io.RandomAccessFile;
-import java.net.*;
+import java.net.URI;
+import java.net.URLEncoder;
 import java.nio.charset.Charset;
 import java.util.*;
 
@@ -152,85 +151,6 @@ public class HttpClientImpl extends HttpClient {
         });
     }
 
-    @Override
-    public void downloadFile(URL url, File saveFile, HttpClient.Process process) {
-        process.call(HttpClient.Process.State.准备开始, null, 0, null);
-        InputStream inputStream = null;
-        RandomAccessFile randomAccessFile = null;
-        HttpURLConnection urlConnection = null;
-        int responseCode = 0;
-        int unitProgress = 0;
-
-        try {
-            process.call(HttpClient.Process.State.正在连接, null, unitProgress, null);
-            HttpHost httpHost = WindowManager.getInstance().getPacScriptProxy(url.toURI());
-            if (Objects.nonNull(httpHost)) {
-                Proxy proxy = new Proxy(Proxy.Type.HTTP, new InetSocketAddress(httpHost.getHostName(), httpHost.getPort()));
-                urlConnection = (HttpURLConnection) url.openConnection(proxy);
-            } else {
-                urlConnection = (HttpURLConnection) url.openConnection();
-            }
-            urlConnection.setRequestMethod("GET");
-            urlConnection.setConnectTimeout(10 * 1000);
-            responseCode = urlConnection.getResponseCode();
-        } catch (Exception e) {
-            process.call(HttpClient.Process.State.连接超时, null, unitProgress, e);
-            return;
-        }
-
-        try {
-            boolean is = responseCode >= 200 && responseCode < 300;
-            if (!is) {
-                process.call(HttpClient.Process.State.请求状态码异常, null, unitProgress, null);
-                return;
-            }
-            process.call(HttpClient.Process.State.创建文件, null, unitProgress, null);
-            inputStream = urlConnection.getInputStream();
-            int len = 0;
-            byte[] data = new byte[4096];
-            //用于保存当前进度（具体进度）
-            int progres = 0;
-            //获取文件
-            int maxProgres = urlConnection.getContentLength();
-            if (!saveFile.getParentFile().exists()) {
-                saveFile.getParentFile().mkdir();
-            }
-            if (saveFile.exists()) {
-                saveFile.delete();
-            }
-            saveFile.createNewFile();
-            randomAccessFile = new RandomAccessFile(saveFile, "rwd");
-            //设置文件大小
-            randomAccessFile.setLength(maxProgres);
-            //将文件大小分成100分，每一分的大小为unit
-            int unit = maxProgres / 100;
-            //用于保存当前进度(1~100%)
-            while (-1 != (len = inputStream.read(data))) {
-                randomAccessFile.write(data, 0, len);
-                //保存当前具体进度
-                progres += len;
-                //计算当前百分比进度
-                int temp = progres / unit;
-                //如果下载过程出现百分比变化
-                if (temp >= 1 && temp > unitProgress) {
-                    //保存当前百分比
-                    unitProgress = temp;
-                    process.call(HttpClient.Process.State.下载中, null, unitProgress, null);
-                }
-            }
-            inputStream.close();
-            process.call(HttpClient.Process.State.下载完毕, saveFile, unitProgress, null);
-        } catch (Exception e) {
-            process.call(HttpClient.Process.State.未知异常, null, unitProgress, e);
-        } finally {
-            try {
-                SystemTools.closeThrow(inputStream, randomAccessFile);
-            } catch (Exception e) {
-                process.call(HttpClient.Process.State.未知异常, null, unitProgress, e);
-            }
-        }
-    }
-
     /**
      * 请求
      *
@@ -253,6 +173,12 @@ public class HttpClientImpl extends HttpClient {
         httpClientBuilder.setRedirectStrategy(new LaxRedirectStrategy());
         httpClientBuilder.setDefaultCookieStore(COOKIE_STORE);
         httpClientBuilder.setUserAgent(USER_AGENT);
+        httpClientBuilder.setDefaultRequestConfig(RequestConfig.custom()
+                .setConnectionRequestTimeout(30 * 1000)
+                .setConnectTimeout(30 * 1000)
+                .setSocketTimeout(30 * 1000)
+                .build()
+        );
         // 代理设置
         HttpHost proxy = WindowManager.getInstance().getPacScriptProxy(httpUriRequest.getURI());
         httpClientBuilder.setProxy(proxy);

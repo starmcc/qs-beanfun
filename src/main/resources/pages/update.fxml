@@ -13,10 +13,11 @@
             <Font size="14.0" />
          </font></TextArea>
         <ProgressBar fx:id="progressBar" layoutY="210.0" prefHeight="50.0" prefWidth="330.0" progress="0.0" />
-      <Label fx:id="labelProcess" alignment="CENTER" layoutX="146.0" layoutY="223.0" style="-fx-effect: dropshadow(three-pass-box, #72b9da, 10.0,0, 0, 0);" text="10%" textAlignment="CENTER">
+      <Label fx:id="labelProcess" alignment="CENTER" layoutX="14.0" layoutY="223.0" style="-fx-effect: dropshadow(three-pass-box, #72b9da, 10.0,0, 0, 0);" text="0%" textAlignment="CENTER">
          <font>
             <Font name="System Bold" size="18.0" />
          </font>
       </Label>
+      <Label fx:id="labelSpeed" alignment="CENTER" layoutX="139.0" layoutY="228.0" style="-fx-effect: dropshadow(three-pass-box, #72b9da, 10.0,0, 0, 0);" text="100 KB/s" textAlignment="CENTER" />
     </children>
 </AnchorPane>

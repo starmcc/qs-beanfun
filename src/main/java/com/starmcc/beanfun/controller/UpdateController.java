@@ -1,6 +1,7 @@
 package com.starmcc.beanfun.controller;
 
-import com.starmcc.beanfun.client.HttpClient;
+import com.starmcc.beanfun.client.DownloadClient;
+import com.starmcc.beanfun.constant.FXPageEnum;
 import com.starmcc.beanfun.constant.QsConstant;
 import com.starmcc.beanfun.entity.client.UpdateModel;
 import com.starmcc.beanfun.manager.FrameManager;
@@ -35,16 +36,19 @@ public class UpdateController implements Initializable {
     private ProgressBar progressBar;
     @FXML
     private Label labelProcess;
+    @FXML
+    private Label labelSpeed;
 
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
         textAreaContent.setText(model.getContent());
         labelProcess.setText("0%");
+        labelSpeed.setText("");
         try {
             this.download();
         } catch (Exception e) {
-            throw new RuntimeException(e);
+            log.error("Runtime error e={}", e.getMessage(), e);
         }
     }
 
@@ -56,21 +60,36 @@ public class UpdateController implements Initializable {
     private void download() throws Exception {
         String fileName = QsConstant.PATH_APP + "\\" + QsConstant.APP_NAME + ".exe.tmp";
         ThreadPoolManager.execute(() -> {
-            HttpClient.getInstance().downloadFile(new URL(model.getUrl()), new File(fileName), (state, file, process, e) -> {
+            DownloadClient.getInstance().execute(new URL(model.getUrl()), new File(fileName), (state, file, process, speed, e) -> {
                 if (!state.isNormal()) {
                     FrameManager.getInstance().runLater(() -> {
                         FrameManager.getInstance().message("更新失败-" + state.toString(), Alert.AlertType.WARNING);
                         if (Objects.nonNull(e)) {
                             log.error("更新失败 e={}", e.getMessage(), e);
                         }
+                        FrameManager.getInstance().closeWindow(FXPageEnum.更新页);
                     });
                     return;
                 }
-                progressBar.setProgress(process / 100D);
-                FrameManager.getInstance().runLater(() -> labelProcess.setText(process + "%"));
-                if (state != HttpClient.Process.State.下载完毕) {
+                if (state == DownloadClient.Process.State.下载中) {
+                    progressBar.setProgress(process / 100D);
+                    FrameManager.getInstance().runLater(() -> labelProcess.setText(process + "%"));
+                } else if (state == DownloadClient.Process.State.速度回显) {
+                    FrameManager.getInstance().runLater(() -> {
+                        String speedTxt = "";
+                        if (speed >= 1024) {
+                            speedTxt = (speed / 1024) + "MB/s";
+                        } else {
+                            speedTxt = speed + "KB/s";
+                        }
+                        labelSpeed.setText(speedTxt);
+                    });
+                }
+
+                if (state != DownloadClient.Process.State.下载完毕) {
                     return;
                 }
+
                 this.downloadComplete(file);
                 FrameManager.getInstance().exit();
             });

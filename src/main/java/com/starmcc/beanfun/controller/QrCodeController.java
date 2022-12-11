@@ -1,16 +1,16 @@
 package com.starmcc.beanfun.controller;
 
-import com.starmcc.beanfun.client.HttpClient;
+import com.starmcc.beanfun.client.DownloadClient;
 import com.starmcc.beanfun.client.QrCodeClient;
 import com.starmcc.beanfun.constant.FXPageEnum;
 import com.starmcc.beanfun.constant.QsConstant;
 import com.starmcc.beanfun.entity.client.BeanfunModel;
 import com.starmcc.beanfun.entity.client.BeanfunQrCodeResult;
 import com.starmcc.beanfun.entity.client.BeanfunStringResult;
-import com.starmcc.beanfun.manager.ThreadPoolManager;
 import com.starmcc.beanfun.manager.AdvancedTimerMamager;
-import com.starmcc.beanfun.manager.impl.AdvancedTimerTask;
 import com.starmcc.beanfun.manager.FrameManager;
+import com.starmcc.beanfun.manager.ThreadPoolManager;
+import com.starmcc.beanfun.manager.impl.AdvancedTimerTask;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.Label;
@@ -87,11 +87,11 @@ public class QrCodeController implements Initializable {
             ThreadPoolManager.execute(this::loadQrCode, false);
             return;
         }
-        HttpClient.getInstance().downloadFile(
+        DownloadClient.getInstance().execute(
                 new URL(beanfunQrCodeResult.getQrImageUrl()),
                 new File(QsConstant.PATH_APP_PLUGINS + "onlineQrCode.jpg"),
-                (state, file, process, e) -> {
-                    if (state == HttpClient.Process.State.下载完毕) {
+                (state, file, process, speed, e) -> {
+                    if (state == DownloadClient.Process.State.下载完毕) {
                         if (Objects.nonNull(file)) {
                             this.startScanQrCode(file);
                             return;
