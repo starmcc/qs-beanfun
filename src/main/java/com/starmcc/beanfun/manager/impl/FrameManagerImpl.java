@@ -138,8 +138,13 @@ public class FrameManagerImpl implements FrameManager {
 
     @Override
     public void openWebBrowser(String url) {
+        this.openWebBrowser(url, true);
+    }
+
+    @Override
+    public void openWebBrowser(String url, boolean newWindow) {
         try {
-            FrameManager.getInstance().runLater(() -> JxBrowser.getInstance().open(url));
+            FrameManager.getInstance().runLater(() -> JxBrowser.getInstance().open(url, newWindow));
         } catch (Exception e) {
             log.error("打开浏览器发生异常 e={}", e.getMessage(), e);
         }

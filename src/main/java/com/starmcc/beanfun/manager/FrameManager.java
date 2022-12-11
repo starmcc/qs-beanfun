@@ -66,11 +66,19 @@ public interface FrameManager {
     void openWebUrl(String url);
 
     /**
-     * 打开内置网页浏览器(Miniblink)
+     * 打开内置网页浏览器
      *
      * @param url url
      */
     void openWebBrowser(String url);
+
+    /**
+     * 打开内置网页浏览器
+     *
+     * @param url       url
+     * @param newWindow 是否允许新窗口打开
+     */
+    void openWebBrowser(String url, boolean newWindow);
 
     /**
      * 退出App

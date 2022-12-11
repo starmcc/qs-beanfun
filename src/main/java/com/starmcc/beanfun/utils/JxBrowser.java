@@ -38,8 +38,8 @@ import java.util.Properties;
 public class JxBrowser {
 
     private final static String DEFAULT_TITLE = "QsBrowser";
-    private final static int DEFAULT_WIDTH = 800;
-    private final static int DEFAULT_HEIGHT = 700;
+    private final static int DEFAULT_WIDTH = 850;
+    private final static int DEFAULT_HEIGHT = 600;
 
     static {
         try {
@@ -73,9 +73,10 @@ public class JxBrowser {
     /**
      * 打开浏览器
      *
-     * @param url url
+     * @param url       地址
+     * @param newWindow 是否打开新窗口
      */
-    public void open(String url) {
+    public void open(String url, boolean newWindow) {
         // 开始构建javafx窗体
         Stage stage = new Stage();
         Browser browser = new Browser();
@@ -116,7 +117,9 @@ public class JxBrowser {
             textUrl.setText(titleEvent.getBrowser().getURL());
         }));
         // 设置新窗口只在本窗口中打开
-        browser.setPopupHandler(popupParams -> (b2, rectangle) -> browser.loadURL(popupParams.getURL()));
+        if (newWindow) {
+            browser.setPopupHandler(popupParams -> (b2, rectangle) -> browser.loadURL(popupParams.getURL()));
+        }
         // 加载地址
         browser.loadURL(url);
     }

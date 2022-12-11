@@ -154,7 +154,7 @@ public class LoginController implements Initializable {
     @FXML
     public void registerAction() throws Exception {
         String jumpUrl = BeanfunClient.run().getWebUrlRegister();
-        FrameManager.getInstance().openWebBrowser(jumpUrl);
+        FrameManager.getInstance().openWebBrowser(jumpUrl, false);
     }
 
 
