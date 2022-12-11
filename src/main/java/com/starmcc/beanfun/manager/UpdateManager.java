@@ -66,18 +66,11 @@ public class UpdateManager {
         // 有新版本
         FrameManager.getInstance().runLater(() -> {
             String msg = model.getContent() + "\n是否立刻更新?";
-            if (!FrameManager.getInstance().dialogConfirm("有新版本-" + model.getVersion(), msg)) {
+            if (!FrameManager.getInstance().dialogConfirm("有新版本", msg)) {
                 return;
             }
             UpdateController.model = model;
             FrameManager.getInstance().openWindow(FXPageEnum.更新页);
-            // 结束其他窗口
-//            for (Map.Entry<String, JFXStage> entry : QsConstant.JFX_STAGE_DATA.entrySet()) {
-//                if (StringUtils.equals(entry.getKey(), FXPageEnum.更新页.getFileName())) {
-//                    continue;
-//                }
-//                entry.getValue().getStage().close();
-//            }
         });
     }
 

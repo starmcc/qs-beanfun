@@ -35,6 +35,9 @@ public class ThirdPartyApiClient {
             String html = qsHttpResponse.getContent();
             List<List<String>> regex = RegexUtils.regex(RegexUtils.Constant.COMMON_RATE_POINTS, html);
             String current = RegexUtils.getIndex(0, 1, regex);
+            if (StringUtils.isBlank(current)){
+                return BigDecimal.ZERO;
+            }
             return StringUtils.isNotBlank(current) ? new BigDecimal(current) : BigDecimal.ZERO;
         } catch (Exception e) {
             log.error("获取实时汇率异常 e={}", e.getMessage(), e);

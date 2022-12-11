@@ -16,6 +16,8 @@ import javafx.scene.control.TextArea;
 import lombok.extern.slf4j.Slf4j;
 
 import java.io.File;
+import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.net.URL;
 import java.util.Objects;
 import java.util.ResourceBundle;
@@ -44,7 +46,7 @@ public class UpdateController implements Initializable {
     public void initialize(URL location, ResourceBundle resources) {
         textAreaContent.setText(model.getContent());
         labelProcess.setText("0%");
-        labelSpeed.setText("");
+        labelSpeed.setText("-KB/s");
         try {
             this.download();
         } catch (Exception e) {
@@ -77,8 +79,9 @@ public class UpdateController implements Initializable {
                 } else if (state == DownloadClient.Process.State.速度回显) {
                     FrameManager.getInstance().runLater(() -> {
                         String speedTxt = "";
-                        if (speed >= 1024) {
-                            speedTxt = (speed / 1024) + "MB/s";
+                        BigDecimal b1024 = new BigDecimal(1024);
+                        if (speed.compareTo(b1024) >= 0) {
+                            speedTxt = speed.divide(b1024, 2, RoundingMode.HALF_UP) + "MB/s";
                         } else {
                             speedTxt = speed + "KB/s";
                         }

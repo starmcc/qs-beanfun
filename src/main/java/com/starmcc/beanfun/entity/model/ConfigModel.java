@@ -61,7 +61,7 @@ public class ConfigModel implements Serializable {
         // 代理配置
         this.proxyConfig = new ProxyConfig();
         // 检查应用更新
-        this.checkAppUpdate = true;
+        this.checkAppUpdate = false;
         // vip密钥
         this.vipSecrect = "";
     }

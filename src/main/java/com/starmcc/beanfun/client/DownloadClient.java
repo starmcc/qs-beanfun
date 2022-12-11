@@ -4,6 +4,7 @@ import com.starmcc.beanfun.client.impl.DownloadClientImpl;
 import com.starmcc.beanfun.client.impl.HttpClientImpl;
 
 import java.io.File;
+import java.math.BigDecimal;
 import java.net.URL;
 import java.util.Objects;
 
@@ -77,7 +78,7 @@ public abstract class DownloadClient {
          * @param speed   速度
          * @param e       e
          */
-        void call(Process.State state, File file, Integer process, Long speed, Exception e);
+        void call(Process.State state, File file, Integer process, BigDecimal speed, Exception e);
 
     }
 }

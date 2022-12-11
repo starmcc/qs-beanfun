@@ -19,6 +19,8 @@ import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.client.methods.HttpUriRequest;
 import org.apache.http.client.protocol.HttpClientContext;
+import org.apache.http.conn.ssl.NoopHostnameVerifier;
+import org.apache.http.conn.ssl.SSLConnectionSocketFactory;
 import org.apache.http.cookie.Cookie;
 import org.apache.http.impl.client.BasicCookieStore;
 import org.apache.http.impl.client.CloseableHttpClient;
@@ -27,11 +29,17 @@ import org.apache.http.impl.client.LaxRedirectStrategy;
 import org.apache.http.impl.cookie.BasicClientCookie;
 import org.apache.http.message.BasicHeader;
 import org.apache.http.message.BasicNameValuePair;
+import org.apache.http.ssl.SSLContextBuilder;
+import org.apache.http.ssl.TrustStrategy;
 import org.apache.http.util.EntityUtils;
 
+import javax.net.ssl.HostnameVerifier;
+import javax.net.ssl.SSLContext;
 import java.net.URI;
 import java.net.URLEncoder;
 import java.nio.charset.Charset;
+import java.security.cert.CertificateException;
+import java.security.cert.X509Certificate;
 import java.util.*;
 
 /**
@@ -158,6 +166,7 @@ public class HttpClientImpl extends HttpClient {
      * @return {@link String}
      */
     private QsHttpResponse request(SupplierCustom supplier) throws Exception {
+        System.setProperty("https.protocols", "TLSv1,TLSv1.1,TLSv1.2");
         HttpUriRequest httpUriRequest = null;
         try {
             httpUriRequest = supplier.build();
@@ -169,6 +178,15 @@ public class HttpClientImpl extends HttpClient {
         HttpClientBuilder httpClientBuilder = HttpClientBuilder.create();
         List<Header> headers = new ArrayList<>();
         headers.add(new BasicHeader("Accept-Encoding", "identity"));
+        SSLContext sslContext = new SSLContextBuilder().loadTrustMaterial(null, new TrustStrategy() {
+            @Override
+            public boolean isTrusted(X509Certificate[] chain, String authType) throws CertificateException {
+                return true;
+            }
+        }).build();
+        HostnameVerifier hostnameVerifier = NoopHostnameVerifier.INSTANCE;
+        SSLConnectionSocketFactory sslsf = new SSLConnectionSocketFactory(sslContext, hostnameVerifier);
+        httpClientBuilder.setSSLSocketFactory(sslsf);
         httpClientBuilder.setDefaultHeaders(headers);
         httpClientBuilder.setRedirectStrategy(new LaxRedirectStrategy());
         httpClientBuilder.setDefaultCookieStore(COOKIE_STORE);

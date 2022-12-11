@@ -11,12 +11,22 @@ import org.apache.http.HttpHost;
 import org.apache.http.client.config.RequestConfig;
 import org.apache.http.client.methods.CloseableHttpResponse;
 import org.apache.http.client.methods.HttpGet;
-import org.apache.http.config.ConnectionConfig;
+import org.apache.http.conn.ssl.NoopHostnameVerifier;
+import org.apache.http.conn.ssl.SSLConnectionSocketFactory;
 import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClientBuilder;
+import org.apache.http.impl.client.HttpClients;
+import org.apache.http.ssl.SSLContextBuilder;
+import org.apache.http.ssl.TrustStrategy;
 
+import javax.net.ssl.HostnameVerifier;
+import javax.net.ssl.SSLContext;
 import java.io.*;
+import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.net.URL;
+import java.security.cert.CertificateException;
+import java.security.cert.X509Certificate;
 import java.util.Objects;
 
 /**
@@ -29,13 +39,22 @@ import java.util.Objects;
 public class DownloadClientImpl extends DownloadClient {
 
     private long counter = 0;
-
     @Override
+
     public void execute(URL url, File saveFile, DownloadClient.Process process) {
         process.call(DownloadClient.Process.State.准备开始, null, 0, null, null);
         FileOutputStream fos = null;
         try {
             HttpClientBuilder httpClientBuilder = HttpClientBuilder.create();
+            SSLContext sslContext = new SSLContextBuilder().loadTrustMaterial(null, new TrustStrategy() {
+                @Override
+                public boolean isTrusted(X509Certificate[] chain, String authType) throws CertificateException {
+                    return true;
+                }
+            }).build();
+            HostnameVerifier hostnameVerifier = NoopHostnameVerifier.INSTANCE;
+            SSLConnectionSocketFactory sslsf = new SSLConnectionSocketFactory(sslContext, hostnameVerifier);
+            httpClientBuilder.setSSLSocketFactory(sslsf);
             // 代理
             HttpHost proxy = WindowManager.getInstance().getPacScriptProxy(url.toURI());
             httpClientBuilder.setProxy(proxy);
@@ -52,8 +71,11 @@ public class DownloadClientImpl extends DownloadClient {
                 process.call(DownloadClient.Process.State.请求状态码异常, null, null, null, null);
                 return;
             }
-            byte[] bytes = readDownloadFile(process, response);
             process.call(DownloadClient.Process.State.创建文件, null, null, null, null);
+            byte[] bytes = readDownloadFile(process, response);
+            if (Objects.isNull(bytes)){
+                return;
+            }
             fos = new FileOutputStream(saveFile);
             fos.write(bytes);
             process.call(DownloadClient.Process.State.下载完毕, saveFile, null, null, null);
@@ -76,6 +98,7 @@ public class DownloadClientImpl extends DownloadClient {
     private byte[] readDownloadFile(DownloadClient.Process process, CloseableHttpResponse response) {
         ByteArrayOutputStream bos = null;
         String taskName = null;
+        boolean error = false;
         try {
             HttpEntity entity = response.getEntity();
             InputStream inputStream = entity.getContent();
@@ -89,14 +112,13 @@ public class DownloadClientImpl extends DownloadClient {
             counter = 0;
             taskName = AdvancedTimerMamager.getInstance().addTask(new AdvancedTimerTask() {
                 private long temp = 0;
-                private long speed = 0;
+                private BigDecimal speed = BigDecimal.ZERO;
 
                 @Override
                 public void start() throws Exception {
-                    speed = counter - temp;
+                    speed = new BigDecimal(counter - temp);
                     temp = counter;
-                    process.call(Process.State.速度回显, null, null, speed / 1000, null);
-                    System.out.println(speed / 1000);
+                    process.call(Process.State.速度回显, null, null, speed.divide(new BigDecimal(1000), 2, RoundingMode.HALF_UP), null);
                 }
             }, 0, 2000);
             while ((len = inputStream.read(buffer)) != -1) {
@@ -116,10 +138,11 @@ public class DownloadClientImpl extends DownloadClient {
         } catch (Exception e) {
             log.error("下载异常 e={}", e.getMessage(), e);
             process.call(DownloadClient.Process.State.未知异常, null, null, null, e);
+            error = true;
         } finally {
             SystemTools.close(bos);
             AdvancedTimerMamager.getInstance().removeTask(taskName);
         }
-        return Objects.nonNull(bos) ? bos.toByteArray() : null;
+        return Objects.nonNull(bos) && !error ? bos.toByteArray() : null;
     }
 }
