@@ -767,9 +767,12 @@ public class MainController implements Initializable {
         } else if (QsConstant.beanfunModel.isNewAccount()) {
             // 需要创建账号
             FrameManager.getInstance().message("新账号请点击创建账号!", Alert.AlertType.INFORMATION);
-            buttonAddAct.setVisible(QsConstant.beanfunModel.isNewAccount());
-            menuItemAddAct.setVisible(QsConstant.beanfunModel.isNewAccount());
+            buttonAddAct.setVisible(true);
+            menuItemAddAct.setVisible(true);
         }
+
+        buttonAddAct.setVisible(false);
+        menuItemAddAct.setVisible(false);
 
         FrameManager.getInstance().runLater(() -> {
             ObservableList<Account> options = FXCollections.observableArrayList();
