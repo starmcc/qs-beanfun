@@ -4,7 +4,6 @@ import com.starmcc.beanfun.constant.FXPageEnum;
 import com.starmcc.beanfun.constant.QsConstant;
 import com.starmcc.beanfun.manager.FrameManager;
 import javafx.event.EventHandler;
-import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Node;
 import javafx.scene.Parent;
@@ -113,69 +112,6 @@ public class JFXStage implements EventHandler<MouseEvent> {
     }
 
     /**
-     * 构建登录页面
-     *
-     * @param page 页面
-     */
-    public void buildLogin(FXPageEnum page) {
-        HBox hbox = new HBox();
-        hbox.setPrefHeight(26);
-        hbox.getStylesheets().add(this.getClass().getResource("/static/css/login.css").toExternalForm());
-        hbox.getStyleClass().add(HBOX_CSS_CLASS);
-        // LOGO
-//        Label logo = new Label();
-//        logo.setPrefWidth(22);
-//        logo.setPrefHeight(22);
-//        logo.getStyleClass().add(LOGO_CSS_CLASS);
-//        hbox.getChildren().add(logo);
-        // TITLE
-        Label titleLbl = new Label(page.getTitle());
-        titleLbl.setId("customTitle");
-        titleLbl.setPrefHeight(22);
-        titleLbl.setFont(Font.font(12));
-        titleLbl.setAlignment(Pos.CENTER);
-        titleLbl.getStyleClass().add(TITLE_CSS_CLASS);
-        hbox.getChildren().add(titleLbl);
-        // PANE
-        Pane pane = new Pane();
-        HBox.setHgrow(pane, Priority.ALWAYS);
-        hbox.getChildren().add(pane);
-        // CLOSE
-        Label close = new Label();
-        close.setPrefWidth(22);
-        close.setPrefHeight(22);
-        close.getStyleClass().add(CLOSE_CSS_CLASS);
-        close.setOnMouseClicked(e -> FrameManager.getInstance().exit());
-
-        // about
-        Label about = new Label();
-        about.setPrefWidth(22);
-        about.setPrefHeight(22);
-        about.getStyleClass().add(ABOUT_CSS_CLASS);
-        about.setOnMouseClicked(event -> {
-            try {
-                FrameManager.getInstance().openWindow(FXPageEnum.关于我, FXPageEnum.登录页);
-            } catch (Exception e) {
-                log.error("发生异常 e={}", e.getMessage(), e);
-            }
-        });
-        hbox.getChildren().add(about);
-        hbox.getChildren().add(close);
-        // STAGE
-        stage.initStyle(StageStyle.UNDECORATED);
-        BorderPane borderPane = new BorderPane();
-        borderPane.setTop(hbox);
-        borderPane.setCenter(root);
-        Scene scene = new Scene(borderPane);
-        scene.getRoot().setOnMousePressed(this);
-        scene.getRoot().setOnMouseDragged(this);
-        hbox.setOnMousePressed(this);
-        hbox.setOnMouseDragged(this);
-        root.setStyle("-fx-border-width: 1; -fx-border-color: black");
-        stage.setScene(scene);
-    }
-
-    /**
      * 构建
      *
      * @param page 页面
@@ -183,22 +119,28 @@ public class JFXStage implements EventHandler<MouseEvent> {
     public void build(FXPageEnum page) {
         HBox hbox = new HBox();
         hbox.setPrefHeight(26);
-        hbox.getStylesheets().add(this.getClass().getResource("/static/css/title.css").toExternalForm());
+        String cssFile = "/static/css/title.css";
+        if (page == FXPageEnum.登录页) {
+            cssFile = "/static/css/login.css";
+        }
+        hbox.getStylesheets().add(this.getClass().getResource(cssFile).toExternalForm());
         hbox.getStyleClass().add(HBOX_CSS_CLASS);
-        // LOGO
-        Label logo = new Label();
-        logo.setPrefWidth(22);
-        logo.setPrefHeight(22);
-        logo.getStyleClass().add(LOGO_CSS_CLASS);
-        hbox.getChildren().add(logo);
+        if (page.getShowIco()) {
+            // LOGO
+            Label logo = new Label();
+            logo.setPrefWidth(22);
+            logo.setPrefHeight(22);
+            logo.getStyleClass().add(LOGO_CSS_CLASS);
+            hbox.getChildren().add(logo);
+        }
         // TITLE
         Label titleLbl = new Label(page.getTitle());
-        if (page == FXPageEnum.登录页 || page == FXPageEnum.主页) {
+        if (page == FXPageEnum.主页) {
             titleLbl.setText(page.getTitle() + "-" + QsConstant.APP_VERSION);
         }
         titleLbl.setId("customTitle");
         titleLbl.setPrefHeight(22);
-        titleLbl.setFont(Font.font(13));
+        titleLbl.setFont(Font.font(12));
         titleLbl.setAlignment(Pos.CENTER);
         titleLbl.getStyleClass().add(TITLE_CSS_CLASS);
         hbox.getChildren().add(titleLbl);
@@ -219,6 +161,22 @@ public class JFXStage implements EventHandler<MouseEvent> {
             FrameManager.getInstance().closeWindow(page);
         });
 
+        if (page.getAboutButton()) {
+            // about
+            Label about = new Label();
+            about.setPrefWidth(22);
+            about.setPrefHeight(22);
+            about.getStyleClass().add(ABOUT_CSS_CLASS);
+            about.setOnMouseClicked(event -> {
+                try {
+                    FrameManager.getInstance().openWindow(FXPageEnum.关于我, page);
+                } catch (Exception e) {
+                    log.error("发生异常 e={}", e.getMessage(), e);
+                }
+            });
+            hbox.getChildren().add(about);
+        }
+
         if (page.getShowMinButton()) {
             // MIN
             Label min = new Label();
@@ -234,6 +192,7 @@ public class JFXStage implements EventHandler<MouseEvent> {
             });
             hbox.getChildren().add(min);
         }
+
         hbox.getChildren().add(close);
         // STAGE
         stage.initStyle(StageStyle.UNDECORATED);

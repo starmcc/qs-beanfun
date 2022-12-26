@@ -28,7 +28,6 @@ public class EquipmentHandler {
             // 上卷次数 = 0，或总攻击数 = 0 则不计算
             return "请填写装备数据";
         }
-        int totalAtk = param.getTotalAtk() - param.getStarAtk();
         if (verifyIsReel(param, CalcConstant.Reel.RED卷)) {
             return "Red卷";
         }
@@ -102,7 +101,7 @@ public class EquipmentHandler {
             if (param.getEquipmentType() != CalcConstant.EquipmentType.武器) {
                 totalAtk += param.getReelNum() * reelAtk;
             }
-            int contrast = param.getTotalAtk() - totalAtk;
+            int contrast = param.getTotalAtk() - param.getStarAtk() - totalAtk;
             list.add(new TrainingModel(contrast, reelAtk));
         }
 
@@ -125,7 +124,12 @@ public class EquipmentHandler {
         }
 
         if (trainingModel.getAtk() != 0D) {
-            double atk = (double) trainingModel.getAtk() / param.getReelNum();
+            double atk = 0;
+            if (trainingModel.getAtk().compareTo(param.getReelNum()) == 0) {
+                atk = (double) trainingModel.getAtk() / 10;
+            } else {
+                atk = (double) trainingModel.getAtk() / param.getReelNum();
+            }
             return Double.parseDouble(String.format("%.2f", atk + trainingModel.getReelAtk()));
         }
 

@@ -121,12 +121,7 @@ public class FrameManagerImpl implements FrameManager {
         if (Objects.nonNull(build)) {
             build.accept(jfxStage);
         }
-        if (page.getShowTop()) {
-            jfxStage.build(page);
-        } else {
-            jfxStage.buildLogin(page);
-//            jfxStage.buildSimple(page);
-        }
+        jfxStage.build(page);
         stage.getIcons().add(new Image("static/images/ico.png"));
         stage.setResizable(false);
         stage.setTitle(page.getTitle());
