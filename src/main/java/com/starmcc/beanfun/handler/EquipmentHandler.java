@@ -232,7 +232,7 @@ public class EquipmentHandler {
         if (Double.compare(dAtk, new Double(0)) == 0) {
             return 1;
         }
-        return (int) Math.ceil(dAtk);
+        return (int) Math.floor(dAtk) + 1;
     }
 
 
