@@ -8,7 +8,7 @@ import com.starmcc.beanfun.entity.client.BeanfunModel;
 import com.starmcc.beanfun.entity.client.BeanfunStringResult;
 import com.starmcc.beanfun.entity.model.ComBoBoxListCell;
 import com.starmcc.beanfun.entity.model.ConfigModel;
-import com.starmcc.beanfun.entity.model.LoadingPage;
+import com.starmcc.beanfun.entity.model.LoadPage;
 import com.starmcc.beanfun.handler.AccountHandler;
 import com.starmcc.beanfun.manager.AdvancedTimerMamager;
 import com.starmcc.beanfun.manager.FrameManager;
@@ -122,7 +122,7 @@ public class LoginController implements Initializable {
      */
     @FXML
     public void loginAction() {
-        LoadingPage.task(FXPageEnum.登录页, (label) -> {
+        LoadPage.task(FXPageEnum.登录页, (label) -> {
             try {
                 label.setText("正在登录..");
                 final Map<String, Double> map = new HashMap<>(16);

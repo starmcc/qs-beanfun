@@ -1,12 +1,14 @@
 .hbox{
     -fx-background-color: #40444f;
+    -fx-padding: 5px 10px;
 }
 
 .logo{
     -fx-background-radius: 2px;
     -fx-background-position: center center;
     -fx-background-repeat: no-repeat;
-    -fx-background-size: 16px 16px;
+    -fx-background-size: 22px 22px;
+    -fx-padding: 5px 10px;
     -fx-background-color: transparent;
     -fx-background-image: url("../images/ico.png");
     -fx-border-width: 0;
@@ -14,12 +16,14 @@
 
 .title{
     -fx-text-fill: #fff;
+    -fx-padding: 5px 10px;
 }
 
 .close{
     -fx-background-position: center center;
     -fx-background-repeat: no-repeat;
-    -fx-background-size: 16px 16px;
+    -fx-background-size: 22px 22px;
+    -fx-padding: 5px 15px;
     -fx-background-color: transparent;
     -fx-background-image: url("../images/close_0.png");
     -fx-cursor: hand;
@@ -34,7 +38,8 @@
 .min{
     -fx-background-position: center center;
     -fx-background-repeat: no-repeat;
-    -fx-background-size: 16px 16px;
+    -fx-background-size: 22px 22px;
+    -fx-padding: 5px 15px;
     -fx-background-color: transparent;
     -fx-background-image: url("../images/min_0.png");
     -fx-cursor: hand;

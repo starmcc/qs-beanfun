@@ -52,7 +52,7 @@ public class ConfigModel implements Serializable {
         this.loginType = LoginType.TypeEnum.HK.getType();
         // 关闭
         this.killGamePatcher = true;
-        // 不自动输入
+        // 不免密输入
         this.passInput = false;
         // 录像配置
         this.recordVideo = new RecordVideo();

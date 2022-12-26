@@ -5,11 +5,7 @@ import com.starmcc.beanfun.constant.QsConstant;
 import com.starmcc.beanfun.entity.model.JFXStage;
 import com.starmcc.beanfun.entity.model.QsTray;
 import com.starmcc.beanfun.entity.thread.ThrowRunnable;
-import com.starmcc.beanfun.manager.AdvancedTimerMamager;
-import com.starmcc.beanfun.manager.FrameManager;
-import com.starmcc.beanfun.manager.RecordVideoManager;
-import com.starmcc.beanfun.manager.ThreadPoolManager;
-import com.starmcc.beanfun.utils.JxBrowser;
+import com.starmcc.beanfun.manager.*;
 import javafx.application.Platform;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
@@ -17,6 +13,7 @@ import javafx.scene.control.Alert;
 import javafx.scene.control.ButtonType;
 import javafx.scene.control.TextInputDialog;
 import javafx.scene.image.Image;
+import javafx.stage.Modality;
 import javafx.stage.Stage;
 import lombok.extern.slf4j.Slf4j;
 
@@ -116,6 +113,7 @@ public class FrameManagerImpl implements FrameManager {
         Stage stage = new Stage();
         if (Objects.nonNull(parentStage)) {
             stage.initOwner(parentStage);
+            stage.initModality(Modality.APPLICATION_MODAL);
         }
         Parent parent = FXMLLoader.load(FrameManagerImpl.class.getResource(page.buildPath()));
         JFXStage jfxStage = JFXStage.of(stage, parent);
@@ -126,7 +124,8 @@ public class FrameManagerImpl implements FrameManager {
         if (page.getShowTop()) {
             jfxStage.build(page);
         } else {
-            jfxStage.buildSimple(page);
+            jfxStage.buildLogin(page);
+//            jfxStage.buildSimple(page);
         }
         stage.getIcons().add(new Image("static/images/ico.png"));
         stage.setResizable(false);
@@ -144,7 +143,7 @@ public class FrameManagerImpl implements FrameManager {
     @Override
     public void openWebBrowser(String url, boolean newWindow) {
         try {
-            FrameManager.getInstance().runLater(() -> JxBrowser.getInstance().open(url, newWindow));
+            FrameManager.getInstance().runLater(() -> JxBrowserManager.getInstance().open(url, newWindow));
         } catch (Exception e) {
             log.error("打开浏览器发生异常 e={}", e.getMessage(), e);
         }

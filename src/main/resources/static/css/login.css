@@ -1,15 +1,50 @@
-.title-close:hover {
-    -fx-image: url("../images/login_close_1.png");
+.hbox{
+    -fx-background-color: #40444f;
+    -fx-padding: 5px 10px;
 }
 
-.title-close {
-    -fx-image: url("../images/login_close_0.png");
+.title{
+    -fx-text-fill: #fff;
+    -fx-padding: 5px 5px;
+}
+.logo{
+    -fx-background-radius: 2px;
+    -fx-background-position: center center;
+    -fx-background-repeat: no-repeat;
+    -fx-background-size: 22px 22px;
+    -fx-padding: 5px 10px;
+    -fx-background-color: transparent;
+    -fx-background-image: url("../images/ico.png");
+    -fx-border-width: 0;
+}
+.close{
+    -fx-background-position: center center;
+    -fx-background-repeat: no-repeat;
+    -fx-background-size: 22px 22px;
+    -fx-padding: 5px 15px;
+    -fx-background-color: transparent;
+    -fx-background-image: url("../images/login_close_0.png");
+    -fx-cursor: hand;
+    -fx-border-width: 0;
 }
 
-.title-about:hover {
-    -fx-image: url("../images/login_about_1.png");
+.close:hover{
+    -fx-background-image: url("../images/login_close_1.png");
+    -fx-border-width: 0;
 }
 
-.title-about {
-    -fx-image: url("../images/login_about_0.png");
+.about{
+    -fx-background-position: center center;
+    -fx-background-repeat: no-repeat;
+    -fx-background-size: 22px 22px;
+    -fx-padding: 5px 15px;
+    -fx-background-color: transparent;
+    -fx-background-image: url("../images/login_about_0.png");
+    -fx-cursor: hand;
+    -fx-border-width: 0;
+}
+
+.about:hover{
+    -fx-background-image: url("../images/login_about_1.png");
+    -fx-border-width: 0;
 }

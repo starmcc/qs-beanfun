@@ -8,7 +8,7 @@ import com.starmcc.beanfun.entity.client.Account;
 import com.starmcc.beanfun.entity.client.BeanfunAccountResult;
 import com.starmcc.beanfun.entity.client.BeanfunStringResult;
 import com.starmcc.beanfun.entity.model.ConfigModel;
-import com.starmcc.beanfun.entity.model.LoadingPage;
+import com.starmcc.beanfun.entity.model.LoadPage;
 import com.starmcc.beanfun.entity.model.QsTray;
 import com.starmcc.beanfun.handler.*;
 import com.starmcc.beanfun.manager.AdvancedTimerMamager;
@@ -124,6 +124,8 @@ public class MainController implements Initializable {
     @FXML
     private CheckBox checkBoxAutoInput;
     @FXML
+    private CheckBox checkBoxHideAct;
+    @FXML
     private RadioButton radioButtonGame;
     @FXML
     private RadioButton radioButtonScreen;
@@ -152,7 +154,7 @@ public class MainController implements Initializable {
             QsConstant.trayIcon = QsTray.init(QsConstant.JFX_STAGE_DATA.get(FXPageEnum.主页).getStage());
             QsTray.show(QsConstant.trayIcon);
             // 获取账号数据
-            LoadingPage.task(FXPageEnum.主页, label -> {
+            LoadPage.task(FXPageEnum.主页, label -> {
                 label.setText("加载账号信息..");
                 refeshAccounts(null);
             });
@@ -190,7 +192,8 @@ public class MainController implements Initializable {
         checkBoxKillGamePatcher.setSelected(BooleanUtils.isTrue(QsConstant.config.getKillGamePatcher()));
         checkBoxAutoInput.setSelected(BooleanUtils.isTrue(QsConstant.config.getAutoInput()));
         checkBoxCheckAppUpdate.setSelected(BooleanUtils.isTrue(QsConstant.config.getCheckAppUpdate()));
-
+        // 是否隐藏显示
+        textFieldActId.setVisible(!checkBoxHideAct.isSelected());
 
         // 录像配置
         ConfigModel.RecordVideo recordVideo = QsConstant.config.getRecordVideo();
@@ -380,7 +383,7 @@ public class MainController implements Initializable {
 
     @FXML
     public void exitLoginAction() {
-        LoadingPage.task(FXPageEnum.主页, label -> {
+        LoadPage.task(FXPageEnum.主页, label -> {
             label.setText("正在退出登录..");
             BeanfunClient.run().loginOut(QsConstant.beanfunModel.getToken());
             FrameManager.getInstance().runLater(() -> {
@@ -392,7 +395,7 @@ public class MainController implements Initializable {
 
     @FXML
     public void changeAccountNowAction() {
-        LoadingPage.task(FXPageEnum.主页, label -> {
+        LoadPage.task(FXPageEnum.主页, label -> {
             label.setText("变更账户..");
             this.accountInfoRefresh();
         });
@@ -404,7 +407,7 @@ public class MainController implements Initializable {
      */
     @FXML
     public void getDynamicPasswordAction() {
-        LoadingPage.task(FXPageEnum.主页, label -> {
+        LoadPage.task(FXPageEnum.主页, label -> {
             label.setText("获取动态密码..");
             AccountHandler.getDynamicPassword(QsConstant.nowAccount, (id, password) -> {
                 FrameManager.getInstance().runLater(() -> textFieldDynamicPwd.setText(password));
@@ -446,7 +449,7 @@ public class MainController implements Initializable {
         }
         // 启动游戏 如果免输入模式，组装账密
         if (BooleanUtils.isTrue(QsConstant.config.getPassInput())) {
-            LoadingPage.task(FXPageEnum.主页, label -> {
+            LoadPage.task(FXPageEnum.主页, label -> {
                 label.setText("正在获取动态密码...");
                 try {
                     AccountHandler.getDynamicPassword(QsConstant.nowAccount, (id, password) -> {
@@ -495,7 +498,7 @@ public class MainController implements Initializable {
      */
     @FXML
     public void updatePointsAction(ActionEvent actionEvent) {
-        LoadingPage.task(FXPageEnum.主页, label -> {
+        LoadPage.task(FXPageEnum.主页, label -> {
             label.setText("获取游戏点数...");
             // 获取游戏点数
             String pointsText = getPointsText();
@@ -513,7 +516,7 @@ public class MainController implements Initializable {
         if (StringUtils.isBlank(name)) {
             return;
         }
-        LoadingPage.task(FXPageEnum.主页, label -> {
+        LoadPage.task(FXPageEnum.主页, label -> {
             label.setText("添加账号..");
             try {
                 BeanfunStringResult result = BeanfunClient.run().addAccount(name);
@@ -538,7 +541,7 @@ public class MainController implements Initializable {
         if (StringUtils.isBlank(newName)) {
             return;
         }
-        LoadingPage.task(FXPageEnum.主页, label -> {
+        LoadPage.task(FXPageEnum.主页, label -> {
             label.setText("编辑账号..");
             try {
                 BeanfunStringResult result = BeanfunClient.run().changeAccountName(QsConstant.nowAccount.getId(), newName);
@@ -592,7 +595,7 @@ public class MainController implements Initializable {
     @FXML
     public void updateRateAction(ActionEvent actionEvent) {
         // 获取汇率
-        LoadingPage.task(FXPageEnum.主页, label -> {
+        LoadPage.task(FXPageEnum.主页, label -> {
             label.setText("更新汇率..");
             QsConstant.currentRateChinaToTw = ThirdPartyApiClient.getCurrentRateChinaToTw();
             FrameManager.getInstance().runLater(() -> labelExchangeNow.setText(QsConstant.currentRateChinaToTw.toString()));
@@ -704,14 +707,21 @@ public class MainController implements Initializable {
     }
 
     @FXML
+    public void hideActPwdAction(ActionEvent actionEvent) {
+        textFieldActId.setVisible(!checkBoxHideAct.isSelected());
+    }
+
+    @FXML
     public void clearRecordVideoAction(ActionEvent actionEvent) {
         String folder = QsConstant.config.getRecordVideo().getFolder();
         File file = new File(folder);
         if (!file.exists()) {
+            FrameManager.getInstance().messageSync("该目录不存在!", Alert.AlertType.WARNING);
             return;
         }
         File[] files = file.listFiles(pathname -> pathname.getName().endsWith(".mp4"));
         if (ArrayUtils.isEmpty(files)) {
+            FrameManager.getInstance().messageSync("没有录像可清空!", Alert.AlertType.WARNING);
             return;
         }
         int delNum = 0;

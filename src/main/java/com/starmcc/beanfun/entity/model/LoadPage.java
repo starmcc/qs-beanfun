@@ -6,9 +6,9 @@ import com.starmcc.beanfun.entity.thread.ThrowConsumer;
 import com.starmcc.beanfun.manager.FrameManager;
 import com.starmcc.beanfun.manager.ThreadPoolManager;
 import javafx.geometry.Pos;
+import javafx.scene.Node;
 import javafx.scene.control.Label;
-import javafx.scene.image.Image;
-import javafx.scene.image.ImageView;
+import javafx.scene.control.ProgressIndicator;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.StackPane;
@@ -17,7 +17,6 @@ import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
 import javafx.scene.text.TextAlignment;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.lang3.StringUtils;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -30,8 +29,7 @@ import java.util.Objects;
  * @date 2022/09/24
  */
 @Slf4j
-public class LoadingPage {
-    private static final Map<String, Pane> PANE_MAP = new HashMap<>(16);
+public class LoadPage {
 
 
     /**
@@ -46,57 +44,34 @@ public class LoadingPage {
         if (Objects.isNull(stagePane)) {
             throw new RuntimeException("find pageEnum error");
         }
+        if (Objects.isNull(consumer)) {
+            throw new RuntimeException("find consumer error");
+        }
         String message = "Loading..";
         Map<String, Object> map = buildBasicPage(message, stagePane);
         Pane pane = (Pane) map.get("pane");
         Label label = (Label) map.get("label");
         pane.setId(pageEnum.getFileName() + "-loading");
-        PANE_MAP.put(pageEnum.getFileName(), pane);
-        FrameManager.getInstance().runLater(() -> stagePane.getChildren().add(pane));
-        if (Objects.isNull(consumer)) {
-            return;
-        }
-        ThreadPoolManager.execute(() -> closeLoadingPageByTaskRunning(pageEnum, consumer, label));
-    }
-
-
-    /**
-     * 关闭
-     *
-     * @param pageEnum 页面枚举
-     */
-    public static void close(FXPageEnum pageEnum) {
-        Pane pane = PANE_MAP.get(pageEnum.getFileName());
-        if (Objects.isNull(pane)) {
-            return;
-        }
-        PANE_MAP.remove(pageEnum.getFileName());
-        Pane stagePane = getStageParentPane(pageEnum);
-        if (Objects.isNull(stagePane)) {
-            return;
-        }
-        FrameManager.getInstance().runLater(() -> stagePane.getChildren().remove(pane));
+        FrameManager.getInstance().runLater(() -> {
+            stagePane.getChildren().add(pane);
+            stagePane.setDisable(true);
+        });
+        ThreadPoolManager.execute(() -> {
+            try {
+                consumer.run(label);
+            } catch (Exception e) {
+                log.error("error = {}", e.getMessage(), e);
+            } finally {
+                FrameManager.getInstance().runLater(() -> {
+                    stagePane.getChildren().remove(pane);
+                    stagePane.setDisable(false);
+                });
+            }
+        });
     }
 
 
     // ==============================================================================
-
-
-    /**
-     * 通过运行任务关闭加载页面
-     *
-     * @param pageEnum 页面枚举
-     * @param runnable 可运行
-     */
-    private static void closeLoadingPageByTaskRunning(FXPageEnum pageEnum, ThrowConsumer<Label> consumer, Label label) {
-        try {
-            consumer.run(label);
-        } catch (Exception e) {
-            log.error("error = {}", e.getMessage(), e);
-        } finally {
-            close(pageEnum);
-        }
-    }
 
 
     /**
@@ -108,22 +83,23 @@ public class LoadingPage {
         StackPane stackPane = new StackPane();
         stackPane.setPrefWidth(stagePane.getWidth());
         stackPane.setPrefHeight(stagePane.getHeight());
-        stackPane.setStyle("-fx-background-color: rgba(0,0,0,0.4);");
+        stackPane.setStyle("-fx-background-color: rgba(0,0,0,0.8);-fx-opacity: 1.0;");
         VBox vBox = new VBox();
         vBox.setAlignment(Pos.CENTER);
-        Image image = new Image("static/images/loading.gif");
-        ImageView imageView = new ImageView(image);
-        imageView.setFitWidth(32);
-        imageView.setFitHeight(32);
-        vBox.getChildren().add(imageView);
-        Map<String, Object> map = new HashMap<>(16);
         Label label = new Label();
         label.setAlignment(Pos.CENTER);
         label.setText(message);
         label.setFont(new Font(14));
         label.setTextAlignment(TextAlignment.CENTER);
         label.setTextFill(Color.WHITE);
-        vBox.getChildren().add(label);
+        label.setStyle("-fx-opacity: 1.0;");
+        ProgressIndicator progressIndicator = new ProgressIndicator();
+        progressIndicator.setProgress(-1F);
+        progressIndicator.setPrefWidth(56);
+        progressIndicator.setPrefHeight(56);
+        progressIndicator.setStyle("-fx-opacity: 1.0;");
+        vBox.getChildren().addAll(progressIndicator, label);
+        Map<String, Object> map = new HashMap<>(16);
         map.put("label", label);
         stackPane.getChildren().add(vBox);
         map.put("pane", stackPane);
@@ -138,7 +114,7 @@ public class LoadingPage {
      * @return {@link Pane}
      */
     private static Pane getStageParentPane(FXPageEnum pageEnum) {
-        JFXStage jfxStage = QsConstant.JFX_STAGE_DATA.get(pageEnum.getFileName());
+        JFXStage jfxStage = QsConstant.JFX_STAGE_DATA.get(pageEnum);
         if (Objects.isNull(jfxStage) || Objects.isNull(jfxStage.getStage())) {
             return null;
         }

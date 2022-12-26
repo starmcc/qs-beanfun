@@ -1,5 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
+<?import java.lang.*?>
+<?import javafx.scene.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.image.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.text.*?>
 <?import javafx.scene.Cursor?>
 <?import javafx.scene.control.Button?>
 <?import javafx.scene.control.CheckBox?>
@@ -13,63 +19,48 @@
 <?import javafx.scene.layout.AnchorPane?>
 <?import javafx.scene.text.Font?>
 
-<AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="290.0" prefWidth="330.0" xmlns="http://javafx.com/javafx/8.0.171" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.starmcc.beanfun.controller.LoginController">
+<AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="270.0" prefWidth="330.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.starmcc.beanfun.controller.LoginController">
     <children>
-        <AnchorPane prefHeight="80.0" prefWidth="330.0" style="-fx-background-color: #40444f;">
+        <AnchorPane prefHeight="60.0" prefWidth="330.0" style="-fx-background-color: #40444f;">
             <children>
-                <ImageView fx:id="logo" fitHeight="80.0" fitWidth="230.0" layoutX="10.0" pickOnBounds="true" smooth="false">
+                <ImageView fx:id="logo" fitHeight="60.0" fitWidth="200.0" layoutX="65.0" layoutY="1.0" pickOnBounds="true" smooth="false">
                     <image>
                         <Image url="@../static/images/logo.png" />
                     </image>
                 </ImageView>
-                <ImageView fitHeight="22.0" fitWidth="22.0" layoutX="305.0" layoutY="3.0" onMouseClicked="#closeApplication" pickOnBounds="true" preserveRatio="true" styleClass="title-close">
-                    <image>
-                        <Image url="@../static/images/login_close_0.png" />
-                    </image>
-                    <cursor>
-                        <Cursor fx:constant="DEFAULT" />
-                    </cursor>
-                </ImageView>
-                <ChoiceBox fx:id="choiceBoxLoginType" layoutX="260.0" layoutY="50.0" onAction="#selectLoginTypeAction" prefHeight="23.0" prefWidth="62.0" style="-fx-background-color: white;" />
-                <ImageView fitHeight="22.0" fitWidth="22.0" layoutX="276.0" layoutY="3.0" onMouseClicked="#aboutAction" pickOnBounds="true" preserveRatio="true" styleClass="title-about">
-                    <image>
-                        <Image url="@../static/images/login_about_0.png" />
-                    </image>
-                    <cursor>
-                        <Cursor fx:constant="DEFAULT" />
-                    </cursor>
-                </ImageView>
             </children>
         </AnchorPane>
-        <ComboBox fx:id="comboBoxAccount" editable="true" layoutX="62.0" layoutY="140.0" onAction="#selectAccountAction" prefHeight="28.0" prefWidth="234.0" style="-fx-border-color: D3D3D3; -fx-outer-border: transparent;" />
-        <ImageView fitHeight="22.0" fitWidth="22.0" layoutX="37.0" layoutY="143.0" pickOnBounds="true" preserveRatio="true">
+        <ChoiceBox fx:id="choiceBoxLoginType" layoutX="262.0" layoutY="64.0" onAction="#selectLoginTypeAction" prefHeight="23.0" prefWidth="62.0" />
+
+        <ComboBox fx:id="comboBoxAccount" editable="true" layoutX="58.0" layoutY="121.0" onAction="#selectAccountAction" prefHeight="28.0" prefWidth="234.0" style="-fx-border-color: D3D3D3; -fx-outer-border: transparent;" />
+        <ImageView fitHeight="22.0" fitWidth="22.0" layoutX="33.0" layoutY="124.0" pickOnBounds="true" preserveRatio="true">
             <image>
                 <Image url="@../static/images/ico.png" />
             </image>
         </ImageView>
-        <ImageView fitHeight="22.0" fitWidth="22.0" layoutX="37.0" layoutY="176.0" pickOnBounds="true" preserveRatio="true">
+        <ImageView fitHeight="22.0" fitWidth="22.0" layoutX="33.0" layoutY="157.0" pickOnBounds="true" preserveRatio="true">
             <image>
                 <Image url="@../static/images/pwd.png" />
             </image>
         </ImageView>
-        <PasswordField fx:id="passwordFieldPassword" layoutX="62.0" layoutY="174.0" prefHeight="26.0" prefWidth="234.0" />
-        <CheckBox fx:id="checkBoxRemember" focusTraversable="false" layoutX="40.0" layoutY="211.0" mnemonicParsing="false" onAction="#rememberClickAction" text="记住密码">
+        <PasswordField fx:id="passwordFieldPassword" layoutX="58.0" layoutY="155.0" prefHeight="26.0" prefWidth="234.0" />
+        <CheckBox fx:id="checkBoxRemember" focusTraversable="false" layoutX="36.0" layoutY="192.0" mnemonicParsing="false" onAction="#rememberClickAction" text="记住密码">
             <cursor>
                 <Cursor fx:constant="DEFAULT" />
             </cursor>
         </CheckBox>
-        <Hyperlink fx:id="hyperlinkForgetPwd" focusTraversable="false" layoutX="168.0" layoutY="208.0" onAction="#forgotPwdAction" style="-fx-text-fill: black;" text="忘记密码">
+        <Hyperlink fx:id="hyperlinkForgetPwd" focusTraversable="false" layoutX="164.0" layoutY="189.0" onAction="#forgotPwdAction" style="-fx-text-fill: black;" text="忘记密码">
             <cursor>
                 <Cursor fx:constant="DEFAULT" />
             </cursor>
         </Hyperlink>
-        <Hyperlink fx:id="hyperlinkRegister" focusTraversable="false" layoutX="240.0" layoutY="208.0" onAction="#registerAction" style="-fx-text-fill: black;" text="注册账号">
+        <Hyperlink fx:id="hyperlinkRegister" focusTraversable="false" layoutX="236.0" layoutY="189.0" onAction="#registerAction" style="-fx-text-fill: black;" text="注册账号">
             <cursor>
                 <Cursor fx:constant="DEFAULT" />
             </cursor>
         </Hyperlink>
-        <Button layoutX="40.0" layoutY="234.0" mnemonicParsing="false" onAction="#loginAction" prefHeight="35.0" prefWidth="255.0" text="登录" />
-        <ImageView fx:id="imageViewQrCode" fitHeight="26.0" fitWidth="26.0" layoutX="304.0" layoutY="263.0" onMouseClicked="#qrCodeClick" pickOnBounds="true" preserveRatio="true">
+        <Button layoutX="36.0" layoutY="215.0" mnemonicParsing="false" onAction="#loginAction" prefHeight="35.0" prefWidth="255.0" text="登录" />
+        <ImageView fx:id="imageViewQrCode" fitHeight="26.0" fitWidth="26.0" layoutX="303.0" layoutY="243.0" onMouseClicked="#qrCodeClick" pickOnBounds="true" preserveRatio="true">
             <image>
                 <Image url="@../static/images/二维码.png" />
             </image>
@@ -77,12 +68,12 @@
                 <Cursor fx:constant="HAND" />
             </cursor>
         </ImageView>
-      <Label layoutX="37.0" layoutY="90.0" text="适度游戏益脑，沉迷游戏伤身。" textFill="#ab3112">
+      <Label layoutX="33.0" layoutY="71.0" text="适度游戏益脑，沉迷游戏伤身。" textFill="#ab3112">
          <font>
             <Font size="13.0" />
          </font>
       </Label>
-      <Label layoutX="114.0" layoutY="115.0" text="合理安排时间，享受健康生活。" textFill="#71c669">
+      <Label layoutX="110.0" layoutY="96.0" text="合理安排时间，享受健康生活。" textFill="#71c669">
          <font>
             <Font size="13.0" />
          </font>

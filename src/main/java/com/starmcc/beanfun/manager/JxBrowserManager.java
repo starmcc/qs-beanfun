@@ -1,9 +1,6 @@
-package com.starmcc.beanfun.utils;
+package com.starmcc.beanfun.manager;
 
 import com.starmcc.beanfun.client.HttpClient;
-import com.starmcc.beanfun.manager.FrameManager;
-import com.starmcc.beanfun.manager.ThreadPoolManager;
-import com.starmcc.beanfun.manager.WindowManager;
 import com.teamdev.jxbrowser.chromium.Browser;
 import com.teamdev.jxbrowser.chromium.CookieStorage;
 import com.teamdev.jxbrowser.chromium.ba;
@@ -32,14 +29,14 @@ import java.util.Properties;
  * jx浏览器
  *
  * @author starmcc
- * @date 2022/11/28
+ * @date 2022/12/26
  */
 @Slf4j
-public class JxBrowser {
+public class JxBrowserManager {
 
     private final static String DEFAULT_TITLE = "QsBrowser";
     private final static int DEFAULT_WIDTH = 850;
-    private final static int DEFAULT_HEIGHT = 600;
+    private final static int DEFAULT_HEIGHT = 650;
 
     static {
         try {
@@ -64,10 +61,10 @@ public class JxBrowser {
     /**
      * 获得实例
      *
-     * @return {@link JxBrowser}
+     * @return {@link JxBrowserManager}
      */
-    public synchronized static JxBrowser getInstance() {
-        return new JxBrowser();
+    public synchronized static JxBrowserManager getInstance() {
+        return new JxBrowserManager();
     }
 
     /**
@@ -98,6 +95,7 @@ public class JxBrowser {
         stage.setTitle(DEFAULT_TITLE);
         stage.setWidth(DEFAULT_WIDTH);
         stage.setHeight(DEFAULT_HEIGHT);
+        stage.setResizable(false);
         stage.getIcons().add(new Image("static/images/ico.png"));
         stage.setOnCloseRequest(event -> {
             // 使用线程异步关闭引擎
