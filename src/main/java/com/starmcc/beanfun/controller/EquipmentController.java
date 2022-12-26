@@ -1,12 +1,13 @@
 package com.starmcc.beanfun.controller;
 
 import com.starmcc.beanfun.constant.CalcConstant;
-import com.starmcc.beanfun.handler.EquipmentHandler;
-import com.starmcc.beanfun.listener.FocusedTextZeroChangeListener;
-import com.starmcc.beanfun.listener.TextValChangeListener;
 import com.starmcc.beanfun.entity.model.CalcModel;
 import com.starmcc.beanfun.entity.param.EquipmentAutoCalcParam;
 import com.starmcc.beanfun.entity.param.EquipmentCalcParam;
+import com.starmcc.beanfun.handler.EquipmentHandler;
+import com.starmcc.beanfun.listener.FocusedTextZeroChangeListener;
+import com.starmcc.beanfun.listener.TextValChangeListener;
+import com.starmcc.beanfun.listener.TextValDoubleChangeListener;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
@@ -105,7 +106,7 @@ public class EquipmentController implements Initializable {
         initTextFieldListener(starLevelText);
         initTextFieldListener(reelNumText);
         initTextFieldListener(gloryReelNumText);
-        initTextFieldListener(gloryValText);
+        initTextFieldListener(gloryValText, true);
         initTextFieldListener(blackReelNumText);
         initTextFieldListener(vReelNumText);
         initTextFieldListener(xReelNumText);
@@ -115,14 +116,30 @@ public class EquipmentController implements Initializable {
         autoCheckBox.selectedProperty().addListener((observable, oldValue, newValue) -> this.autoViewModel(newValue));
     }
 
+
     /**
      * 初始化文本域侦听器
      *
      * @param textField 文本字段
      */
     private void initTextFieldListener(TextField textField) {
+        initTextFieldListener(textField, false);
+    }
+
+
+    /**
+     * 初始化文本域侦听器
+     *
+     * @param textField 文本字段
+     * @param isDouble  是Double
+     */
+    private void initTextFieldListener(TextField textField, boolean isDouble) {
         textField.focusedProperty().addListener(new FocusedTextZeroChangeListener(textField));
-        textField.textProperty().addListener(new TextValChangeListener(textField));
+        if (isDouble) {
+            textField.textProperty().addListener(new TextValDoubleChangeListener(textField));
+        } else {
+            textField.textProperty().addListener(new TextValChangeListener(textField));
+        }
         textField.setOnMouseClicked(event -> textField.setText(""));
         textField.textProperty().addListener((observable, oldValue, newValue) -> this.calcData());
     }
@@ -137,7 +154,7 @@ public class EquipmentController implements Initializable {
             param.setStarAtk(starAtk);
             Integer gloryNum = StringUtils.isBlank(gloryReelNumText.getText()) ? 0 : Integer.parseInt(gloryReelNumText.getText());
             param.setGloryNum(gloryNum);
-            Integer gloryValNum = StringUtils.isBlank(gloryValText.getText()) ? 0 : Integer.parseInt(gloryValText.getText());
+            Double gloryValNum = StringUtils.isBlank(gloryValText.getText()) ? 0 : Double.parseDouble(gloryValText.getText());
             param.setGloryValNum(gloryValNum);
             Integer blackNum = StringUtils.isBlank(blackReelNumText.getText()) ? 0 : Integer.parseInt(blackReelNumText.getText());
             param.setBlackNum(blackNum);
@@ -159,8 +176,8 @@ public class EquipmentController implements Initializable {
             String equipmentType = (String) selectedToggle.getUserData();
             param.setEquipmentType(CalcConstant.EquipmentType.build(Integer.parseInt(equipmentType)));
             CalcModel model = EquipmentHandler.calc(param);
-            totalAtkText.setText(String.valueOf(model.getTotalAtk()));
-            appendAtkLabel.setText(String.valueOf(model.getAppendAtk()));
+            totalAtkText.setText(String.valueOf((int) Math.floor(model.getTotalAtk())));
+            appendAtkLabel.setText(String.valueOf((int) Math.floor(model.getAppendAtk())));
         } else {
             // 自动模式
             EquipmentAutoCalcParam param = new EquipmentAutoCalcParam();

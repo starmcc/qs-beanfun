@@ -20,7 +20,7 @@ public class EquipmentCalcParam implements Serializable {
     private Integer starLevel;
     private Integer level;
     private Integer gloryNum;
-    private Integer gloryValNum;
+    private Double gloryValNum;
     private Integer blackNum;
     private Integer vNum;
     private Integer xNum;

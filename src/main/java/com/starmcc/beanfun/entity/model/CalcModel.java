@@ -16,8 +16,8 @@ import java.io.Serializable;
 public class CalcModel implements Serializable {
     private static final long serialVersionUID = -8615808741207121881L;
 
-    private Integer totalAtk;
-    private Integer appendAtk;
+    private Double totalAtk;
+    private Double appendAtk;
 
 
 }

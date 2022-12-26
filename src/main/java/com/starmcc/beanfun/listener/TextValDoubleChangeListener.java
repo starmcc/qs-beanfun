@@ -12,22 +12,19 @@ import org.apache.commons.lang3.StringUtils;
  * @author starmcc
  * @date 2022/04/02
  */
-public class TextValChangeListener implements ChangeListener<String> {
+public class TextValDoubleChangeListener implements ChangeListener<String> {
 
     private final TextField textField;
 
-    public TextValChangeListener(TextField textField) {
+    public TextValDoubleChangeListener(TextField textField) {
         this.textField = textField;
     }
 
     @Override
     public void changed(ObservableValue<? extends String> observable, String oldValue, String newValue) {
         if (textField.isFocused() && StringUtils.isNotBlank(newValue)) {
-            if (!newValue.matches("^[0-9]*$")) {
+            if (!newValue.matches("^[0-9]+\\.{0,1}[0-9]{0,2}$")) {
                 textField.setText("0");
-            }
-            if (newValue.length() > 4) {
-                textField.setText(newValue.substring(0, 4));
             }
         }
     }

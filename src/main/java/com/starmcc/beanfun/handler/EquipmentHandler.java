@@ -64,7 +64,7 @@ public class EquipmentHandler {
         } else {
             reelAtk = param.getReelNum() * reel.getArmor();
         }
-        int totalAtk = param.getOriginAtk();
+        Double totalAtk = new Double(param.getOriginAtk());
         if (param.getEquipmentType() == CalcConstant.EquipmentType.武器) {
             totalAtk += reelAtk;
         }
@@ -72,7 +72,7 @@ public class EquipmentHandler {
         if (param.getEquipmentType() != CalcConstant.EquipmentType.武器) {
             totalAtk += reelAtk;
         }
-        return param.getTotalAtk() != 0 && param.getTotalAtk() == totalAtk;
+        return param.getTotalAtk() != 0 && param.getTotalAtk().compareTo(totalAtk.intValue()) == 0;
     }
 
     /**
@@ -82,36 +82,11 @@ public class EquipmentHandler {
      * @return int
      */
     private static double verifyIsGlory(EquipmentAutoCalcParam param) {
-        int totalAtk = 0;
-        List<TrainingModel> list = new ArrayList<>();
-        for (int i = 0; i < 10; i++) {
-            int reelAtk = 0;
-            if (param.getEquipmentType() == CalcConstant.EquipmentType.武器
-                    || param.getEquipmentType() == CalcConstant.EquipmentType.心脏) {
-                reelAtk = 10 + i;
-            } else {
-                reelAtk = 5 + i;
-            }
-            totalAtk = param.getOriginAtk();
-            if (param.getEquipmentType() == CalcConstant.EquipmentType.武器) {
-                // 武器需要加上卷的攻击去算
-                totalAtk += param.getReelNum() * reelAtk;
-            }
-            totalAtk = calcStarAtk(totalAtk, param.getStarLevel(), param.getLevel(), param.getEquipmentType());
-            if (param.getEquipmentType() != CalcConstant.EquipmentType.武器) {
-                totalAtk += param.getReelNum() * reelAtk;
-            }
-            int contrast = param.getTotalAtk() - param.getStarAtk() - totalAtk;
-            list.add(new TrainingModel(contrast, reelAtk));
-        }
-
-        list.sort((o1, o2) -> o1.getAtk().compareTo(o2.atk));
-        Optional<TrainingModel> first = list.stream().filter(item -> item.getAtk() >= 0).findFirst();
-
-        if (!first.isPresent()) {
+        Double totalAtk = 0D;
+        TrainingModel trainingModel = getTrainingModel(param);
+        if (trainingModel == null) {
             return -1;
-        }
-        TrainingModel trainingModel = first.get();
+        };
         if (param.getEquipmentType() == CalcConstant.EquipmentType.武器
                 || param.getEquipmentType() == CalcConstant.EquipmentType.心脏) {
             if (trainingModel.getAtk() > 20) {
@@ -122,18 +97,84 @@ public class EquipmentHandler {
                 return -1;
             }
         }
-
         if (trainingModel.getAtk() != 0D) {
-            double atk = 0;
-            if (trainingModel.getAtk().compareTo(param.getReelNum()) == 0) {
-                atk = (double) trainingModel.getAtk() / 10;
+            return getTrainingModel2(param,  trainingModel);
+        }
+        return trainingModel.getReelAtk();
+    }
+
+    /**
+     * 获取训练模型
+     *
+     * @param param 参数
+     * @return {@link TrainingModel}
+     */
+    private static TrainingModel getTrainingModel(EquipmentAutoCalcParam param) {
+        Double totalAtk;
+        List<TrainingModel> list = new ArrayList<>();
+        for (int i = 0; i < 10; i++) {
+            double reelAtk = 0d;
+            if (param.getEquipmentType() == CalcConstant.EquipmentType.武器
+                    || param.getEquipmentType() == CalcConstant.EquipmentType.心脏) {
+                reelAtk = 10 + i;
             } else {
-                atk = (double) trainingModel.getAtk() / param.getReelNum();
+                reelAtk = 5 + i;
             }
-            return Double.parseDouble(String.format("%.2f", atk + trainingModel.getReelAtk()));
+            totalAtk = new Double(param.getOriginAtk());
+            if (param.getEquipmentType() == CalcConstant.EquipmentType.武器) {
+                // 武器需要加上卷的攻击去算
+                totalAtk += param.getReelNum() * reelAtk;
+            }
+            totalAtk = calcStarAtk(totalAtk, param.getStarLevel(), param.getLevel(), param.getEquipmentType());
+            if (param.getEquipmentType() != CalcConstant.EquipmentType.武器) {
+                totalAtk += param.getReelNum() * reelAtk;
+            }
+            Double contrast = param.getTotalAtk() - param.getStarAtk() - totalAtk;
+            list.add(new TrainingModel(contrast, reelAtk));
         }
 
-        return trainingModel.getReelAtk();
+        list.sort((o1, o2) -> o1.getAtk().compareTo(o2.atk));
+        Optional<TrainingModel> first = list.stream().filter(item -> item.getAtk() >= 0).findFirst();
+
+        if (!first.isPresent()) {
+            return null;
+        }
+        TrainingModel trainingModel = first.get();
+        return trainingModel;
+    }
+
+    /**
+     * 获取训练模型2
+     *
+     * @param param         参数
+     * @param trainingModel 培训模式
+     * @return double
+     */
+    private static double getTrainingModel2(EquipmentAutoCalcParam param, TrainingModel trainingModel) {
+        List<TrainingModel> list2 = new ArrayList<>();
+        for (int i = 0; i < 100; i++) {
+            Double tt = new Double(param.getOriginAtk());
+            if (param.getEquipmentType() == CalcConstant.EquipmentType.武器) {
+                // 武器需要加上卷的攻击去算
+                tt += param.getReelNum() * (trainingModel.getReelAtk() + ((i + 1) / 100D));
+            }
+            tt = calcStarAtk(tt, param.getStarLevel(), param.getLevel(), param.getEquipmentType());
+            if (param.getEquipmentType() != CalcConstant.EquipmentType.武器) {
+                tt += param.getReelNum() * (trainingModel.getReelAtk() + ((i + 1) / 100D));
+            }
+            Double contrast = param.getTotalAtk() - param.getStarAtk() - tt;
+            list2.add(new TrainingModel(contrast, ((i + 1) / 100D) + trainingModel.getReelAtk()));
+            if (contrast == 0D) {
+                return Double.parseDouble(String.format("%.2f", (i + 1) / 100D + trainingModel.getReelAtk()));
+            }
+        }
+        list2.sort((o1, o2) -> o1.getAtk().compareTo(o2.atk));
+        Optional<TrainingModel> first2 = list2.stream().filter(item -> item.getAtk() >= 0).findFirst();
+        if (!first2.isPresent()) {
+            return -1;
+        }
+        TrainingModel trainingModel2 = first2.get();
+        return trainingModel2.getReelAtk();
     }
 
     /**
@@ -144,8 +185,7 @@ public class EquipmentHandler {
      */
     public static CalcModel calc(EquipmentCalcParam param) {
         // 获得卷轴攻击力
-        int reelNum = param.getGloryNum() + param.getBlackNum() + param.getVNum() + param.getXNum() + param.getRedNum();
-        int reelAtk = param.getGloryNum() * param.getGloryValNum();
+        Double reelAtk = param.getGloryNum() * param.getGloryValNum();
         if (param.getEquipmentType() == CalcConstant.EquipmentType.武器
                 || param.getEquipmentType() == CalcConstant.EquipmentType.心脏) {
             reelAtk += param.getBlackNum() * CalcConstant.Reel.黑卷.getWeapons();
@@ -160,7 +200,7 @@ public class EquipmentHandler {
         }
 
         // 使用原始攻击 + 卷轴攻击套用星力加成计算 武器吃加成! 获取总攻击数据
-        int totalAtk = param.getOriginAtk();
+        Double totalAtk = new Double(param.getOriginAtk());
         if (param.getEquipmentType() == CalcConstant.EquipmentType.武器) {
             totalAtk += reelAtk;
         }
@@ -169,7 +209,7 @@ public class EquipmentHandler {
             totalAtk += reelAtk;
         }
         // 获取附加攻击值
-        int appendAtk = totalAtk - param.getOriginAtk() - param.getStarAtk();
+        Double appendAtk = totalAtk - param.getOriginAtk() - param.getStarAtk();
 
         return CalcModel.builder().totalAtk(totalAtk).appendAtk(appendAtk).build();
 
@@ -182,7 +222,7 @@ public class EquipmentHandler {
      * @param param 参数
      * @return int
      */
-    private static int calcStarAtk(int totalAtk, int starLevel, int level, CalcConstant.EquipmentType equipmentType) {
+    private static Double calcStarAtk(Double totalAtk, int starLevel, int level, CalcConstant.EquipmentType equipmentType) {
         // 循环计算攻击力
         for (int i = 0; i < starLevel; i++) {
             if (equipmentType == CalcConstant.EquipmentType.武器) {
@@ -224,7 +264,7 @@ public class EquipmentHandler {
      * @param atk atk公司
      * @return int
      */
-    private static int calcStarLevelDeduceAtk(int atk) {
+    private static int calcStarLevelDeduceAtk(Double atk) {
         if (atk == 0) {
             return 0;
         }
@@ -241,10 +281,10 @@ public class EquipmentHandler {
 
         private static final long serialVersionUID = 2311167728586773837L;
 
-        private Integer atk;
-        private Integer reelAtk;
+        private Double atk;
+        private Double reelAtk;
 
-        public TrainingModel(Integer atk, Integer reelAtk) {
+        public TrainingModel(Double atk, Double reelAtk) {
             this.atk = atk;
             this.reelAtk = reelAtk;
         }
