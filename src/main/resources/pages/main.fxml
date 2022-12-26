@@ -130,7 +130,7 @@
                                                 <Font size="13.0" />
                                             </font>
                                         </Button>
-                                        <Button fx:id="startGameBtn" layoutX="10.0" layoutY="162.0" mnemonicParsing="false" onAction="#startGameAction" prefHeight="74.0" prefWidth="201.0" text="启动游戏(32/64bit)">
+                                        <Button fx:id="startGameBtn" layoutX="10.0" layoutY="162.0" mnemonicParsing="false" onAction="#startGameAction" prefHeight="77.0" prefWidth="201.0" text="启动游戏(32/64bit)">
                                             <font>
                                                 <Font size="15.0" />
                                             </font>
