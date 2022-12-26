@@ -1,5 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
+<?import java.lang.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.text.*?>
 <?import javafx.scene.control.CheckBox?>
 <?import javafx.scene.control.ComboBox?>
 <?import javafx.scene.control.Label?>
@@ -10,7 +14,7 @@
 <?import javafx.scene.layout.Pane?>
 <?import javafx.scene.text.Font?>
 
-<AnchorPane prefHeight="248.0" prefWidth="289.0" xmlns="http://javafx.com/javafx/8.0.171" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.starmcc.beanfun.controller.EquipmentController">
+<AnchorPane prefHeight="248.0" prefWidth="289.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.starmcc.beanfun.controller.EquipmentController">
     <children>
       <Label fx:id="autoText" alignment="CENTER" layoutX="14.0" layoutY="185.0" prefHeight="59.0" prefWidth="261.0" style="-fx-background-color: #ffffff;" text="自动模式" textFill="#f984ff">
          <font>
@@ -49,10 +53,10 @@
         </Pane>
         <Label fx:id="gloryLabel" layoutX="10.0" layoutY="192.0" prefHeight="15.0" prefWidth="58.0" text="命运/荣耀" />
         <TextField fx:id="gloryReelNumText" alignment="CENTER" layoutX="67.0" layoutY="188.0" prefHeight="23.0" prefWidth="36.0" text="0" />
-        <Label fx:id="gloryValLabel" layoutX="39.0" layoutY="220.0" text="均值" />
+        <Label fx:id="gloryValLabel" layoutX="11.0" layoutY="220.0" prefHeight="15.0" prefWidth="36.0" text="平均值" />
         <TextField fx:id="redReelNumText" alignment="CENTER" layoutX="228.0" layoutY="216.0" prefHeight="23.0" prefWidth="36.0" text="0" />
         <Label fx:id="blackLabel" layoutX="112.0" layoutY="192.0" text="黑卷" />
-        <TextField fx:id="gloryValText" alignment="CENTER" layoutX="68.0" layoutY="216.0" prefHeight="23.0" prefWidth="36.0" text="0" />
+        <TextField fx:id="gloryValText" alignment="CENTER" layoutX="54.0" layoutY="216.0" prefHeight="23.0" prefWidth="50.0" text="0" />
         <Label fx:id="vLabel" layoutX="114.0" layoutY="220.0" text="V卷" />
         <TextField fx:id="blackReelNumText" alignment="CENTER" layoutX="144.0" layoutY="188.0" prefHeight="23.0" prefWidth="36.0" text="0" />
         <Label layoutX="198.0" layoutY="192.0" text="X卷" fx:id="xLabel" />
