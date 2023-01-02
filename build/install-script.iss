@@ -2,7 +2,7 @@
 ; SEE THE DOCUMENTATION FOR DETAILS ON CREATING INNO SETUP SCRIPT FILES!
 
 #define MyAppName "QsBeanfun"
-#define MyAppVersion "4.1.3"
+#define MyAppVersion "4.2.0"
 #define MyAppPublisher "starmcc"
 #define MyAppURL "https://github.com/starmcc/qs-beanfun"
 #define MyAppExeName "QsBeanfun.exe"
