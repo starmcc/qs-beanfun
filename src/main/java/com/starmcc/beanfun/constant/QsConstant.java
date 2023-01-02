@@ -26,7 +26,6 @@ public class QsConstant {
     public static final String PATH_APP_CONFIG = PATH_APP_PLUGINS + "config.json";
     public static final String APP_NAME = "QsBeanfun";
     public static final String UPDATE_API_GITHUB = "https://api.github.com/repos/starmcc/qs-beanfun/releases/latest";
-    public static final String UPDATE_API_SERVER = "https://update.qstms.com/qs-beanfun/version.json";
     public static final String GITHUB_URL = "https://github.com/starmcc/qs-beanfun";
     public static final JFXStageData JFX_STAGE_DATA = new JFXStageData();
     public static TrayIcon trayIcon;
