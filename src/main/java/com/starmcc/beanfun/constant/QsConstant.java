@@ -3,12 +3,15 @@ package com.starmcc.beanfun.constant;
 import com.starmcc.beanfun.entity.client.Account;
 import com.starmcc.beanfun.entity.client.BeanfunModel;
 import com.starmcc.beanfun.entity.model.ConfigModel;
+import com.starmcc.beanfun.utils.SystemTools;
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 
 import java.awt.*;
 import java.io.IOException;
+import java.io.InputStream;
 import java.math.BigDecimal;
+import java.util.Properties;
 
 
 /**
@@ -19,20 +22,42 @@ import java.math.BigDecimal;
  */
 @Slf4j
 public class QsConstant {
-    public static boolean DEV = false;
-    public static final String APP_VERSION = "4.2.0";
+
+    private static final Properties DATA_PROS;
+    public static final String ENV;
+    public static final String APP_VERSION;
+    public static final String APP_NAME;
+    public static final String GITHUB_API_LATSET;
+    public static final String APP_UPDATE_CONFIG;
+    public static final String GITHUB_URL;
     public static final String PATH_APP = System.getProperties().getProperty("user.dir");
     public static final String PATH_APP_PLUGINS = PATH_APP + "\\qs-data\\";
     public static final String PATH_APP_CONFIG = PATH_APP_PLUGINS + "config.json";
-    public static final String APP_NAME = "QsBeanfun";
-    public static final String UPDATE_API_GITHUB = "https://api.github.com/repos/starmcc/qs-beanfun/releases/latest";
-    public static final String GITHUB_URL = "https://github.com/starmcc/qs-beanfun";
     public static final JFXStageData JFX_STAGE_DATA = new JFXStageData();
     public static TrayIcon trayIcon;
     public static ConfigModel config;
     public static BigDecimal currentRateChinaToTw = new BigDecimal("4.5");
     public static BeanfunModel beanfunModel;
     public static Account nowAccount;
+
+    static {
+        DATA_PROS = new Properties();
+        InputStream in = null;
+        try {
+            in = QsConstant.class.getClassLoader().getResourceAsStream("data.properties");
+            DATA_PROS.load(in);
+        } catch (Exception e) {
+            log.error("异常 error={}", e.getMessage(), e);
+        } finally {
+            SystemTools.close(in);
+        }
+        APP_VERSION = DATA_PROS.getProperty("app.version");
+        APP_NAME = DATA_PROS.getProperty("app.name");
+        ENV = DATA_PROS.getProperty("app.env", "prod");
+        GITHUB_API_LATSET = DATA_PROS.getProperty("github.api.latest");
+        APP_UPDATE_CONFIG = DATA_PROS.getProperty("app.update.config");
+        GITHUB_URL = DATA_PROS.getProperty("github.url");
+    }
 
     /**
      * 插件枚举

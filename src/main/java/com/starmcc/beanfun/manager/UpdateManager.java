@@ -8,13 +8,14 @@ import com.starmcc.beanfun.constant.FXPageEnum;
 import com.starmcc.beanfun.constant.QsConstant;
 import com.starmcc.beanfun.controller.UpdateController;
 import com.starmcc.beanfun.entity.client.QsHttpResponse;
-import com.starmcc.beanfun.entity.client.UpdateModel;
+import com.starmcc.beanfun.entity.model.UpdateModel;
 import javafx.scene.control.Alert;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 
 import java.util.Arrays;
 import java.util.List;
+import java.util.Objects;
 import java.util.stream.Collectors;
 
 /**
@@ -50,25 +51,46 @@ public class UpdateManager {
      * @param quiet 静默
      */
     public synchronized void verifyAppVersion(boolean quiet) {
-        final UpdateModel model = manager.useGithubUpdate();
+        final UpdateModel model = new UpdateModel();
+        model.setType(manager.requestUpdateType());
+        if (model.getType() == UpdateModel.Type.无数据) {
+            if (quiet) {
+                return;
+            }
+            FrameManager.getInstance().message("网络超时,无法获取最新版本信息", Alert.AlertType.WARNING);
+            return;
+        }
+
+        if (model.getType() == UpdateModel.Type.未知类型) {
+            model.setType(UpdateModel.Type.GITHUB手动更新);
+        }
+        // 使用github更新
+        manager.useGithubUpdate(model);
+
         if (model.getState() != UpdateModel.State.有新版本) {
             if (quiet) {
                 return;
             }
             if (model.getState() == UpdateModel.State.获取失败) {
-                FrameManager.getInstance().message("Github网络连接超时,无法自动检查更新.", Alert.AlertType.WARNING);
+                FrameManager.getInstance().message("网络超时,无法获取最新版本信息", Alert.AlertType.WARNING);
             } else if (model.getState() == UpdateModel.State.已是最新版本) {
-                FrameManager.getInstance().message("已经是最新版本", Alert.AlertType.INFORMATION);
+                FrameManager.getInstance().message("当前已经是最新版本", Alert.AlertType.INFORMATION);
             }
             return;
         }
 
         // 有新版本
         FrameManager.getInstance().runLater(() -> {
-            String msg = model.getContent() + "\n是否立刻更新?";
+            String msg = model.getContent() + "\n是否更新?";
             if (!FrameManager.getInstance().dialogConfirm("有新版本", msg)) {
                 return;
             }
+            if (model.getType() == UpdateModel.Type.GITHUB手动更新) {
+                // 手动更新，则跳转浏览器页面
+                FrameManager.getInstance().openWebUrl(QsConstant.GITHUB_URL);
+                return;
+            }
+            // 不是手动更新，则弹出下载页面
             UpdateController.model = model;
             FrameManager.getInstance().openWindow(FXPageEnum.更新页);
         });
@@ -76,35 +98,66 @@ public class UpdateManager {
 
 
     /**
-     * 使用github更新
+     * 请求更新类型
      *
-     * @return {@link UpdateModel}
+     * @return {@link UpdateModel.Type}
      */
-    private UpdateModel useGithubUpdate() {
+    private synchronized UpdateModel.Type requestUpdateType() {
         try {
-            QsHttpResponse qsHttpResponse = HttpClient.getInstance().get(QsConstant.UPDATE_API_GITHUB);
+            QsHttpResponse qsHttpResponse = HttpClient.getInstance().get(QsConstant.APP_UPDATE_CONFIG);
             if (!qsHttpResponse.getSuccess()) {
-                return UpdateModel.build(UpdateModel.State.获取失败);
+                return UpdateModel.Type.无数据;
+            }
+            String content = qsHttpResponse.getContent();
+            content = Objects.nonNull(content) ? content.trim() : content;
+            if (StringUtils.isBlank(content)) {
+                return UpdateModel.Type.无数据;
+            }
+            UpdateModel.Type type = UpdateModel.Type.get(Short.valueOf(content));
+            return Objects.nonNull(type) ? type : UpdateModel.Type.未知类型;
+        } catch (Exception e) {
+            log.error("异常 e={}", e.getMessage(), e);
+        }
+        return UpdateModel.Type.无数据;
+
+    }
+
+    /**
+     * 使用github自动更新
+     *
+     * @param updateModel 更新模型
+     * @param quiet       静默
+     */
+    private void useGithubUpdate(UpdateModel updateModel) {
+        try {
+            QsHttpResponse qsHttpResponse = HttpClient.getInstance().get(QsConstant.GITHUB_API_LATSET);
+            if (!qsHttpResponse.getSuccess()) {
+                updateModel.setState(UpdateModel.State.获取失败);
+                return;
             }
             String json = qsHttpResponse.getContent();
             if (StringUtils.isBlank(json)) {
-                return UpdateModel.build(UpdateModel.State.获取失败);
+                updateModel.setState(UpdateModel.State.获取失败);
+                return;
             }
             JSONObject jsonObj = JSON.parseObject(json);
             String githubVersion = jsonObj.getString("tag_name");
 
             if (StringUtils.isBlank(githubVersion)) {
-                return UpdateModel.build(UpdateModel.State.获取失败);
+                updateModel.setState(UpdateModel.State.获取失败);
+                return;
             }
 
             Integer targetVersion = getNumberVersion(githubVersion);
             if (targetVersion == 0) {
                 log.error("版本解析为0，解析失败 targetVersion={}", githubVersion);
-                return UpdateModel.build(UpdateModel.State.已是最新版本);
+                updateModel.setState(UpdateModel.State.已是最新版本);
+                return;
             }
             Integer nowVersion = getNumberVersion(QsConstant.APP_VERSION);
             if (nowVersion.compareTo(targetVersion) != -1) {
-                return UpdateModel.build(UpdateModel.State.已是最新版本);
+                updateModel.setState(UpdateModel.State.已是最新版本);
+                return;
             }
 
             StringBuffer tipsBf = new StringBuffer();
@@ -121,15 +174,14 @@ public class UpdateManager {
                 }
             }
             log.info("新版本下载地址: {}", downloadUrl);
-            UpdateModel model = UpdateModel.build(UpdateModel.State.有新版本);
-            model.setVersion(githubVersion);
-            model.setUrl(downloadUrl);
-            model.setContent(tipsBf.toString());
-            model.setVersionInt(targetVersion.intValue());
-            return model;
+            updateModel.setState(UpdateModel.State.有新版本);
+            updateModel.setVersion(githubVersion);
+            updateModel.setUrl(downloadUrl);
+            updateModel.setContent(tipsBf.toString());
+            updateModel.setVersionInt(targetVersion.intValue());
         } catch (Exception e) {
             log.error("获取版本异常 e={}", e.getMessage(), e);
-            return UpdateModel.build(UpdateModel.State.获取失败);
+            updateModel.setState(UpdateModel.State.获取失败);
         }
     }
 

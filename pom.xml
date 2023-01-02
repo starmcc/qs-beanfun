@@ -6,7 +6,7 @@
 
     <groupId>com.starmcc.beanfun</groupId>
     <artifactId>qs-beanfun</artifactId>
-    <version>4.2.0</version>
+    <version>1.0.0</version>
     <name>QsBeanfun</name>
 
     <properties>

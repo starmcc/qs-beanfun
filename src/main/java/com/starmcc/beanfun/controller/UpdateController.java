@@ -3,7 +3,7 @@ package com.starmcc.beanfun.controller;
 import com.starmcc.beanfun.client.DownloadClient;
 import com.starmcc.beanfun.constant.FXPageEnum;
 import com.starmcc.beanfun.constant.QsConstant;
-import com.starmcc.beanfun.entity.client.UpdateModel;
+import com.starmcc.beanfun.entity.model.UpdateModel;
 import com.starmcc.beanfun.manager.FrameManager;
 import com.starmcc.beanfun.manager.ThreadPoolManager;
 import com.starmcc.beanfun.utils.FileTools;
