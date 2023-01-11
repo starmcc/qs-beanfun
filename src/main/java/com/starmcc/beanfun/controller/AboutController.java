@@ -9,9 +9,7 @@ import com.starmcc.beanfun.utils.FileTools;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
-import javafx.scene.control.Alert;
-import javafx.scene.control.CheckBox;
-import javafx.scene.control.Hyperlink;
+import javafx.scene.control.*;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.BooleanUtils;
 
@@ -34,9 +32,28 @@ public class AboutController implements Initializable {
     private CheckBox checkBoxPacSwitch;
     @FXML
     private Hyperlink versionBtn;
+    @FXML
+    private ToggleGroup toggleGroupUpdateChannel;
+    @FXML
+    private Button buttonOpenSource;
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
+        ConfigModel.UpdateChannel updateChannel = ConfigModel.UpdateChannel.get(QsConstant.config.getUpdateChannel());
+        if (updateChannel == ConfigModel.UpdateChannel.GITHUB) {
+            buttonOpenSource.setText("开源GitHub");
+        } else if (updateChannel == ConfigModel.UpdateChannel.GITEE) {
+            buttonOpenSource.setText("开源Gitee");
+        }
+
+        for (Toggle toggle : toggleGroupUpdateChannel.getToggles()) {
+            toggle.setSelected(Objects.equals(Short.valueOf(String.valueOf(toggle.getUserData())), updateChannel.getChannel()));
+        }
+        toggleGroupUpdateChannel.selectedToggleProperty().addListener((observable, oldValue, newValue) -> {
+            QsConstant.config.setUpdateChannel(Short.valueOf(String.valueOf(newValue.getUserData())));
+            FileTools.saveConfig(QsConstant.config);
+        });
+
         versionBtn.setText(QsConstant.APP_VERSION);
         if (Objects.nonNull(QsConstant.config.getProxyConfig())) {
             checkBoxPacSwitch.setSelected(!BooleanUtils.isTrue(QsConstant.config.getProxyConfig().getBan()));
@@ -67,7 +84,12 @@ public class AboutController implements Initializable {
 
     @FXML
     public void gitHubBtnAction(ActionEvent actionEvent) {
-        FrameManager.getInstance().openWebUrl(QsConstant.GITHUB_URL);
+        ConfigModel.UpdateChannel updateChannel = ConfigModel.UpdateChannel.get(QsConstant.config.getUpdateChannel());
+        if (updateChannel == ConfigModel.UpdateChannel.GITHUB) {
+            FrameManager.getInstance().openWebUrl(QsConstant.GITHUB_URL);
+        } else if (updateChannel == ConfigModel.UpdateChannel.GITEE) {
+            FrameManager.getInstance().openWebUrl(QsConstant.GITEE_URL);
+        }
     }
 
     @FXML

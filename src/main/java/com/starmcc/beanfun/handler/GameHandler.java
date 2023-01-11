@@ -38,7 +38,7 @@ public class GameHandler {
 
         String lrExe = QsConstant.PluginEnum.LOCALE_REMULATOR.getMainPath();
         String lrDll = QsConstant.PluginEnum.LOCALE_REMULATOR.getTargetPath() + "\\LRHookx64.dll";
-        String cmd = "\"" + lrExe + "\" tms \"" + lrDll + "\" " + runParam;
+        String cmd = "\"" + lrExe + "\" \"" + lrDll + "\" tms " + runParam;
         try {
             log.info("执行命令 runGame = {}", cmd);
             Runtime.getRuntime().exec(cmd, null, new File(gamePath).getParentFile());

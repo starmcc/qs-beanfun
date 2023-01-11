@@ -37,8 +37,8 @@ import java.util.Objects;
  */
 @Slf4j
 public class DownloadClientImpl extends DownloadClient {
+    private long progres = 0L;
 
-    private long counter = 0;
     @Override
 
     public void execute(URL url, File saveFile, DownloadClient.Process process) {
@@ -73,7 +73,7 @@ public class DownloadClientImpl extends DownloadClient {
             }
             process.call(DownloadClient.Process.State.创建文件, null, null, null, null);
             byte[] bytes = readDownloadFile(process, response);
-            if (Objects.isNull(bytes)){
+            if (Objects.isNull(bytes)) {
                 return;
             }
             fos = new FileOutputStream(saveFile);
@@ -106,28 +106,25 @@ public class DownloadClientImpl extends DownloadClient {
             byte[] buffer = new byte[1024];
             int unitProgress = 0;
             int len = 0;
-            int unit = contentLength / 100;
-            int progres = 0;
+            long unit = contentLength / 100;
             bos = new ByteArrayOutputStream();
-            counter = 0;
             taskName = AdvancedTimerMamager.getInstance().addTask(new AdvancedTimerTask() {
                 private long temp = 0;
                 private BigDecimal speed = BigDecimal.ZERO;
 
                 @Override
                 public void start() throws Exception {
-                    speed = new BigDecimal(counter - temp);
-                    temp = counter;
+                    speed = new BigDecimal(progres - temp);
+                    temp = progres;
                     process.call(Process.State.速度回显, null, null, speed.divide(new BigDecimal(1000), 2, RoundingMode.HALF_UP), null);
                 }
-            }, 0, 2000);
+            }, 0, 1000);
             while ((len = inputStream.read(buffer)) != -1) {
-                counter++;
                 bos.write(buffer, 0, len);
                 //保存当前具体进度
                 progres += len;
                 //计算当前百分比进度
-                int temp = progres / unit;
+                int temp = (int) (progres / unit);
                 //如果下载过程出现百分比变化
                 if (temp >= 1 && temp > unitProgress) {
                     //保存当前百分比

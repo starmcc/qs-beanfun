@@ -126,6 +126,8 @@ public class MainController implements Initializable {
     @FXML
     private CheckBox checkBoxHideAct;
     @FXML
+    private CheckBox checkBoxHookInput;
+    @FXML
     private RadioButton radioButtonGame;
     @FXML
     private RadioButton radioButtonScreen;
@@ -194,6 +196,9 @@ public class MainController implements Initializable {
         checkBoxCheckAppUpdate.setSelected(BooleanUtils.isTrue(QsConstant.config.getCheckAppUpdate()));
         // 是否隐藏显示
         textFieldActId.setVisible(!checkBoxHideAct.isSelected());
+        // LR配置
+        ConfigModel.LRConfig lrConfig = QsConstant.config.getLrConfig();
+        checkBoxHookInput.setSelected(BooleanUtils.isTrue(lrConfig.getHookInput()));
 
         // 录像配置
         ConfigModel.RecordVideo recordVideo = QsConstant.config.getRecordVideo();
@@ -265,6 +270,11 @@ public class MainController implements Initializable {
         checkBoxCheckAppUpdate.setOnAction(event -> {
             QsConstant.config.setCheckAppUpdate(checkBoxCheckAppUpdate.isSelected());
             FileTools.saveConfig(QsConstant.config);
+        });
+        checkBoxHookInput.setOnAction(event -> {
+            QsConstant.config.getLrConfig().setHookInput(checkBoxHookInput.isSelected());
+            FileTools.saveConfig(QsConstant.config);
+            LocaleRemulatorHandler.settingHookInput(QsConstant.config.getLrConfig().getHookInput());
         });
         // =========================== 导航菜单控件事件 ========================
         menuItemOfficialTmsUrl.setOnAction(event -> FrameManager.getInstance().openWebUrl("https://maplestory.beanfun.com/main"));

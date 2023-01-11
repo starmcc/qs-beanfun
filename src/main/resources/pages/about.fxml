@@ -3,7 +3,9 @@
 <?import javafx.scene.control.Button?>
 <?import javafx.scene.control.CheckBox?>
 <?import javafx.scene.control.Hyperlink?>
+<?import javafx.scene.control.RadioButton?>
 <?import javafx.scene.control.Separator?>
+<?import javafx.scene.control.ToggleGroup?>
 <?import javafx.scene.image.Image?>
 <?import javafx.scene.image.ImageView?>
 <?import javafx.scene.layout.AnchorPane?>
@@ -63,7 +65,7 @@
             <Font size="25.0" />
          </font>
       </Text>
-      <Button layoutX="17.0" layoutY="341.0" mnemonicParsing="false" onAction="#gitHubBtnAction" prefHeight="28.0" prefWidth="83.0" text="开源GitHub" />
+      <Button layoutX="17.0" layoutY="341.0" mnemonicParsing="false" fx:id="buttonOpenSource" onAction="#gitHubBtnAction" prefHeight="28.0" prefWidth="83.0" text="" />
       <Text fill="#ff4000" layoutX="11.0" layoutY="203.0" strokeType="OUTSIDE" strokeWidth="0.0" text="所有不怀好意的指责..." textAlignment="CENTER" wrappingWidth="150.00000132247806">
          <font>
             <Font size="15.0" />
@@ -76,5 +78,11 @@
       </Text>
       <Button layoutX="258.0" layoutY="39.0" mnemonicParsing="false" onAction="#resetConfigBtnAction" text="重置所有配置" />
       <CheckBox fx:id="checkBoxPacSwitch" layoutX="249.0" layoutY="15.0" mnemonicParsing="false" prefHeight="16.0" prefWidth="101.0" text="适配PAC代理" />
+      <RadioButton layoutX="86.0" layoutY="15.0" mnemonicParsing="false" text="GitHub" userData="1">
+         <toggleGroup>
+            <ToggleGroup fx:id="toggleGroupUpdateChannel" />
+         </toggleGroup>
+      </RadioButton>
+      <RadioButton layoutX="152.0" layoutY="15.0" mnemonicParsing="false" text="Gitee" toggleGroup="$toggleGroupUpdateChannel" userData="2" />
     </children>
 </AnchorPane>

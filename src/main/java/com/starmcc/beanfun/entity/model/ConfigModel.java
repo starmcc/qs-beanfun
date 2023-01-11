@@ -8,6 +8,7 @@ import java.io.File;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 /**
  * 全局配置数据模型
@@ -26,6 +27,7 @@ public class ConfigModel implements Serializable {
     private Integer ranShaoKey;
     private Boolean killStartPalyWindow;
     private Boolean checkAppUpdate;
+    private Short updateChannel;
     private Boolean killGamePatcher;
     private Boolean autoInput;
     private Boolean passInput;
@@ -33,6 +35,7 @@ public class ConfigModel implements Serializable {
     private RecordVideo recordVideo;
     private List<ActPwd> actPwds;
     private ProxyConfig proxyConfig;
+    private LRConfig lrConfig;
     private String vipSecrect;
 
     public ConfigModel() {
@@ -61,7 +64,11 @@ public class ConfigModel implements Serializable {
         // 代理配置
         this.proxyConfig = new ProxyConfig();
         // 检查应用更新
-        this.checkAppUpdate = false;
+        this.checkAppUpdate = true;
+        // 更新渠道 默认Gitee 走国内路线
+        this.updateChannel = UpdateChannel.GITEE.getChannel();
+        // LR配置
+        this.lrConfig = new LRConfig();
         // vip密钥
         this.vipSecrect = "";
     }
@@ -153,6 +160,26 @@ public class ConfigModel implements Serializable {
         }
     }
 
+    /**
+     * lrconfig
+     *
+     * @author starmcc
+     * @date 2023/01/12
+     */
+    @Data
+    public static class LRConfig implements Serializable {
+        private static final long serialVersionUID = 7199324595972542483L;
+
+        /**
+         * 钩子输入法
+         */
+        private Boolean hookInput;
+
+        public LRConfig() {
+            this.hookInput = true;
+        }
+
+    }
 
     @Data
     public static class ProxyConfig implements Serializable {
@@ -171,6 +198,39 @@ public class ConfigModel implements Serializable {
         @Override
         public String toString() {
             return ip + ":" + port;
+        }
+    }
+
+
+    /**
+     * 更新频道
+     *
+     * @author starmcc
+     * @date 2023/01/12
+     */
+    public static enum UpdateChannel {
+        GITHUB((short) 1),
+        GITEE((short) 2),
+        ;
+
+        private final short channel;
+
+        UpdateChannel(short channel) {
+            this.channel = channel;
+        }
+
+        public short getChannel() {
+            return channel;
+        }
+
+        public static UpdateChannel get(short channel) {
+            for (UpdateChannel value : values()) {
+                if (Objects.equals(value.getChannel(), channel)) {
+                    return value;
+                }
+            }
+            // 默认Github
+            return UpdateChannel.GITHUB;
         }
     }
 }

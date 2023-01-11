@@ -27,9 +27,10 @@ public class QsConstant {
     public static final String ENV;
     public static final String APP_VERSION;
     public static final String APP_NAME;
-    public static final String GITHUB_API_LATSET;
-    public static final String APP_UPDATE_CONFIG;
     public static final String GITHUB_URL;
+    public static final String GITHUB_API_LATSET;
+    public static final String GITEE_URL;
+    public static final String GITEE_API_LATSET;
     public static final String PATH_APP = System.getProperties().getProperty("user.dir");
     public static final String PATH_APP_PLUGINS = PATH_APP + "\\qs-data\\";
     public static final String PATH_APP_CONFIG = PATH_APP_PLUGINS + "config.json";
@@ -54,9 +55,10 @@ public class QsConstant {
         APP_VERSION = DATA_PROS.getProperty("app.version");
         APP_NAME = DATA_PROS.getProperty("app.name");
         ENV = DATA_PROS.getProperty("app.env", "prod");
-        GITHUB_API_LATSET = DATA_PROS.getProperty("github.api.latest");
-        APP_UPDATE_CONFIG = DATA_PROS.getProperty("app.update.config");
         GITHUB_URL = DATA_PROS.getProperty("github.url");
+        GITHUB_API_LATSET = DATA_PROS.getProperty("github.api.latest");
+        GITEE_URL = DATA_PROS.getProperty("gitee.url");
+        GITEE_API_LATSET = DATA_PROS.getProperty("gitee.api.latest");
     }
 
     /**

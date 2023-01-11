@@ -1,6 +1,8 @@
 package com.starmcc.beanfun;
 
 import com.starmcc.beanfun.constant.QsConstant;
+import com.starmcc.beanfun.entity.model.ConfigModel;
+import com.starmcc.beanfun.handler.LocaleRemulatorHandler;
 import com.starmcc.beanfun.manager.FrameManager;
 import com.starmcc.beanfun.manager.ThreadPoolManager;
 import com.starmcc.beanfun.manager.UpdateManager;
@@ -39,6 +41,10 @@ public class InitApplication {
         // 写入依赖文件
         for (QsConstant.PluginEnum resource : QsConstant.PluginEnum.values()) {
             File file = new File(resource.getTargetPath());
+            if (resource == QsConstant.PluginEnum.LOCALE_REMULATOR) {
+                boolean b = FileTools.deleteFolder(new File(resource.getTargetPath()));
+                log.info("重置LR文件 {}", b);
+            }
             if (file.exists()) {
                 continue;
             }
@@ -48,6 +54,10 @@ public class InitApplication {
         if (BooleanUtils.isTrue(QsConstant.config.getCheckAppUpdate())) {
             ThreadPoolManager.execute(() -> UpdateManager.getInstance().verifyAppVersion(true));
         }
+
+        // 修改LR配置文件
+        ConfigModel.LRConfig lrConfig = QsConstant.config.getLrConfig();
+        LocaleRemulatorHandler.settingHookInput(lrConfig.getHookInput());
     }
 
 
