@@ -1,7 +1,6 @@
 package com.starmcc.beanfun.controller;
 
 import com.starmcc.beanfun.client.BeanfunClient;
-import com.starmcc.beanfun.client.ThirdPartyApiClient;
 import com.starmcc.beanfun.constant.FXPageEnum;
 import com.starmcc.beanfun.constant.QsConstant;
 import com.starmcc.beanfun.entity.client.Account;
@@ -13,24 +12,24 @@ import com.starmcc.beanfun.entity.model.QsTray;
 import com.starmcc.beanfun.handler.*;
 import com.starmcc.beanfun.manager.AdvancedTimerMamager;
 import com.starmcc.beanfun.manager.FrameManager;
-import com.starmcc.beanfun.manager.ThreadPoolManager;
 import com.starmcc.beanfun.manager.WindowManager;
 import com.starmcc.beanfun.manager.impl.AdvancedTimerTask;
 import com.starmcc.beanfun.utils.DataTools;
 import com.starmcc.beanfun.utils.FileTools;
 import com.starmcc.beanfun.utils.RegexUtils;
-import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.*;
+import javafx.scene.input.MouseButton;
+import javafx.scene.input.MouseEvent;
+import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
-import javafx.stage.DirectoryChooser;
 import javafx.stage.FileChooser;
+import javafx.stage.Stage;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.BooleanUtils;
 import org.apache.commons.lang3.StringUtils;
 
@@ -55,14 +54,16 @@ import java.util.ResourceBundle;
 public class MainController implements Initializable {
 
 
+    public Label expandableBar;
+    public VBox expandablePane;
+    public VBox mainPane;
     @FXML
     private ChoiceBox<Account> choiceBoxActList;
     @FXML
     private Label labelActPoint;
     @FXML
     private Label labelActStatus;
-    @FXML
-    private Label labelActCreateTime;
+    private String actCreateTimeStr;
     @FXML
     private TextField textFieldActId;
     @FXML
@@ -74,19 +75,19 @@ public class MainController implements Initializable {
     @FXML
     private TextField textFieldGamePath;
     @FXML
-    private TextField textFieldRmbInput;
-    @FXML
-    private TextField textFieldXtbInput;
-    @FXML
     private Button buttonAddAct;
     @FXML
     private MenuItem menuItemAddAct;
     @FXML
-    private Label labelExchangeNow;
-    @FXML
     private CheckMenuItem checkMenuItemAlwaysOnTop;
     @FXML
     private CheckMenuItem checkMenuItemAutoLunShao;
+    @FXML
+    public Menu menuLunShaoSetting;
+    @FXML
+    public MenuItem menuItemLunHui;
+    @FXML
+    public MenuItem menuItemRanShao;
     @FXML
     private MenuItem menuItemOfficialTmsUrl;
     @FXML
@@ -104,35 +105,13 @@ public class MainController implements Initializable {
     @FXML
     private MenuItem qsbiliUrlMenu;
     @FXML
-    private TextField textFieldLunHui;
-    @FXML
-    private TextField textFieldRanShao;
-    @FXML
-    private TextField textFieldVideoPath;
-    @FXML
-    private Label labelRanshao;
-    @FXML
-    private Label labelLunhui;
-    @FXML
-    private ChoiceBox<Integer> choiceBoxVideoFps;
-    @FXML
-    private ComboBox<String> comboBoxVideoCodeRate;
-    @FXML
     private CheckBox checkBoxKillGamePatcher;
     @FXML
     private ToggleButton buttonRecordVideo;
     @FXML
-    private CheckBox checkBoxAutoInput;
-    @FXML
-    private CheckBox checkBoxHideAct;
-    @FXML
     private CheckBox checkBoxHookInput;
     @FXML
-    private RadioButton radioButtonGame;
-    @FXML
-    private RadioButton radioButtonScreen;
-    @FXML
-    private TextField textFieldFFmpegPath;
+    public CheckBox checkBoxMinimizeHide;
     @FXML
     private MenuItem menuItemEquipment;
     @FXML
@@ -145,8 +124,8 @@ public class MainController implements Initializable {
     private MenuItem menuItemAlliance;
     @FXML
     private MenuItem menuItemExit;
-    @FXML
-    private CheckBox checkBoxCheckAppUpdate;
+//    @FXML
+//    private CheckBox checkBoxCheckAppUpdate;
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
@@ -192,39 +171,12 @@ public class MainController implements Initializable {
         checkBoxKillPlayStartWindow.setSelected(BooleanUtils.isTrue(QsConstant.config.getKillStartPalyWindow()));
         textFieldGamePath.setText(QsConstant.config.getGamePath());
         checkBoxKillGamePatcher.setSelected(BooleanUtils.isTrue(QsConstant.config.getKillGamePatcher()));
-        checkBoxAutoInput.setSelected(BooleanUtils.isTrue(QsConstant.config.getAutoInput()));
-        checkBoxCheckAppUpdate.setSelected(BooleanUtils.isTrue(QsConstant.config.getCheckAppUpdate()));
-        // 是否隐藏显示
-        textFieldActId.setVisible(!checkBoxHideAct.isSelected());
+        checkBoxMinimizeHide.setSelected(BooleanUtils.isTrue(QsConstant.config.getMinimizeMode()));
+
         // LR配置
         ConfigModel.LRConfig lrConfig = QsConstant.config.getLrConfig();
         checkBoxHookInput.setSelected(BooleanUtils.isTrue(lrConfig.getHookInput()));
 
-        // 录像配置
-        ConfigModel.RecordVideo recordVideo = QsConstant.config.getRecordVideo();
-        ObservableList<Integer> fpsItems = FXCollections.observableArrayList();
-        fpsItems.add(30);
-        fpsItems.add(60);
-        fpsItems.add(90);
-        choiceBoxVideoFps.setItems(fpsItems);
-        choiceBoxVideoFps.getSelectionModel().select(recordVideo.getFps());
-        textFieldVideoPath.setText(recordVideo.getFolder());
-
-        ObservableList<String> codeRateItems = FXCollections.observableArrayList();
-        codeRateItems.add("1800");
-        codeRateItems.add("2500");
-        codeRateItems.add("3500");
-        comboBoxVideoCodeRate.setItems(codeRateItems);
-        comboBoxVideoCodeRate.getSelectionModel().select(recordVideo.getCodeRate());
-        comboBoxVideoCodeRate.setValue(String.valueOf(recordVideo.getCodeRate()));
-
-        Integer captureType = recordVideo.getCaptureType();
-        if (Objects.equals(captureType, ConfigModel.RecordVideo.CaptureTypeEnum.游戏窗口.getType())) {
-            radioButtonGame.setSelected(true);
-        } else {
-            radioButtonScreen.setSelected(true);
-        }
-        textFieldFFmpegPath.setText(recordVideo.getFfmpegPath());
         // vip功能初始化
         this.vipFeatureInit();
     }
@@ -238,14 +190,12 @@ public class MainController implements Initializable {
         String secrect = Base64.getEncoder().encodeToString(DataTools.getCpuId().getBytes());
         boolean start = StringUtils.isNotBlank(data) && StringUtils.equals(secrect, data);
         checkMenuItemAutoLunShao.setVisible(start);
-        labelLunhui.setVisible(start);
-        labelRanshao.setVisible(start);
-        textFieldLunHui.setVisible(start);
-        textFieldRanShao.setVisible(start);
+        menuLunShaoSetting.setVisible(start);
+
         if (start) {
             // 轮烧配置
-            textFieldLunHui.setText(KeyEvent.getKeyText(QsConstant.config.getLunHuiKey()));
-            textFieldRanShao.setText(KeyEvent.getKeyText(QsConstant.config.getRanShaoKey()));
+            menuItemLunHui.setText(menuItemLunHui.getText() + KeyEvent.getKeyText(QsConstant.config.getLunHuiKey()));
+            menuItemRanShao.setText(menuItemRanShao.getText() + KeyEvent.getKeyText(QsConstant.config.getRanShaoKey()));
         }
     }
 
@@ -267,14 +217,14 @@ public class MainController implements Initializable {
             QsConstant.config.setKillStartPalyWindow(checkBoxKillPlayStartWindow.isSelected());
             FileTools.saveConfig(QsConstant.config);
         });
-        checkBoxCheckAppUpdate.setOnAction(event -> {
-            QsConstant.config.setCheckAppUpdate(checkBoxCheckAppUpdate.isSelected());
-            FileTools.saveConfig(QsConstant.config);
-        });
         checkBoxHookInput.setOnAction(event -> {
             QsConstant.config.getLrConfig().setHookInput(checkBoxHookInput.isSelected());
             FileTools.saveConfig(QsConstant.config);
             LocaleRemulatorHandler.settingHookInput(QsConstant.config.getLrConfig().getHookInput());
+        });
+        checkBoxMinimizeHide.setOnAction(event -> {
+            QsConstant.config.setMinimizeMode(checkBoxMinimizeHide.isSelected());
+            FileTools.saveConfig(QsConstant.config);
         });
         // =========================== 导航菜单控件事件 ========================
         menuItemOfficialTmsUrl.setOnAction(event -> FrameManager.getInstance().openWebUrl("https://maplestory.beanfun.com/main"));
@@ -313,81 +263,46 @@ public class MainController implements Initializable {
 
         menuItemAlliance.setOnAction(event -> QsConstant.PluginEnum.WAR_ALLIANCE_HTML.run());
 
-
-        // =========================== 汇率控件事件 ========================
-        textFieldRmbInput.textProperty().addListener((ObservableValue<? extends String> observable, String oldValue, String newValue) -> {
-            if (textFieldRmbInput.isFocused()) {
-                textFieldXtbInput.setText(CellHandler.cellHuiLv(newValue, 1).toString());
-            }
-        });
-        textFieldXtbInput.textProperty().addListener((ObservableValue<? extends String> observable, String oldValue, String newValue) -> {
-            if (textFieldXtbInput.isFocused()) {
-                textFieldRmbInput.setText(CellHandler.cellHuiLv(newValue, 2).toString());
-            }
-        });
-
-        // 获取汇率
-        ThreadPoolManager.execute(() -> {
-            QsConstant.currentRateChinaToTw = ThirdPartyApiClient.getCurrentRateChinaToTw();
-            FrameManager.getInstance().runLater(() -> labelExchangeNow.setText(QsConstant.currentRateChinaToTw.toString()));
-        });
-
         // =================== 轮烧按键配置控件事件 =====================
 
-        textFieldLunHui.setOnKeyPressed((keyEvent) -> {
-            int code = keyEvent.getCode().impl_getCode();
-            if (code == 0) {
-                textFieldLunHui.setText("");
-                return;
+//        textFieldLunHui.setOnKeyPressed((keyEvent) -> {
+//            int code = keyEvent.getCode().impl_getCode();
+//            if (code == 0) {
+//                textFieldLunHui.setText("");
+//                return;
+//            }
+//            textFieldLunHui.setText(KeyEvent.getKeyText(code));
+//            // 记录设置
+//            QsConstant.config.setLunHuiKey(code);
+//            FileTools.saveConfig(QsConstant.config);
+//        });
+//
+//        textFieldRanShao.setOnKeyPressed((keyEvent) -> {
+//            int code = keyEvent.getCode().impl_getCode();
+//            if (code == 0) {
+//                textFieldLunHui.setText("");
+//                return;
+//            }
+//            textFieldRanShao.setText(KeyEvent.getKeyText(code));
+//            // 记录设置
+//            QsConstant.config.setRanShaoKey(code);
+//            FileTools.saveConfig(QsConstant.config);
+//        });
+
+
+        textFieldActId.focusedProperty().addListener((observable, oldValue, newValue) -> {
+            if (newValue) {
+                // 如果编辑框获取焦点，则明文显示内容
+                textFieldActId.setText(QsConstant.nowAccount.getId());
             }
-            textFieldLunHui.setText(KeyEvent.getKeyText(code));
-            // 记录设置
-            QsConstant.config.setLunHuiKey(code);
-            FileTools.saveConfig(QsConstant.config);
+            else {
+                // 如果编辑框不为空，则将第五位之后的内容设置为*
+                if (StringUtils.isNotBlank(textFieldActId.getText())) {
+                    textFieldActId.setText(QsConstant.nowAccount.getId().substring(0, 5) + "******");
+                }
+            }
         });
 
-        textFieldRanShao.setOnKeyPressed((keyEvent) -> {
-            int code = keyEvent.getCode().impl_getCode();
-            if (code == 0) {
-                textFieldLunHui.setText("");
-                return;
-            }
-            textFieldRanShao.setText(KeyEvent.getKeyText(code));
-            // 记录设置
-            QsConstant.config.setRanShaoKey(code);
-            FileTools.saveConfig(QsConstant.config);
-        });
-
-
-        // =================== 录像控件事件 =====================
-        comboBoxVideoCodeRate.valueProperty().addListener((obsVal, oldVal, newVal) -> {
-            // 只能输入数字
-            if (!RegexUtils.test(RegexUtils.Constant.COMMON_NUMBER, newVal)) {
-                comboBoxVideoCodeRate.setValue(oldVal);
-                return;
-            }
-            ConfigModel.RecordVideo recordVideoTemp = QsConstant.config.getRecordVideo();
-            int number = Integer.valueOf(newVal);
-            if (number == 0) {
-                number = recordVideoTemp.getCodeRate();
-            }
-            recordVideoTemp.setCodeRate(number);
-            comboBoxVideoCodeRate.setValue(String.valueOf(number));
-            QsConstant.config.setRecordVideo(recordVideoTemp);
-            FileTools.saveConfig(QsConstant.config);
-        });
-
-        ToggleGroup group = new ToggleGroup();
-        radioButtonGame.setToggleGroup(group);
-        radioButtonScreen.setToggleGroup(group);
-        radioButtonGame.setOnAction(event -> {
-            QsConstant.config.getRecordVideo().setCaptureType(ConfigModel.RecordVideo.CaptureTypeEnum.游戏窗口.getType());
-            FileTools.saveConfig(QsConstant.config);
-        });
-        radioButtonScreen.setOnAction(event -> {
-            QsConstant.config.getRecordVideo().setCaptureType(ConfigModel.RecordVideo.CaptureTypeEnum.全屏.getType());
-            FileTools.saveConfig(QsConstant.config);
-        });
     }
 
 
@@ -421,17 +336,6 @@ public class MainController implements Initializable {
             label.setText("获取动态密码..");
             AccountHandler.getDynamicPassword(QsConstant.nowAccount, (id, password) -> {
                 FrameManager.getInstance().runLater(() -> textFieldDynamicPwd.setText(password));
-                // 自动输入 并检查游戏是否存在
-                if (BooleanUtils.isTrue(QsConstant.config.getAutoInput())
-                        && StringUtils.isNotBlank(password)
-                        && WindowManager.getInstance().checkMapleStoryRunning()) {
-                    try {
-                        WindowManager.getInstance().autoInputActPwd(id, password);
-                    } catch (Exception e) {
-                        log.error("error={}", e, e.getMessage());
-                        FrameManager.getInstance().message("自动输入异常", Alert.AlertType.ERROR);
-                    }
-                }
             });
         });
     }
@@ -507,7 +411,7 @@ public class MainController implements Initializable {
      * 更新游戏点数事件
      */
     @FXML
-    public void updatePointsAction(ActionEvent actionEvent) {
+    public void updatePointsAction(MouseEvent actionEvent) {
         LoadPage.task(FXPageEnum.主页, label -> {
             label.setText("获取游戏点数...");
             // 获取游戏点数
@@ -596,22 +500,6 @@ public class MainController implements Initializable {
         QsConstant.JFX_STAGE_DATA.get(FXPageEnum.主页).getStage().setAlwaysOnTop(checkMenuItemAlwaysOnTop.isSelected());
     }
 
-
-    /**
-     * 更新汇率
-     *
-     * @param actionEvent 行动事件
-     */
-    @FXML
-    public void updateRateAction(ActionEvent actionEvent) {
-        // 获取汇率
-        LoadPage.task(FXPageEnum.主页, label -> {
-            label.setText("更新汇率..");
-            QsConstant.currentRateChinaToTw = ThirdPartyApiClient.getCurrentRateChinaToTw();
-            FrameManager.getInstance().runLater(() -> labelExchangeNow.setText(QsConstant.currentRateChinaToTw.toString()));
-        });
-    }
-
     /**
      * 自动轮烧
      *
@@ -642,38 +530,6 @@ public class MainController implements Initializable {
     public void openToolsWindowAction(ActionEvent actionEvent) throws Exception {
         FrameManager.getInstance().openWindow(FXPageEnum.关于我, FXPageEnum.主页);
     }
-
-    @FXML
-    public void videoPathOpenAction(ActionEvent actionEvent) throws Exception {
-        DirectoryChooser directoryChooser = new DirectoryChooser();
-        directoryChooser.setTitle("录像目录");
-        File selectedfolder = directoryChooser.showDialog(QsConstant.JFX_STAGE_DATA.get(FXPageEnum.主页).getStage());
-        if (Objects.isNull(selectedfolder)) {
-            return;
-        }
-        String path = selectedfolder.getPath();
-        if (StringUtils.isBlank(path)) {
-            return;
-        }
-        textFieldVideoPath.setText(path);
-        QsConstant.config.getRecordVideo().setFolder(path);
-        FileTools.saveConfig(QsConstant.config);
-    }
-
-    @FXML
-    public void selectVideoFpsAction(ActionEvent actionEvent) {
-        Integer value = choiceBoxVideoFps.getValue();
-        QsConstant.config.getRecordVideo().setFps(value);
-        FileTools.saveConfig(QsConstant.config);
-    }
-
-    @FXML
-    public void selectVideoCodeRateAction(ActionEvent actionEvent) {
-        String value = comboBoxVideoCodeRate.getValue();
-        QsConstant.config.getRecordVideo().setCodeRate(Integer.valueOf(value));
-        FileTools.saveConfig(QsConstant.config);
-    }
-
 
     @FXML
     public void recordVideoAction(ActionEvent actionEvent) {
@@ -711,60 +567,16 @@ public class MainController implements Initializable {
     }
 
     @FXML
-    public void autoInputAction(ActionEvent actionEvent) {
-        QsConstant.config.setAutoInput(checkBoxAutoInput.isSelected());
-        FileTools.saveConfig(QsConstant.config);
+    public void openVideoSettingWindowAction(ActionEvent actionEvent) throws Exception
+    {
+        FrameManager.getInstance().openWindow(FXPageEnum.录像设置, FXPageEnum.主页);
     }
 
     @FXML
-    public void hideActPwdAction(ActionEvent actionEvent) {
-        textFieldActId.setVisible(!checkBoxHideAct.isSelected());
+    public void openCurrencyWindowAction(ActionEvent actionEvent) throws Exception
+    {
+        FrameManager.getInstance().openWindow(FXPageEnum.汇率查询, FXPageEnum.主页);
     }
-
-    @FXML
-    public void clearRecordVideoAction(ActionEvent actionEvent) {
-        String folder = QsConstant.config.getRecordVideo().getFolder();
-        File file = new File(folder);
-        if (!file.exists()) {
-            FrameManager.getInstance().messageSync("该目录不存在!", Alert.AlertType.WARNING);
-            return;
-        }
-        File[] files = file.listFiles(pathname -> pathname.getName().endsWith(".mp4"));
-        if (ArrayUtils.isEmpty(files)) {
-            FrameManager.getInstance().messageSync("没有录像可清空!", Alert.AlertType.WARNING);
-            return;
-        }
-        int delNum = 0;
-        for (File f : files) {
-            delNum = f.delete() ? delNum++ : delNum;
-        }
-        FrameManager.getInstance().messageSync("已清理" + delNum + "个录像", Alert.AlertType.INFORMATION);
-    }
-
-
-    @FXML
-    public void ffmpegOpenAction(ActionEvent actionEvent) {
-        FileChooser fileChooser = new FileChooser();
-        FileChooser.ExtensionFilter extFilter = new FileChooser.ExtensionFilter("FFmpeg.exe(*.exe)", "*.exe");
-        fileChooser.getExtensionFilters().add(extFilter);
-        File file = fileChooser.showOpenDialog(QsConstant.JFX_STAGE_DATA.get(FXPageEnum.主页).getStage());
-        if (Objects.isNull(file)) {
-            return;
-        }
-        String path = file.getPath();
-        if (StringUtils.isBlank(path)) {
-            return;
-        }
-        textFieldFFmpegPath.setText(path);
-        QsConstant.config.getRecordVideo().setFfmpegPath(path);
-        FileTools.saveConfig(QsConstant.config);
-    }
-
-    @FXML
-    public void downloadFFmpegAction(ActionEvent actionEvent) {
-        FrameManager.getInstance().openWebUrl("https://ffmpeg.org/download.html");
-    }
-    // =============================================== 私有方法 =================================
 
 
     /**
@@ -789,7 +601,7 @@ public class MainController implements Initializable {
             FrameManager.getInstance().message("新账号请点击创建账号!", Alert.AlertType.INFORMATION);
         }
 
-        buttonAddAct.setVisible(QsConstant.beanfunModel.isNewAccount());
+//        buttonAddAct.setVisible(QsConstant.beanfunModel.isNewAccount());
         menuItemAddAct.setVisible(QsConstant.beanfunModel.isNewAccount());
 
         FrameManager.getInstance().runLater(() -> {
@@ -844,13 +656,33 @@ public class MainController implements Initializable {
         labelActStatus.setText(statusText);
         labelActStatus.setTextFill(statusColor);
         if (Objects.nonNull(QsConstant.nowAccount.getCreateTime())) {
-            String createTimeStr = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(QsConstant.nowAccount.getCreateTime());
-            labelActCreateTime.setText(createTimeStr);
+            actCreateTimeStr = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(QsConstant.nowAccount.getCreateTime());
         }
-        textFieldActId.setText(QsConstant.nowAccount.getId());
+        textFieldActId.setText(QsConstant.nowAccount.getId().substring(0, 5) + "******");
         // 获取游戏点数
         String pointsText = this.getPointsText();
         FrameManager.getInstance().runLater(() -> labelActPoint.setText(pointsText));
     }
 
+    public void expandableBarAction(MouseEvent mouseEvent)
+    {
+        if (mouseEvent.getButton() == MouseButton.PRIMARY)
+        {
+            expandablePane.setVisible(!expandablePane.isVisible());
+            expandableBar.setText(expandablePane.isVisible() ? "▼" : "▲");
+
+            final Stage stage = QsConstant.JFX_STAGE_DATA.get(FXPageEnum.主页).getStage();
+
+            if (expandablePane.isVisible())
+            {
+                stage.sizeToScene();
+                expandablePane.setStyle("");
+            }
+            else
+            {
+                stage.setHeight(stage.getHeight() - expandablePane.getHeight());
+//                expandablePane.setStyle("-fx-border-width: 1; -fx-border-color: black");
+            }
+        }
+    }
 }

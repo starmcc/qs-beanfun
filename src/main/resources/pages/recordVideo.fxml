@@ -1,0 +1,88 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.text.Font?>
+<BorderPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="250.0"
+            prefWidth="400.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1"
+            fx:controller="com.starmcc.beanfun.controller.RecordVideoSettingController">
+    <center>
+        <GridPane BorderPane.alignment="CENTER">
+            <columnConstraints>
+                <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" percentWidth="60.0" prefWidth="100.0"/>
+                <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" percentWidth="7.0" prefWidth="100.0"/>
+                <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0"/>
+            </columnConstraints>
+            <rowConstraints>
+                <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES"/>
+                <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES"/>
+                <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES"/>
+                <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES"/>
+            </rowConstraints>
+            <children>
+                <VBox alignment="TOP_CENTER" prefHeight="200.0" prefWidth="100.0" spacing="10.0" GridPane.rowSpan="4">
+                    <children>
+                        <HBox alignment="CENTER" prefHeight="30.0" prefWidth="200.0" spacing="10.0">
+                            <children>
+                                <Label text="推荐配置：" textFill="RED">
+                                    <font>
+                                        <Font name="System Bold" size="13.0"/>
+                                    </font>
+                                </Label>
+                                <Label text="默认使用低配进行录制"/>
+                            </children>
+                        </HBox>
+                        <Label text="30FPS,1800码率 | 低配" textFill="#09a426"/>
+                        <Label text="60FPS,2500码率 | 中配" textFill="#cd4100"/>
+                        <Label text="90FPS,3500码率 | 高配" textFill="#ff5227"/>
+                    </children>
+                </VBox>
+                <Button maxWidth="1.7976931348623157E308" mnemonicParsing="false" onAction="#clearRecordVideoAction"
+                        text="清空视频数据" GridPane.columnIndex="2"/>
+                <Label text="FPS" GridPane.columnIndex="1" GridPane.rowIndex="1"/>
+                <ChoiceBox fx:id="choiceBoxVideoFps" onDragDetected="#selectVideoFpsAction" prefWidth="150.0"
+                           GridPane.columnIndex="2" GridPane.rowIndex="1"/>
+                <Label text="码率" GridPane.columnIndex="1" GridPane.rowIndex="2"/>
+                <ComboBox fx:id="comboBoxVideoCodeRate" editable="true" onDragDetected="#selectVideoCodeRateAction"
+                          prefWidth="150.0" GridPane.columnIndex="2" GridPane.rowIndex="2"/>
+                <HBox alignment="CENTER_LEFT" prefHeight="100.0" prefWidth="200.0" spacing="20.0"
+                      GridPane.columnIndex="2" GridPane.rowIndex="3">
+                    <children>
+                        <RadioButton fx:id="radioButtonGame" mnemonicParsing="false" text="游戏"/>
+                        <RadioButton fx:id="radioButtonScreen" mnemonicParsing="false" text="全屏"/>
+                    </children>
+                </HBox>
+            </children>
+        </GridPane>
+    </center>
+    <bottom>
+        <GridPane hgap="5.0" BorderPane.alignment="CENTER">
+            <columnConstraints>
+                <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0"/>
+                <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" percentWidth="60.0" prefWidth="100.0"/>
+                <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0"/>
+            </columnConstraints>
+            <rowConstraints>
+                <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES"/>
+                <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES"/>
+                <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES"/>
+            </rowConstraints>
+            <children>
+                <Label text="FFmpeg目录" GridPane.rowIndex="1"/>
+                <Label text="视频保存目录" GridPane.rowIndex="2"/>
+                <TextField fx:id="textFieldFFmpegPath" GridPane.columnIndex="1" GridPane.rowIndex="1"/>
+                <TextField fx:id="textFieldVideoPath" GridPane.columnIndex="1" GridPane.rowIndex="2"/>
+                <Button maxWidth="1.7976931348623157E308" mnemonicParsing="false" onAction="#ffmpegOpenAction"
+                        text="打开" GridPane.columnIndex="2" GridPane.rowIndex="1"/>
+                <Button maxWidth="1.7976931348623157E308" mnemonicParsing="false" onAction="#videoPathOpenAction"
+                        text="打开" GridPane.columnIndex="2" GridPane.rowIndex="2"/>
+                <Button maxHeight="1.7976931348623157E308" mnemonicParsing="false" onAction="#downloadFFmpegAction"
+                        text="前往下载FFmpeg" GridPane.columnSpan="2"/>
+            </children>
+        </GridPane>
+    </bottom>
+    <padding>
+        <Insets bottom="10.0" left="10.0" right="10.0" top="10.0"/>
+    </padding>
+</BorderPane>

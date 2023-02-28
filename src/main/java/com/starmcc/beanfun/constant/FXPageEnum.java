@@ -20,6 +20,8 @@ public enum FXPageEnum {
     更新页("update", true, "自动更新", false, false, true, null),
     关于我("about", false, "关于..", false, false, false, null),
     装备计算器("equipment", true, "装备卷轴计算器", false, false, false, null),
+    汇率查询("currency", true, "汇率查询", false, false, false, null),
+    录像设置("recordVideo", true, "录像设置", false, false, false, null),
     ;
 
     /**

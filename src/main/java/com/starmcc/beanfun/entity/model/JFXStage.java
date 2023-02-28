@@ -185,10 +185,13 @@ public class JFXStage implements EventHandler<MouseEvent> {
             min.getStyleClass().add(MIN_CSS_CLASS);
             min.setOnMouseClicked(e -> {
                 stage.setIconified(true);
-                if (stage.isIconified()) {
-                    stage.setIconified(false);
+                if (QsConstant.config.getMinimizeMode())
+                {
+                    if (stage.isIconified()) {
+                        stage.setIconified(false);
+                    }
+                    stage.hide();
                 }
-                stage.hide();
             });
             hbox.getChildren().add(min);
         }

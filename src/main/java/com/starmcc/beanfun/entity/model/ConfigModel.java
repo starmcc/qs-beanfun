@@ -37,6 +37,7 @@ public class ConfigModel implements Serializable {
     private ProxyConfig proxyConfig;
     private LRConfig lrConfig;
     private String vipSecrect;
+    private Boolean minimizeMode;
 
     public ConfigModel() {
         // 默认配置
@@ -71,6 +72,8 @@ public class ConfigModel implements Serializable {
         this.lrConfig = new LRConfig();
         // vip密钥
         this.vipSecrect = "";
+        // 最小化模式
+        this.minimizeMode = false;
     }
 
 

@@ -1,29 +1,15 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<?import javafx.geometry.Point3D?>
-<?import javafx.scene.control.Button?>
-<?import javafx.scene.control.CheckBox?>
-<?import javafx.scene.control.CheckMenuItem?>
-<?import javafx.scene.control.ChoiceBox?>
-<?import javafx.scene.control.ComboBox?>
-<?import javafx.scene.control.Label?>
-<?import javafx.scene.control.Menu?>
-<?import javafx.scene.control.MenuBar?>
-<?import javafx.scene.control.MenuItem?>
-<?import javafx.scene.control.RadioButton?>
-<?import javafx.scene.control.Separator?>
-<?import javafx.scene.control.Tab?>
-<?import javafx.scene.control.TabPane?>
-<?import javafx.scene.control.TextField?>
-<?import javafx.scene.control.ToggleButton?>
-<?import javafx.scene.layout.AnchorPane?>
-<?import javafx.scene.layout.VBox?>
-<?import javafx.scene.text.Font?>
-<?import javafx.scene.text.Text?>
-
-<AnchorPane xmlns="http://javafx.com/javafx/8.0.171" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.starmcc.beanfun.controller.MainController">
+<?import javafx.geometry.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.Cursor?>
+<?import javafx.scene.image.Image?>
+<?import javafx.scene.image.ImageView?>
+<?import javafx.scene.layout.*?>
+<?import javafx.util.Duration?>
+<AnchorPane xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.starmcc.beanfun.controller.MainController">
     <children>
-        <VBox prefHeight="300.0" prefWidth="400.0">
+        <VBox fx:id="mainPane" minHeight="-Infinity" minWidth="-Infinity" prefHeight="320.0" prefWidth="400.0">
             <children>
                 <MenuBar VBox.vgrow="NEVER">
                     <menus>
@@ -31,6 +17,12 @@
                             <items>
                                 <CheckMenuItem fx:id="checkMenuItemAlwaysOnTop" mnemonicParsing="false" onAction="#alwaysOnTopAction" text="窗口置顶" />
                                 <CheckMenuItem fx:id="checkMenuItemAutoLunShao" mnemonicParsing="false" onAction="#autoLunShaoAction" text="自动轮烧" />
+                                <Menu fx:id="menuLunShaoSetting" mnemonicParsing="false" text="轮烧设置">
+                                    <items>
+                                        <MenuItem fx:id="menuItemLunHui" mnemonicParsing="false" text="轮热键：" />
+                                        <MenuItem fx:id="menuItemRanShao" mnemonicParsing="false" text="烧热键：" />
+                                    </items>
+                                </Menu>
                                 <MenuItem fx:id="menuItemNgs" mnemonicParsing="false" text="强制结束NGS进程" />
                                 <MenuItem fx:id="menuItemEquipment" mnemonicParsing="false" text="装备卷轴计算器" />
                                 <MenuItem fx:id="menuItemPaperDoll" mnemonicParsing="false" text="纸娃娃系统" />
@@ -67,252 +59,145 @@
                         </Menu>
                     </menus>
                 </MenuBar>
-                <TabPane tabClosingPolicy="UNAVAILABLE">
-                    <tabs>
-                        <Tab text="常规">
-                            <content>
-                                <AnchorPane>
+                <GridPane hgap="5.0" style="-fx-font-size: 13;" vgap="5.0">
+                    <children>
+                        <Label text="游戏账号" />
+                        <Label text="乐豆" GridPane.rowIndex="1" />
+                        <Label text="账号状态" GridPane.rowIndex="2" />
+                        <ChoiceBox fx:id="choiceBoxActList" maxWidth="1.7976931348623157E308" onDragDetected="#changeAccountNowAction" prefWidth="150.0" style="-fx-font-size: 12;" GridPane.columnIndex="1" />
+                        <Label fx:id="labelActStatus" text="正常" textFill="#18ab05" GridPane.columnIndex="1" GridPane.rowIndex="2" />
+                        <Button maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" mnemonicParsing="false" onAction="#exitLoginAction" text="退出登录" GridPane.columnIndex="2" />
+                        <TextField fx:id="textFieldActId" editable="false" style="-fx-font-size: 12;" GridPane.columnIndex="1" GridPane.rowIndex="3" />
+                        <TextField fx:id="textFieldDynamicPwd" editable="false" style="-fx-font-size: 12;" GridPane.columnIndex="1" GridPane.rowIndex="4" />
+                        <Button maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" mnemonicParsing="false" onAction="#getDynamicPasswordAction" text="获取动态密码" GridPane.columnIndex="1" GridPane.rowIndex="5" />
+                        <Button fx:id="startGameBtn" defaultButton="true" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" mnemonicParsing="false" onAction="#startGameAction" style="-fx-font-size: 22;" text="启动游戏" GridPane.columnIndex="2" GridPane.columnSpan="2" GridPane.rowIndex="4" GridPane.rowSpan="2" />
+                        <CheckBox fx:id="checkBoxPassInput" mnemonicParsing="false" text="自动登陆 (免输入账密)" GridPane.columnIndex="2" GridPane.columnSpan="2" GridPane.rowIndex="3" />
+                        <Label text="登陆账号" GridPane.rowIndex="3" />
+                        <Label text="登陆密码" GridPane.rowIndex="4" />
+                        <HBox alignment="CENTER_LEFT" prefHeight="100.0" prefWidth="200.0" spacing="5.0" GridPane.columnIndex="1" GridPane.rowIndex="1">
+                            <children>
+                                <Label fx:id="labelActPoint" text="0" textFill="#f85fc3" />
+                                <ImageView fitHeight="20.0" fitWidth="20.0" onMouseClicked="#updatePointsAction" opacity="0.8" pickOnBounds="true" preserveRatio="true">
+                                    <image>
+                                        <Image url="@/static/images/update.png" />
+                                    </image>
+                                    <cursor>
+                                        <Cursor fx:constant="HAND" />
+                                    </cursor>
+                                </ImageView>
+                            </children>
+                        </HBox>
+                        <HBox prefHeight="100.0" prefWidth="200.0" GridPane.columnIndex="3">
+                            <children>
+                                <ToggleButton fx:id="buttonRecordVideo" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" mnemonicParsing="false" onAction="#recordVideoAction" style="-fx-background-radius: 3 0 0 3; -fx-border-radius: 3 0 0 3;" text="录像" HBox.hgrow="ALWAYS" />
+                                <Button maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" mnemonicParsing="false" onAction="#openVideoSettingWindowAction" style="-fx-background-radius: 0 3 3 0; -fx-border-radius: 0 3 3 0;" text="*" />
+                            </children>
+                        </HBox>
+                        <Button maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" mnemonicParsing="false" onAction="#openCurrencyWindowAction" text="汇率查询" GridPane.columnIndex="3" GridPane.rowIndex="1" />
+<!--                  <Button maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" mnemonicParsing="false" onAction="#updatePointsAction" text="更新点数" GridPane.columnIndex="2" GridPane.rowIndex="1" />-->
+                        <!--                                <ImageView fitHeight="150.0" fitWidth="200.0" pickOnBounds="true" preserveRatio="true" GridPane.columnIndex="2" GridPane.rowIndex="1" />-->
+                    </children>
+                    <columnConstraints>
+                        <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" percentWidth="15.0" prefWidth="100.0" />
+                        <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" percentWidth="40.0" prefWidth="100.0" />
+                        <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
+                        <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
+                    </columnConstraints>
+                    <padding>
+                        <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
+                    </padding>
+                    <rowConstraints>
+                        <RowConstraints maxHeight="30.0" minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                        <RowConstraints maxHeight="30.0" minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                        <RowConstraints maxHeight="30.0" minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                        <RowConstraints maxHeight="30.0" minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                        <RowConstraints maxHeight="30.0" minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                        <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                    </rowConstraints>
+                </GridPane>
+                <HBox alignment="CENTER" onMouseClicked="#expandableBarAction" prefHeight="0.0" prefWidth="400.0">
+                    <children>
+                        <Separator prefWidth="200.0" />
+                        <Label fx:id="expandableBar" minWidth="12.0" text="▼" textFill="#a8a8a8" />
+                        <Separator prefWidth="200.0" />
+                    </children>
+                    <cursor>
+                        <Cursor fx:constant="HAND" />
+                    </cursor>
+                    <padding>
+                        <Insets left="5.0" right="5.0" />
+                    </padding>
+                </HBox>
+                <VBox fx:id="expandablePane">
+                    <children>
+                        <GridPane hgap="5.0">
+                            <columnConstraints>
+                                <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
+                                <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
+                                <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
+                            </columnConstraints>
+                            <rowConstraints>
+                                <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                                <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                            </rowConstraints>
+                            <children>
+                                <CheckBox fx:id="checkBoxKillGamePatcher" mnemonicParsing="false" text="阻止游戏自动更新" />
+                                <CheckBox fx:id="checkBoxKillPlayStartWindow" mnemonicParsing="false" text="自动跳过PLAY窗口" GridPane.columnIndex="1" />
+                                <CheckBox fx:id="checkBoxHookInput" mnemonicParsing="false" text="输入法钩子(Win7)" GridPane.columnIndex="2" />
+                                <HBox alignment="CENTER_LEFT" prefHeight="100.0" prefWidth="200.0" spacing="3.0" GridPane.rowIndex="1">
                                     <children>
-
-                                        <Button fx:id="buttonAddAct" layoutX="220.0" layoutY="53.0" mnemonicParsing="false" onAction="#addActAction" prefHeight="30.0" prefWidth="80.0" text="创建账号" textFill="#0071fc">
-                                            <font>
-                                                <Font size="13.0" />
-                                            </font>
-                                        </Button>
-                                        <Button layoutX="309.0" layoutY="16.0" mnemonicParsing="false" onAction="#exitLoginAction" prefHeight="30.0" prefWidth="80.0" text="退出登录">
-                                            <font>
-                                                <Font size="13.0" />
-                                            </font>
-                                        </Button>
-                                        <Label layoutX="15.0" layoutY="20.0" text="账号">
-                                            <font>
-                                                <Font size="15.0" />
-                                            </font>
+                                        <CheckBox fx:id="checkBoxMinimizeHide" mnemonicParsing="false" text="最小化时隐藏" />
+                                        <Label text="(?)" underline="true">
+                                            <cursor>
+                                                <Cursor fx:constant="HAND" />
+                                            </cursor>
+                                            <tooltip>
+                                                <Tooltip text="若勾选此项，在最小化时将只会在系统托盘显示登陆器图标，不会在任务栏中提示" wrapText="true">
+                                                    <showDelay>
+                                                        <Duration millis="0" />
+                                                    </showDelay>
+                                                </Tooltip>
+                                            </tooltip>
                                         </Label>
-                                        <Label layoutX="15.0" layoutY="58.0" text="乐豆">
-                                            <font>
-                                                <Font size="15.0" />
-                                            </font>
-                                        </Label>
-                                        <Label fx:id="labelActPoint" alignment="CENTER" layoutX="55.0" layoutY="58.0" prefHeight="15.0" prefWidth="152.0" text="0" textFill="#f85fc3">
-                                            <font>
-                                                <Font size="15.0" />
-                                            </font>
-                                        </Label>
-                                        <Label layoutX="15.0" layoutY="96.0" text="状态">
-                                            <font>
-                                                <Font size="15.0" />
-                                            </font>
-                                        </Label>
-                                        <Label fx:id="labelActStatus" alignment="CENTER" layoutX="55.0" layoutY="96.0" prefHeight="15.0" prefWidth="152.0" text="正常" textFill="#18ab05">
-                                            <font>
-                                                <Font size="15.0" />
-                                            </font>
-                                        </Label>
-                                        <Label layoutX="15.0" layoutY="134.0" text="注册">
-                                            <font>
-                                                <Font size="15.0" />
-                                            </font>
-                                        </Label>
-                                        <Label fx:id="labelActCreateTime" alignment="CENTER" layoutX="55.0" layoutY="134.0" prefHeight="15.0" prefWidth="152.0" text="1970-11-11 00:00:00">
-                                            <font>
-                                                <Font size="15.0" />
-                                            </font>
-                                        </Label>
-                                        <TextField fx:id="textFieldActId" editable="false" layoutX="219.0" layoutY="126.0" prefHeight="33.0" prefWidth="170.0" text="" />
-                                        <TextField fx:id="textFieldDynamicPwd" editable="false" layoutX="219.0" layoutY="164.0" prefHeight="33.0" prefWidth="92.0" />
-                                        <Button layoutX="220.0" layoutY="16.0" mnemonicParsing="false" onAction="#updatePointsAction" prefHeight="30.0" prefWidth="80.0" text="更新点数">
-                                            <font>
-                                                <Font size="13.0" />
-                                            </font>
-                                        </Button>
-                                        <Button fx:id="startGameBtn" layoutX="10.0" layoutY="162.0" mnemonicParsing="false" onAction="#startGameAction" prefHeight="77.0" prefWidth="201.0" text="启动游戏(32/64bit)">
-                                            <font>
-                                                <Font size="15.0" />
-                                            </font>
-                                        </Button>
-                                        <ToggleButton fx:id="buttonRecordVideo" layoutX="309.0" layoutY="53.0" mnemonicParsing="false" onAction="#recordVideoAction" prefHeight="30.0" prefWidth="80.0" text="开始录像">
-                                 <font>
-                                    <Font size="13.0" />
-                                 </font></ToggleButton>
-                                        <CheckBox fx:id="checkBoxAutoInput" layoutX="315.0" layoutY="162.0" mnemonicParsing="false" onAction="#autoInputAction" prefHeight="16.0" prefWidth="73.0" text="自动输入" />
-                                        <Button layoutX="219.0" layoutY="201.0" mnemonicParsing="false" onAction="#getDynamicPasswordAction" prefHeight="37.0" prefWidth="171.0" text="获取动态密码">
-                                            <font>
-                                                <Font size="15.0" />
-                                            </font>
-                                        </Button>
-                                        <ChoiceBox fx:id="choiceBoxActList" layoutX="56.0" layoutY="20.0" onDragDetected="#changeAccountNowAction" prefHeight="23.0" prefWidth="156.0" />
-                              <CheckBox fx:id="checkBoxHideAct" layoutX="315.0" layoutY="182.0" mnemonicParsing="false" onAction="#hideActPwdAction" prefHeight="16.0" prefWidth="73.0" selected="true" text="隐藏账号" />
                                     </children>
-                           <rotationAxis>
-                              <Point3D />
-                           </rotationAxis>
-                                </AnchorPane>
-                            </content>
-                        </Tab>
-                        <Tab text="汇率计算">
-                            <content>
-                                <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0">
-                                    <children>
-                                        <Label layoutX="30.0" layoutY="123.0" text="软妹币">
-                                            <font>
-                                                <Font size="15.0" />
-                                            </font>
-                                        </Label>
-                                        <Label layoutX="30.0" layoutY="161.0" text="新台币">
-                                            <font>
-                                                <Font size="15.0" />
-                                            </font>
-                                        </Label>
-                                        <TextField fx:id="textFieldRmbInput" layoutX="80.0" layoutY="118.0" prefHeight="30.0" prefWidth="260.0">
-                                            <font>
-                                                <Font size="15.0" />
-                                            </font>
-                                        </TextField>
-                                        <TextField fx:id="textFieldXtbInput" layoutX="80.0" layoutY="156.0" prefHeight="30.0" prefWidth="261.0">
-                                            <font>
-                                                <Font size="15.0" />
-                                            </font>
-                                        </TextField>
-                                        <Label layoutX="109.0" layoutY="60.0" prefHeight="20.0" prefWidth="179.0" text="中台汇率实时计算(需网络)">
-                                            <font>
-                                                <Font size="15.0" />
-                                            </font>
-                                        </Label>
-                                        <Label layoutX="157.0" layoutY="89.0" prefHeight="20.0" prefWidth="75.0" text="当前汇率：">
-                                            <font>
-                                                <Font size="15.0" />
-                                            </font>
-                                        </Label>
-                                        <Label fx:id="labelExchangeNow" layoutX="246.0" layoutY="89.0" prefHeight="20.0" prefWidth="95.0" text="0" textFill="#bf6a6a">
-                                            <font>
-                                                <Font size="15.0" />
-                                            </font>
-                                        </Label>
-                                        <Button layoutX="77.0" layoutY="88.0" mnemonicParsing="false" onAction="#updateRateAction" text="更新汇率" />
-                                    </children>
-                                </AnchorPane>
-                            </content>
-                        </Tab>
-                        <Tab text="工具设置">
-                            <content>
-                                <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="243.0" prefWidth="426.0">
-                                    <children>
-                                        <TextField fx:id="textFieldGamePath" editable="false" layoutX="14.0" layoutY="52.0" prefHeight="30.0" prefWidth="368.0">
-                                            <font>
-                                                <Font size="15.0" />
-                                            </font>
-                                        </TextField>
-                                        <CheckBox fx:id="checkBoxPassInput" layoutX="250.0" layoutY="143.0" mnemonicParsing="false" prefHeight="21.0" prefWidth="109.0" text="免输入模式">
-                                            <font>
-                                                <Font size="15.0" />
-                                            </font>
-                                        </CheckBox>
-                                        <Text layoutX="14.0" layoutY="34.0" strokeType="OUTSIDE" strokeWidth="0.0" text="游戏路径(不能有中文)" wrappingWidth="158.015625">
-                                            <font>
-                                                <Font size="15.0" />
-                                            </font>
-                                        </Text>
-                                        <Button layoutX="313.0" layoutY="13.0" mnemonicParsing="false" onAction="#gamePathOpenAction" prefHeight="30.0" prefWidth="66.0" text="打开">
-                                            <font>
-                                                <Font size="15.0" />
-                                            </font>
-                                        </Button>
-                                        <Separator layoutX="2.0" layoutY="94.0" prefHeight="2.0" prefWidth="400.0" />
-                                        <Label fx:id="labelLunhui" layoutX="165.0" layoutY="210.0" text="轮回热键" />
-                                        <TextField fx:id="textFieldLunHui" editable="false" layoutX="218.0" layoutY="206.0" prefHeight="23.0" prefWidth="51.0" />
-                                        <Label fx:id="labelRanshao" layoutX="275.0" layoutY="210.0" text="燃烧热键" />
-                                        <TextField fx:id="textFieldRanShao" editable="false" layoutX="328.0" layoutY="206.0" prefHeight="23.0" prefWidth="51.0" />
-                                        <CheckBox fx:id="checkBoxKillPlayStartWindow" layoutX="250.0" layoutY="111.0" mnemonicParsing="false" prefHeight="21.0" prefWidth="124.0" text="关闭Play窗口">
-                                            <font>
-                                                <Font size="15.0" />
-                                            </font>
-                                        </CheckBox>
-                                        <CheckBox fx:id="checkBoxKillGamePatcher" layoutX="14.0" layoutY="111.0" mnemonicParsing="false" prefHeight="21.0" prefWidth="123.0" text="阻止游戏更新">
-                                            <font>
-                                                <Font size="15.0" />
-                                            </font>
-                                        </CheckBox>
-                              <CheckBox fx:id="checkBoxCheckAppUpdate" layoutX="14.0" layoutY="143.0" mnemonicParsing="false" prefHeight="21.0" prefWidth="138.0" text="检查登录器更新">
-                                 <font>
-                                    <Font size="15.0" />
-                                 </font>
-                              </CheckBox>
-                              <CheckBox fx:id="checkBoxHookInput" layoutX="14.0" layoutY="175.0" mnemonicParsing="false" prefHeight="21.0" prefWidth="109.0" text="输入法钩子">
-                                 <font>
-                                    <Font size="15.0" />
-                                 </font>
-                              </CheckBox>
-                                    </children>
-                                </AnchorPane>
-                            </content>
-                        </Tab>
-                        <Tab text="录像设置">
-                            <content>
-                                <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0">
-                                    <children>
-                                        <Label layoutX="98.0" layoutY="20.0" prefHeight="15.0" prefWidth="130.0" text="默认使用低配进行录制" />
-                                        <Label layoutX="21.0" layoutY="18.0" prefHeight="15.0" prefWidth="65.0" text="推荐配置：" textFill="RED">
-                                            <font>
-                                                <Font name="System Bold" size="13.0" />
-                                            </font>
-                                        </Label>
-                                        <Label layoutX="38.0" layoutY="46.0" prefHeight="18.0" prefWidth="150.0" text="30FPS,1800码率 | 低配" textFill="#09a426">
-                                            <font>
-                                                <Font size="13.0" />
-                                            </font>
-                                        </Label>
-                                        <Label layoutX="38.0" layoutY="72.0" prefHeight="18.0" prefWidth="150.0" text="60FPS,2500码率 | 中配" textFill="#cd4100">
-                                            <font>
-                                                <Font size="13.0" />
-                                            </font>
-                                        </Label>
-                                        <Label layoutX="38.0" layoutY="98.0" prefHeight="18.0" prefWidth="150.0" text="90FPS,3500码率 | 高配" textFill="#ff5227">
-                                            <font>
-                                                <Font size="13.0" />
-                                            </font>
-                                        </Label>
-                                        <Label layoutX="21.0" layoutY="212.0" text="视频目录">
-                                            <font>
-                                                <Font size="14.0" />
-                                            </font>
-                                        </Label>
-                                        <TextField fx:id="textFieldVideoPath" editable="false" layoutX="94.0" layoutY="206.0" prefHeight="33.0" prefWidth="219.0" />
-                                        <Button layoutX="322.0" layoutY="204.0" mnemonicParsing="false" onAction="#videoPathOpenAction" prefHeight="34.0" prefWidth="66.0" text="打开">
-                                            <font>
-                                                <Font size="15.0" />
-                                            </font>
-                                        </Button>
-                                        <ChoiceBox fx:id="choiceBoxVideoFps" layoutX="277.0" layoutY="54.0" onDragDetected="#selectVideoFpsAction" prefHeight="23.0" prefWidth="109.0" />
-                                        <Label layoutX="241.0" layoutY="58.0" text="FPS" />
-                                        <Label layoutX="241.0" layoutY="93.0" text="码率" />
-                                        <ComboBox fx:id="comboBoxVideoCodeRate" editable="true" layoutX="278.0" layoutY="89.0" onDragDetected="#selectVideoCodeRateAction" prefHeight="23.0" prefWidth="109.0" />
-                                        <Button layoutX="275.0" layoutY="14.0" mnemonicParsing="false" onAction="#clearRecordVideoAction" prefHeight="30.0" prefWidth="111.0" text="清空视频数据">
-                                            <font>
-                                                <Font size="15.0" />
-                                            </font>
-                                        </Button>
-                                        <RadioButton fx:id="radioButtonGame" layoutX="275.0" layoutY="127.0" mnemonicParsing="false" text="游戏" />
-                                        <RadioButton fx:id="radioButtonScreen" layoutX="332.0" layoutY="127.0" mnemonicParsing="false" text="全屏" />
-                                        <Label layoutX="25.0" layoutY="174.0" text="FFmpeg">
-                                            <font>
-                                                <Font size="14.0" />
-                                            </font>
-                                        </Label>
-                                        <TextField fx:id="textFieldFFmpegPath" editable="false" layoutX="94.0" layoutY="167.0" prefHeight="33.0" prefWidth="219.0" />
-                                        <Button layoutX="322.0" layoutY="167.0" mnemonicParsing="false" onAction="#ffmpegOpenAction" prefHeight="34.0" prefWidth="66.0" text="打开">
-                                            <font>
-                                                <Font size="15.0" />
-                                            </font>
-                                        </Button>
-                                        <Button layoutX="17.0" layoutY="126.0" mnemonicParsing="false" onAction="#downloadFFmpegAction" prefHeight="30.0" prefWidth="115.0" text="前往下载FFmpeg" />
-                                    </children>
-                                </AnchorPane>
-                            </content>
-                        </Tab>
-                    </tabs>
-                </TabPane>
+                                </HBox>
+                            </children>
+                            <VBox.margin>
+                                <Insets left="5.0" right="5.0" />
+                            </VBox.margin>
+                            <padding>
+                                <Insets left="5.0" />
+                            </padding>
+                        </GridPane>
+                        <GridPane>
+                            <columnConstraints>
+                                <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" percentWidth="15.0" prefWidth="100.0" />
+                                <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" percentWidth="75.0" prefWidth="100.0" />
+                                <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" percentWidth="12.0" prefWidth="100.0" />
+                            </columnConstraints>
+                            <rowConstraints>
+                                <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                            </rowConstraints>
+                            <children>
+                                <Label text="游戏路径" />
+                                <Button maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" mnemonicParsing="false" onAction="#gamePathOpenAction" style="-fx-border-radius: 0 3 3 0; -fx-background-radius: 0 3 3 0;" text="浏览" GridPane.columnIndex="2">
+                                    <GridPane.margin>
+                                        <Insets bottom="5.0" top="5.0" />
+                                    </GridPane.margin>
+                                </Button>
+                                <TextField fx:id="textFieldGamePath" style="-fx-border-radius: 3 0 0 3; -fx-background-radius: 3 0 0 3;" GridPane.columnIndex="1" />
+                            </children>
+                            <padding>
+                                <Insets bottom="5.0" left="5.0" right="5.0" />
+                            </padding>
+                            <VBox.margin>
+                                <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
+                            </VBox.margin>
+                        </GridPane>
+                    </children>
+                </VBox>
             </children>
         </VBox>
+
     </children>
 </AnchorPane>
