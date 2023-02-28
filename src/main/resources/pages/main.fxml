@@ -6,12 +6,11 @@
 <?import javafx.scene.image.Image?>
 <?import javafx.scene.image.ImageView?>
 <?import javafx.scene.layout.*?>
-<?import javafx.util.Duration?>
 <AnchorPane xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.starmcc.beanfun.controller.MainController">
     <children>
         <VBox fx:id="mainPane" minHeight="-Infinity" minWidth="-Infinity" prefHeight="320.0" prefWidth="400.0">
             <children>
-                <MenuBar VBox.vgrow="NEVER">
+                <MenuBar VBox.vgrow="NEVER" stylesheets="@/static/css/menuitem.css">
                     <menus>
                         <Menu mnemonicParsing="false" text="主菜单">
                             <items>
@@ -19,8 +18,19 @@
                                 <CheckMenuItem fx:id="checkMenuItemAutoLunShao" mnemonicParsing="false" onAction="#autoLunShaoAction" text="自动轮烧" />
                                 <Menu fx:id="menuLunShaoSetting" mnemonicParsing="false" text="轮烧设置">
                                     <items>
-                                        <MenuItem fx:id="menuItemLunHui" mnemonicParsing="false" text="轮热键：" />
-                                        <MenuItem fx:id="menuItemRanShao" mnemonicParsing="false" text="烧热键：" />
+                                        <MenuItem fx:id="menuItemLunHui" disable="true" mnemonicParsing="false" text="轮热键：(点击编辑框后按键设置)" style="-fx-text-fill: #000; -fx-opacity: 1.0;"/>
+                              <CustomMenuItem hideOnClick="false" mnemonicParsing="false" text="Unspecified Action">
+                                 <content>
+                                    <TextField fx:id="textFieldLunHui" editable="false" />
+                                 </content>
+                              </CustomMenuItem>
+                              <SeparatorMenuItem mnemonicParsing="false" />
+                                        <MenuItem fx:id="menuItemRanShao" disable="true" mnemonicParsing="false" text="烧热键：" style="-fx-text-fill: #000; -fx-opacity: 1.0;" />
+                              <CustomMenuItem hideOnClick="false" mnemonicParsing="false" text="Unspecified Action">
+                                 <content>
+                                    <TextField fx:id="textFieldRanShao" editable="false" promptText="点击此处后直接按键盘设置" />
+                                 </content>
+                              </CustomMenuItem>
                                     </items>
                                 </Menu>
                                 <MenuItem fx:id="menuItemNgs" mnemonicParsing="false" text="强制结束NGS进程" />
@@ -153,9 +163,7 @@
                                             </cursor>
                                             <tooltip>
                                                 <Tooltip text="若勾选此项，在最小化时将只会在系统托盘显示登陆器图标，不会在任务栏中提示" wrapText="true">
-                                                    <showDelay>
-                                                        <Duration millis="0" />
-                                                    </showDelay>
+
                                                 </Tooltip>
                                             </tooltip>
                                         </Label>

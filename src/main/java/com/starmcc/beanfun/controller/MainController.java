@@ -105,6 +105,10 @@ public class MainController implements Initializable {
     @FXML
     private MenuItem qsbiliUrlMenu;
     @FXML
+    private TextField textFieldLunHui;
+    @FXML
+    private TextField textFieldRanShao;
+    @FXML
     private CheckBox checkBoxKillGamePatcher;
     @FXML
     private ToggleButton buttonRecordVideo;
@@ -194,8 +198,8 @@ public class MainController implements Initializable {
 
         if (start) {
             // 轮烧配置
-            menuItemLunHui.setText(menuItemLunHui.getText() + KeyEvent.getKeyText(QsConstant.config.getLunHuiKey()));
-            menuItemRanShao.setText(menuItemRanShao.getText() + KeyEvent.getKeyText(QsConstant.config.getRanShaoKey()));
+            textFieldLunHui.setText(KeyEvent.getKeyText(QsConstant.config.getLunHuiKey()));
+            textFieldRanShao.setText(KeyEvent.getKeyText(QsConstant.config.getRanShaoKey()));
         }
     }
 
@@ -265,29 +269,29 @@ public class MainController implements Initializable {
 
         // =================== 轮烧按键配置控件事件 =====================
 
-//        textFieldLunHui.setOnKeyPressed((keyEvent) -> {
-//            int code = keyEvent.getCode().impl_getCode();
-//            if (code == 0) {
-//                textFieldLunHui.setText("");
-//                return;
-//            }
-//            textFieldLunHui.setText(KeyEvent.getKeyText(code));
-//            // 记录设置
-//            QsConstant.config.setLunHuiKey(code);
-//            FileTools.saveConfig(QsConstant.config);
-//        });
-//
-//        textFieldRanShao.setOnKeyPressed((keyEvent) -> {
-//            int code = keyEvent.getCode().impl_getCode();
-//            if (code == 0) {
-//                textFieldLunHui.setText("");
-//                return;
-//            }
-//            textFieldRanShao.setText(KeyEvent.getKeyText(code));
-//            // 记录设置
-//            QsConstant.config.setRanShaoKey(code);
-//            FileTools.saveConfig(QsConstant.config);
-//        });
+        textFieldLunHui.setOnKeyPressed((keyEvent) -> {
+            int code = keyEvent.getCode().impl_getCode();
+            if (code == 0) {
+                textFieldLunHui.setText("");
+                return;
+            }
+            textFieldLunHui.setText(KeyEvent.getKeyText(code));
+            // 记录设置
+            QsConstant.config.setLunHuiKey(code);
+            FileTools.saveConfig(QsConstant.config);
+        });
+
+        textFieldRanShao.setOnKeyPressed((keyEvent) -> {
+            int code = keyEvent.getCode().impl_getCode();
+            if (code == 0) {
+                textFieldLunHui.setText("");
+                return;
+            }
+            textFieldRanShao.setText(KeyEvent.getKeyText(code));
+            // 记录设置
+            QsConstant.config.setRanShaoKey(code);
+            FileTools.saveConfig(QsConstant.config);
+        });
 
 
         textFieldActId.focusedProperty().addListener((observable, oldValue, newValue) -> {
