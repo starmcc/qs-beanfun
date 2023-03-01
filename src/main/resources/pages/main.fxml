@@ -77,7 +77,6 @@
                         <Button maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" mnemonicParsing="false" onAction="#exitLoginAction" text="退出登录" GridPane.columnIndex="3" />
                         <TextField fx:id="textFieldActId" editable="false" style="-fx-font-size: 12;" GridPane.columnIndex="1" GridPane.rowIndex="3" />
                         <TextField fx:id="textFieldDynamicPwd" editable="false" style="-fx-font-size: 12;" GridPane.columnIndex="1" GridPane.rowIndex="4" />
-                        <Button maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" mnemonicParsing="false" onAction="#getDynamicPasswordAction" text="获取动态密码" GridPane.columnIndex="1" GridPane.rowIndex="5" />
                         <Button fx:id="startGameBtn" defaultButton="true" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" mnemonicParsing="false" onAction="#startGameAction" style="-fx-font-size: 22;" text="启动游戏" GridPane.columnIndex="2" GridPane.columnSpan="2" GridPane.rowIndex="4" GridPane.rowSpan="2" />
                         <CheckBox fx:id="checkBoxPassInput" mnemonicParsing="false" text="自动登陆 (免输入账密)" GridPane.columnIndex="2" GridPane.columnSpan="2" GridPane.rowIndex="3" />
                         <Label text="登陆账号" GridPane.rowIndex="3" />
@@ -126,6 +125,23 @@
                                 </ImageView>
                             </children>
                         </HBox>
+                  <HBox alignment="CENTER_LEFT" maxWidth="1.7976931348623157E308" GridPane.columnIndex="1" GridPane.rowIndex="5">
+                     <children>
+                        <ToggleButton fx:id="toggleButtonAutoInput" onAction="#autoInputAction" mnemonicParsing="false" style="-fx-background-radius: 3 0 0 3; -fx-border-radius: 3 0 0 3;">
+                           <graphic>
+                              <ImageView fitHeight="22.0" fitWidth="22.0" pickOnBounds="true" preserveRatio="true" >
+                                  <image>
+                                      <Image url="@/static/images/auto.png" />
+                                  </image>
+                              </ImageView>
+                           </graphic>
+                           <padding>
+                              <Insets bottom="3.0" left="3.0" right="3.0" top="3.0" />
+                           </padding>
+                        </ToggleButton>
+                              <Button maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" mnemonicParsing="false" onAction="#getDynamicPasswordAction" style="-fx-background-radius: 0 3 3 0; -fx-border-radius: 0 3 3 0;" text="获取动态密码" HBox.hgrow="ALWAYS" />
+                     </children>
+                  </HBox>
                     </children>
                     <columnConstraints>
                         <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" percentWidth="15.0" prefWidth="100.0" />

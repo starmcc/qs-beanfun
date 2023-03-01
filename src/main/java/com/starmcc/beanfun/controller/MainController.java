@@ -60,6 +60,7 @@ public class MainController implements Initializable {
     public VBox mainPane;
     public ImageView btnAddAct;
     public Button startGameBtn;
+    public ToggleButton toggleButtonAutoInput;
     @FXML
     private ChoiceBox<Account> choiceBoxActList;
     @FXML
@@ -177,6 +178,7 @@ public class MainController implements Initializable {
         checkBoxKillPlayStartWindow.setSelected(BooleanUtils.isTrue(QsConstant.config.getKillStartPalyWindow()));
         textFieldGamePath.setText(QsConstant.config.getGamePath());
         checkBoxKillGamePatcher.setSelected(BooleanUtils.isTrue(QsConstant.config.getKillGamePatcher()));
+        toggleButtonAutoInput.setSelected(BooleanUtils.isTrue(QsConstant.config.getAutoInput()));
         checkBoxMinimizeHide.setSelected(BooleanUtils.isTrue(QsConstant.config.getMinimizeMode()));
 
         // LR配置
@@ -342,6 +344,17 @@ public class MainController implements Initializable {
             label.setText("获取动态密码..");
             AccountHandler.getDynamicPassword(QsConstant.nowAccount, (id, password) -> {
                 FrameManager.getInstance().runLater(() -> textFieldDynamicPwd.setText(password));
+                // 自动输入 并检查游戏是否存在
+                if (BooleanUtils.isTrue(QsConstant.config.getAutoInput())
+                        && StringUtils.isNotBlank(password)
+                        && WindowManager.getInstance().checkMapleStoryRunning()) {
+                    try {
+                        WindowManager.getInstance().autoInputActPwd(id, password);
+                    } catch (Exception e) {
+                        log.error("error={}", e, e.getMessage());
+                        FrameManager.getInstance().message("自动输入异常", Alert.AlertType.ERROR);
+                    }
+                }
             });
         });
     }
@@ -570,6 +583,12 @@ public class MainController implements Initializable {
         }
 
         RecordVideoHandler.run(buttonRecordVideo.isSelected());
+    }
+
+    @FXML
+    public void autoInputAction(ActionEvent actionEvent) {
+        QsConstant.config.setAutoInput(toggleButtonAutoInput.isSelected());
+        FileTools.saveConfig(QsConstant.config);
     }
 
     @FXML
