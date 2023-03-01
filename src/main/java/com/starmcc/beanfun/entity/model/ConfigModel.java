@@ -38,6 +38,7 @@ public class ConfigModel implements Serializable {
     private LRConfig lrConfig;
     private String vipSecrect;
     private Boolean minimizeMode;
+    private Boolean expandSettingPane;
 
     public ConfigModel() {
         // 默认配置
@@ -74,6 +75,8 @@ public class ConfigModel implements Serializable {
         this.vipSecrect = "";
         // 最小化模式
         this.minimizeMode = false;
+        // 展开工具设置面板
+        this.expandSettingPane = true;
     }
 
 

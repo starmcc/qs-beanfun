@@ -7,7 +7,7 @@
 <?import javafx.scene.layout.*?>
 <AnchorPane xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.starmcc.beanfun.controller.MainController">
     <children>
-        <VBox fx:id="mainPane" minHeight="-Infinity" minWidth="-Infinity" prefHeight="320.0" prefWidth="400.0">
+        <VBox fx:id="mainPane" alignment="TOP_CENTER" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity">
             <children>
                 <MenuBar stylesheets="@/static/css/menuitem.css" VBox.vgrow="NEVER">
                     <menus>
@@ -68,7 +68,7 @@
                         </Menu>
                     </menus>
                 </MenuBar>
-                <GridPane hgap="5.0" style="-fx-font-size: 13;" vgap="5.0">
+                <GridPane hgap="5.0" maxHeight="-Infinity" maxWidth="-Infinity" prefHeight="195.0" prefWidth="400.0" style="-fx-font-size: 13;" vgap="5.0" VBox.vgrow="NEVER">
                     <children>
                         <Label text="游戏账号" />
                         <Label text="乐豆" GridPane.rowIndex="1" />
@@ -126,8 +126,6 @@
                                 </ImageView>
                             </children>
                         </HBox>
-                        <!--                  <Button maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" mnemonicParsing="false" onAction="#updatePointsAction" text="更新点数" GridPane.columnIndex="2" GridPane.rowIndex="1" />-->
-                        <!--                                <ImageView fitHeight="150.0" fitWidth="200.0" pickOnBounds="true" preserveRatio="true" GridPane.columnIndex="2" GridPane.rowIndex="1" />-->
                     </children>
                     <columnConstraints>
                         <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" percentWidth="15.0" prefWidth="100.0" />
@@ -160,7 +158,7 @@
                         <Insets left="5.0" right="5.0" />
                     </padding>
                 </HBox>
-                <VBox fx:id="expandablePane">
+                <VBox fx:id="expandablePane" alignment="TOP_CENTER" VBox.vgrow="ALWAYS">
                     <children>
                         <GridPane hgap="5.0">
                             <columnConstraints>
@@ -199,30 +197,26 @@
                                 <Insets left="5.0" />
                             </padding>
                         </GridPane>
-                        <GridPane>
+                        <GridPane VBox.vgrow="ALWAYS">
                             <columnConstraints>
-                                <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" percentWidth="15.0" prefWidth="100.0" />
-                                <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" percentWidth="75.0" prefWidth="100.0" />
-                                <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" percentWidth="12.0" prefWidth="100.0" />
+                                <ColumnConstraints hgrow="SOMETIMES" minWidth="0.0" percentWidth="15.0" prefWidth="0.0" />
+                                <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" percentWidth="74.0" prefWidth="100.0" />
+                                <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="10.0" />
                             </columnConstraints>
                             <rowConstraints>
-                                <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                                <RowConstraints minHeight="10.0" prefHeight="25.0" vgrow="SOMETIMES" />
                             </rowConstraints>
                             <children>
                                 <Label text="游戏路径" />
-                                <Button maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" mnemonicParsing="false" onAction="#gamePathOpenAction" style="-fx-border-radius: 0 3 3 0; -fx-background-radius: 0 3 3 0;" text="浏览" GridPane.columnIndex="2">
-                                    <GridPane.margin>
-                                        <Insets bottom="5.0" top="5.0" />
-                                    </GridPane.margin>
-                                </Button>
-                                <TextField fx:id="textFieldGamePath" style="-fx-border-radius: 3 0 0 3; -fx-background-radius: 3 0 0 3;" GridPane.columnIndex="1" />
+                                <TextField fx:id="textFieldGamePath" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" style="-fx-border-radius: 3 0 0 3; -fx-background-radius: 3 0 0 3;" GridPane.columnIndex="1" />
+                                <Button maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" mnemonicParsing="false" onAction="#gamePathOpenAction" style="-fx-border-radius: 0 3 3 0; -fx-background-radius: 0 3 3 0;" text="浏览" GridPane.columnIndex="2" />
                             </children>
-                            <padding>
-                                <Insets bottom="5.0" left="5.0" right="5.0" />
-                            </padding>
                             <VBox.margin>
                                 <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
                             </VBox.margin>
+                     <padding>
+                        <Insets bottom="5.0" left="5.0" right="5.0" />
+                     </padding>
                         </GridPane>
                     </children>
                 </VBox>

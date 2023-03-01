@@ -207,7 +207,7 @@ public class JFXStage implements EventHandler<MouseEvent> {
         scene.getRoot().setOnMouseDragged(this);
         hbox.setOnMousePressed(this);
         hbox.setOnMouseDragged(this);
-        root.setStyle("-fx-border-width: 1; -fx-border-color: black");
+        borderPane.setStyle("-fx-border-width: 1; -fx-border-color: black");
         stage.setScene(scene);
     }
 

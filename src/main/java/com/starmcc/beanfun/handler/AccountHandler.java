@@ -84,6 +84,7 @@ public class AccountHandler {
             BeanfunStringResult pwdResult = BeanfunClient.run().getDynamicPassword(account, QsConstant.beanfunModel.getToken());
             if (!pwdResult.isSuccess()) {
                 FrameManager.getInstance().message(pwdResult.getMsg(), Alert.AlertType.ERROR);
+                return;
             }
             log.debug("动态密码 ={}", pwdResult.getData());
             if (Objects.isNull(account)) {

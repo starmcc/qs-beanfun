@@ -134,20 +134,22 @@ public class MainController implements Initializable {
     public void initialize(URL location, ResourceBundle resources) {
         // 加载页面
         FrameManager.getInstance().runLater(() -> {
+
+            switchExpandablePane(QsConstant.config.getExpandSettingPane(), true);
             // 托盘菜单
             QsConstant.trayIcon = QsTray.init(QsConstant.JFX_STAGE_DATA.get(FXPageEnum.主页).getStage());
             QsTray.show(QsConstant.trayIcon);
-            // 获取账号数据
-            LoadPage.task(FXPageEnum.主页, label -> {
-                label.setText("加载账号信息..");
-                refeshAccounts(null);
-            });
             try {
                 this.initEvent();
                 this.initData();
             } catch (Exception e) {
                 log.error("error={}", e.getMessage(), e);
             }
+            // 获取账号数据
+            LoadPage.task(FXPageEnum.主页, label -> {
+                label.setText("加载账号信息..");
+                refeshAccounts(null);
+            });
 
             startGameBtn.requestFocus();
 
@@ -672,21 +674,35 @@ public class MainController implements Initializable {
     {
         if (mouseEvent.getButton() == MouseButton.PRIMARY)
         {
-            expandablePane.setVisible(!expandablePane.isVisible());
-            expandableBar.setText(expandablePane.isVisible() ? "▼" : "▲");
-
-            final Stage stage = QsConstant.JFX_STAGE_DATA.get(FXPageEnum.主页).getStage();
-
-            if (expandablePane.isVisible())
-            {
-                stage.sizeToScene();
-                expandablePane.setStyle("");
-            }
-            else
-            {
-                stage.setHeight(stage.getHeight() - expandablePane.getHeight());
-//                expandablePane.setStyle("-fx-border-width: 1; -fx-border-color: black");
-            }
+            FrameManager.getInstance().runLater(() -> {
+                switchExpandablePane(!expandablePane.isVisible(), false);
+                QsConstant.config.setExpandSettingPane(expandablePane.isVisible());
+                FileTools.saveConfig(QsConstant.config);
+            });
         }
+    }
+
+    private void switchExpandablePane(boolean show, boolean init)
+    {
+        expandableBar.setText(expandablePane.isVisible() ? "▼" : "▲");
+
+        expandablePane.setVisible(show);
+
+        final Stage stage = QsConstant.JFX_STAGE_DATA.get(FXPageEnum.主页).getStage();
+
+        if (show)
+        {
+            // 初始化时不添加
+            if (init)
+            {
+                return;
+            }
+            mainPane.getChildren().add(expandablePane);
+        }
+        else
+        {
+            mainPane.getChildren().remove(expandablePane);
+        }
+        stage.sizeToScene();
     }
 }
