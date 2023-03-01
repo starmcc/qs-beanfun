@@ -23,6 +23,7 @@ import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.*;
+import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseButton;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.VBox;
@@ -57,6 +58,8 @@ public class MainController implements Initializable {
     public Label expandableBar;
     public VBox expandablePane;
     public VBox mainPane;
+    public ImageView btnAddAct;
+    public Button startGameBtn;
     @FXML
     private ChoiceBox<Account> choiceBoxActList;
     @FXML
@@ -74,8 +77,6 @@ public class MainController implements Initializable {
     private CheckBox checkBoxKillPlayStartWindow;
     @FXML
     private TextField textFieldGamePath;
-    @FXML
-    private Button buttonAddAct;
     @FXML
     private MenuItem menuItemAddAct;
     @FXML
@@ -149,6 +150,9 @@ public class MainController implements Initializable {
             } catch (Exception e) {
                 log.error("error={}", e.getMessage(), e);
             }
+
+            startGameBtn.requestFocus();
+
             // 开始心跳 5分钟心跳一次保持登录状态
             final int delay = 1000 * 60 * 5;
             // 10分钟后开始
@@ -160,8 +164,6 @@ public class MainController implements Initializable {
                 }
             }, waitTime, delay);
         });
-
-
     }
 
     /**
@@ -429,7 +431,7 @@ public class MainController implements Initializable {
      * 添加账号事件
      */
     @FXML
-    public void addActAction(ActionEvent actionEvent) {
+    public void addActAction(MouseEvent actionEvent) {
         String name = FrameManager.getInstance().dialogText("添加账号", "");
         if (StringUtils.isBlank(name)) {
             return;
@@ -439,7 +441,7 @@ public class MainController implements Initializable {
             try {
                 BeanfunStringResult result = BeanfunClient.run().addAccount(name);
                 if (result.isSuccess()) {
-                    refeshAccounts(() -> FrameManager.getInstance().runLater(() -> buttonAddAct.setVisible(false)));
+                    refeshAccounts(() -> FrameManager.getInstance().runLater(() -> btnAddAct.setVisible(false)));
                 } else {
                     FrameManager.getInstance().message(result.getMsg(), Alert.AlertType.WARNING);
                 }
@@ -605,7 +607,7 @@ public class MainController implements Initializable {
             FrameManager.getInstance().message("新账号请点击创建账号!", Alert.AlertType.INFORMATION);
         }
 
-        buttonAddAct.setVisible(QsConstant.beanfunModel.isNewAccount());
+        btnAddAct.setVisible(QsConstant.beanfunModel.isNewAccount());
         menuItemAddAct.setVisible(QsConstant.beanfunModel.isNewAccount());
 
         FrameManager.getInstance().runLater(() -> {

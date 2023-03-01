@@ -3,8 +3,7 @@
 <?import javafx.geometry.*?>
 <?import javafx.scene.control.*?>
 <?import javafx.scene.Cursor?>
-<?import javafx.scene.image.Image?>
-<?import javafx.scene.image.ImageView?>
+<?import javafx.scene.image.*?>
 <?import javafx.scene.layout.*?>
 <AnchorPane xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.starmcc.beanfun.controller.MainController">
     <children>
@@ -74,7 +73,6 @@
                         <Label text="游戏账号" />
                         <Label text="乐豆" GridPane.rowIndex="1" />
                         <Label text="账号状态" GridPane.rowIndex="2" />
-                        <ChoiceBox fx:id="choiceBoxActList" maxWidth="1.7976931348623157E308" onDragDetected="#changeAccountNowAction" prefWidth="150.0" style="-fx-font-size: 12;" GridPane.columnIndex="1" />
                         <Label fx:id="labelActStatus" text="正常" textFill="#18ab05" GridPane.columnIndex="1" GridPane.rowIndex="2" />
                         <Button maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" mnemonicParsing="false" onAction="#exitLoginAction" text="退出登录" GridPane.columnIndex="3" />
                         <TextField fx:id="textFieldActId" editable="false" style="-fx-font-size: 12;" GridPane.columnIndex="1" GridPane.rowIndex="3" />
@@ -100,11 +98,34 @@
                         <HBox prefHeight="100.0" prefWidth="200.0" GridPane.columnIndex="3" GridPane.rowIndex="1">
                             <children>
                                 <ToggleButton fx:id="buttonRecordVideo" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" mnemonicParsing="false" onAction="#recordVideoAction" style="-fx-background-radius: 3 0 0 3; -fx-border-radius: 3 0 0 3;" text="录像" HBox.hgrow="ALWAYS" />
-                                <Button maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" mnemonicParsing="false" onAction="#openVideoSettingWindowAction" style="-fx-background-radius: 0 3 3 0; -fx-border-radius: 0 3 3 0;" text="*" />
+                                <Button maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" mnemonicParsing="false" onAction="#openVideoSettingWindowAction" style="-fx-background-radius: 0 3 3 0; -fx-border-radius: 0 3 3 0;">
+                                    <graphic>
+                                        <ImageView fitHeight="20.0" fitWidth="20.0">
+                                            <image>
+                                                <Image url="@/static/images/setting.png" />
+                                            </image>
+                                        </ImageView>
+                                    </graphic>
+                           <padding>
+                              <Insets bottom="1.0" left="1.0" right="1.0" top="1.0" />
+                           </padding>
+                                </Button>
                             </children>
                         </HBox>
-                        <Button maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" mnemonicParsing="false" onAction="#openCurrencyWindowAction" text="汇率查询" GridPane.columnIndex="2" GridPane.rowIndex="1" />
-                  <Button fx:id="buttonAddAct" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" mnemonicParsing="false" onAction="#addActAction" text="创建账号" textFill="#0071fc" GridPane.columnIndex="2" />
+                        <Button maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" mnemonicParsing="false" onAction="#openCurrencyWindowAction" text="汇率查询" GridPane.columnIndex="3" GridPane.rowIndex="2" />
+                  <HBox alignment="CENTER_LEFT" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" spacing="5.0" GridPane.columnIndex="1" GridPane.columnSpan="2" GridPane.hgrow="ALWAYS" GridPane.vgrow="ALWAYS">
+                     <children>
+                              <ChoiceBox fx:id="choiceBoxActList" maxWidth="1.7976931348623157E308" onDragDetected="#changeAccountNowAction" style="-fx-font-size: 12;" HBox.hgrow="ALWAYS" />
+                        <ImageView fx:id="btnAddAct" fitHeight="20.0" fitWidth="20.0" onMouseClicked="#addActAction" pickOnBounds="true" preserveRatio="true" visible="false">
+                            <image>
+                                <Image url="@/static/images/add.png" />
+                            </image>
+                            <cursor>
+                                <Cursor fx:constant="HAND" />
+                            </cursor>
+                        </ImageView>
+                     </children>
+                  </HBox>
 <!--                  <Button maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" mnemonicParsing="false" onAction="#updatePointsAction" text="更新点数" GridPane.columnIndex="2" GridPane.rowIndex="1" />-->
                         <!--                                <ImageView fitHeight="150.0" fitWidth="200.0" pickOnBounds="true" preserveRatio="true" GridPane.columnIndex="2" GridPane.rowIndex="1" />-->
                     </children>
