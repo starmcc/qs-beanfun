@@ -20,9 +20,9 @@
                   <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
               </rowConstraints>
                <children>
-                  <Label alignment="CENTER" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" text="中台汇率实时计算(需网络)" GridPane.columnSpan="3" />
-                  <Label alignment="CENTER" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" text="软妹币" GridPane.rowIndex="2" />
-                  <Label alignment="CENTER" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" text="新台币" GridPane.rowIndex="3" />
+                  <Label alignment="CENTER"  text="中台汇率实时计算(需网络)" GridPane.columnSpan="3" />
+                  <Label alignment="CENTER" text="软妹币" GridPane.rowIndex="2" />
+                  <Label alignment="CENTER"  text="新台币" GridPane.rowIndex="3" />
                   <HBox alignment="CENTER_LEFT" prefHeight="100.0" prefWidth="200.0" GridPane.columnIndex="1" GridPane.columnSpan="2" GridPane.rowIndex="1">
                      <children>
                         <Button mnemonicParsing="false" onAction="#updateRateAction" style="-fx-font-size: 13;" text="更新汇率" />
@@ -31,7 +31,7 @@
                               <Insets left="10.0" />
                            </HBox.margin>
                         </Label>
-                        <Label fx:id="labelExchangeNow" alignment="CENTER" maxWidth="1.7976931348623157E308" text="0" textFill="#bf6a6a" HBox.hgrow="ALWAYS">
+                        <Label fx:id="labelExchangeNow" alignment="CENTER" text="0" textFill="#bf6a6a" HBox.hgrow="ALWAYS">
                            <HBox.margin>
                               <Insets left="10.0" />
                            </HBox.margin>

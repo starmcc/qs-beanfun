@@ -57,7 +57,7 @@ public class CurrencyController implements Initializable
     @FXML
     public void updateRateAction(ActionEvent actionEvent) {
         // 获取汇率
-        LoadPage.task(FXPageEnum.主页, label -> {
+        LoadPage.task(FXPageEnum.汇率查询, label -> {
             label.setText("更新汇率..");
             QsConstant.currentRateChinaToTw = ThirdPartyApiClient.getCurrentRateChinaToTw();
             FrameManager.getInstance().runLater(() -> labelExchangeNow.setText(QsConstant.currentRateChinaToTw.toString()));
