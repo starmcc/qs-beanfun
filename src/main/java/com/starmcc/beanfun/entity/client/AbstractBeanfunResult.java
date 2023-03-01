@@ -44,7 +44,7 @@ public abstract class AbstractBeanfunResult {
         /**
          * 请求错误
          */
-        REQUEST_ERROR(-2, "网络请求失败!"),
+        REQUEST_ERROR(-2, "网络请求失败,请关闭加速器或更换节点再重试!"),
         /**
          * 错误
          */
@@ -60,15 +60,15 @@ public abstract class AbstractBeanfunResult {
         /**
          * 账密为空
          */
-        IP_BANK(2, "您的IP被官方锁定,请切换网络环境后再试!"),
+        IP_BANK(2, "IP被锁定,请关闭加速器或更换节点再重试!"),
         /**
          * otp得到空
          */
-        OTP_GET_EMPTY(3, "OTP获取失败!"),
+        OTP_GET_EMPTY(3, "OTP获取失败,请关闭加速器或更换节点再重试!"),
         /**
          * otp签名错误
          */
-        OTP_SIGN_GET_ERROR(4, "OTP签名获取失败!"),
+        OTP_SIGN_GET_ERROR(4, "OTP签名获取失败,请关闭加速器或更换节点再重试!"),
         /**
          * beanfun请求错误
          */
@@ -101,7 +101,7 @@ public abstract class AbstractBeanfunResult {
         /**
          * 需要进阶认证
          */
-        CERT_VERIFY(12, "账号需要进阶认证才可以使用!"),
+        CERT_VERIFY(12, "账号需要进阶认证才可以使用,请在菜单栏进入用户中心->会员中心进行认证!"),
         ;
 
         private final int code;
