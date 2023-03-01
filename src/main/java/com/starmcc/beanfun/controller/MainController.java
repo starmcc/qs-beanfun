@@ -129,8 +129,6 @@ public class MainController implements Initializable {
     private MenuItem menuItemAlliance;
     @FXML
     private MenuItem menuItemExit;
-//    @FXML
-//    private CheckBox checkBoxCheckAppUpdate;
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
