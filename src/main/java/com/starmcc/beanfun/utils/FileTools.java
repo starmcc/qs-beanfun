@@ -5,6 +5,7 @@ import com.alibaba.fastjson.TypeReference;
 import com.alibaba.fastjson.serializer.SerializerFeature;
 import com.starmcc.beanfun.constant.QsConstant;
 import com.starmcc.beanfun.entity.model.ConfigModel;
+import com.starmcc.beanfun.manager.ThreadPoolManager;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 
@@ -198,32 +199,32 @@ public class FileTools {
      * @param model json数据
      * @return boolean
      */
-    public synchronized static boolean saveConfig(ConfigModel model) {
-        ConfigModel copyConfig = encodeAndCopyAccount(model);
-        // 账号加密
-        String content = JSON.toJSONString(copyConfig, SerializerFeature.PrettyFormat, SerializerFeature.WriteMapNullValue, SerializerFeature.WriteDateUseDateFormat);
-        try {
-            File file = new File(QsConstant.PATH_APP_CONFIG);
-            // 创建上级目录
-            if (!file.getParentFile().exists()) {
-                file.getParentFile().mkdirs();
+    public synchronized static void saveConfig(ConfigModel model) {
+        ThreadPoolManager.execute(() -> {
+            ConfigModel copyConfig = encodeAndCopyAccount(model);
+            // 账号加密
+            String content = JSON.toJSONString(copyConfig, SerializerFeature.PrettyFormat, SerializerFeature.WriteMapNullValue, SerializerFeature.WriteDateUseDateFormat);
+            try {
+                File file = new File(QsConstant.PATH_APP_CONFIG);
+                // 创建上级目录
+                if (!file.getParentFile().exists()) {
+                    file.getParentFile().mkdirs();
+                }
+                // 如果文件存在，则删除文件
+                if (file.exists()) {
+                    file.delete();
+                }
+                // 创建文件
+                file.createNewFile();
+                // 写入文件
+                Writer write = new OutputStreamWriter(new FileOutputStream(file), StandardCharsets.UTF_8);
+                write.write(content);
+                write.flush();
+                write.close();
+            } catch (Exception e) {
+                log.error("文件写入异常 e={}", e.getMessage(), e);
             }
-            // 如果文件存在，则删除文件
-            if (file.exists()) {
-                file.delete();
-            }
-            // 创建文件
-            file.createNewFile();
-            // 写入文件
-            Writer write = new OutputStreamWriter(new FileOutputStream(file), StandardCharsets.UTF_8);
-            write.write(content);
-            write.flush();
-            write.close();
-            return true;
-        } catch (Exception e) {
-            log.error("文件写入异常 e={}", e.getMessage(), e);
-            return false;
-        }
+        });
     }
 
     /**
