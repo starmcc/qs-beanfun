@@ -10,7 +10,7 @@
     <children>
         <VBox fx:id="mainPane" minHeight="-Infinity" minWidth="-Infinity" prefHeight="320.0" prefWidth="400.0">
             <children>
-                <MenuBar VBox.vgrow="NEVER" stylesheets="@/static/css/menuitem.css">
+                <MenuBar stylesheets="@/static/css/menuitem.css" VBox.vgrow="NEVER">
                     <menus>
                         <Menu mnemonicParsing="false" text="主菜单">
                             <items>
@@ -18,14 +18,14 @@
                                 <CheckMenuItem fx:id="checkMenuItemAutoLunShao" mnemonicParsing="false" onAction="#autoLunShaoAction" text="自动轮烧" />
                                 <Menu fx:id="menuLunShaoSetting" mnemonicParsing="false" text="轮烧设置">
                                     <items>
-                                        <MenuItem fx:id="menuItemLunHui" disable="true" mnemonicParsing="false" text="轮热键：(点击编辑框后按键设置)" style="-fx-text-fill: #000; -fx-opacity: 1.0;"/>
+                                        <MenuItem fx:id="menuItemLunHui" disable="true" mnemonicParsing="false" style="-fx-text-fill: #000; -fx-opacity: 1.0;" text="轮热键：(点击编辑框后按键设置)" />
                               <CustomMenuItem hideOnClick="false" mnemonicParsing="false" text="Unspecified Action">
                                  <content>
                                     <TextField fx:id="textFieldLunHui" editable="false" />
                                  </content>
                               </CustomMenuItem>
                               <SeparatorMenuItem mnemonicParsing="false" />
-                                        <MenuItem fx:id="menuItemRanShao" disable="true" mnemonicParsing="false" text="烧热键：" style="-fx-text-fill: #000; -fx-opacity: 1.0;" />
+                                        <MenuItem fx:id="menuItemRanShao" disable="true" mnemonicParsing="false" style="-fx-text-fill: #000; -fx-opacity: 1.0;" text="烧热键：" />
                               <CustomMenuItem hideOnClick="false" mnemonicParsing="false" text="Unspecified Action">
                                  <content>
                                     <TextField fx:id="textFieldRanShao" editable="false" promptText="点击此处后直接按键盘设置" />
@@ -76,7 +76,7 @@
                         <Label text="账号状态" GridPane.rowIndex="2" />
                         <ChoiceBox fx:id="choiceBoxActList" maxWidth="1.7976931348623157E308" onDragDetected="#changeAccountNowAction" prefWidth="150.0" style="-fx-font-size: 12;" GridPane.columnIndex="1" />
                         <Label fx:id="labelActStatus" text="正常" textFill="#18ab05" GridPane.columnIndex="1" GridPane.rowIndex="2" />
-                        <Button maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" mnemonicParsing="false" onAction="#exitLoginAction" text="退出登录" GridPane.columnIndex="2" />
+                        <Button maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" mnemonicParsing="false" onAction="#exitLoginAction" text="退出登录" GridPane.columnIndex="3" />
                         <TextField fx:id="textFieldActId" editable="false" style="-fx-font-size: 12;" GridPane.columnIndex="1" GridPane.rowIndex="3" />
                         <TextField fx:id="textFieldDynamicPwd" editable="false" style="-fx-font-size: 12;" GridPane.columnIndex="1" GridPane.rowIndex="4" />
                         <Button maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" mnemonicParsing="false" onAction="#getDynamicPasswordAction" text="获取动态密码" GridPane.columnIndex="1" GridPane.rowIndex="5" />
@@ -86,7 +86,7 @@
                         <Label text="登陆密码" GridPane.rowIndex="4" />
                         <HBox alignment="CENTER_LEFT" prefHeight="100.0" prefWidth="200.0" spacing="5.0" GridPane.columnIndex="1" GridPane.rowIndex="1">
                             <children>
-                                <Label fx:id="labelActPoint" text="0" textFill="#f85fc3" />
+                                <Label fx:id="labelActPoint" text="0" />
                                 <ImageView fitHeight="20.0" fitWidth="20.0" onMouseClicked="#updatePointsAction" opacity="0.8" pickOnBounds="true" preserveRatio="true">
                                     <image>
                                         <Image url="@/static/images/update.png" />
@@ -97,13 +97,14 @@
                                 </ImageView>
                             </children>
                         </HBox>
-                        <HBox prefHeight="100.0" prefWidth="200.0" GridPane.columnIndex="3">
+                        <HBox prefHeight="100.0" prefWidth="200.0" GridPane.columnIndex="3" GridPane.rowIndex="1">
                             <children>
                                 <ToggleButton fx:id="buttonRecordVideo" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" mnemonicParsing="false" onAction="#recordVideoAction" style="-fx-background-radius: 3 0 0 3; -fx-border-radius: 3 0 0 3;" text="录像" HBox.hgrow="ALWAYS" />
                                 <Button maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" mnemonicParsing="false" onAction="#openVideoSettingWindowAction" style="-fx-background-radius: 0 3 3 0; -fx-border-radius: 0 3 3 0;" text="*" />
                             </children>
                         </HBox>
-                        <Button maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" mnemonicParsing="false" onAction="#openCurrencyWindowAction" text="汇率查询" GridPane.columnIndex="3" GridPane.rowIndex="1" />
+                        <Button maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" mnemonicParsing="false" onAction="#openCurrencyWindowAction" text="汇率查询" GridPane.columnIndex="2" GridPane.rowIndex="1" />
+                  <Button fx:id="buttonAddAct" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" mnemonicParsing="false" onAction="#addActAction" text="创建账号" textFill="#0071fc" GridPane.columnIndex="2" />
 <!--                  <Button maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" mnemonicParsing="false" onAction="#updatePointsAction" text="更新点数" GridPane.columnIndex="2" GridPane.rowIndex="1" />-->
                         <!--                                <ImageView fitHeight="150.0" fitWidth="200.0" pickOnBounds="true" preserveRatio="true" GridPane.columnIndex="2" GridPane.rowIndex="1" />-->
                     </children>
