@@ -76,7 +76,7 @@ public class ConfigModel implements Serializable {
         // 最小化模式
         this.minimizeMode = false;
         // 展开工具设置面板
-        this.expandSettingPane = true;
+        this.expandSettingPane = false;
     }
 
 
