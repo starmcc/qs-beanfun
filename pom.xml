@@ -20,7 +20,7 @@
         <version.logback-classic>1.2.3</version.logback-classic>
         <version.jna-platform-jpms>5.10.0</version.jna-platform-jpms>
         <version.maven-shade-plugin>1.2.1</version.maven-shade-plugin>
-        <version.launch4j-maven-plugin>2.1.2</version.launch4j-maven-plugin>
+<!--        <version.launch4j-maven-plugin>2.1.2</version.launch4j-maven-plugin>-->
     </properties>
 
     <dependencies>
@@ -82,84 +82,32 @@
             <version>6.21</version>
         </dependency>
     </dependencies>
+
     <build>
         <finalName>${artifactId}</finalName>
+
         <plugins>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-shade-plugin</artifactId>
-                <version>${version.maven-shade-plugin}</version>
+                <artifactId>maven-assembly-plugin</artifactId>
+                <version>2.6</version>
+                <configuration>
+                    <archive>
+                        <manifest>
+                            <mainClass>com.starmcc.beanfun.QsBeanfunApplication</mainClass>
+                        </manifest>
+                    </archive>
+                    <descriptorRefs>
+                        <descriptorRef>jar-with-dependencies</descriptorRef>
+                    </descriptorRefs>
+                </configuration>
                 <executions>
                     <execution>
+                        <id>make-assembly</id>
                         <phase>package</phase>
                         <goals>
-                            <goal>shade</goal>
+                            <goal>single</goal>
                         </goals>
-                        <configuration>
-                            <finalName>${artifactId}</finalName>
-                            <transformers>
-                                <transformer
-                                        implementation="org.apache.maven.plugins.shade.resource.ManifestResourceTransformer">
-                                    <mainClass>com.starmcc.beanfun.QsBeanfunApplication</mainClass>
-                                </transformer>
-                            </transformers>
-                        </configuration>
-                    </execution>
-                </executions>
-            </plugin>
-            <plugin>
-                <groupId>com.akathist.maven.plugins.launch4j</groupId>
-                <artifactId>launch4j-maven-plugin</artifactId>
-                <version>${version.launch4j-maven-plugin}</version>
-                <executions>
-                    <execution>
-                        <phase>package</phase>
-                        <goals>
-                            <goal>launch4j</goal>
-                        </goals>
-                        <configuration>
-                            <!--运行方式-->
-                            <headerType>gui</headerType>
-                            <!--输出的exe文件-->
-                            <outfile>${project.build.directory}/QsBeanfun.exe</outfile>
-                            <!--需要打包的Jar文件-->
-                            <jar>${project.build.directory}/${artifactId}.jar</jar>
-                            <classPath>
-                                <mainClass>com.starmcc.beanfun.QsBeanfunApplication</mainClass>
-                            </classPath>
-                            <icon>./build/ico.ico</icon>
-                            <manifest>./build/exe.manifest</manifest>
-                            <downloadUrl>https://www.oracle.com/java/technologies/downloads/#jre8-windows</downloadUrl>
-                            <priority>high</priority>
-                            <singleInstance>
-                                <mutexName>${name}</mutexName>
-                                <windowTitle>${name}</windowTitle>
-                            </singleInstance>
-                            <!--配置jre-->
-                            <jre>
-                                <minVersion>1.8.0</minVersion>
-                                <bundledJre64Bit>false</bundledJre64Bit>
-                                <bundledJreAsFallback>false</bundledJreAsFallback>
-                                <jdkPreference>preferJre</jdkPreference>
-                                <runtimeBits>64</runtimeBits>
-                                <path>./jre</path>
-                                <opts>
-                                    <opt>-Dglass.win.minHiDPI=1</opt>
-                                </opts>
-                            </jre>
-                            <versionInfo>
-                                <fileVersion>${version}.0</fileVersion>
-                                <txtFileVersion>${version}</txtFileVersion>
-                                <fileDescription>${name}</fileDescription>
-                                <copyright>starmcc</copyright>
-                                <productVersion>${version}.0</productVersion>
-                                <txtProductVersion>${name}</txtProductVersion>
-                                <productName>${name}</productName>
-                                <internalName>${name}</internalName>
-                                <originalFilename>${name}.exe</originalFilename>
-                                <language>SIMPLIFIED_CHINESE</language>
-                            </versionInfo>
-                        </configuration>
                     </execution>
                 </executions>
             </plugin>

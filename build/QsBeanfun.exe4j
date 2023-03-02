@@ -1,31 +1,14 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<exe4j version="5.1" transformSequenceNumber="2">
-  <directoryPresets config="../src/main/resources/lib" />
-  <application name="QsBeasnfun" distributionSourceDir="../target">
-    <languages>
-      <principalLanguage id="en" customLocalizationFile="" />
-    </languages>
-  </application>
-  <executable name="QsBeanfun" type="2" iconSet="true" iconFile="./ico.ico" executableDir="." redirectStderr="true" stderrFile="error.log" stderrMode="overwrite" redirectStdout="false" stdoutFile="output.log" stdoutMode="overwrite" failOnStderrOutput="true" executableMode="1" changeWorkingDirectory="true" workingDirectory="." singleInstance="true" serviceStartType="2" serviceDependencies="" serviceDescription="" jreLocation="" executionLevel="requireAdministrator" checkConsoleParameter="true" globalSingleInstance="false" singleInstanceActivate="true" dpiAware="true" amd64="true">
-    <messageSet />
-    <versionInfo include="false" fileVersion="" fileDescription="" legalCopyright="" internalName="" productName="" companyName="" productVersion="" />
-  </executable>
-  <splashScreen show="false" width="0" height="0" bitmapFile="" windowsNative="false" textOverlay="false">
-    <text>
-      <statusLine x="20" y="20" text="" fontSize="8" fontColor="0,0,0" bold="false" />
-      <versionLine x="20" y="40" text="version %VERSION%" fontSize="8" fontColor="0,0,0" bold="false" />
-    </text>
-  </splashScreen>
-  <java mainClass="com.starmcc.beanfun.QsBeanfunApplication" vmParameters="-Dappdir=${EXE4J_EXEDIR}" arguments="" allowVMPassthroughParameters="true" preferredVM="" bundleRuntime="true" minVersion="1.8" maxVersion="1.8" allowBetaVM="true" jdkOnly="false">
+<exe4j version="9.0" transformSequenceNumber="3">
+  <directoryPresets config="./lib" />
+  <application name="QsBeasnfun" distributionSourceDir="../target" />
+  <executable name="QsBeanfun" wrapperType="embed" iconSet="true" iconFile="./ico.ico" executableDir="." executableMode="gui" singleInstance="true" executionLevel="requireAdministrator" checkConsoleParameter="true" dpiAware="true" />
+  <java mainClass="com.starmcc.beanfun.QsBeanfunApplication" vmParameters="-Dappdir=${EXE4J_EXEDIR}" minVersion="1.8" allowBetaVM="true">
     <searchSequence>
-      <directory location="./jre" />
+      <registry />
     </searchSequence>
     <classPath>
-      <archive location="../target/qs-beanfun.jar" failOnError="true" />
+      <archive location="../target/qs-beanfun-jar-with-dependencies.jar" />
     </classPath>
-    <nativeLibraryDirectories />
-    <vmOptions />
   </java>
-  <includedFiles />
-  <unextractableFiles />
 </exe4j>
