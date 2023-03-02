@@ -18,6 +18,8 @@
 
 ## 3. Inno Setup 打包安装程序
 
+> inno Setup版本为6.0.5
+
 安裝`inno Setup`工具，运行`install\install-script.iss`，点击`Run`即可打包出安装包。
 
 脚本内请查阅官方自行修改值，如果是没变动过目录情况下一般不需要变更，直接执行即可。
