@@ -6,5 +6,4 @@ log/
 target/
 .idea
 *.bak
-/build/jre/
 /qs-data/
