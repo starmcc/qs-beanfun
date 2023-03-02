@@ -15,7 +15,8 @@ import java.util.function.Consumer;
 public enum FXPageEnum {
     登录页("login", false, "小梦出品", false, true, true,
             jfxStage -> jfxStage.getRoot().getStylesheets().add(QsConstant.class.getResource("/static/css/login.css").toExternalForm())),
-    主页("main", true, "QsBeanfun", true, false, true, null),
+    主页("main", true, "QsBeanfun", true, false, true,
+            jfxStage -> jfxStage.getRoot().getStylesheets().add(QsConstant.class.getResource("/static/css/main.css").toExternalForm())),
     二维码登录("qrCode", true, "二维码登录", false, false, true, null),
     更新页("update", true, "自动更新", false, false, true, null),
     关于我("about", false, "关于..", false, false, false, null),

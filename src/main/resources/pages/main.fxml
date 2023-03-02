@@ -5,11 +5,13 @@
 <?import javafx.scene.Cursor?>
 <?import javafx.scene.image.*?>
 <?import javafx.scene.layout.*?>
-<AnchorPane xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.starmcc.beanfun.controller.MainController">
+<?import javafx.util.Duration?>
+
+<AnchorPane xmlns="http://javafx.com/javafx/8.0.171" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.starmcc.beanfun.controller.MainController">
     <children>
         <VBox fx:id="mainPane" alignment="TOP_CENTER" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity">
             <children>
-                <MenuBar stylesheets="@/static/css/menuitem.css" VBox.vgrow="NEVER">
+                <MenuBar VBox.vgrow="NEVER">
                     <menus>
                         <Menu mnemonicParsing="false" text="主菜单">
                             <items>
@@ -68,86 +70,132 @@
                         </Menu>
                     </menus>
                 </MenuBar>
-                <GridPane hgap="5.0" maxHeight="-Infinity" maxWidth="-Infinity" prefHeight="195.0" prefWidth="400.0" style="-fx-font-size: 13;" vgap="5.0" VBox.vgrow="NEVER">
+                <GridPane hgap="5.0" maxHeight="-Infinity" maxWidth="-Infinity" prefHeight="225.0" prefWidth="400.0" style="-fx-font-size: 13;" vgap="5.0" VBox.vgrow="NEVER">
                     <children>
-                        <Label text="游戏账号" />
-                        <Label text="乐豆" GridPane.rowIndex="1" />
-                        <Label text="账号状态" GridPane.rowIndex="2" />
-                        <Label fx:id="labelActStatus" text="正常" textFill="#18ab05" GridPane.columnIndex="1" GridPane.rowIndex="2" />
-                        <Button maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" mnemonicParsing="false" onAction="#exitLoginAction" text="退出登录" GridPane.columnIndex="3" />
-                        <TextField fx:id="textFieldActId" editable="false" style="-fx-font-size: 12;" GridPane.columnIndex="1" GridPane.rowIndex="3" />
-                        <TextField fx:id="textFieldDynamicPwd" editable="false" style="-fx-font-size: 12;" GridPane.columnIndex="1" GridPane.rowIndex="4" />
-                        <Button fx:id="startGameBtn" defaultButton="true" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" mnemonicParsing="false" onAction="#startGameAction" style="-fx-font-size: 22;" text="启动游戏" GridPane.columnIndex="2" GridPane.columnSpan="2" GridPane.rowIndex="4" GridPane.rowSpan="2" />
-                        <CheckBox fx:id="checkBoxPassInput" mnemonicParsing="false" text="自动登陆 (免输入账密)" GridPane.columnIndex="2" GridPane.columnSpan="2" GridPane.rowIndex="3" />
-                        <Label text="登陆账号" GridPane.rowIndex="3" />
-                        <Label text="登陆密码" GridPane.rowIndex="4" />
-                        <HBox alignment="CENTER_LEFT" prefHeight="100.0" prefWidth="200.0" spacing="5.0" GridPane.columnIndex="1" GridPane.rowIndex="1">
+                        <Label text="游戏账号" GridPane.columnIndex="1" />
+                        <Label text="乐豆" GridPane.columnIndex="1" GridPane.rowIndex="1" />
+                        <Label text="账号状态" GridPane.columnIndex="1" GridPane.rowIndex="2" />
+                        <Label fx:id="labelActStatus" text="正常" textFill="#18ab05" GridPane.columnIndex="2" GridPane.rowIndex="2" />
+                        <Button maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" mnemonicParsing="false" onAction="#exitLoginAction" text="退出登录" GridPane.columnIndex="4">
+                     <GridPane.margin>
+                        <Insets />
+                     </GridPane.margin></Button>
+                        <TextField fx:id="textFieldActId" editable="false" style="-fx-font-size: 12;" GridPane.columnIndex="2" GridPane.rowIndex="3" />
+                        <TextField fx:id="textFieldDynamicPwd" editable="false" style="-fx-font-size: 12;" GridPane.columnIndex="2" GridPane.rowIndex="4" />
+                        <Button fx:id="startGameBtn" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" mnemonicParsing="false" onAction="#startGameAction" styleClass="start_game_btn" text="启   动   游   戏" textFill="WHITE" GridPane.columnIndex="1" GridPane.columnSpan="4" GridPane.rowIndex="5">
+                     <GridPane.margin>
+                        <Insets />
+                     </GridPane.margin></Button>
+                        <Label text="登陆账号" GridPane.columnIndex="1" GridPane.rowIndex="3" />
+                        <Label text="登陆密码" GridPane.columnIndex="1" GridPane.rowIndex="4" />
+                        <HBox alignment="CENTER_LEFT" prefHeight="100.0" prefWidth="200.0" spacing="5.0" GridPane.columnIndex="2" GridPane.rowIndex="1">
                             <children>
                                 <Label fx:id="labelActPoint" text="0" />
-                                <ImageView fitHeight="20.0" fitWidth="20.0" onMouseClicked="#updatePointsAction" opacity="0.8" pickOnBounds="true" preserveRatio="true">
-                                    <image>
-                                        <Image url="@/static/images/update.png" />
-                                    </image>
-                                    <cursor>
-                                        <Cursor fx:constant="HAND" />
-                                    </cursor>
-                                </ImageView>
+                        <Label onMouseClicked="#updatePointsAction">
+                           <graphic>
+                                      <ImageView fitHeight="20.0" fitWidth="20.0" opacity="0.8" pickOnBounds="true" preserveRatio="true">
+                                          <image>
+                                              <Image url="@../static/images/update.png" />
+                                          </image>
+                                          <cursor>
+                                              <Cursor fx:constant="HAND" />
+                                          </cursor>
+                                      </ImageView>
+                           </graphic>
+                           <tooltip>
+                              <Tooltip text="刷新点数" fx:id="tooltipRefeshPoint" />
+                           </tooltip>
+                        </Label>
                             </children>
                         </HBox>
-                        <HBox prefHeight="100.0" prefWidth="200.0" GridPane.columnIndex="3" GridPane.rowIndex="2">
+                        <HBox prefHeight="100.0" prefWidth="200.0" GridPane.columnIndex="4" GridPane.rowIndex="2">
                             <children>
-                                <ToggleButton fx:id="buttonRecordVideo" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" mnemonicParsing="false" onAction="#recordVideoAction" style="-fx-background-radius: 3 0 0 3; -fx-border-radius: 3 0 0 3;" text="录像" HBox.hgrow="ALWAYS" />
+                                <ToggleButton fx:id="buttonRecordVideo" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" mnemonicParsing="false" onAction="#recordVideoAction" style="-fx-background-radius: 3 0 0 3; -fx-border-radius: 3 0 0 3;" text="录像" HBox.hgrow="ALWAYS">
+                           <HBox.margin>
+                              <Insets />
+                           </HBox.margin></ToggleButton>
                                 <Button maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" mnemonicParsing="false" onAction="#openVideoSettingWindowAction" style="-fx-background-radius: 0 3 3 0; -fx-border-radius: 0 3 3 0;">
                                     <graphic>
                                         <ImageView fitHeight="20.0" fitWidth="20.0">
                                             <image>
-                                                <Image url="@/static/images/setting.png" />
+                                                <Image url="@../static/images/setting.png" />
                                             </image>
                                         </ImageView>
                                     </graphic>
                                     <padding>
                                         <Insets bottom="1.0" left="1.0" right="1.0" top="1.0" />
                                     </padding>
+                           <tooltip>
+                              <Tooltip text="设置" fx:id="tooltipVideoConfig" />
+                           </tooltip>
                                 </Button>
                             </children>
+                     <GridPane.margin>
+                        <Insets />
+                     </GridPane.margin>
                         </HBox>
-                        <Button maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" mnemonicParsing="false" onAction="#openCurrencyWindowAction" text="汇率查询" GridPane.columnIndex="3" GridPane.rowIndex="1" />
-                        <HBox alignment="CENTER_LEFT" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" spacing="5.0" GridPane.columnIndex="1" GridPane.columnSpan="2" GridPane.hgrow="ALWAYS" GridPane.vgrow="ALWAYS">
+                        <Button maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" mnemonicParsing="false" onAction="#openCurrencyWindowAction" text="汇率查询" GridPane.columnIndex="4" GridPane.rowIndex="1">
+                     <GridPane.margin>
+                        <Insets />
+                     </GridPane.margin></Button>
+                        <HBox alignment="CENTER_LEFT" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" spacing="5.0" GridPane.columnIndex="2" GridPane.hgrow="ALWAYS" GridPane.vgrow="ALWAYS">
                             <children>
                                 <ChoiceBox fx:id="choiceBoxActList" maxWidth="1.7976931348623157E308" onDragDetected="#changeAccountNowAction" style="-fx-font-size: 12;" HBox.hgrow="ALWAYS" />
-                                <ImageView fx:id="btnAddAct" fitHeight="20.0" fitWidth="20.0" onMouseClicked="#addActAction" pickOnBounds="true" preserveRatio="true" visible="false">
-                                    <image>
-                                        <Image url="@/static/images/add.png" />
-                                    </image>
-                                    <cursor>
-                                        <Cursor fx:constant="HAND" />
-                                    </cursor>
-                                </ImageView>
                             </children>
+                     <GridPane.margin>
+                        <Insets />
+                     </GridPane.margin>
                         </HBox>
-                  <HBox alignment="CENTER_LEFT" maxWidth="1.7976931348623157E308" GridPane.columnIndex="1" GridPane.rowIndex="5">
+                  <HBox alignment="CENTER_LEFT" maxWidth="1.7976931348623157E308" GridPane.columnIndex="3" GridPane.columnSpan="2" GridPane.rowIndex="4">
                      <children>
                         <ToggleButton fx:id="toggleButtonAutoInput" mnemonicParsing="false" onAction="#autoInputAction" style="-fx-background-radius: 3 0 0 3; -fx-border-radius: 3 0 0 3;">
                            <graphic>
                               <ImageView fitHeight="22.0" fitWidth="22.0" pickOnBounds="true" preserveRatio="true">
-                                  <image>
-                                      <Image url="@/static/images/auto.png" />
-                                  </image>
+                                 <image>
+                                    <Image url="@../static/images/auto.png" />
+                                 </image>
                               </ImageView>
                            </graphic>
                            <padding>
                               <Insets bottom="3.0" left="3.0" right="3.0" top="3.0" />
                            </padding>
+                           <tooltip>
+                               <Tooltip fx:id="tooltipAutoInput"  text="自动输入" />
+                           </tooltip>
                         </ToggleButton>
-                              <Button maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" mnemonicParsing="false" onAction="#getDynamicPasswordAction" style="-fx-background-radius: 0 3 3 0; -fx-border-radius: 0 3 3 0;" text="获取动态密码" HBox.hgrow="ALWAYS" />
+                              <Button maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" mnemonicParsing="false" onAction="#getDynamicPasswordAction" style="-fx-background-radius: 0 3 3 0; -fx-border-radius: 0 3 3 0;" text="获取动态密码" HBox.hgrow="ALWAYS">
+                           <HBox.margin>
+                              <Insets />
+                           </HBox.margin>
+                        </Button>
                      </children>
+                     <GridPane.margin>
+                        <Insets />
+                     </GridPane.margin>
                   </HBox>
+                  <Label fx:id="btnAddActLabel" GridPane.columnIndex="3" onMouseClicked="#addActAction">
+                     <graphic>
+                                <ImageView fx:id="btnAddAct" fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
+                                    <cursor>
+                                        <Cursor fx:constant="HAND" />
+                                    </cursor>
+                           <image>
+                              <Image url="@../static/images/add.png" />
+                           </image>
+                                </ImageView>
+                     </graphic>
+                     <tooltip>
+                        <Tooltip text="创建账号" fx:id="tooltipCreateAccount" />
+                     </tooltip>
+                  </Label>
                     </children>
                     <columnConstraints>
+                  <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" percentWidth="5.0" prefWidth="100.0" />
                         <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" percentWidth="15.0" prefWidth="100.0" />
                         <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" percentWidth="40.0" prefWidth="100.0" />
                         <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
-                        <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
+                  <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" percentWidth="20.0" prefWidth="100.0" />
+                  <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" percentWidth="5.0" prefWidth="100.0" />
                     </columnConstraints>
                     <padding>
                         <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
@@ -198,13 +246,12 @@
                                                 <Cursor fx:constant="HAND" />
                                             </cursor>
                                             <tooltip>
-                                                <Tooltip text="若勾选此项，在最小化时将只会在系统托盘显示登陆器图标，不会在任务栏中提示" wrapText="true">
-
-                                                </Tooltip>
+                                                <Tooltip fx:id="tooltipHideMain" text="若勾选此项&#10;在最小化时将只会在系统托盘显示登陆器图标&#10;不会在任务栏中提示" />
                                             </tooltip>
                                         </Label>
                                     </children>
                                 </HBox>
+                              <CheckBox fx:id="checkBoxPassInput" mnemonicParsing="false" text="启动游戏后免登录界面" GridPane.columnIndex="1" GridPane.columnSpan="2" GridPane.rowIndex="1" />
                             </children>
                             <VBox.margin>
                                 <Insets left="5.0" right="5.0" />

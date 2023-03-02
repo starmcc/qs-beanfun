@@ -2,7 +2,7 @@
 
 ### RelaxNG Object Model/Parser License
 ```
-Copyright (c) Kohsuke Kawaguchi
+Copyright (C) Kohsuke Kawaguchi 2004-2011
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal

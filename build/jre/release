@@ -1,6 +1,6 @@
-JAVA_VERSION="1.8.0_341"
+JAVA_VERSION="1.8.0_361"
 OS_NAME="Windows"
 OS_VERSION="5.2"
 OS_ARCH="amd64"
-SOURCE=".:git:f05e5874a671+"
+SOURCE=".:git:5591fb07f525+"
 BUILD_TYPE="commercial"

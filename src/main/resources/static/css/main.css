@@ -1,0 +1,18 @@
+.start_game_btn:hover {
+    -fx-background-color: #00a1ff;
+}
+
+.start_game_btn {
+    -fx-font-size: 22;
+    -fx-background-color: #007ec7;
+    -fx-background-radius: 10 10 10 10;
+}
+
+.menu-item:disabled {
+    -fx-background-color: #fff;
+    -fx-opacity: 1.0;
+}
+
+.tooltip {
+    -fx-font-size: 14px;
+}

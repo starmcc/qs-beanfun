@@ -30,6 +30,7 @@ import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
+import javafx.util.Duration;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.BooleanUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -54,12 +55,19 @@ import java.util.ResourceBundle;
 @Slf4j
 public class MainController implements Initializable {
 
-
+    @FXML
     public Label expandableBar;
+    @FXML
     public VBox expandablePane;
+    @FXML
     public VBox mainPane;
+    @FXML
     public ImageView btnAddAct;
+    @FXML
+    public Label btnAddActLabel;
+    @FXML
     public Button startGameBtn;
+    @FXML
     public ToggleButton toggleButtonAutoInput;
     @FXML
     private ChoiceBox<Account> choiceBoxActList;
@@ -67,6 +75,7 @@ public class MainController implements Initializable {
     private Label labelActPoint;
     @FXML
     private Label labelActStatus;
+    @FXML
     private String actCreateTimeStr;
     @FXML
     private TextField textFieldActId;
@@ -130,6 +139,16 @@ public class MainController implements Initializable {
     private MenuItem menuItemAlliance;
     @FXML
     private MenuItem menuItemExit;
+    @FXML
+    private Tooltip tooltipAutoInput;
+    @FXML
+    private Tooltip tooltipCreateAccount;
+    @FXML
+    private Tooltip tooltipHideMain;
+    @FXML
+    private Tooltip tooltipRefeshPoint;
+    @FXML
+    private Tooltip tooltipVideoConfig;
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
@@ -174,6 +193,13 @@ public class MainController implements Initializable {
      */
     private void initData() throws Exception {
         // 基础状态设置
+        Duration duration = new Duration(0);
+        tooltipAutoInput.setShowDelay(duration);
+        tooltipCreateAccount.setShowDelay(duration);
+        tooltipHideMain.setShowDelay(duration);
+        tooltipRefeshPoint.setShowDelay(duration);
+        tooltipVideoConfig.setShowDelay(duration);
+
         checkBoxPassInput.setSelected(BooleanUtils.isTrue(QsConstant.config.getPassInput()));
         checkBoxKillPlayStartWindow.setSelected(BooleanUtils.isTrue(QsConstant.config.getKillStartPalyWindow()));
         textFieldGamePath.setText(QsConstant.config.getGamePath());
@@ -302,8 +328,7 @@ public class MainController implements Initializable {
             if (newValue) {
                 // 如果编辑框获取焦点，则明文显示内容
                 textFieldActId.setText(QsConstant.nowAccount.getId());
-            }
-            else {
+            } else {
                 // 如果编辑框不为空，则将第五位之后的内容设置为*
                 if (StringUtils.isNotBlank(textFieldActId.getText())) {
                     textFieldActId.setText(QsConstant.nowAccount.getId().substring(0, 5) + "******");
@@ -454,7 +479,10 @@ public class MainController implements Initializable {
             try {
                 BeanfunStringResult result = BeanfunClient.run().addAccount(name);
                 if (result.isSuccess()) {
-                    refeshAccounts(() -> FrameManager.getInstance().runLater(() -> btnAddAct.setVisible(false)));
+                    refeshAccounts(() -> FrameManager.getInstance().runLater(() -> {
+                        btnAddAct.setVisible(false);
+                        btnAddActLabel.setVisible(false);
+                    }));
                 } else {
                     FrameManager.getInstance().message(result.getMsg(), Alert.AlertType.WARNING);
                 }
@@ -592,14 +620,12 @@ public class MainController implements Initializable {
     }
 
     @FXML
-    public void openVideoSettingWindowAction(ActionEvent actionEvent) throws Exception
-    {
+    public void openVideoSettingWindowAction(ActionEvent actionEvent) throws Exception {
         FrameManager.getInstance().openWindow(FXPageEnum.录像设置, FXPageEnum.主页);
     }
 
     @FXML
-    public void openCurrencyWindowAction(ActionEvent actionEvent) throws Exception
-    {
+    public void openCurrencyWindowAction(ActionEvent actionEvent) throws Exception {
         FrameManager.getInstance().openWindow(FXPageEnum.汇率查询, FXPageEnum.主页);
     }
 
@@ -623,10 +649,11 @@ public class MainController implements Initializable {
             FrameManager.getInstance().message("请前往用户中心 -> 会员中心进行进阶认证!\n" + "做完进阶认证后请退出登录器重新登录!", Alert.AlertType.INFORMATION);
         } else if (QsConstant.beanfunModel.isNewAccount()) {
             // 需要创建账号
-            FrameManager.getInstance().message("新账号请点击创建账号!", Alert.AlertType.INFORMATION);
+            FrameManager.getInstance().message("新账号请点击游戏账号创建按钮!", Alert.AlertType.INFORMATION);
         }
 
         btnAddAct.setVisible(QsConstant.beanfunModel.isNewAccount());
+        btnAddActLabel.setVisible(QsConstant.beanfunModel.isNewAccount());
         menuItemAddAct.setVisible(QsConstant.beanfunModel.isNewAccount());
 
         FrameManager.getInstance().runLater(() -> {
@@ -689,10 +716,8 @@ public class MainController implements Initializable {
         FrameManager.getInstance().runLater(() -> labelActPoint.setText(pointsText));
     }
 
-    public void expandableBarAction(MouseEvent mouseEvent)
-    {
-        if (mouseEvent.getButton() == MouseButton.PRIMARY)
-        {
+    public void expandableBarAction(MouseEvent mouseEvent) {
+        if (mouseEvent.getButton() == MouseButton.PRIMARY) {
             FrameManager.getInstance().runLater(() -> {
                 switchExpandablePane(!expandablePane.isVisible(), false);
                 QsConstant.config.setExpandSettingPane(expandablePane.isVisible());
@@ -701,25 +726,20 @@ public class MainController implements Initializable {
         }
     }
 
-    private void switchExpandablePane(boolean show, boolean init)
-    {
+    private void switchExpandablePane(boolean show, boolean init) {
         expandableBar.setText(expandablePane.isVisible() ? "▼" : "▲");
 
         expandablePane.setVisible(show);
 
         final Stage stage = QsConstant.JFX_STAGE_DATA.get(FXPageEnum.主页).getStage();
 
-        if (show)
-        {
+        if (show) {
             // 初始化时不添加
-            if (init)
-            {
+            if (init) {
                 return;
             }
             mainPane.getChildren().add(expandablePane);
-        }
-        else
-        {
+        } else {
             mainPane.getChildren().remove(expandablePane);
         }
         stage.sizeToScene();

@@ -6,7 +6,7 @@
 
 此为基础中的基础，不会的请合理运用搜索引擎查阅资料。
 
-执行`package`后，`Maven`将自动打包为`QsBeanfun.jar`。
+执行`package`后，`Maven`将自动打包为`QsBeanfun.jar`
 
 ## 2. 使用exe4j打包
 

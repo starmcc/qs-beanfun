@@ -6,12 +6,15 @@
 <?import javafx.scene.control.RadioButton?>
 <?import javafx.scene.control.Separator?>
 <?import javafx.scene.control.ToggleGroup?>
+<?import javafx.scene.control.Tooltip?>
 <?import javafx.scene.image.Image?>
 <?import javafx.scene.image.ImageView?>
 <?import javafx.scene.layout.AnchorPane?>
 <?import javafx.scene.text.Font?>
 <?import javafx.scene.text.Text?>
 
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.layout.VBox?>
 <AnchorPane prefHeight="380.0" prefWidth="370.0" style="-fx-background-color: white;" xmlns="http://javafx.com/javafx/8.0.171" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.starmcc.beanfun.controller.AboutController">
     <children>
         <Text fill="RED" layoutX="22.0" layoutY="95.0" strokeType="OUTSIDE" strokeWidth="0.0" text="本登录器不是游戏橘子数位科技开发的客户端程序" textAlignment="CENTER" wrappingWidth="332.240234375">
@@ -65,7 +68,7 @@
             <Font size="25.0" />
          </font>
       </Text>
-      <Button layoutX="17.0" layoutY="341.0" mnemonicParsing="false" fx:id="buttonOpenSource" onAction="#gitHubBtnAction" prefHeight="28.0" prefWidth="83.0" text="" />
+      <Button fx:id="buttonOpenSource" layoutX="17.0" layoutY="341.0" mnemonicParsing="false" onAction="#gitHubBtnAction" prefHeight="28.0" prefWidth="83.0" text="" />
       <Text fill="#ff4000" layoutX="11.0" layoutY="203.0" strokeType="OUTSIDE" strokeWidth="0.0" text="所有不怀好意的指责..." textAlignment="CENTER" wrappingWidth="150.00000132247806">
          <font>
             <Font size="15.0" />
@@ -77,7 +80,12 @@
          </font>
       </Text>
       <Button layoutX="258.0" layoutY="39.0" mnemonicParsing="false" onAction="#resetConfigBtnAction" text="重置所有配置" />
-      <CheckBox fx:id="checkBoxPacSwitch" layoutX="249.0" layoutY="15.0" mnemonicParsing="false" prefHeight="16.0" prefWidth="101.0" text="适配PAC代理" />
+      <CheckBox fx:id="checkBoxPacSwitch" layoutX="249.0" layoutY="15.0" mnemonicParsing="false" prefHeight="16.0" prefWidth="101.0" text="适配PAC代理">
+         <tooltip>
+            <Tooltip fx:id="tooltipPac" style="-fx-font-size: 14px" text="开启后登录器将会适配当前电脑中存在的加速器效果&#10;读取系统中PAC的脚本代理地址&#10;如果登录过程中出现错误请关闭加速器或关闭此功能">
+
+            </Tooltip>
+         </tooltip></CheckBox>
       <RadioButton layoutX="86.0" layoutY="15.0" mnemonicParsing="false" text="GitHub" userData="1">
          <toggleGroup>
             <ToggleGroup fx:id="toggleGroupUpdateChannel" />

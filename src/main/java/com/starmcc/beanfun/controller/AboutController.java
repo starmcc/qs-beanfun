@@ -36,9 +36,13 @@ public class AboutController implements Initializable {
     private ToggleGroup toggleGroupUpdateChannel;
     @FXML
     private Button buttonOpenSource;
+    @FXML
+    private Tooltip tooltipPac;
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
+        // Tooltip
+//        tooltipPac.setText("abc\nabc");
         ConfigModel.UpdateChannel updateChannel = ConfigModel.UpdateChannel.get(QsConstant.config.getUpdateChannel());
         if (updateChannel == ConfigModel.UpdateChannel.GITHUB) {
             buttonOpenSource.setText("开源GitHub");
