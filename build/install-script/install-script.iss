@@ -2,7 +2,7 @@
 ; SEE THE DOCUMENTATION FOR DETAILS ON CREATING INNO SETUP SCRIPT FILES!
 
 #define MyAppName "QsBeanfun"
-#define MyAppVersion "4.2.1"
+#define MyAppVersion "4.3"
 #define MyAppPublisher "starmcc"
 #define MyAppURL "https://github.com/starmcc/qs-beanfun"
 #define MyAppExeName "QsBeanfun.exe"
@@ -41,8 +41,8 @@ Name: "desktopicon"; Description: "{cm:CreateDesktopIcon}"; GroupDescription: "{
 Name: "quicklaunchicon"; Description: "{cm:CreateQuickLaunchIcon}"; GroupDescription: "{cm:AdditionalIcons}"; Flags: unchecked; OnlyBelowVersion: 0,6.1
 
 [Files]
-Source: "..\target\QsBeanfun.exe"; DestDir: "{app}"; Flags: ignoreversion
-Source: ".\jre\*"; DestDir: "{app}\{#MyJreName}"; Flags: ignoreversion recursesubdirs createallsubdirs
+Source: "..\..\target\QsBeanfun.exe"; DestDir: "{app}"; Flags: ignoreversion
+Source: "..\jre\*"; DestDir: "{app}\{#MyJreName}"; Flags: ignoreversion recursesubdirs createallsubdirs
 ; NOTE: Don't use "Flags: ignoreversion" on any shared system files
 
 [Icons]
