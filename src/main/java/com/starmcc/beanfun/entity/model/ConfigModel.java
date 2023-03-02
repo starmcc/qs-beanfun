@@ -74,7 +74,7 @@ public class ConfigModel implements Serializable {
         // vip密钥
         this.vipSecrect = "";
         // 最小化模式
-        this.minimizeMode = false;
+        this.minimizeMode = true;
         // 展开工具设置面板
         this.expandSettingPane = false;
     }
