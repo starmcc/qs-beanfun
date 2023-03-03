@@ -18,9 +18,7 @@
   </splashScreen>
   <java mainClass="com.starmcc.beanfun.QsBeanfunApplication" vmParameters="" arguments="" allowVMPassthroughParameters="true" preferredVM="" bundleRuntime="true" minVersion="1.8" maxVersion="" allowBetaVM="false" jdkOnly="false">
     <searchSequence>
-      <directory location="../jre" />
-      <registry />
-      <envVar name="JAVA_HOME" />
+      <directory location="./jre" />
     </searchSequence>
     <classPath>
       <archive location="../target/qs-beanfun.jar" failOnError="false" />
