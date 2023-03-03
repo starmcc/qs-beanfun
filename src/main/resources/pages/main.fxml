@@ -1,31 +1,12 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<?import javafx.geometry.Insets?>
-<?import javafx.scene.Cursor?>
-<?import javafx.scene.control.Button?>
-<?import javafx.scene.control.CheckBox?>
-<?import javafx.scene.control.CheckMenuItem?>
-<?import javafx.scene.control.ChoiceBox?>
-<?import javafx.scene.control.CustomMenuItem?>
-<?import javafx.scene.control.Label?>
-<?import javafx.scene.control.Menu?>
-<?import javafx.scene.control.MenuBar?>
-<?import javafx.scene.control.MenuItem?>
-<?import javafx.scene.control.Separator?>
-<?import javafx.scene.control.SeparatorMenuItem?>
-<?import javafx.scene.control.TextField?>
-<?import javafx.scene.control.ToggleButton?>
-<?import javafx.scene.control.Tooltip?>
-<?import javafx.scene.image.Image?>
-<?import javafx.scene.image.ImageView?>
-<?import javafx.scene.layout.AnchorPane?>
-<?import javafx.scene.layout.ColumnConstraints?>
-<?import javafx.scene.layout.GridPane?>
-<?import javafx.scene.layout.HBox?>
-<?import javafx.scene.layout.RowConstraints?>
-<?import javafx.scene.layout.VBox?>
-
-<AnchorPane xmlns="http://javafx.com/javafx/8.0.171" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.starmcc.beanfun.controller.MainController">
+<?import javafx.geometry.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.*?>
+<?import javafx.scene.image.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.text.Font?>
+<AnchorPane xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.starmcc.beanfun.controller.MainController">
     <children>
         <VBox fx:id="mainPane" alignment="TOP_CENTER" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity">
             <children>
@@ -88,25 +69,28 @@
                         </Menu>
                     </menus>
                 </MenuBar>
-                <GridPane hgap="5.0" maxHeight="-Infinity" maxWidth="-Infinity" prefHeight="225.0" prefWidth="400.0" style="-fx-font-size: 13;" vgap="5.0" VBox.vgrow="NEVER">
+                <GridPane hgap="5.0" maxHeight="-Infinity" maxWidth="-Infinity" prefHeight="235.0" prefWidth="400.0" style="-fx-font-size: 13;" vgap="5.0" VBox.vgrow="NEVER">
                     <children>
-                        <Label text="游戏账号" GridPane.columnIndex="1" />
-                        <Label text="乐豆" GridPane.columnIndex="1" GridPane.rowIndex="1" />
-                        <Label text="账号状态" GridPane.columnIndex="1" GridPane.rowIndex="2" />
-                        <Label fx:id="labelActStatus" text="正常" textFill="#18ab05" GridPane.columnIndex="2" GridPane.rowIndex="2" />
-                        <Button maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" mnemonicParsing="false" onAction="#exitLoginAction" text="退出登录" GridPane.columnIndex="4">
+                        <Label text="游戏账号" />
+                        <Label text="乐豆" GridPane.rowIndex="1" />
+                        <Label text="账号状态" GridPane.rowIndex="2" />
+                        <Label fx:id="labelActStatus" text="正常" textFill="#18ab05" GridPane.columnIndex="1" GridPane.rowIndex="2" />
+                        <Button maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" mnemonicParsing="false" onAction="#exitLoginAction" text="退出登录" GridPane.columnIndex="3">
                      <GridPane.margin>
                         <Insets />
                      </GridPane.margin></Button>
-                        <TextField fx:id="textFieldActId" editable="false" style="-fx-font-size: 12;" GridPane.columnIndex="2" GridPane.rowIndex="3" />
-                        <TextField fx:id="textFieldDynamicPwd" editable="false" style="-fx-font-size: 12;" GridPane.columnIndex="2" GridPane.rowIndex="4" />
-                        <Button fx:id="startGameBtn" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" mnemonicParsing="false" onAction="#startGameAction" styleClass="start_game_btn" text="启   动   游   戏" textFill="WHITE" GridPane.columnIndex="1" GridPane.columnSpan="4" GridPane.rowIndex="5">
+                        <TextField fx:id="textFieldActId" editable="false" style="-fx-font-size: 12;" GridPane.columnIndex="1" GridPane.rowIndex="3" />
+                        <TextField fx:id="textFieldDynamicPwd" editable="false" style="-fx-font-size: 12;" GridPane.columnIndex="1" GridPane.rowIndex="4" />
+                        <Button fx:id="startGameBtn" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" mnemonicParsing="false" onAction="#startGameAction" styleClass="start_game_btn" text="启   动   游   戏" textFill="WHITE" GridPane.columnSpan="4" GridPane.rowIndex="5">
                      <GridPane.margin>
-                        <Insets bottom="3.0" top="3.0" />
-                     </GridPane.margin></Button>
-                        <Label text="登陆账号" GridPane.columnIndex="1" GridPane.rowIndex="3" />
-                        <Label text="登陆密码" GridPane.columnIndex="1" GridPane.rowIndex="4" />
-                        <HBox alignment="CENTER_LEFT" prefHeight="100.0" prefWidth="200.0" spacing="5.0" GridPane.columnIndex="2" GridPane.rowIndex="1">
+                        <Insets bottom="5.0" top="10.0" />
+                     </GridPane.margin>
+                     <font>
+                        <Font size="20.0" />
+                     </font></Button>
+                        <Label text="登陆账号" GridPane.rowIndex="3" />
+                        <Label text="登陆密码" GridPane.rowIndex="4" />
+                        <HBox alignment="CENTER_LEFT" prefHeight="100.0" prefWidth="200.0" spacing="5.0" GridPane.columnIndex="1" GridPane.rowIndex="1">
                             <children>
                                 <Label fx:id="labelActPoint" text="0" />
                         <Label onMouseClicked="#updatePointsAction">
@@ -123,10 +107,13 @@
                            <tooltip>
                               <Tooltip fx:id="tooltipRefeshPoint" text="刷新点数" />
                            </tooltip>
+                           <cursor>
+                              <Cursor fx:constant="HAND" />
+                           </cursor>
                         </Label>
                             </children>
                         </HBox>
-                        <HBox prefHeight="100.0" prefWidth="200.0" GridPane.columnIndex="4" GridPane.rowIndex="2">
+                        <HBox prefHeight="100.0" prefWidth="200.0" GridPane.columnIndex="3" GridPane.rowIndex="2">
                             <children>
                                 <ToggleButton fx:id="buttonRecordVideo" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" mnemonicParsing="false" onAction="#recordVideoAction" style="-fx-background-radius: 3 0 0 3; -fx-border-radius: 3 0 0 3;" text="录像" HBox.hgrow="ALWAYS">
                            <HBox.margin>
@@ -152,11 +139,11 @@
                         <Insets />
                      </GridPane.margin>
                         </HBox>
-                        <Button maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" mnemonicParsing="false" onAction="#openCurrencyWindowAction" text="汇率查询" GridPane.columnIndex="4" GridPane.rowIndex="1">
+                        <Button maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" mnemonicParsing="false" onAction="#openCurrencyWindowAction" text="汇率查询" GridPane.columnIndex="3" GridPane.rowIndex="1">
                      <GridPane.margin>
                         <Insets />
                      </GridPane.margin></Button>
-                        <HBox alignment="CENTER_LEFT" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" spacing="5.0" GridPane.columnIndex="2" GridPane.hgrow="ALWAYS" GridPane.vgrow="ALWAYS">
+                        <HBox alignment="CENTER_LEFT" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" spacing="5.0" GridPane.columnIndex="1" GridPane.hgrow="ALWAYS" GridPane.vgrow="ALWAYS">
                             <children>
                                 <ChoiceBox fx:id="choiceBoxActList" maxWidth="1.7976931348623157E308" onDragDetected="#changeAccountNowAction" style="-fx-font-size: 12;" HBox.hgrow="ALWAYS" />
                             </children>
@@ -164,9 +151,9 @@
                         <Insets />
                      </GridPane.margin>
                         </HBox>
-                  <HBox alignment="CENTER_LEFT" maxWidth="1.7976931348623157E308" GridPane.columnIndex="3" GridPane.columnSpan="2" GridPane.rowIndex="4">
+                  <HBox alignment="CENTER_LEFT" maxWidth="1.7976931348623157E308" GridPane.columnIndex="2" GridPane.columnSpan="2" GridPane.rowIndex="4">
                      <children>
-                        <ToggleButton fx:id="toggleButtonAutoInput" mnemonicParsing="false" onAction="#autoInputAction" style="-fx-background-radius: 3 0 0 3; -fx-border-radius: 3 0 0 3;">
+                        <ToggleButton fx:id="toggleButtonAutoInput" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" mnemonicParsing="false" onAction="#autoInputAction" style="-fx-background-radius: 3 0 0 3; -fx-border-radius: 3 0 0 3;">
                            <graphic>
                               <ImageView fitHeight="22.0" fitWidth="22.0" pickOnBounds="true" preserveRatio="true">
                                  <image>
@@ -191,7 +178,7 @@
                         <Insets />
                      </GridPane.margin>
                   </HBox>
-                  <Label fx:id="btnAddActLabel" onMouseClicked="#addActAction" GridPane.columnIndex="3">
+                  <Label fx:id="btnAddActLabel" onMouseClicked="#addActAction" GridPane.columnIndex="2">
                      <graphic>
                                 <ImageView fx:id="btnAddAct" fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
                                     <cursor>
@@ -205,18 +192,19 @@
                      <tooltip>
                         <Tooltip fx:id="tooltipCreateAccount" text="创建账号" />
                      </tooltip>
+                     <cursor>
+                        <Cursor fx:constant="HAND" />
+                     </cursor>
                   </Label>
                     </children>
                     <columnConstraints>
-                  <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" percentWidth="5.0" prefWidth="100.0" />
+                        <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" percentWidth="18.0" prefWidth="100.0" />
+                        <ColumnConstraints hgrow="ALWAYS" minWidth="10.0" prefWidth="100.0" />
                         <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" percentWidth="15.0" prefWidth="100.0" />
-                        <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" percentWidth="40.0" prefWidth="100.0" />
-                        <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
-                  <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" percentWidth="20.0" prefWidth="100.0" />
-                  <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" percentWidth="5.0" prefWidth="100.0" />
+                  <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" percentWidth="25.0" prefWidth="100.0" />
                     </columnConstraints>
                     <padding>
-                        <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
+                        <Insets bottom="5.0" left="25.0" right="25.0" top="5.0" />
                     </padding>
                     <rowConstraints>
                         <RowConstraints maxHeight="30.0" minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
@@ -224,8 +212,11 @@
                         <RowConstraints maxHeight="30.0" minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
                         <RowConstraints maxHeight="30.0" minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
                         <RowConstraints maxHeight="30.0" minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
-                        <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                        <RowConstraints minHeight="10.0" prefHeight="40.0" vgrow="SOMETIMES" />
                     </rowConstraints>
+               <VBox.margin>
+                  <Insets />
+               </VBox.margin>
                 </GridPane>
                 <HBox alignment="CENTER" onMouseClicked="#expandableBarAction" prefHeight="0.0" prefWidth="400.0">
                     <children>
