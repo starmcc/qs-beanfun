@@ -74,9 +74,13 @@ public class MainController implements Initializable {
     @FXML
     private Label labelActPoint;
     @FXML
+    private Label labelActStatusTips;
+    @FXML
     private Label labelActStatus;
     @FXML
-    private String actCreateTimeStr;
+    private Label labelCreateTimeTips;
+    @FXML
+    private Label labelActCreateTime;
     @FXML
     private TextField textFieldActId;
     @FXML
@@ -707,10 +711,15 @@ public class MainController implements Initializable {
         Color statusColor = BooleanUtils.isTrue(QsConstant.nowAccount.getStatus()) ? Color.GREEN : Color.RED;
         labelActStatus.setText(statusText);
         labelActStatus.setTextFill(statusColor);
-        if (Objects.nonNull(QsConstant.nowAccount.getCreateTime())) {
-            actCreateTimeStr = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(QsConstant.nowAccount.getCreateTime());
+        boolean showCreateTime = Objects.nonNull(QsConstant.nowAccount.getCreateTime());
+        labelCreateTimeTips.setVisible(showCreateTime);
+        labelActCreateTime.setVisible(showCreateTime);
+        if (showCreateTime) {
+            String actCreateTimeStr = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(QsConstant.nowAccount.getCreateTime());
+            labelActCreateTime.setText(actCreateTimeStr);
         }
         textFieldActId.setText(QsConstant.nowAccount.getId().substring(0, 5) + "******");
+
         // 获取游戏点数
         String pointsText = this.getPointsText();
         FrameManager.getInstance().runLater(() -> labelActPoint.setText(pointsText));
