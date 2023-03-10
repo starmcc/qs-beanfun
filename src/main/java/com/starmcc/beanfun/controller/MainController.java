@@ -166,6 +166,8 @@ public class MainController implements Initializable {
             try {
                 this.initEvent();
                 this.initData();
+                // vip功能初始化
+                this.vipFeatureInit();
             } catch (Exception e) {
                 log.error("error={}", e.getMessage(), e);
             }
@@ -215,18 +217,42 @@ public class MainController implements Initializable {
         ConfigModel.LRConfig lrConfig = QsConstant.config.getLrConfig();
         checkBoxHookInput.setSelected(BooleanUtils.isTrue(lrConfig.getHookInput()));
 
-        // vip功能初始化
-        this.vipFeatureInit();
     }
 
     /**
      * vip功能初始化
      */
     private void vipFeatureInit() {
+        // =================== 轮烧按键配置控件事件 =====================
+        textFieldLunHui.setOnKeyPressed((keyEvent) -> {
+            int code = keyEvent.getCode().impl_getCode();
+            if (code == 0) {
+                textFieldLunHui.setText("");
+                return;
+            }
+            textFieldLunHui.setText(KeyEvent.getKeyText(code));
+            // 记录设置
+            QsConstant.config.setLunHuiKey(code);
+            FileTools.saveConfig(QsConstant.config);
+        });
+
+        textFieldRanShao.setOnKeyPressed((keyEvent) -> {
+            int code = keyEvent.getCode().impl_getCode();
+            if (code == 0) {
+                textFieldLunHui.setText("");
+                return;
+            }
+            textFieldRanShao.setText(KeyEvent.getKeyText(code));
+            // 记录设置
+            QsConstant.config.setRanShaoKey(code);
+            FileTools.saveConfig(QsConstant.config);
+        });
+
         String data = QsConstant.config.getVipSecrect();
         // http://www.jsons.cn/base64/   wmic CPU get ProcessorID
         String secrect = Base64.getEncoder().encodeToString(DataTools.getCpuId().getBytes());
         boolean start = StringUtils.isNotBlank(data) && StringUtils.equals(secrect, data);
+        start = true;
         checkMenuItemAutoLunShao.setVisible(start);
         menuLunShaoSetting.setVisible(start);
 
@@ -300,33 +326,6 @@ public class MainController implements Initializable {
         menuItemPaperDoll.setOnAction(event -> QsConstant.PluginEnum.MAPLESTORY_EMULATOR.run());
 
         menuItemAlliance.setOnAction(event -> QsConstant.PluginEnum.WAR_ALLIANCE_HTML.run());
-
-        // =================== 轮烧按键配置控件事件 =====================
-
-        textFieldLunHui.setOnKeyPressed((keyEvent) -> {
-            int code = keyEvent.getCode().impl_getCode();
-            if (code == 0) {
-                textFieldLunHui.setText("");
-                return;
-            }
-            textFieldLunHui.setText(KeyEvent.getKeyText(code));
-            // 记录设置
-            QsConstant.config.setLunHuiKey(code);
-            FileTools.saveConfig(QsConstant.config);
-        });
-
-        textFieldRanShao.setOnKeyPressed((keyEvent) -> {
-            int code = keyEvent.getCode().impl_getCode();
-            if (code == 0) {
-                textFieldLunHui.setText("");
-                return;
-            }
-            textFieldRanShao.setText(KeyEvent.getKeyText(code));
-            // 记录设置
-            QsConstant.config.setRanShaoKey(code);
-            FileTools.saveConfig(QsConstant.config);
-        });
-
 
         textFieldActId.focusedProperty().addListener((observable, oldValue, newValue) -> {
             if (newValue) {
