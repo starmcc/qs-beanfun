@@ -19,11 +19,3 @@ AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
 LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
-
-免责声明：
-1. qs-beanfun秋水橘子登录器以下简称《本工具》
-2. 本工具是通过模拟网页登录方式快速登入橘子网站，依赖区域模拟元件进行繁体环境模拟启动游戏，以方便玩家游玩新枫之谷为本工具的应用范围。
-3. 本工具使用Java语言进行开发并发布，请在 https://github.com/starmcc/qs-beanfun 官方地址下载保证不含任何病毒和恶意插件。
-4. 在使用本工具中如发现问题或者Bug，可及时反馈到Github的Issues问答区，感谢您的支持。
-5. 本工具不是游戏橘子数位科技开发的官方客户端程式，由作者个人开发以学习使用，因此肯定会存在不完善的问题，用户在使用时请自行评估风险且自担风险，作者不承担任何风险和法律责任。
-6. 本项目**遵循MIT开源协议**。
