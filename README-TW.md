@@ -20,7 +20,7 @@
     <img alt="JRE" src="https://img.shields.io/badge/JVM-1.8(64bit)-8d38dc"/>
 </p>
 <p align="center">
-    <a href="./MEADME.md">简体中文</a>
+    <a href="./README.md">简体中文</a>
     <span style="font-weight:bold;">繁體中文</span>
 </p>
 

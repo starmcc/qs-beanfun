@@ -21,7 +21,7 @@
 </p>
 <p align="center">
     <span style="font-weight:bold;">简体中文</span>
-    <a href="./MEADME-TW.md">繁體中文</a>
+    <a href="./README-TW.md">繁體中文</a>
 </p>
 
 ## 介绍
