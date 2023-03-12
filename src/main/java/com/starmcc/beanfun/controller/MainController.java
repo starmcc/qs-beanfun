@@ -223,6 +223,16 @@ public class MainController implements Initializable {
      * vip功能初始化
      */
     private void vipFeatureInit() {
+        String data = QsConstant.config.getVipSecrect();
+        // http://www.jsons.cn/base64/   wmic CPU get ProcessorID
+        String secrect = Base64.getEncoder().encodeToString(DataTools.getCpuId().getBytes());
+        boolean start = StringUtils.isNotBlank(data) && StringUtils.equals(secrect, data);
+        checkMenuItemAutoLunShao.setVisible(start);
+        menuLunShaoSetting.setVisible(start);
+
+        if (!start) {
+            return;
+        }
         // =================== 轮烧按键配置控件事件 =====================
         textFieldLunHui.setOnKeyPressed((keyEvent) -> {
             int code = keyEvent.getCode().impl_getCode();
@@ -247,20 +257,9 @@ public class MainController implements Initializable {
             QsConstant.config.setRanShaoKey(code);
             FileTools.saveConfig(QsConstant.config);
         });
-
-        String data = QsConstant.config.getVipSecrect();
-        // http://www.jsons.cn/base64/   wmic CPU get ProcessorID
-        String secrect = Base64.getEncoder().encodeToString(DataTools.getCpuId().getBytes());
-        boolean start = StringUtils.isNotBlank(data) && StringUtils.equals(secrect, data);
-        start = true;
-        checkMenuItemAutoLunShao.setVisible(start);
-        menuLunShaoSetting.setVisible(start);
-
-        if (start) {
-            // 轮烧配置
-            textFieldLunHui.setText(KeyEvent.getKeyText(QsConstant.config.getLunHuiKey()));
-            textFieldRanShao.setText(KeyEvent.getKeyText(QsConstant.config.getRanShaoKey()));
-        }
+        // 轮烧配置
+        textFieldLunHui.setText(KeyEvent.getKeyText(QsConstant.config.getLunHuiKey()));
+        textFieldRanShao.setText(KeyEvent.getKeyText(QsConstant.config.getRanShaoKey()));
     }
 
 
