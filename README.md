@@ -1,5 +1,25 @@
 # QsBeanfun
 
+<p align="center">
+    <a href="https://github.com/starmcc/qs-beanfun/blob/master/LICENSE">
+        <img alt="LICENSE" src="https://img.shields.io/badge/License-MIT-lightgrey"/>
+    </a>
+    <a href="https://github.com/starmcc/qs-beanfun">
+        <img alt="stars" src="https://img.shields.io/github/stars/starmcc/qs-beanfun?label=Stars"/>
+    </a>
+    <a href="https://github.com/starmcc/qs-beanfun/releases/latest">
+        <img alt="Releases" src="https://img.shields.io/github/v/release/starmcc/qs-beanfun?display_name=tag&label=Latest&color=red"/>
+    </a>
+    <a href="https://www.qstms.com/">
+        <img alt="童年小梦" src="https://img.shields.io/badge/HomePage-%E7%AB%A5%E5%B9%B4%E5%B0%8F%E6%A2%A6-orange"/>
+    </a>
+  </p>
+<p align="center">
+    <img alt="Downloads" src="https://img.shields.io/github/downloads/starmcc/qs-beanfun/total?label=Downloads"/>
+    <img alt="GitHub last commit" src="https://img.shields.io/github/last-commit/starmcc/qs-beanfun?label=LastCommit">
+    <img alt="JRE" src="https://img.shields.io/badge/JVM-1.8(64bit)-8d38dc"/>
+</p>
+
 ## 介绍
 
 ![logo](./src/main/resources/static/images/ico.png)
@@ -155,10 +175,11 @@ certutil -hashfile 该程序路径
 
 如不想展示可单独联系我删除名字，部分并未展示是实在找不到您的名字
 
-> 名单更新时间：2023-3-3
+> 名单更新时间：2023-3-12
 
 |           名单           | 金额（RMB） |
 |:----------------------:|:-------:|
+|        Andr***         |   20    |
 |    COSMOS(PS:喝杯奶茶)     |   30    |
 |          咳咳溜           |   20    |
 |         不再犹豫z          |   66    |
