@@ -20,7 +20,7 @@
         <version.logback-classic>1.2.3</version.logback-classic>
         <version.jna-platform-jpms>5.10.0</version.jna-platform-jpms>
         <version.maven-shade-plugin>1.2.1</version.maven-shade-plugin>
-<!--        <version.launch4j-maven-plugin>2.1.2</version.launch4j-maven-plugin>-->
+        <version.launch4j-maven-plugin>2.3.2</version.launch4j-maven-plugin>
     </properties>
 
     <dependencies>
@@ -112,7 +112,7 @@
                     </execution>
                 </executions>
             </plugin>
-            <!--<plugin>
+            <plugin>
                 <groupId>com.akathist.maven.plugins.launch4j</groupId>
                 <artifactId>launch4j-maven-plugin</artifactId>
                 <version>${version.launch4j-maven-plugin}</version>
@@ -123,11 +123,11 @@
                             <goal>launch4j</goal>
                         </goals>
                         <configuration>
-                            &lt;!&ndash;运行方式&ndash;&gt;
+                            <!--运行方式-->
                             <headerType>gui</headerType>
-                            &lt;!&ndash;输出的exe文件&ndash;&gt;
+                            <!--输出的exe文件-->
                             <outfile>${project.build.directory}/QsBeanfun.exe</outfile>
-                            &lt;!&ndash;需要打包的Jar文件&ndash;&gt;
+                            <!--需要打包的Jar文件-->
                             <jar>${project.build.directory}/${artifactId}.jar</jar>
                             <classPath>
                                 <mainClass>com.starmcc.beanfun.QsBeanfunApplication</mainClass>
@@ -135,6 +135,9 @@
                                 <preCp>anything</preCp>
                             </classPath>
                             <icon>./build/ico.ico</icon>
+                            <dontWrapJar>false</dontWrapJar>
+                            <customProcName>true</customProcName>
+                            <stayAlive>true</stayAlive>
                             <manifest>./build/exe.manifest</manifest>
                             <downloadUrl>https://www.oracle.com/java/technologies/downloads/#jre8-windows</downloadUrl>
                             <priority>high</priority>
@@ -142,7 +145,7 @@
                                 <mutexName>${name}</mutexName>
                                 <windowTitle>${name}</windowTitle>
                             </singleInstance>
-                            &lt;!&ndash;配置jre&ndash;&gt;
+                            <!--配置jre-->
                             <jre>
                                 <minVersion>1.8.0</minVersion>
                                 <bundledJre64Bit>false</bundledJre64Bit>
@@ -171,7 +174,7 @@
                         </configuration>
                     </execution>
                 </executions>
-            </plugin>-->
+            </plugin>
         </plugins>
     </build>
 </project>

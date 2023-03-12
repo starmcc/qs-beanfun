@@ -74,9 +74,13 @@ public class MainController implements Initializable {
     @FXML
     private Label labelActPoint;
     @FXML
+    private Label labelActStatusTips;
+    @FXML
     private Label labelActStatus;
     @FXML
-    private String actCreateTimeStr;
+    private Label labelCreateTimeTips;
+    @FXML
+    private Label labelActCreateTime;
     @FXML
     private TextField textFieldActId;
     @FXML
@@ -162,6 +166,8 @@ public class MainController implements Initializable {
             try {
                 this.initEvent();
                 this.initData();
+                // vip功能初始化
+                this.vipFeatureInit();
             } catch (Exception e) {
                 log.error("error={}", e.getMessage(), e);
             }
@@ -211,8 +217,6 @@ public class MainController implements Initializable {
         ConfigModel.LRConfig lrConfig = QsConstant.config.getLrConfig();
         checkBoxHookInput.setSelected(BooleanUtils.isTrue(lrConfig.getHookInput()));
 
-        // vip功能初始化
-        this.vipFeatureInit();
     }
 
     /**
@@ -226,11 +230,36 @@ public class MainController implements Initializable {
         checkMenuItemAutoLunShao.setVisible(start);
         menuLunShaoSetting.setVisible(start);
 
-        if (start) {
-            // 轮烧配置
-            textFieldLunHui.setText(KeyEvent.getKeyText(QsConstant.config.getLunHuiKey()));
-            textFieldRanShao.setText(KeyEvent.getKeyText(QsConstant.config.getRanShaoKey()));
+        if (!start) {
+            return;
         }
+        // =================== 轮烧按键配置控件事件 =====================
+        textFieldLunHui.setOnKeyPressed((keyEvent) -> {
+            int code = keyEvent.getCode().impl_getCode();
+            if (code == 0) {
+                textFieldLunHui.setText("");
+                return;
+            }
+            textFieldLunHui.setText(KeyEvent.getKeyText(code));
+            // 记录设置
+            QsConstant.config.setLunHuiKey(code);
+            FileTools.saveConfig(QsConstant.config);
+        });
+
+        textFieldRanShao.setOnKeyPressed((keyEvent) -> {
+            int code = keyEvent.getCode().impl_getCode();
+            if (code == 0) {
+                textFieldLunHui.setText("");
+                return;
+            }
+            textFieldRanShao.setText(KeyEvent.getKeyText(code));
+            // 记录设置
+            QsConstant.config.setRanShaoKey(code);
+            FileTools.saveConfig(QsConstant.config);
+        });
+        // 轮烧配置
+        textFieldLunHui.setText(KeyEvent.getKeyText(QsConstant.config.getLunHuiKey()));
+        textFieldRanShao.setText(KeyEvent.getKeyText(QsConstant.config.getRanShaoKey()));
     }
 
 
@@ -296,33 +325,6 @@ public class MainController implements Initializable {
         menuItemPaperDoll.setOnAction(event -> QsConstant.PluginEnum.MAPLESTORY_EMULATOR.run());
 
         menuItemAlliance.setOnAction(event -> QsConstant.PluginEnum.WAR_ALLIANCE_HTML.run());
-
-        // =================== 轮烧按键配置控件事件 =====================
-
-        textFieldLunHui.setOnKeyPressed((keyEvent) -> {
-            int code = keyEvent.getCode().impl_getCode();
-            if (code == 0) {
-                textFieldLunHui.setText("");
-                return;
-            }
-            textFieldLunHui.setText(KeyEvent.getKeyText(code));
-            // 记录设置
-            QsConstant.config.setLunHuiKey(code);
-            FileTools.saveConfig(QsConstant.config);
-        });
-
-        textFieldRanShao.setOnKeyPressed((keyEvent) -> {
-            int code = keyEvent.getCode().impl_getCode();
-            if (code == 0) {
-                textFieldLunHui.setText("");
-                return;
-            }
-            textFieldRanShao.setText(KeyEvent.getKeyText(code));
-            // 记录设置
-            QsConstant.config.setRanShaoKey(code);
-            FileTools.saveConfig(QsConstant.config);
-        });
-
 
         textFieldActId.focusedProperty().addListener((observable, oldValue, newValue) -> {
             if (newValue) {
@@ -707,10 +709,15 @@ public class MainController implements Initializable {
         Color statusColor = BooleanUtils.isTrue(QsConstant.nowAccount.getStatus()) ? Color.GREEN : Color.RED;
         labelActStatus.setText(statusText);
         labelActStatus.setTextFill(statusColor);
-        if (Objects.nonNull(QsConstant.nowAccount.getCreateTime())) {
-            actCreateTimeStr = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(QsConstant.nowAccount.getCreateTime());
+        boolean showCreateTime = Objects.nonNull(QsConstant.nowAccount.getCreateTime());
+        labelCreateTimeTips.setVisible(showCreateTime);
+        labelActCreateTime.setVisible(showCreateTime);
+        if (showCreateTime) {
+            String actCreateTimeStr = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(QsConstant.nowAccount.getCreateTime());
+            labelActCreateTime.setText(actCreateTimeStr);
         }
         textFieldActId.setText(QsConstant.nowAccount.getId().substring(0, 5) + "******");
+
         // 获取游戏点数
         String pointsText = this.getPointsText();
         FrameManager.getInstance().runLater(() -> labelActPoint.setText(pointsText));
