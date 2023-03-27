@@ -1,6 +1,7 @@
 package com.starmcc.beanfun.utils;
 
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.StringUtils;
 import sun.misc.BASE64Decoder;
 import sun.misc.BASE64Encoder;
 
@@ -34,6 +35,9 @@ public class AesTools {
      */
     public static String encode(final String key, String content) {
         try {
+            if (StringUtils.isBlank(content)) {
+                return content;
+            }
             //1.构造密钥生成器，指定为AES算法,不区分大小写
             KeyGenerator keygen = KeyGenerator.getInstance("AES");
             //2.根据ecnodeRules规则初始化密钥生成器

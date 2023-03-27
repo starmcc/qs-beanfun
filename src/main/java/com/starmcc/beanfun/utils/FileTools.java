@@ -169,29 +169,10 @@ public class FileTools {
                 configModel = new ConfigModel();
                 FileTools.saveConfig(configModel);
             }
-            dncodeAccount(configModel);
         }
         return configModel;
     }
 
-    /**
-     * 解密账号(地址引用)
-     *
-     * @param configModel 配置模型
-     */
-    private synchronized static void dncodeAccount(ConfigModel configModel) {
-        final String key = DataTools.getComputerUniqueId();
-        if (DataTools.collectionIsEmpty(configModel.getActPwds())) {
-            return;
-        }
-        for (ConfigModel.ActPwd actPwd : configModel.getActPwds()) {
-            if (StringUtils.indexOf(actPwd.getAct(), "@") == -1) {
-                // 需要解密
-                actPwd.setAct(AesTools.dncode(key, actPwd.getAct()));
-                actPwd.setPwd(AesTools.dncode(key, actPwd.getPwd()));
-            }
-        }
-    }
 
     /**
      * 保存配置
@@ -201,9 +182,7 @@ public class FileTools {
      */
     public synchronized static void saveConfig(ConfigModel model) {
         ThreadPoolManager.execute(() -> {
-            ConfigModel copyConfig = encodeAndCopyAccount(model);
-            // 账号加密
-            String content = JSON.toJSONString(copyConfig, SerializerFeature.PrettyFormat, SerializerFeature.WriteMapNullValue, SerializerFeature.WriteDateUseDateFormat);
+            String content = JSON.toJSONString(model, SerializerFeature.PrettyFormat, SerializerFeature.WriteMapNullValue, SerializerFeature.WriteDateUseDateFormat);
             try {
                 File file = new File(QsConstant.PATH_APP_CONFIG);
                 // 创建上级目录
@@ -227,42 +206,6 @@ public class FileTools {
         });
     }
 
-    /**
-     * 深拷贝一份新的配置数据并且加密账号
-     *
-     * @param model 模型
-     * @return {@link ConfigModel}
-     */
-    private synchronized static ConfigModel encodeAndCopyAccount(ConfigModel model) {
-        final String key = DataTools.getComputerUniqueId();
-        // 深拷贝，不影响原对象
-        ConfigModel configModel = deepCopy(model, ConfigModel.class);
-        if (DataTools.collectionIsEmpty(configModel.getActPwds())) {
-            return configModel;
-        }
-        for (ConfigModel.ActPwd actPwd : configModel.getActPwds()) {
-            if (StringUtils.indexOf(actPwd.getAct(), "@") >= 0) {
-                // 需要加密
-                actPwd.setAct(AesTools.encode(key, actPwd.getAct()));
-                actPwd.setPwd(AesTools.encode(key, actPwd.getPwd()));
-            }
-        }
-        return configModel;
-    }
-
-    /**
-     * 深拷贝
-     *
-     * @param source t
-     * @param clamm  clamm
-     * @return {@link T}
-     */
-    public synchronized static <T> T deepCopy(T source, Class<T> clamm) {
-        if (Objects.isNull(source)) {
-            return source;
-        }
-        return JSON.parseObject(JSON.toJSONString(source), clamm);
-    }
 
     /**
      * 写文件

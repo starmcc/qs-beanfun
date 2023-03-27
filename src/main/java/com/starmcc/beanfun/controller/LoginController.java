@@ -13,6 +13,7 @@ import com.starmcc.beanfun.handler.AccountHandler;
 import com.starmcc.beanfun.manager.AdvancedTimerMamager;
 import com.starmcc.beanfun.manager.FrameManager;
 import com.starmcc.beanfun.manager.impl.AdvancedTimerTask;
+import com.starmcc.beanfun.utils.AesTools;
 import com.starmcc.beanfun.utils.DataTools;
 import com.starmcc.beanfun.utils.FileTools;
 import javafx.collections.ObservableList;
@@ -100,7 +101,8 @@ public class LoginController implements Initializable {
             if (!Objects.equals(item.getType(), selectedItem.getType())) {
                 continue;
             }
-            items.add(item.getAct());
+            final String key = DataTools.getComputerUniqueId();
+            items.add(AesTools.dncode(key, item.getAct()));
         }
         if (DataTools.collectionIsNotEmpty(items)) {
             comboBoxAccount.getSelectionModel().selectFirst();
@@ -231,15 +233,16 @@ public class LoginController implements Initializable {
         if (DataTools.collectionIsEmpty(actPwds)) {
             return "";
         }
+        final String key = DataTools.getComputerUniqueId();
         Optional<ConfigModel.ActPwd> optional = actPwds.stream()
                 .filter(actPwd -> {
                     if (!Objects.equals(QsConstant.config.getLoginType(), actPwd.getType())) {
                         return false;
                     }
-                    return StringUtils.equals(actPwd.getAct(), act);
+                    return StringUtils.equals(AesTools.dncode(key, actPwd.getAct()), act);
                 })
                 .findFirst();
-        return optional.isPresent() ? optional.get().getPwd() : "";
+        return optional.isPresent() ? AesTools.dncode(key, optional.get().getPwd()) : "";
     }
 
     /**

@@ -7,6 +7,7 @@ import com.starmcc.beanfun.entity.client.Account;
 import com.starmcc.beanfun.entity.client.BeanfunStringResult;
 import com.starmcc.beanfun.entity.model.ConfigModel;
 import com.starmcc.beanfun.manager.FrameManager;
+import com.starmcc.beanfun.utils.AesTools;
 import com.starmcc.beanfun.utils.DataTools;
 import com.starmcc.beanfun.utils.FileTools;
 import javafx.scene.control.Alert;
@@ -44,7 +45,8 @@ public class AccountHandler {
             if (!Objects.equals(actPwd.getType(), loginType.getType())) {
                 continue;
             }
-            if (StringUtils.equals(actPwd.getAct(), account)) {
+            final String key = DataTools.getComputerUniqueId();
+            if (StringUtils.equals(AesTools.dncode(key, actPwd.getAct()), account)) {
                 iterator.remove();
                 break;
             }
@@ -64,8 +66,10 @@ public class AccountHandler {
         delActPwd(account, loginType);
         try {
             ConfigModel.ActPwd actPwd = new ConfigModel.ActPwd();
-            actPwd.setAct(account);
-            actPwd.setPwd(password);
+            final String key = DataTools.getComputerUniqueId();
+
+            actPwd.setAct(AesTools.encode(key, account));
+            actPwd.setPwd(AesTools.encode(key, password));
             actPwd.setType(loginType.getType());
             QsConstant.config.getActPwds().add(0, actPwd);
             FileTools.saveConfig(QsConstant.config);
