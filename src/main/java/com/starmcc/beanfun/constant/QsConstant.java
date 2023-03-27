@@ -69,8 +69,17 @@ public class QsConstant {
      */
     @Getter
     public static enum PluginEnum {
+        /**
+         * LR
+         */
         LOCALE_REMULATOR(PATH_APP_PLUGINS + "Locale_Remulator", "bin/Locale_Remulator.zip", "LRProc.exe"),
+        /**
+         * 纸娃娃
+         */
         MAPLESTORY_EMULATOR(PATH_APP_PLUGINS + "MapleStoryEmulator", "bin/MapleStoryEmulator.zip", "MapleStoryEmulator.exe"),
+        /**
+         * 联盟HTML
+         */
         WAR_ALLIANCE_HTML(PATH_APP_PLUGINS + "WarAllianceHtml", "bin/WarAllianceHtml.zip", "index.htm"),
 
         ;

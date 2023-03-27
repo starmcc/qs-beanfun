@@ -368,7 +368,8 @@ public class HKBeanfunClientImpl extends BeanfunClient {
 
     @Override
     public String getWebUrlServiceCenter() {
-        return "https://cs.hk.beanfun.com/faq/index.aspx";
+//        return "https://cs.hk.beanfun.com/faq/index.aspx";
+        return "https://csp.hk.beanfun.com/";
     }
 
     @Override

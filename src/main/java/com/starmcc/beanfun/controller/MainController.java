@@ -142,6 +142,8 @@ public class MainController implements Initializable {
     @FXML
     private MenuItem menuItemAlliance;
     @FXML
+    private MenuItem menuItemTheSeed;
+    @FXML
     private MenuItem menuItemExit;
     @FXML
     private Tooltip tooltipAutoInput;
@@ -324,7 +326,10 @@ public class MainController implements Initializable {
 
         menuItemPaperDoll.setOnAction(event -> QsConstant.PluginEnum.MAPLESTORY_EMULATOR.run());
 
-        menuItemAlliance.setOnAction(event -> QsConstant.PluginEnum.WAR_ALLIANCE_HTML.run());
+        menuItemAlliance.setOnAction(event ->
+                FrameManager.getInstance().openWebBrowser(QsConstant.PluginEnum.WAR_ALLIANCE_HTML.getMainPath()));
+
+        menuItemTheSeed.setOnAction(event -> FrameManager.getInstance().openWebUrl("https://seed.qstms.com"));
 
         textFieldActId.focusedProperty().addListener((observable, oldValue, newValue) -> {
             if (newValue) {

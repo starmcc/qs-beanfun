@@ -57,6 +57,7 @@
                                 <MenuItem fx:id="menuItemEquipment" mnemonicParsing="false" text="装备卷轴计算器" />
                                 <MenuItem fx:id="menuItemPaperDoll" mnemonicParsing="false" text="纸娃娃系统" />
                                 <MenuItem fx:id="menuItemAlliance" mnemonicParsing="false" text="联盟摆放模拟器" />
+                                <MenuItem fx:id="menuItemTheSeed" mnemonicParsing="false" text="TheSeed小助手" />
                                 <MenuItem fx:id="menuItemSystemCalc" mnemonicParsing="false" text="系统计算器" />
                                 <MenuItem fx:id="menuItemExit" mnemonicParsing="false" text="退出" />
                             </items>

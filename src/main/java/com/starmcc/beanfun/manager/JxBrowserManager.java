@@ -5,10 +5,14 @@ import com.teamdev.jxbrowser.chromium.Browser;
 import com.teamdev.jxbrowser.chromium.CookieStorage;
 import com.teamdev.jxbrowser.chromium.ba;
 import com.teamdev.jxbrowser.chromium.javafx.BrowserView;
+import javafx.beans.value.ChangeListener;
+import javafx.geometry.Insets;
 import javafx.scene.Scene;
+import javafx.scene.control.Button;
 import javafx.scene.control.TextField;
 import javafx.scene.image.Image;
 import javafx.scene.input.KeyCode;
+import javafx.scene.layout.GridPane;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
 import lombok.extern.slf4j.Slf4j;
@@ -76,11 +80,23 @@ public class JxBrowserManager {
     public void open(String url, boolean newWindow) {
         // 开始构建javafx窗体
         Stage stage = new Stage();
+        stage.setTitle(DEFAULT_TITLE);
+        stage.setWidth(DEFAULT_WIDTH);
+        stage.setHeight(DEFAULT_HEIGHT);
+        stage.getIcons().add(new Image("static/images/ico.png"));
+        stage.setResizable(true);
+
         Browser browser = new Browser();
         BrowserView view = new BrowserView(browser);
         view.setPrefWidth(DEFAULT_WIDTH);
         view.setPrefHeight(DEFAULT_HEIGHT);
-        VBox box = new VBox();
+        stage.setOnCloseRequest(event -> {
+            // 使用线程异步关闭引擎
+            ThreadPoolManager.execute(() -> browser.dispose());
+            // 关闭窗口
+            stage.close();
+        });
+
         TextField textUrl = new TextField();
         textUrl.setText(url);
         textUrl.setPrefWidth(DEFAULT_WIDTH);
@@ -89,20 +105,28 @@ public class JxBrowserManager {
                 browser.loadURL(textUrl.getText());
             }
         });
-        box.getChildren().add(textUrl);
-        box.getChildren().add(view);
-        stage.setScene(new Scene(box));
-        stage.setTitle(DEFAULT_TITLE);
-        stage.setWidth(DEFAULT_WIDTH);
-        stage.setHeight(DEFAULT_HEIGHT);
-        stage.setResizable(false);
-        stage.getIcons().add(new Image("static/images/ico.png"));
-        stage.setOnCloseRequest(event -> {
-            // 使用线程异步关闭引擎
-            ThreadPoolManager.execute(() -> browser.dispose());
-            // 关闭窗口
-            stage.close();
-        });
+
+        Button btn = new Button("Go to..");
+        btn.setMinWidth(80);
+        btn.setOnAction(event -> browser.loadURL(textUrl.getText()));
+
+        GridPane grid = new GridPane();
+        grid.setPadding(new Insets(5, 5, 5, 5));
+        grid.setHgap(5);
+        grid.setVgap(5);
+        grid.addRow(0, textUrl);
+        grid.addColumn(1, btn);
+        GridPane.setColumnSpan(view, 2);
+        grid.addRow(1, view);
+        stage.setScene(new Scene(grid));
+        // 窗口大小监听器
+        ChangeListener<Number> stageSizeListener = (observable, ov, nv) -> {
+            view.setPrefHeight(stage.getHeight());
+            view.setPrefWidth(stage.getWidth());
+            textUrl.setPrefWidth(stage.getWidth());
+        };
+        stage.widthProperty().addListener(stageSizeListener);
+        stage.heightProperty().addListener(stageSizeListener);
         // 显示窗口
         stage.show();
         // 初始化代理信息
@@ -121,6 +145,7 @@ public class JxBrowserManager {
         // 加载地址
         browser.loadURL(url);
     }
+
 
     /**
      * 初始化浏览器cookie
