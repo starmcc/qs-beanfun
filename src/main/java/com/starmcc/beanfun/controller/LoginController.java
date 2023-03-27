@@ -93,6 +93,7 @@ public class LoginController implements Initializable {
         choiceBoxLoginType.getSelectionModel().select(selectLoginType);
     }
 
+
     private void refeshAccounts() {
         ObservableList<String> items = comboBoxAccount.getItems();
         items.clear();
@@ -130,9 +131,7 @@ public class LoginController implements Initializable {
                 final Map<String, Double> map = new HashMap<>(16);
                 String taskName = buildTaskByLoadTips(label, map);
                 // 执行登录方法
-                BeanfunStringResult loginResult = BeanfunClient.run().login(
-                        comboBoxAccount.getValue(), passwordFieldPassword.getText(),
-                        process -> map.put("process", process * 100));
+                BeanfunStringResult loginResult = BeanfunClient.run().login(comboBoxAccount.getValue(), passwordFieldPassword.getText(), process -> map.put("process", process * 100));
                 AdvancedTimerMamager.getInstance().removeTask(taskName);
                 if (!loginResult.isSuccess()) {
                     FrameManager.getInstance().message(loginResult.getMsg(), Alert.AlertType.ERROR);
@@ -234,14 +233,12 @@ public class LoginController implements Initializable {
             return "";
         }
         final String key = DataTools.getComputerUniqueId();
-        Optional<ConfigModel.ActPwd> optional = actPwds.stream()
-                .filter(actPwd -> {
-                    if (!Objects.equals(QsConstant.config.getLoginType(), actPwd.getType())) {
-                        return false;
-                    }
-                    return StringUtils.equals(AesTools.dncode(key, actPwd.getAct()), act);
-                })
-                .findFirst();
+        Optional<ConfigModel.ActPwd> optional = actPwds.stream().filter(actPwd -> {
+            if (!Objects.equals(QsConstant.config.getLoginType(), actPwd.getType())) {
+                return false;
+            }
+            return StringUtils.equals(AesTools.dncode(key, actPwd.getAct()), act);
+        }).findFirst();
         return optional.isPresent() ? AesTools.dncode(key, optional.get().getPwd()) : "";
     }
 
