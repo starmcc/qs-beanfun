@@ -92,40 +92,32 @@ public class QrCodeController implements Initializable {
                 new File(QsConstant.PATH_APP_PLUGINS + "onlineQrCode.jpg"),
                 (state, file, process, speed, e) -> {
                     if (state == DownloadClient.Process.State.下载完毕) {
-                        if (Objects.nonNull(file)) {
-                            this.startScanQrCode(file);
+                        if (Objects.isNull(file)) {
+                            try {
+                                // 下载二维码出现问题 重新下载
+                                Thread.sleep(1000);
+                                ThreadPoolManager.execute(this::loadQrCode, false);
+                            } catch (Exception ex) {
+                                log.error("error={}", e.getMessage(), e);
+                            }
                             return;
                         }
-                        try {
-                            // 下载二维码出现问题 重新下载
-                            Thread.sleep(1000);
-                            ThreadPoolManager.execute(this::loadQrCode, false);
-                        } catch (Exception ex) {
-                            log.error("error={}", e.getMessage(), e);
-                        }
+                        FrameManager.getInstance().runLater(() -> {
+                            Image image = new Image(file.toURI().toString());
+                            imageViewQrCode.setImage(image);
+                            labelQrCodeTips.setText("请扫描二维码登录");
+                            labelQrCodeTips.setTextFill(Color.GREEN);
+                        });
+                        // 开始心跳检查
+                        AdvancedTimerMamager.getInstance().addTask(new AdvancedTimerTask() {
+                            @Override
+                            public void start() throws Exception {
+                                checkQrCodeStatus();
+                            }
+                        }, 1000, 2000);
+
                     }
                 });
-    }
-
-    /**
-     * 开始扫描二维码
-     *
-     * @param file 文件
-     */
-    private void startScanQrCode(File file) {
-        FrameManager.getInstance().runLater(() -> {
-            Image image = new Image(file.toURI().toString());
-            imageViewQrCode.setImage(image);
-            labelQrCodeTips.setText("请扫描二维码登录");
-            labelQrCodeTips.setTextFill(Color.GREEN);
-        });
-        // 开始心跳检查
-        AdvancedTimerMamager.getInstance().addTask(new AdvancedTimerTask<QrCodeController>(this) {
-            @Override
-            public void start() throws Exception {
-                this.getResources().checkQrCodeStatus();
-            }
-        }, 1000, 2000);
     }
 
     /**

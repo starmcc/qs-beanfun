@@ -14,12 +14,9 @@ import java.util.concurrent.ScheduledFuture;
  */
 @Slf4j
 @Data
-public abstract class AdvancedTimerTask<T> implements Runnable {
+public abstract class AdvancedTimerTask implements Runnable {
 
     volatile ScheduledFuture<?> scheduledFuture = null;
-
-    private T resources;
-    private Boolean printTime;
 
     private String taskName;
 
@@ -30,20 +27,6 @@ public abstract class AdvancedTimerTask<T> implements Runnable {
      */
     public abstract void start() throws Exception;
 
-    public AdvancedTimerTask() {
-        this.resources = null;
-        this.printTime = true;
-    }
-
-
-    public AdvancedTimerTask(T resources) {
-        this.resources = resources;
-    }
-
-    public AdvancedTimerTask(T resources, boolean printTime) {
-        this.resources = resources;
-        this.printTime = printTime;
-    }
 
     @Override
     public void run() {
@@ -53,11 +36,8 @@ public abstract class AdvancedTimerTask<T> implements Runnable {
         } catch (Exception e) {
             throw new RuntimeException(e);
         } finally {
-            if (printTime) {
-                log.debug("task run time consuming {}/ms", System.currentTimeMillis() - startTime);
-            }
+            log.debug("task run time consuming {}/ms", System.currentTimeMillis() - startTime);
         }
-
     }
 
     /**

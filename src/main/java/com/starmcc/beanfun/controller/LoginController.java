@@ -266,7 +266,7 @@ public class LoginController implements Initializable {
      */
     private static String buildTaskByLoadTips(Label label, final Map<String, Double> map) {
         map.put("nowProcess", 0D);
-        return AdvancedTimerMamager.getInstance().addTask(new AdvancedTimerTask(null, false) {
+        return AdvancedTimerMamager.getInstance().addTask(new AdvancedTimerTask() {
             @Override
             public void start() throws Exception {
                 FrameManager.getInstance().runLater(() -> {
