@@ -13,7 +13,6 @@ import javafx.scene.control.TextField;
 import javafx.scene.image.Image;
 import javafx.scene.input.KeyCode;
 import javafx.scene.layout.GridPane;
-import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
@@ -181,7 +180,7 @@ public class JxBrowserManager {
     private void initProxyInfo(String url) {
         try {
             URI uri = new URI(url);
-            HttpHost proxy = WindowManager.getInstance().getPacScriptProxy(uri);
+            HttpHost proxy = WindowManager.getInstance().getProxy(uri);
             String ip = Objects.nonNull(proxy) ? proxy.getHostName() : null;
             String port = Objects.nonNull(proxy) ? String.valueOf(proxy.getPort()) : null;
             if (StringUtils.isNotBlank(ip) && StringUtils.isNotBlank(port)) {

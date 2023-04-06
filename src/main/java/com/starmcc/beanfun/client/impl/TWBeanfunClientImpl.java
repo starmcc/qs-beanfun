@@ -27,49 +27,58 @@ import java.util.function.Consumer;
 public class TWBeanfunClientImpl extends BeanfunClient {
 
     @Override
-    public String getSessionKey() throws Exception {
+    public BeanfunStringResult getSessionKey() throws Exception {
         HttpClient.getInstance().getCookieStore().clear();
+        BeanfunStringResult result = new BeanfunStringResult();
+
         String url = "https://tw.beanfun.com/beanfun_block/bflogin/default.aspx";
         ReqParams params = ReqParams.getInstance().addParam("service", "999999_T0");
         QsHttpResponse qsHttpResponse = HttpClient.getInstance().get(url, params);
         if (!qsHttpResponse.getSuccess()) {
-            return null;
+            return result.error(BeanfunResult.CodeEnum.OTP_GET_EMPTY);
         }
 
         String content = qsHttpResponse.getContent();
 
-        if (StringUtils.indexOf(content, "IP已自動被系統鎖定") >= 0) {
-            return "IP锁定";
+        if (StringUtils.indexOf(content, "IP已自動被系統鎖定") != -1) {
+            return result.error(BeanfunResult.CodeEnum.IP_BAN);
+        }
+
+        if (StringUtils.indexOf(content, "目前無法在您的國家或地區瀏覽此網站") != -1) {
+            return result.error(BeanfunResult.CodeEnum.AREA_BAN);
         }
 
         List<List<String>> dataList = RegexUtils.regex(RegexUtils.Constant.TW_SESSION_KEY, content);
-
-        return RegexUtils.getIndex(0, 1, dataList);
+        String sessionKey = RegexUtils.getIndex(0, 1, dataList);
+        if (StringUtils.isBlank(sessionKey)) {
+            return result.error(BeanfunResult.CodeEnum.OTP_GET_EMPTY);
+        }
+        result.setData(sessionKey);
+        return result.success();
     }
 
     @Override
     public BeanfunStringResult login(String account, String password, Consumer<Double> process) throws Exception {
+        BeanfunStringResult result = new BeanfunStringResult();
         if (StringUtils.isEmpty(account) || StringUtils.isEmpty(password)) {
-            return BeanfunStringResult.error(AbstractBeanfunResult.CodeEnum.ACT_PWD_IS_NULL);
+            return result.error(BeanfunResult.CodeEnum.ACT_PWD_IS_NULL);
         }
         process.accept(0.1);
         // 1. 请求获取SessionKey
-        String sessionKey = this.getSessionKey();
+        BeanfunStringResult sessionKeyResult = this.getSessionKey();
         process.accept(0.2);
-        if (StringUtils.isBlank(sessionKey)) {
-            return BeanfunStringResult.error(AbstractBeanfunResult.CodeEnum.OTP_GET_EMPTY);
-        } else if (StringUtils.equals(sessionKey, "IP锁定")) {
-            return BeanfunStringResult.error(AbstractBeanfunResult.CodeEnum.IP_BANK);
+        if (!sessionKeyResult.isSuccess()) {
+            return sessionKeyResult;
         }
 
 
         // 2. 获取签名信息
         String url = "https://tw.newlogin.beanfun.com/login/id-pass_form.aspx";
-        ReqParams params = ReqParams.getInstance().addParam("skey", sessionKey);
+        ReqParams params = ReqParams.getInstance().addParam("skey", sessionKeyResult.getData());
         QsHttpResponse response = HttpClient.getInstance().get(url, params);
         process.accept(0.4);
         if (!response.getSuccess()) {
-            return BeanfunStringResult.error(AbstractBeanfunResult.CodeEnum.REQUEST_ERROR);
+            return result.error(BeanfunResult.CodeEnum.REQUEST_ERROR);
         }
 
         String content = response.getContent();
@@ -82,7 +91,7 @@ public class TWBeanfunClientImpl extends BeanfunClient {
         dataList = RegexUtils.regex(RegexUtils.Constant.TW_VIEWSTATEGENERATOR, content);
         String viewstateGenerator = RegexUtils.getIndex(0, 1, dataList);
         if (StringUtils.isEmpty(viewstate) || StringUtils.isEmpty(eventvalidation) || StringUtils.isEmpty(viewstateGenerator)) {
-            return BeanfunStringResult.error(AbstractBeanfunResult.CodeEnum.OTP_SIGN_GET_ERROR);
+            return result.error(BeanfunResult.CodeEnum.OTP_SIGN_GET_ERROR);
         }
 
 
@@ -96,12 +105,12 @@ public class TWBeanfunClientImpl extends BeanfunClient {
                 .addParam("t_AccountID", account)
                 .addParam("t_Password", password)
                 .addParam("btn_login", "登入");
-        url = "https://tw.newlogin.beanfun.com/login/id-pass_form.aspx?skey=" + sessionKey;
+        url = "https://tw.newlogin.beanfun.com/login/id-pass_form.aspx?skey=" + sessionKeyResult.getData();
 
         response = HttpClient.getInstance().post(url, params);
         process.accept(0.6);
         if (!response.getSuccess()) {
-            return BeanfunStringResult.error(AbstractBeanfunResult.CodeEnum.REQUEST_ERROR);
+            return result.error(BeanfunResult.CodeEnum.REQUEST_ERROR);
         }
 
         content = response.getContent();
@@ -109,18 +118,18 @@ public class TWBeanfunClientImpl extends BeanfunClient {
         dataList = RegexUtils.regex(RegexUtils.Constant.TW_LOGIN_ERROR_MSG, content);
         String errMsg = RegexUtils.getIndex(0, 1, dataList);
         if (StringUtils.isNotBlank(errMsg)) {
-            return BeanfunStringResult.error(AbstractBeanfunResult.CodeEnum.LOGIN_ERROR_MSG, errMsg);
+            return result.error(BeanfunResult.CodeEnum.LOGIN_ERROR_MSG, errMsg);
         }
 
         dataList = RegexUtils.regex(RegexUtils.Constant.TW_LOGIN_AKEY, content);
         String aKey = RegexUtils.getIndex(0, 1, dataList);
 
         if (StringUtils.isBlank(aKey)) {
-            return BeanfunStringResult.error(AbstractBeanfunResult.CodeEnum.LOGIN_ERROR_MSG);
+            return result.error(BeanfunResult.CodeEnum.LOGIN_ERROR_MSG);
         }
 
         // 4. 通过akey请求获取bfWebToken
-        params = ReqParams.getInstance().addParam("SessionKey", sessionKey)
+        params = ReqParams.getInstance().addParam("SessionKey", sessionKeyResult.getData())
                 .addParam("AuthKey", aKey)
                 .addParam("ServiceCode", "")
                 .addParam("ServiceRegion", "")
@@ -130,14 +139,15 @@ public class TWBeanfunClientImpl extends BeanfunClient {
         response = HttpClient.getInstance().post(url, params);
         process.accept(0.9);
         if (!response.getSuccess()) {
-            return BeanfunStringResult.error(AbstractBeanfunResult.CodeEnum.REQUEST_ERROR);
+            return result.error(BeanfunResult.CodeEnum.REQUEST_ERROR);
         }
         String bfWebToken = this.getBfWebToken();
         if (StringUtils.isBlank(bfWebToken)) {
-            return BeanfunStringResult.error(AbstractBeanfunResult.CodeEnum.REQUEST_ERROR);
+            return result.error(BeanfunResult.CodeEnum.REQUEST_ERROR);
         }
         process.accept(1.0);
-        return BeanfunStringResult.success(bfWebToken);
+        result.setData(bfWebToken);
+        return result.success();
     }
 
     @Override
@@ -151,7 +161,7 @@ public class TWBeanfunClientImpl extends BeanfunClient {
                 .addParam("web_token", token);
         QsHttpResponse httpResponse = HttpClient.getInstance().get(url, params);
         if (!httpResponse.getSuccess()) {
-            return BeanfunAccountResult.error(AbstractBeanfunResult.CodeEnum.REQUEST_ERROR);
+            return actResult.error(BeanfunResult.CodeEnum.REQUEST_ERROR);
         }
         String content = httpResponse.getContent();
 
@@ -196,8 +206,9 @@ public class TWBeanfunClientImpl extends BeanfunClient {
 
     @Override
     public BeanfunStringResult getDynamicPassword(Account account, String token) throws Exception {
+        BeanfunStringResult result = new BeanfunStringResult();
         if (Objects.isNull(account) || StringUtils.isBlank(account.getId())) {
-            return BeanfunStringResult.error(AbstractBeanfunResult.CodeEnum.GET_DYNAMIC_PWD_ACT_INFO_EMPTY);
+            return result.error(BeanfunResult.CodeEnum.GET_DYNAMIC_PWD_ACT_INFO_EMPTY);
         }
         String url = "https://tw.beanfun.com/beanfun_block/game_zone/game_start_step2.aspx";
         ReqParams params = ReqParams.getInstance();
@@ -210,7 +221,7 @@ public class TWBeanfunClientImpl extends BeanfunClient {
 
         QsHttpResponse httpResponse = HttpClient.getInstance().get(url, params);
         if (!httpResponse.getSuccess()) {
-            return BeanfunStringResult.error(AbstractBeanfunResult.CodeEnum.REQUEST_ERROR);
+            return result.error(BeanfunResult.CodeEnum.REQUEST_ERROR);
         }
         String content = httpResponse.getContent();
         List<List<String>> dataList = RegexUtils.regex(RegexUtils.Constant.TW_GET_PWD_OTP_KEY, content);
@@ -225,7 +236,7 @@ public class TWBeanfunClientImpl extends BeanfunClient {
         url = "https://tw.newlogin.beanfun.com/generic_handlers/get_cookies.ashx";
         httpResponse = HttpClient.getInstance().get(url);
         if (!httpResponse.getSuccess()) {
-            return BeanfunStringResult.error(AbstractBeanfunResult.CodeEnum.REQUEST_ERROR);
+            return result.error(BeanfunResult.CodeEnum.REQUEST_ERROR);
         }
         content = httpResponse.getContent();
         dataList = RegexUtils.regex(RegexUtils.Constant.TW_GET_PWD_OTP_SECRET, content);
@@ -243,14 +254,14 @@ public class TWBeanfunClientImpl extends BeanfunClient {
         httpResponse = HttpClient.getInstance().post(url, params);
 
         if (!httpResponse.getSuccess()) {
-            return BeanfunStringResult.error(AbstractBeanfunResult.CodeEnum.REQUEST_ERROR);
+            return result.error(BeanfunResult.CodeEnum.REQUEST_ERROR);
         }
 
         content = httpResponse.getContent();
 
         JSONObject jsonObject = JSON.parseObject(content);
         if (Objects.isNull(jsonObject) || jsonObject.getIntValue("intResult") != 1) {
-            return BeanfunStringResult.error(AbstractBeanfunResult.CodeEnum.REQUEST_ERROR);
+            return result.error(BeanfunResult.CodeEnum.REQUEST_ERROR);
         }
 
         url = "https://tw.beanfun.com/beanfun_block/generic_handlers/get_webstart_otp.ashx";
@@ -267,14 +278,15 @@ public class TWBeanfunClientImpl extends BeanfunClient {
         httpResponse = HttpClient.getInstance().get(url, params);
 
         if (!httpResponse.getSuccess()) {
-            return BeanfunStringResult.error(AbstractBeanfunResult.CodeEnum.REQUEST_ERROR);
+            return result.error(BeanfunResult.CodeEnum.REQUEST_ERROR);
         }
         content = httpResponse.getContent();
         String pwd = super.decrDesPkcs5Hex(content);
         if (StringUtils.isBlank(pwd)) {
-            return BeanfunStringResult.error(AbstractBeanfunResult.CodeEnum.GET_DYNAMIC_PWD_ERROR);
+            return result.error(BeanfunResult.CodeEnum.GET_DYNAMIC_PWD_ERROR);
         }
-        return BeanfunStringResult.success(pwd);
+        result.setData(pwd);
+        return result.success();
     }
 
     @Override
@@ -310,6 +322,7 @@ public class TWBeanfunClientImpl extends BeanfunClient {
 
     @Override
     public BeanfunStringResult addAccount(String newName) throws Exception {
+        BeanfunStringResult result = new BeanfunStringResult();
         String url = "https://tw.beanfun.com/generic_handlers/gamezone.ashx";
         ReqParams payload = ReqParams.getInstance()
                 .addParam("strFunction", "AddServiceAccount")
@@ -322,20 +335,21 @@ public class TWBeanfunClientImpl extends BeanfunClient {
         QsHttpResponse response = HttpClient.getInstance().post(url, payload);
         if (!response.getSuccess()) {
             log.error("添加账号失败");
-            return BeanfunStringResult.error(AbstractBeanfunResult.CodeEnum.REQUEST_ERROR);
+            return result.error(BeanfunResult.CodeEnum.REQUEST_ERROR);
         }
         String json = response.getContent();
         JSONObject jsonObject = JSON.parseObject(json);
         int intResult = jsonObject.getIntValue("intResult");
         if (intResult != 1) {
             String strOutstring = jsonObject.getString("strOutstring");
-            return BeanfunStringResult.error(AbstractBeanfunResult.CodeEnum.ACCOUNT_OPT_EXCEPTION, strOutstring);
+            return result.error(BeanfunResult.CodeEnum.ACCOUNT_OPT_EXCEPTION, strOutstring);
         }
-        return BeanfunStringResult.success();
+        return result.success();
     }
 
     @Override
     public BeanfunStringResult changeAccountName(String accountId, String newName) throws Exception {
+        BeanfunStringResult result = new BeanfunStringResult();
         String url = "https://tw.beanfun.com/generic_handlers/gamezone.ashx";
         ReqParams payload = ReqParams.getInstance()
                 .addParam("strFunction", "ChangeServiceAccountDisplayName")
@@ -345,16 +359,16 @@ public class TWBeanfunClientImpl extends BeanfunClient {
         QsHttpResponse httpResponse = HttpClient.getInstance().post(url, payload);
         if (!httpResponse.getSuccess()) {
             log.error("修改账号名称失败");
-            return BeanfunStringResult.error(AbstractBeanfunResult.CodeEnum.REQUEST_ERROR);
+            return result.error(BeanfunResult.CodeEnum.REQUEST_ERROR);
         }
         String json = httpResponse.getContent();
         JSONObject jsonObject = JSON.parseObject(json);
         int intResult = jsonObject.getIntValue("intResult");
         if (intResult != 1) {
             String strOutstring = jsonObject.getString("strOutstring");
-            return BeanfunStringResult.error(AbstractBeanfunResult.CodeEnum.ACCOUNT_OPT_EXCEPTION, strOutstring);
+            return result.error(BeanfunResult.CodeEnum.ACCOUNT_OPT_EXCEPTION, strOutstring);
         }
-        return BeanfunStringResult.success();
+        return result.success();
     }
 
     @Override

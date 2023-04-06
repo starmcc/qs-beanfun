@@ -198,7 +198,7 @@ public class HttpClientImpl extends HttpClient {
                 .build()
         );
         // 代理设置
-        HttpHost proxy = WindowManager.getInstance().getPacScriptProxy(httpUriRequest.getURI());
+        HttpHost proxy = WindowManager.getInstance().getProxy(httpUriRequest.getURI());
         httpClientBuilder.setProxy(proxy);
         CloseableHttpClient httpClient = null;
         CloseableHttpResponse response = null;

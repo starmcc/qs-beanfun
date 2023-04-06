@@ -13,42 +13,8 @@ import java.io.Serializable;
 @Slf4j
 @Data
 @EqualsAndHashCode(callSuper = false)
-public class BeanfunStringResult extends AbstractBeanfunResult implements Serializable {
+public class BeanfunStringResult extends BeanfunResult implements Serializable {
     private static final long serialVersionUID = 8770080225604858074L;
 
     private String data;
-
-    protected BeanfunStringResult(CodeEnum codeEnum) {
-        super(codeEnum);
-    }
-
-    protected BeanfunStringResult(CodeEnum codeEnum, String errorMsg) {
-        super(codeEnum, errorMsg);
-    }
-
-    public static BeanfunStringResult success() {
-        BeanfunStringResult result = new BeanfunStringResult(CodeEnum.SUCCESS);
-        result.setData("");
-        return result;
-    }
-
-    public static BeanfunStringResult success(String data) {
-        BeanfunStringResult result = new BeanfunStringResult(CodeEnum.SUCCESS);
-        result.setData(data);
-        return result;
-    }
-
-    public static BeanfunStringResult error(CodeEnum codeEnum) {
-        log.error("错误信息={}", codeEnum);
-        BeanfunStringResult result = new BeanfunStringResult(codeEnum);
-        result.setData("");
-        return result;
-    }
-
-    public static BeanfunStringResult error(CodeEnum codeEnum, String errorMsg) {
-        log.error("错误信息={} {}", codeEnum, errorMsg);
-        BeanfunStringResult result = new BeanfunStringResult(codeEnum, errorMsg);
-        result.setData("");
-        return result;
-    }
 }

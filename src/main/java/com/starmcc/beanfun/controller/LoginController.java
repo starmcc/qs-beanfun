@@ -126,13 +126,13 @@ public class LoginController implements Initializable {
     @FXML
     public void loginAction() {
         LoadPage.task(FXPageEnum.登录页, (label) -> {
+            String taskName = "";
             try {
                 label.setText("正在登录..");
                 final Map<String, Double> map = new HashMap<>(16);
-                String taskName = buildTaskByLoadTips(label, map);
+                taskName = buildTaskByLoadTips(label, map);
                 // 执行登录方法
                 BeanfunStringResult loginResult = BeanfunClient.run().login(comboBoxAccount.getValue(), passwordFieldPassword.getText(), process -> map.put("process", process * 100));
-                AdvancedTimerMamager.getInstance().removeTask(taskName);
                 if (!loginResult.isSuccess()) {
                     FrameManager.getInstance().message(loginResult.getMsg(), Alert.AlertType.ERROR);
                     return;
@@ -148,6 +148,8 @@ public class LoginController implements Initializable {
             } catch (Exception e) {
                 log.info("login error e={}", e.getMessage(), e);
                 FrameManager.getInstance().message("error:" + e.getMessage(), Alert.AlertType.ERROR);
+            }finally {
+                AdvancedTimerMamager.getInstance().removeTask(taskName);
             }
         });
     }

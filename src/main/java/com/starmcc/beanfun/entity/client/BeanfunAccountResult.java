@@ -15,42 +15,24 @@ import java.util.List;
 @Slf4j
 @Data
 @EqualsAndHashCode(callSuper = false)
-public class BeanfunAccountResult extends AbstractBeanfunResult implements Serializable {
+public class BeanfunAccountResult extends BeanfunResult implements Serializable {
     private static final long serialVersionUID = -7146203696662330129L;
 
     /**
      * 账户列表
      */
-    private List<Account> accountList;
+    private List<Account> accountList = new ArrayList<>();
     /**
      * 新帐户
      */
-    private Boolean newAccount;
+    private Boolean newAccount = false;
     /**
      * 进阶认证状态
      */
-    private Boolean certStatus;
+    private Boolean certStatus = true;
     /**
      * 最大创建账号数量
      */
-    private Integer maxActNumber;
-
-    public BeanfunAccountResult() {
-        this(CodeEnum.SUCCESS);
-    }
-
-    protected BeanfunAccountResult(CodeEnum codeEnum) {
-        super(codeEnum);
-        this.newAccount = false;
-        this.certStatus = true;
-        this.maxActNumber = 0;
-        this.accountList = new ArrayList<>();
-    }
-
-
-    public static BeanfunAccountResult error(CodeEnum codeEnum) {
-        return new BeanfunAccountResult(codeEnum);
-    }
-
+    private Integer maxActNumber = 0;
 
 }

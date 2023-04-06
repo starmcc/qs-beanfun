@@ -1,26 +1,18 @@
 package com.starmcc.beanfun.manager.impl;
 
-import com.starmcc.beanfun.constant.QsConstant;
 import com.starmcc.beanfun.dll.CustomUser32;
-import com.starmcc.beanfun.entity.model.ConfigModel;
 import com.starmcc.beanfun.manager.AdvancedTimerMamager;
 import com.starmcc.beanfun.manager.WindowManager;
-import com.starmcc.beanfun.utils.RegexUtils;
+import com.starmcc.beanfun.utils.ProxyTools;
 import com.sun.jna.platform.win32.*;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.ArrayUtils;
-import org.apache.commons.lang3.BooleanUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.http.HttpHost;
-import org.apache.http.client.methods.CloseableHttpResponse;
-import org.apache.http.client.methods.HttpGet;
-import org.apache.http.impl.client.HttpClients;
-import org.apache.http.util.EntityUtils;
 
 import java.awt.*;
 import java.io.IOException;
 import java.net.URI;
-import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.function.Consumer;
@@ -219,86 +211,13 @@ public class WindowManagerImpl implements WindowManager {
     }
 
     @Override
-    public HttpHost getPacScriptProxy(URI uri) {
-        // 如果有自定义配置的代理，优先使用配置代理
-        ConfigModel.ProxyConfig proxyConfig = QsConstant.config.getProxyConfig();
-        if (Objects.nonNull(proxyConfig)) {
-            if (BooleanUtils.isTrue(proxyConfig.getBan())) {
-                log.info("禁止使用PAC代理");
-                return null;
-            }
-            if (StringUtils.isNotBlank(proxyConfig.getIp()) && Objects.nonNull(proxyConfig.getPort())) {
-                log.info("use proxy my custom value = {}", proxyConfig.toString());
-                return new HttpHost(proxyConfig.getIp(), proxyConfig.getPort(), "http");
-            }
+    public HttpHost getProxy(URI uri) {
+        System.setProperty("java.net.useSystemProxies", "true");
+        HttpHost httpHost = ProxyTools.getProxy(uri);
+        if (Objects.isNull(httpHost)) {
+            System.setProperty("java.net.useSystemProxies", "null");
         }
-        String agent = getPACScriptAgent(uri.toString());
-        if (StringUtils.isBlank(agent)) {
-            return null;
-        }
-        String[] split = agent.split(":");
-        if (ArrayUtils.isEmpty(split) || split.length < 2) {
-            return null;
-        }
-        log.info("使用PAC代理={}", agent);
-        return new HttpHost(split[0], Integer.valueOf(split[1]), "http");
-    }
-
-
-    private static String getPACScriptAgent(String url) {
-        try {
-            String path = "Software\\Microsoft\\Windows\\CurrentVersion\\Internet Settings";
-            boolean exists = Advapi32Util.registryValueExists(WinReg.HKEY_CURRENT_USER, path, "AutoConfigURL", WinNT.KEY_READ);
-            if (!exists) {
-                return "";
-            }
-            String proxyUrl = Advapi32Util.registryGetStringValue(WinReg.HKEY_CURRENT_USER, path, "AutoConfigURL", WinNT.KEY_READ);
-            if (StringUtils.isBlank(proxyUrl)) {
-                log.info("not pac proxy");
-                return "";
-            }
-            HttpGet httpGet = new HttpGet(proxyUrl);
-            CloseableHttpResponse execute = HttpClients.createDefault().execute(httpGet);
-            String pacScript = EntityUtils.toString(execute.getEntity());
-            if (StringUtils.isBlank(pacScript)) {
-                log.info("read pac proxy file is null");
-                return "";
-            }
-            // 直接使用代理
-            List<List<String>> regex = RegexUtils.regex(RegexUtils.Constant.COMMON_IP_ADDRESS, pacScript);
-            String index = RegexUtils.getIndex(0, 1, regex);
-            return index;
-
-            //调用js中的方法 此处调用过慢
-            /*ScriptEngine engine = new ScriptEngineManager().getEngineByName("JavaScript");
-            engine.eval(pacScript);
-            URI uri = new URI(url);
-            Object runResult = ((Invocable) engine).invokeFunction("FindProxyForURL", uri.toString(), uri.getHost());
-            if (Objects.isNull(runResult)) {
-                log.info("url:{} runing FindProxyForURL is null result", url);
-                return "";
-            }
-            String pac = String.valueOf(runResult);
-            log.info("pac={}", pac);
-            // DIRECT 不代理
-            if (StringUtils.indexOf(pac, "DIRECT") >= 0) {
-                return "";
-            }
-            String[] split = pac.split(";");
-            for (String pxy : split) {
-                String[] pxyArr = pxy.trim().split(" ");
-                if (ArrayUtils.isEmpty(pxyArr) || pxyArr.length < 2) {
-                    continue;
-                }
-                if (!StringUtils.equals(pxyArr[0].trim(), "PROXY")) {
-                    continue;
-                }
-                return pxyArr[1].trim();
-            }*/
-        } catch (Exception e) {
-            log.error("proxy error = {}", e.getMessage(), e);
-        }
-        return "";
+        return httpHost;
     }
 
 

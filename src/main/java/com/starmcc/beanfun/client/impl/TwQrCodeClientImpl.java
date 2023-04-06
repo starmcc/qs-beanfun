@@ -5,11 +5,7 @@ import com.alibaba.fastjson.JSONObject;
 import com.starmcc.beanfun.client.BeanfunClient;
 import com.starmcc.beanfun.client.HttpClient;
 import com.starmcc.beanfun.client.QrCodeClient;
-import com.starmcc.beanfun.entity.client.ReqParams;
-import com.starmcc.beanfun.entity.client.AbstractBeanfunResult;
-import com.starmcc.beanfun.entity.client.BeanfunQrCodeResult;
-import com.starmcc.beanfun.entity.client.BeanfunStringResult;
-import com.starmcc.beanfun.entity.client.QsHttpResponse;
+import com.starmcc.beanfun.entity.client.*;
 import com.starmcc.beanfun.utils.RegexUtils;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
@@ -30,35 +26,36 @@ public class TwQrCodeClientImpl extends QrCodeClient {
     @Override
     public BeanfunQrCodeResult getQrCodeImage() throws Exception {
         BeanfunQrCodeResult result = new BeanfunQrCodeResult();
-        String sessionKey = BeanfunClient.run().getSessionKey();
-        result.setSessionKey(sessionKey);
-        if (StringUtils.isBlank(sessionKey)) {
-            return BeanfunQrCodeResult.error(AbstractBeanfunResult.CodeEnum.OTP_GET_EMPTY);
-        } else if (StringUtils.equals(sessionKey, "IP锁定")) {
-            return BeanfunQrCodeResult.error(AbstractBeanfunResult.CodeEnum.IP_BANK);
-        }
 
+        BeanfunStringResult sessionKeyResult = BeanfunClient.run().getSessionKey();
+
+        if (!sessionKeyResult.isSuccess()) {
+            result.setCode(sessionKeyResult.getCode());
+            result.setMsg(sessionKeyResult.getMsg());
+            return result;
+        }
+        result.setSessionKey(sessionKeyResult.getData());
         // 加载二维码表单
         String url = "https://tw.newlogin.beanfun.com/login/qr_form.aspx";
-        ReqParams params = ReqParams.getInstance().addParam("skey", sessionKey);
+        ReqParams params = ReqParams.getInstance().addParam("skey", sessionKeyResult.getData());
         QsHttpResponse response = HttpClient.getInstance().get(url, params);
         if (!response.getSuccess()) {
             log.error("二维码加载异常-{}", 1);
-            return BeanfunQrCodeResult.error(AbstractBeanfunResult.CodeEnum.REQUEST_ERROR);
+            return result.error(BeanfunResult.CodeEnum.REQUEST_ERROR);
         }
 
         // 获取二维码图片
         url = "https://tw.newlogin.beanfun.com/generic_handlers/get_qrcodeData.ashx";
-        params = ReqParams.getInstance().addParam("skey", sessionKey);
+        params = ReqParams.getInstance().addParam("skey", sessionKeyResult.getData());
         response = HttpClient.getInstance().get(url, params);
         if (!response.getSuccess()) {
             log.error("二维码加载异常-{}", 2);
-            return BeanfunQrCodeResult.error(AbstractBeanfunResult.CodeEnum.REQUEST_ERROR);
+            return result.error(BeanfunResult.CodeEnum.REQUEST_ERROR);
         }
         JSONObject jsonObject = JSON.parseObject(response.getContent());
         if (jsonObject.getIntValue("intResult") != 1) {
             log.error("二维码加载异常-{}", 3);
-            return BeanfunQrCodeResult.error(AbstractBeanfunResult.CodeEnum.BEANFUN_ERROR);
+            return result.error(BeanfunResult.CodeEnum.BEANFUN_ERROR);
         }
 
         String strEncryptData = jsonObject.getString("strEncryptData");
@@ -67,7 +64,7 @@ public class TwQrCodeClientImpl extends QrCodeClient {
         result.setStrEncryptBCDOData(strEncryptBCDOData);
         if (StringUtils.isBlank(strEncryptData)) {
             log.error("二维码加载异常-{}", 4);
-            return BeanfunQrCodeResult.error(AbstractBeanfunResult.CodeEnum.REQUEST_ERROR);
+            return result.error(BeanfunResult.CodeEnum.REQUEST_ERROR);
         }
 
         String imgUrl = "https://tw.newlogin.beanfun.com/qrhandler.ashx?u=https://beanfunstor.blob.core.windows.net/redirect/appCheck.html?url=beanfunapp://Q/gameLogin/gtw/"
@@ -91,6 +88,7 @@ public class TwQrCodeClientImpl extends QrCodeClient {
 
     @Override
     public BeanfunStringResult login(String sessionKey) throws Exception {
+        BeanfunStringResult result = new BeanfunStringResult();
         String url = "https://tw.newlogin.beanfun.com/login/qr_step2.aspx";
         ReqParams params = ReqParams.getInstance()
                 .addHeader("Referer", "https://tw.newlogin.beanfun.com/login/qr_form.aspx?skey=" + sessionKey)
@@ -99,7 +97,7 @@ public class TwQrCodeClientImpl extends QrCodeClient {
         QsHttpResponse response = HttpClient.getInstance().get(url, params);
         if (!response.getSuccess()) {
             log.error("二维码登录异常-{}", 1);
-            return BeanfunStringResult.error(AbstractBeanfunResult.CodeEnum.REQUEST_ERROR);
+            return result.error(BeanfunResult.CodeEnum.REQUEST_ERROR);
         }
 
         String content = response.getContent();
@@ -109,7 +107,7 @@ public class TwQrCodeClientImpl extends QrCodeClient {
 
         if (StringUtils.isBlank(aKey) || StringUtils.isBlank(authKey)) {
             log.error("二维码登录异常-{}", 2);
-            return BeanfunStringResult.error(AbstractBeanfunResult.CodeEnum.REQUEST_ERROR);
+            return result.error(BeanfunResult.CodeEnum.REQUEST_ERROR);
         }
 
         url = "https://tw.newlogin.beanfun.com/login/final_step.aspx";
@@ -124,7 +122,7 @@ public class TwQrCodeClientImpl extends QrCodeClient {
 
         if (!response.getSuccess()) {
             log.error("二维码登录异常-{}", 3);
-            return BeanfunStringResult.error(AbstractBeanfunResult.CodeEnum.REQUEST_ERROR);
+            return result.error(BeanfunResult.CodeEnum.REQUEST_ERROR);
         }
 
         List<Cookie> cookies = HttpClient.getInstance().getCookieStore().getCookies();
@@ -145,7 +143,7 @@ public class TwQrCodeClientImpl extends QrCodeClient {
                 .addParam("ServiceAccountSN", "0");
 
         HttpClient.getInstance().post(url, params);
-
-        return BeanfunStringResult.success(bfWebToken);
+        result.setData(bfWebToken);
+        return result.success();
     }
 }

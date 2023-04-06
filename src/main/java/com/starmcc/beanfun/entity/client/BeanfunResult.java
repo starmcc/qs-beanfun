@@ -2,6 +2,7 @@ package com.starmcc.beanfun.entity.client;
 
 import lombok.Data;
 import lombok.Getter;
+import lombok.extern.slf4j.Slf4j;
 
 import java.util.Objects;
 
@@ -9,28 +10,49 @@ import java.util.Objects;
  * @Author starmcc
  * @Date 2022/6/2 10:28
  */
+@Slf4j
 @Data
-public abstract class AbstractBeanfunResult {
+public abstract class BeanfunResult {
 
     private String msg;
     private Integer code;
 
-    protected AbstractBeanfunResult() {
-
+    protected BeanfunResult() {
+        this(CodeEnum.SUCCESS);
     }
 
-    protected AbstractBeanfunResult(CodeEnum codeEnum) {
+    protected BeanfunResult(CodeEnum codeEnum) {
         this.code = codeEnum.getCode();
         this.msg = codeEnum.getDesc();
     }
 
-    protected AbstractBeanfunResult(CodeEnum codeEnum, String errorMsg) {
+    protected BeanfunResult(CodeEnum codeEnum, String errorMsg) {
         this.code = codeEnum.getCode();
         this.msg = errorMsg;
     }
 
     public boolean isSuccess() {
         return Objects.equals(this.code, CodeEnum.SUCCESS.getCode());
+    }
+
+    public <T extends BeanfunResult> T success() {
+        this.setMsg(CodeEnum.SUCCESS.getDesc());
+        this.setCode(CodeEnum.SUCCESS.getCode());
+        return (T) this;
+    }
+
+    public <T extends BeanfunResult> T error(CodeEnum codeEnum) {
+        return error(codeEnum.getCode(), codeEnum.getDesc());
+    }
+
+    public <T extends BeanfunResult> T error(CodeEnum codeEnum, String errMsg) {
+        return error(codeEnum.getCode(), errMsg);
+    }
+
+    public <T extends BeanfunResult> T error(Integer code, String errMsg) {
+        this.setMsg(errMsg);
+        this.setCode(code);
+        return (T) this;
     }
 
     /**
@@ -60,7 +82,7 @@ public abstract class AbstractBeanfunResult {
         /**
          * 账密为空
          */
-        IP_BANK(2, "IP被锁定,请关闭加速器或更换节点再重试!"),
+        IP_BAN(2, "IP被锁定,请关闭加速器或更换节点再重试!"),
         /**
          * otp得到空
          */
@@ -97,11 +119,14 @@ public abstract class AbstractBeanfunResult {
          * 获取动态密码失败!账号信息不存在
          */
         GET_DYNAMIC_PWD_ERROR(11, "获取动态密码失败,解密失败!"),
-
         /**
          * 需要进阶认证
          */
         CERT_VERIFY(12, "账号需要进阶认证才可以使用,请在菜单栏进入用户中心->会员中心进行认证!"),
+        /**
+         * 禁止区域
+         */
+        AREA_BAN(13, "您所在的区域不允许登录!"),
         ;
 
         private final int code;

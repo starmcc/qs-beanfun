@@ -68,12 +68,12 @@ public interface WindowManager {
     void autoInputActPwd(String act, String pwd) throws Exception;
 
     /**
-     * 获取pac脚本代理
+     * 获取代理信息 （适配系统默认代理）
      *
      * @param uri uri
      * @return {@link HttpHost}
      */
-    HttpHost getPacScriptProxy(URI uri);
+    HttpHost getProxy(URI uri);
 
     /**
      * 结束 NGS

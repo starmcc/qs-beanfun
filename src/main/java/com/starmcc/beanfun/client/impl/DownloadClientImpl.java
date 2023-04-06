@@ -15,7 +15,6 @@ import org.apache.http.conn.ssl.NoopHostnameVerifier;
 import org.apache.http.conn.ssl.SSLConnectionSocketFactory;
 import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClientBuilder;
-import org.apache.http.impl.client.HttpClients;
 import org.apache.http.ssl.SSLContextBuilder;
 import org.apache.http.ssl.TrustStrategy;
 
@@ -56,7 +55,7 @@ public class DownloadClientImpl extends DownloadClient {
             SSLConnectionSocketFactory sslsf = new SSLConnectionSocketFactory(sslContext, hostnameVerifier);
             httpClientBuilder.setSSLSocketFactory(sslsf);
             // 代理
-            HttpHost proxy = WindowManager.getInstance().getPacScriptProxy(url.toURI());
+            HttpHost proxy = WindowManager.getInstance().getProxy(url.toURI());
             httpClientBuilder.setProxy(proxy);
             httpClientBuilder.setDefaultRequestConfig(RequestConfig.custom()
                     .setConnectionRequestTimeout(10 * 1000)

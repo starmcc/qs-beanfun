@@ -11,7 +11,7 @@ import java.io.Serializable;
  * @date 2022/10/01
  */
 @Data
-public class BeanfunQrCodeResult extends AbstractBeanfunResult implements Serializable {
+public class BeanfunQrCodeResult extends BeanfunResult implements Serializable {
 
     private static final long serialVersionUID = 2021437261083355340L;
 
@@ -19,17 +19,5 @@ public class BeanfunQrCodeResult extends AbstractBeanfunResult implements Serial
     private String strEncryptData;
     private String strEncryptBCDOData;
     private String qrImageUrl;
-
-    public BeanfunQrCodeResult() {
-        this(CodeEnum.SUCCESS);
-    }
-
-    protected BeanfunQrCodeResult(CodeEnum codeEnum) {
-        super(codeEnum);
-    }
-
-    public static BeanfunQrCodeResult error(CodeEnum codeEnum) {
-        return new BeanfunQrCodeResult(codeEnum);
-    }
 
 }

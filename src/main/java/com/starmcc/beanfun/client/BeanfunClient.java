@@ -50,9 +50,9 @@ public abstract class BeanfunClient {
     /**
      * 获得会话密钥
      *
-     * @return {@link String}
+     * @return {@link SessionKeyResult}
      */
-    public abstract String getSessionKey() throws Exception;
+    public abstract BeanfunStringResult getSessionKey() throws Exception;
 
     /**
      * 登录
