@@ -94,7 +94,7 @@ public class FileTools {
      * @param folder 文件夹
      * @return boolean
      */
-    public synchronized static boolean deleteFolder(File folder) {
+    public static boolean deleteFolder(File folder) {
         // 如果dir不以文件分隔符结尾，自动添加文件分隔符
         if ((!folder.exists()) || (!folder.isDirectory())) {
             return false;
@@ -135,7 +135,7 @@ public class FileTools {
      * @param file 文件
      * @return boolean
      */
-    public synchronized static boolean deleteFile(File file) {
+    public static boolean deleteFile(File file) {
         // 如果文件路径只有单个文件
         if (file.exists() && file.isFile()) {
             if (file.delete()) {
@@ -153,7 +153,7 @@ public class FileTools {
      *
      * @return {@link String}
      */
-    public synchronized static ConfigModel readConfig() {
+    public static ConfigModel readConfig() {
         ConfigModel configModel = null;
         try {
             File file = new File(QsConstant.PATH_APP_CONFIG);
@@ -180,7 +180,7 @@ public class FileTools {
      * @param model json数据
      * @return boolean
      */
-    public synchronized static void saveConfig(ConfigModel model) {
+    public static void saveConfig(ConfigModel model) {
         ThreadPoolManager.execute(() -> {
             String content = JSON.toJSONString(model, SerializerFeature.PrettyFormat, SerializerFeature.WriteMapNullValue, SerializerFeature.WriteDateUseDateFormat);
             try {
@@ -213,7 +213,7 @@ public class FileTools {
      * @param content  内容
      * @param filePath 文件路径
      */
-    public synchronized static void writeFile(String content, String filePath) {
+    public static void writeFile(String content, String filePath) {
         Writer write = null;
         try {
             // 写到文件

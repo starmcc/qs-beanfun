@@ -66,7 +66,7 @@ public class JxBrowserManager {
      *
      * @return {@link JxBrowserManager}
      */
-    public synchronized static JxBrowserManager getInstance() {
+    public static JxBrowserManager getInstance() {
         return new JxBrowserManager();
     }
 

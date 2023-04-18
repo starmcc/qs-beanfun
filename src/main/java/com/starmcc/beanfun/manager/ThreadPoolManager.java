@@ -40,7 +40,7 @@ public class ThreadPoolManager {
      *
      * @param runnable 可运行
      */
-    public synchronized static void execute(ThrowRunnable runnable) {
+    public static void execute(ThrowRunnable runnable) {
         execute(runnable, true);
     }
 
@@ -50,7 +50,7 @@ public class ThreadPoolManager {
      * @param runnable 可运行
      * @param init     初始化
      */
-    public synchronized static void execute(ThrowRunnable runnable, boolean init) {
+    public static void execute(ThrowRunnable runnable, boolean init) {
         if (init) {
             init();
         }
@@ -69,7 +69,7 @@ public class ThreadPoolManager {
     /**
      * 关闭
      */
-    public synchronized static void shutdown() {
+    public static void shutdown() {
         if (Objects.isNull(THREAD_POOL)) {
             return;
         }
@@ -83,7 +83,7 @@ public class ThreadPoolManager {
      *
      * @return boolean
      */
-    public synchronized static boolean isShutdown() {
+    public static boolean isShutdown() {
         if (Objects.isNull(THREAD_POOL)) {
             return true;
         }

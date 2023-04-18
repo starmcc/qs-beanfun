@@ -33,7 +33,7 @@ public class UpdateManager {
      *
      * @return {@link UpdateManager}
      */
-    public static synchronized UpdateManager getInstance() {
+    public static UpdateManager getInstance() {
         //先检查实例是否存在，如果不存在才进入下面的同步块
         if (manager == null) {
             manager = new UpdateManager();
@@ -46,7 +46,7 @@ public class UpdateManager {
      *
      * @param quiet 静默
      */
-    public synchronized void verifyAppVersion(boolean quiet) {
+    public void verifyAppVersion(boolean quiet) {
         final UpdateModel model = new UpdateModel();
 
         // 检查是否生产版本，如果不是，则不进行版本校验

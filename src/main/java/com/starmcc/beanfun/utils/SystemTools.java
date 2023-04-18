@@ -13,7 +13,7 @@ import java.util.Objects;
 @Slf4j
 public class SystemTools {
 
-    public synchronized static void close(AutoCloseable... acArr) {
+    public static void close(AutoCloseable... acArr) {
         for (AutoCloseable ac : acArr) {
             if (Objects.isNull(ac)) {
                 continue;
@@ -27,7 +27,7 @@ public class SystemTools {
     }
 
 
-    public synchronized static void closeThrow(AutoCloseable... acArr) throws Exception {
+    public static void closeThrow(AutoCloseable... acArr) throws Exception {
         Exception throwExc = null;
         for (AutoCloseable ac : acArr) {
             if (Objects.isNull(ac)) {

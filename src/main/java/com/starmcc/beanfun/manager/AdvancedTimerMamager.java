@@ -28,7 +28,7 @@ public class AdvancedTimerMamager {
      *
      * @return {@link AdvancedTimerMamager}
      */
-    public synchronized static AdvancedTimerMamager getInstance() {
+    public static AdvancedTimerMamager getInstance() {
         if (Objects.isNull(advancedTimerMamager)) {
             advancedTimerMamager = new AdvancedTimerMamager();
         }
@@ -50,7 +50,7 @@ public class AdvancedTimerMamager {
      * @param waitTime 等待时间
      * @param delay    延迟
      */
-    public synchronized String addTask(AdvancedTimerTask task, long waitTime, long delay) {
+    public String addTask(AdvancedTimerTask task, long waitTime, long delay) {
         String taskName = "TASK-" + System.currentTimeMillis();
         task.setTaskName(taskName);
         advancedTimerMamager.taskList.add(task);
@@ -64,7 +64,7 @@ public class AdvancedTimerMamager {
      *
      * @param taskName 任务名称
      */
-    public synchronized boolean removeTask(String taskName) {
+    public boolean removeTask(String taskName) {
         if (StringUtils.isBlank(taskName)) {
             return false;
         }
@@ -85,7 +85,7 @@ public class AdvancedTimerMamager {
      *
      * @param taskName 任务名称
      */
-    public synchronized int removeTask(List<String> taskNames) {
+    public int removeTask(List<String> taskNames) {
         if (DataTools.collectionIsEmpty(taskNames)) {
             return 0;
         }
@@ -105,7 +105,7 @@ public class AdvancedTimerMamager {
     /**
      * 删除所有任务
      */
-    public synchronized int removeAllTask() {
+    public int removeAllTask() {
         int result = advancedTimerMamager.taskList.size();
         advancedTimerMamager.taskList.forEach(task -> task.cancel(false));
         advancedTimerMamager.taskList.clear();
@@ -116,7 +116,7 @@ public class AdvancedTimerMamager {
     /**
      * 关闭
      */
-    public synchronized static void shutdown() {
+    public static void shutdown() {
         advancedTimerMamager.removeAllTask();
         advancedTimerMamager.scheduledExecutorService.shutdownNow();
         advancedTimerMamager = null;

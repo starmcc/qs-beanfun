@@ -25,7 +25,7 @@ public class RecordVideoManager {
 
     private static RecordVideoManager recordVideoManager;
 
-    public synchronized static RecordVideoManager getInstance() {
+    public static RecordVideoManager getInstance() {
         if (recordVideoManager == null) {
             recordVideoManager = new RecordVideoManager();
         }
@@ -41,7 +41,7 @@ public class RecordVideoManager {
      * @param codeRate 编码速率
      * @param callback 回调
      */
-    public synchronized void start(ConfigModel.RecordVideo config, Consumer<String> callback) {
+    public void start(ConfigModel.RecordVideo config, Consumer<String> callback) {
         String command = recordVideoManager.buildFFmpegScript(config);
         // 如果是游戏窗口录制模式，前置游戏窗口
         if (Objects.equals(config.getCaptureType(), ConfigModel.RecordVideo.CaptureTypeEnum.游戏窗口.getType())) {
@@ -55,7 +55,7 @@ public class RecordVideoManager {
      *
      * @throws IOException ioexception
      */
-    public synchronized void stop() {
+    public void stop() {
         try {
             if (Objects.isNull(recordVideoManager) || Objects.isNull(recordVideoManager.process)) {
                 return;
