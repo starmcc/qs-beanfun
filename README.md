@@ -15,9 +15,15 @@
     </a>
   </p>
 <p align="center">
-    <img alt="Downloads" src="https://img.shields.io/github/downloads/starmcc/qs-beanfun/total?label=Downloads"/>
-    <img alt="GitHub last commit" src="https://img.shields.io/github/last-commit/starmcc/qs-beanfun?label=LastCommit">
-    <img alt="JRE" src="https://img.shields.io/badge/JVM-1.8(64bit)-8d38dc"/>
+    <a href="https://github.com/starmcc/qs-beanfun/releases/latest">
+        <img alt="Downloads" src="https://img.shields.io/github/downloads/starmcc/qs-beanfun/total?label=Downloads"/>
+    </a>
+    <a href="https://github.com/starmcc/qs-beanfun/commits/master">
+        <img alt="GitHub last commit" src="https://img.shields.io/github/last-commit/starmcc/qs-beanfun?label=LastCommit">
+    </a>
+    <a href="https://www.oracle.com/java/technologies/downloads/#jre8-windows">
+        <img alt="JRE" src="https://img.shields.io/badge/JVM-1.8(64bit)-8d38dc"/>
+    </a>
 </p>
 <p align="center">
     <span style="font-weight:bold;">简体中文</span>
