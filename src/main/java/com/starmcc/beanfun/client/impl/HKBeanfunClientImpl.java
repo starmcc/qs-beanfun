@@ -11,6 +11,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 
 import java.net.URI;
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.*;
 import java.util.function.Consumer;
@@ -420,7 +421,12 @@ public class HKBeanfunClientImpl extends BeanfunClient {
         }
         String content = httpResponse.getContent();
         List<List<String>> dataList = RegexUtils.regex(RegexUtils.Constant.HK_GET_SERVICE_CREATE_TIME, content);
-        String time = RegexUtils.getIndex(0, 1, dataList);
-        return new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").parse(time);
+        try {
+            String time = RegexUtils.getIndex(0, 1, dataList);
+            return new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").parse(time);
+        } catch (ParseException e) {
+            log.error("error = {} content = {}", e.getMessage(), content, e);
+            return null;
+        }
     }
 }
