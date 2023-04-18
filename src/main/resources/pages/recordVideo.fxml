@@ -41,10 +41,10 @@
                 <Button maxWidth="1.7976931348623157E308" mnemonicParsing="false" onAction="#clearRecordVideoAction"
                         text="清空视频数据" GridPane.columnIndex="2"/>
                 <Label text="FPS" GridPane.columnIndex="1" GridPane.rowIndex="1"/>
-                <ChoiceBox fx:id="choiceBoxVideoFps" onDragDetected="#selectVideoFpsAction" prefWidth="150.0"
+                <ChoiceBox fx:id="choiceBoxVideoFps" onAction="#selectVideoFpsAction" prefWidth="150.0"
                            GridPane.columnIndex="2" GridPane.rowIndex="1"/>
                 <Label text="码率" GridPane.columnIndex="1" GridPane.rowIndex="2"/>
-                <ComboBox fx:id="comboBoxVideoCodeRate" editable="true" onDragDetected="#selectVideoCodeRateAction"
+                <ComboBox fx:id="comboBoxVideoCodeRate" editable="true"
                           prefWidth="150.0" GridPane.columnIndex="2" GridPane.rowIndex="2"/>
                 <HBox alignment="CENTER_LEFT" prefHeight="100.0" prefWidth="200.0" spacing="20.0"
                       GridPane.columnIndex="2" GridPane.rowIndex="3">

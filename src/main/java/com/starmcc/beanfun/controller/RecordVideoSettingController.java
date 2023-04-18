@@ -47,7 +47,6 @@ public class RecordVideoSettingController implements Initializable
             ObservableList<Integer> fpsItems = FXCollections.observableArrayList();
             fpsItems.add(30);
             fpsItems.add(60);
-            fpsItems.add(90);
             choiceBoxVideoFps.setItems(fpsItems);
             choiceBoxVideoFps.getSelectionModel().select(recordVideo.getFps());
             textFieldVideoPath.setText(recordVideo.getFolder());
@@ -70,8 +69,6 @@ public class RecordVideoSettingController implements Initializable
                 radioButtonScreen.setSelected(true);
             }
             textFieldFFmpegPath.setText(recordVideo.getFfmpegPath());
-
-
             // =================== 录像控件事件 =====================
             comboBoxVideoCodeRate.valueProperty().addListener((obsVal, oldVal, newVal) ->
             {
@@ -134,14 +131,6 @@ public class RecordVideoSettingController implements Initializable
     {
         Integer value = choiceBoxVideoFps.getValue();
         QsConstant.config.getRecordVideo().setFps(value);
-        FileTools.saveConfig(QsConstant.config);
-    }
-
-    @FXML
-    public void selectVideoCodeRateAction(ActionEvent actionEvent)
-    {
-        String value = comboBoxVideoCodeRate.getValue();
-        QsConstant.config.getRecordVideo().setCodeRate(Integer.valueOf(value));
         FileTools.saveConfig(QsConstant.config);
     }
 
