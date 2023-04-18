@@ -78,7 +78,7 @@
                                 <MenuItem fx:id="menuItemTwBeanfunUrl" mnemonicParsing="false" text="台湾橘子官网" />
                                 <MenuItem fx:id="menuItemTechbangUrl" mnemonicParsing="false" text="透视镜" />
                                 <MenuItem fx:id="menuItemBahamuteUrl" mnemonicParsing="false" text="巴哈姆特" />
-                                <MenuItem fx:id="qstmsUrlMenu" mnemonicParsing="false" text="秋水文献库" />
+                                <MenuItem fx:id="qstmsUrlMenu" mnemonicParsing="false" text="小梦博客" />
                                 <MenuItem fx:id="tmsTieBaUrlMenu" mnemonicParsing="false" text="新枫之谷贴吧" />
                                 <MenuItem fx:id="qsbiliUrlMenu" mnemonicParsing="false" text="秋水小梦B站主页" />
                             </items>
