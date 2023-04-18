@@ -1,27 +1,27 @@
 # QsBeanfun
 
 <p align="center">
-    <a href="https://github.com/starmcc/qs-beanfun/blob/master/LICENSE">
+    <a target="_blank" href="https://github.com/starmcc/qs-beanfun/blob/master/LICENSE">
         <img alt="LICENSE" src="https://img.shields.io/badge/License-MIT-lightgrey"/>
     </a>
-    <a href="https://github.com/starmcc/qs-beanfun">
+    <a target="_blank" href="https://github.com/starmcc/qs-beanfun">
         <img alt="stars" src="https://img.shields.io/github/stars/starmcc/qs-beanfun?label=Stars"/>
     </a>
-    <a href="https://github.com/starmcc/qs-beanfun/releases/latest">
+    <a target="_blank" href="https://github.com/starmcc/qs-beanfun/releases/latest">
         <img alt="Releases" src="https://img.shields.io/github/v/release/starmcc/qs-beanfun?display_name=tag&label=Latest&color=red"/>
     </a>
-    <a href="https://www.qstms.com/">
+    <a target="_blank" href="https://www.qstms.com/">
         <img alt="QSTMS" src="https://img.shields.io/badge/HomePage-QSTMS-orange"/>
     </a>
 </p>
 <p align="center">
-    <a href="https://github.com/starmcc/qs-beanfun/releases/latest">
+    <a target="_blank" href="https://github.com/starmcc/qs-beanfun/releases/latest">
         <img alt="Downloads" src="https://img.shields.io/github/downloads/starmcc/qs-beanfun/total?label=Downloads"/>
     </a>
-    <a href="https://github.com/starmcc/qs-beanfun/commits/master">
+    <a target="_blank" href="https://github.com/starmcc/qs-beanfun/commits/master">
         <img alt="GitHub last commit" src="https://img.shields.io/github/last-commit/starmcc/qs-beanfun?label=LastCommit">
     </a>
-    <a href="https://www.oracle.com/java/technologies/downloads/#jre8-windows">
+    <a target="_blank" href="https://www.oracle.com/java/technologies/downloads/#jre8-windows">
         <img alt="JRE" src="https://img.shields.io/badge/JVM-1.8(64bit)-8d38dc"/>
     </a>
 </p>
