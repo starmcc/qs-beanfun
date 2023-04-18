@@ -25,7 +25,7 @@ import java.util.zip.ZipInputStream;
 @Slf4j
 public class FileTools {
 
-    public synchronized static String readFile(File file) {
+    public static String readFile(File file) {
         Reader reader = null;
         try {
             if (!file.exists()) {
@@ -52,7 +52,7 @@ public class FileTools {
      *
      * @param resourceFile 资源文件
      */
-    public synchronized static void unzipResourceFile(QsConstant.PluginEnum resourceFile) {
+    public static void unzipResourceFile(QsConstant.PluginEnum resourceFile) {
         try {
             InputStream resourceAsStream = FileTools.class.getClassLoader().getResourceAsStream(resourceFile.getSourcePath());
             ZipInputStream zipInputStream = new ZipInputStream(resourceAsStream, Charset.forName("gbk"));
