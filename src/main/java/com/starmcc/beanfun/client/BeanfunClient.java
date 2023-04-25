@@ -33,7 +33,7 @@ public abstract class BeanfunClient {
      *
      * @return {@link BeanfunClient}
      */
-    public static BeanfunClient run() {
+    public synchronized static BeanfunClient run() {
         LoginType.TypeEnum type = LoginType.TypeEnum.getData(QsConstant.config.getLoginType());
         if (type == LoginType.TypeEnum.HK) {
             if (Objects.isNull(beanfunClient) || !(beanfunClient instanceof HKBeanfunClientImpl)) {

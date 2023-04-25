@@ -125,7 +125,7 @@ public class QrCodeController implements Initializable {
      *
      * @throws Exception 异常
      */
-    public void checkQrCodeStatus() throws Exception {
+    synchronized void checkQrCodeStatus() throws Exception {
         if (!beanfunQrCodeResult.isSuccess()) {
             return;
         }

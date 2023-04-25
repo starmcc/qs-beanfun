@@ -22,7 +22,7 @@ public abstract class QrCodeClient {
      *
      * @return {@link QrCodeClient}
      */
-    public static QrCodeClient run() {
+    public synchronized static QrCodeClient run() {
         if (Objects.isNull(qrCodeClient)) {
             qrCodeClient = new TwQrCodeClientImpl();
         }
