@@ -16,6 +16,7 @@ import com.starmcc.beanfun.manager.impl.AdvancedTimerTask;
 import com.starmcc.beanfun.utils.AesTools;
 import com.starmcc.beanfun.utils.DataTools;
 import com.starmcc.beanfun.utils.FileTools;
+import com.starmcc.beanfun.utils.RegexUtils;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
@@ -56,6 +57,8 @@ public class LoginController implements Initializable {
     private Hyperlink hyperlinkForgetPwd;
     @FXML
     private ImageView imageViewQrCode;
+    @FXML
+    private CheckBox checkBoxDualVerify;
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
@@ -74,11 +77,13 @@ public class LoginController implements Initializable {
                 this.loginAction();
             }
         });
+        checkBoxDualVerify.setSelected(BooleanUtils.isTrue(QsConstant.config.getDualVerify()));
         checkBoxRemember.setSelected(BooleanUtils.isTrue(QsConstant.config.getRecordActPwd()));
         hyperlinkRegister.setFocusTraversable(false);
         hyperlinkForgetPwd.setFocusTraversable(false);
         imageViewQrCode.setFocusTraversable(false);
         choiceBoxLoginType.setFocusTraversable(false);
+        checkBoxDualVerify.setFocusTraversable(false);
         checkBoxRemember.setFocusTraversable(false);
         Integer configLoginType = QsConstant.config.getLoginType();
         LoginType selectLoginType = new LoginType();
@@ -125,6 +130,8 @@ public class LoginController implements Initializable {
      */
     @FXML
     public void loginAction() {
+        // 双重验证时请用户填写数据
+        final List<Integer> dvData = checkBoxDualVerify.isSelected() ? this.getDvData() : new ArrayList<>();
         LoadPage.task(FXPageEnum.登录页, (label) -> {
             String taskName = "";
             try {
@@ -132,7 +139,7 @@ public class LoginController implements Initializable {
                 final Map<String, Double> map = new HashMap<>(16);
                 taskName = buildTaskByLoadTips(label, map);
                 // 执行登录方法
-                BeanfunStringResult loginResult = BeanfunClient.run().login(comboBoxAccount.getValue(), passwordFieldPassword.getText(), process -> map.put("process", process * 100));
+                BeanfunStringResult loginResult = BeanfunClient.run().login(comboBoxAccount.getValue(), passwordFieldPassword.getText(), dvData, process -> map.put("process", process * 100));
                 if (!loginResult.isSuccess()) {
                     FrameManager.getInstance().message(loginResult.getMsg(), Alert.AlertType.ERROR);
                     return;
@@ -148,10 +155,35 @@ public class LoginController implements Initializable {
             } catch (Exception e) {
                 log.info("login error e={}", e.getMessage(), e);
                 FrameManager.getInstance().message("error:" + e.getMessage(), Alert.AlertType.ERROR);
-            }finally {
+            } finally {
                 AdvancedTimerMamager.getInstance().removeTask(taskName);
             }
         });
+    }
+
+    @FXML
+    private void dualVerifyClickAction() {
+        QsConstant.config.setDualVerify(checkBoxDualVerify.isSelected());
+        FileTools.saveConfig(QsConstant.config);
+    }
+
+    private List<Integer> getDvData() {
+        // 用户请输入一个验证
+        String data = FrameManager.getInstance().dialogText("請輸入雙重驗證碼", "");
+        data = data.trim();
+        boolean is = RegexUtils.test(RegexUtils.Constant.COMMON_SIX_NUMBER, data);
+        if (!is) {
+            if (FrameManager.getInstance().dialogConfirm("驗證碼錯誤", "您输入的驗證碼錯誤，是否重新输入？")) {
+                return getDvData();
+            }
+            return new ArrayList<>();
+        }
+        List<Integer> list = new ArrayList<>();
+        char[] chars = data.toCharArray();
+        for (char c : chars) {
+            list.add(Integer.parseInt(String.valueOf(c)));
+        }
+        return list;
     }
 
     @FXML
@@ -184,7 +216,7 @@ public class LoginController implements Initializable {
         FileTools.saveConfig(QsConstant.config);
         LoginType.TypeEnum typeEnum = LoginType.TypeEnum.getData(QsConstant.config.getLoginType());
         imageViewQrCode.setVisible(typeEnum == LoginType.TypeEnum.TW);
-
+        checkBoxDualVerify.setVisible(typeEnum == LoginType.TypeEnum.HK);
         refeshAccounts();
     }
 

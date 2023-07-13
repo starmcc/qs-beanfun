@@ -54,15 +54,18 @@ public abstract class BeanfunClient {
      */
     public abstract BeanfunStringResult getSessionKey() throws Exception;
 
+
     /**
      * 登录
      *
      * @param account  账户
      * @param password 密码
-     * @param process  登录进度
+     * @param extend   附加参数
+     * @param process  进度
+     * @return {@link BeanfunStringResult}
      * @throws Exception 异常
      */
-    public abstract BeanfunStringResult login(String account, String password, Consumer<Double> process) throws Exception;
+    public abstract BeanfunStringResult login(String account, String password, Object extend, Consumer<Double> process) throws Exception;
 
 
     /**
@@ -206,5 +209,20 @@ public abstract class BeanfunClient {
             log.error("解密失败 e={}", e.getMessage());
             return "";
         }
+    }
+
+
+    @FunctionalInterface
+    public interface loginProcess<T, K> {
+
+        /**
+         * 接受
+         *
+         * @param process 过程
+         * @param type    类型
+         * @return {@link List}<{@link K}>
+         */
+        List<K> accept(T process, int type);
+
     }
 }

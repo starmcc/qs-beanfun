@@ -59,7 +59,7 @@ public class TWBeanfunClientImpl extends BeanfunClient {
     }
 
     @Override
-    public BeanfunStringResult login(String account, String password, Consumer<Double> process) throws Exception {
+    public BeanfunStringResult login(String account, String password,Object extend, Consumer<Double> process) throws Exception {
         BeanfunStringResult result = new BeanfunStringResult();
         if (StringUtils.isEmpty(account) || StringUtils.isEmpty(password)) {
             return result.error(BeanfunResult.CodeEnum.ACT_PWD_IS_NULL);

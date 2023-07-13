@@ -53,6 +53,7 @@ public class RegexUtils {
         COMMON_CHINA_STRING(Pattern.compile("[\u4E00-\u9FFF]+")),
         COMMON_NUMBER(Pattern.compile("^[0-9]*$")),
         COMMON_RATE_POINTS(Pattern.compile("<p></td><td><p>(.*?)</p></td><td><p>")),
+        COMMON_SIX_NUMBER(Pattern.compile("^\\d{6}$")),
         ;
         private final Pattern pattern;
 

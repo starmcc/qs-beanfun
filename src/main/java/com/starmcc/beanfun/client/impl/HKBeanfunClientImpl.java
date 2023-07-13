@@ -61,7 +61,7 @@ public class HKBeanfunClientImpl extends BeanfunClient {
     }
 
     @Override
-    public BeanfunStringResult login(String account, String password, Consumer<Double> process) throws Exception {
+    public BeanfunStringResult login(String account, String password, Object extend, Consumer<Double> process) throws Exception {
         BeanfunStringResult result = new BeanfunStringResult();
         if (StringUtils.isEmpty(account) || StringUtils.isEmpty(password)) {
             return result.error(BeanfunResult.CodeEnum.ACT_PWD_IS_NULL);
@@ -105,8 +105,8 @@ public class HKBeanfunClientImpl extends BeanfunClient {
                 .addParam("t_AccountID", account)
                 .addParam("t_Password", password)
                 .addParam("token1", "")
-                .addParam("btn_login", "登入")
-                .addParam("checkbox_remember_account", "on");
+                .addParam("g-recaptcha-response", "")
+                .addParam("btn_login", "登入");
         url = "https://login.hk.beanfun.com/login/id-pass_form_newBF.aspx?otp1=" + sessionKeyResult.getData();
         qsHttpResponse = HttpClient.getInstance().post(url, params);
         process.accept(0.6);
@@ -124,11 +124,19 @@ public class HKBeanfunClientImpl extends BeanfunClient {
 
         dataList = RegexUtils.regex(RegexUtils.Constant.HK_LOGIN_AKEY, content);
         String aKey = RegexUtils.getIndex(0, 1, dataList);
-
         if (StringUtils.isBlank(aKey)) {
-            return result.error(BeanfunResult.CodeEnum.LOGIN_ERROR_MSG);
+            // 找不到AK，7月港号新增双重验证 content会返回存在 請輸入雙重驗證碼 关键字
+            if (Objects.isNull(extend)) {
+                return result.error(BeanfunResult.CodeEnum.LOGIN_ERROR_MSG);
+            }
+            // 进入双重验证环节 并获取ak
+            result = this.dualVerify(content, sessionKeyResult.getData(), extend);
+            if (!result.isSuccess()) {
+                return result;
+            }
+            aKey = result.getData();
         }
-
+        process.accept(0.7);
         // 4. 通过akey请求获取webToken
         params = ReqParams.getInstance().addParam("SessionKey", sessionKeyResult.getData())
                 .addParam("AuthKey", aKey)
@@ -149,6 +157,63 @@ public class HKBeanfunClientImpl extends BeanfunClient {
         process.accept(1.0);
         result.setData(bfWebToken);
         return result.success();
+    }
+
+
+    /**
+     * 双重验证
+     *
+     * @param content     内容
+     * @param otp1        otp1
+     * @param dvDataBuild dv数据
+     * @return {@link BeanfunStringResult}
+     * @throws Exception 异常
+     */
+    private BeanfunStringResult dualVerify(String content, String otp1, Object extend) throws Exception {
+        List<Integer> dualVerifications = (List<Integer>) extend;
+        BeanfunStringResult result = new BeanfunStringResult();
+        List<List<String>> dataList = RegexUtils.regex(RegexUtils.Constant.HK_VIEWSTATE, content);
+        String viewstate = RegexUtils.getIndex(0, 1, dataList);
+        dataList = RegexUtils.regex(RegexUtils.Constant.HK_EVENTVALIDATION, content);
+        String eventvalidation = RegexUtils.getIndex(0, 1, dataList);
+        dataList = RegexUtils.regex(RegexUtils.Constant.HK_VIEWSTATEGENERATOR, content);
+        String viewstateGenerator = RegexUtils.getIndex(0, 1, dataList);
+        if (StringUtils.isEmpty(viewstate) || StringUtils.isEmpty(eventvalidation) || StringUtils.isEmpty(viewstateGenerator)) {
+            return result.error(BeanfunResult.CodeEnum.OTP_SIGN_GET_ERROR);
+        }
+        String url = "https://login.hk.beanfun.com/login/id-pass_form_newBF.aspx?otp1=" + otp1;
+        ReqParams params = ReqParams.getInstance().addParam("__EVENTTARGET", "")
+                .addParam("__EVENTARGUMENT", "")
+                .addParam("__VIEWSTATEENCRYPTED", "")
+                .addParam("__VIEWSTATE", viewstate)
+                .addParam("__VIEWSTATEGENERATOR", viewstateGenerator)
+                .addParam("__EVENTVALIDATION", eventvalidation)
+                .addParam("token1", "")
+                .addParam("totpLoginBtn", "登入");
+        for (int i = 0; i < dualVerifications.size(); i++) {
+            params = params.addParam("otpCode" + (i + 1), dualVerifications.get(i).toString());
+        }
+        params.addHeader("Origin", "https://login.hk.beanfun.com");
+        params.addHeader("Referer", url);
+        params.addHeader("Accept", "text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.7");
+        QsHttpResponse qsHttpResponse = HttpClient.getInstance().post(url, params);
+        if (!qsHttpResponse.getSuccess()) {
+            return result.error(BeanfunResult.CodeEnum.REQUEST_ERROR);
+        }
+        content = qsHttpResponse.getContent();
+        if (content.indexOf("驗證碼錯誤") != -1) {
+            return result.error(BeanfunResult.CodeEnum.DUAL_VERIFICATIONS_ERROR);
+        }
+        dataList = RegexUtils.regex(RegexUtils.Constant.HK_LOGIN_ERROR_MSG, content);
+        String errMsg = RegexUtils.getIndex(0, 1, dataList);
+        if (StringUtils.isNotBlank(errMsg)) {
+            return result.error(BeanfunResult.CodeEnum.LOGIN_ERROR_MSG, errMsg);
+        }
+
+        dataList = RegexUtils.regex(RegexUtils.Constant.HK_LOGIN_AKEY, content);
+        String aKey = RegexUtils.getIndex(0, 1, dataList);
+        result.setData(aKey);
+        return result;
     }
 
     @Override

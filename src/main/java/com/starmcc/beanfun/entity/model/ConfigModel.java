@@ -39,6 +39,7 @@ public class ConfigModel implements Serializable {
     private String vipSecrect;
     private Boolean minimizeMode;
     private Boolean expandSettingPane;
+    private Boolean dualVerify;
 
     public ConfigModel() {
         // 默认配置

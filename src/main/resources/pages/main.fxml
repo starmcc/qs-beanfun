@@ -80,7 +80,7 @@
                                 <MenuItem fx:id="menuItemBahamuteUrl" mnemonicParsing="false" text="巴哈姆特" />
                                 <MenuItem fx:id="qstmsUrlMenu" mnemonicParsing="false" text="小梦博客" />
                                 <MenuItem fx:id="tmsTieBaUrlMenu" mnemonicParsing="false" text="新枫之谷贴吧" />
-                                <MenuItem fx:id="qsbiliUrlMenu" mnemonicParsing="false" text="秋水小梦B站主页" />
+                                <MenuItem fx:id="qsbiliUrlMenu" mnemonicParsing="false" text="小梦Bilibili" />
                             </items>
                         </Menu>
                         <Menu mnemonicParsing="false" text="关于...">

@@ -77,6 +77,11 @@
                      </GridPane.margin>
                     </ImageView>
                     <PasswordField fx:id="passwordFieldPassword" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" GridPane.columnIndex="2" GridPane.columnSpan="6" GridPane.rowIndex="2" />
+                  <CheckBox fx:id="checkBoxDualVerify" focusTraversable="false" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" mnemonicParsing="false" onAction="#dualVerifyClickAction" text="双重验证" GridPane.columnIndex="2" GridPane.columnSpan="2">
+                     <cursor>
+                        <Cursor fx:constant="DEFAULT" />
+                     </cursor>
+                  </CheckBox>
                     <CheckBox fx:id="checkBoxRemember" focusTraversable="false" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" mnemonicParsing="false" onAction="#rememberClickAction" text="记住密码" GridPane.columnIndex="6" GridPane.columnSpan="2" GridPane.rowIndex="3">
                         <cursor>
                             <Cursor fx:constant="DEFAULT" />

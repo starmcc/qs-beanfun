@@ -127,6 +127,10 @@ public abstract class BeanfunResult {
          * 禁止区域
          */
         AREA_BAN(13, "您所在的区域不允许登录!"),
+        /**
+         * 双重验证失败
+         */
+        DUAL_VERIFICATIONS_ERROR(14, "双重验证失败!"),
         ;
 
         private final int code;
