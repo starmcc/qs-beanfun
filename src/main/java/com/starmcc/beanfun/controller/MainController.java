@@ -362,7 +362,7 @@ public class MainController implements Initializable {
     public void changeAccountNowAction() {
         LoadPage.task(FXPageEnum.主页, label -> {
             label.setText("变更账户..");
-            this.accountInfoRefresh();
+            FrameManager.getInstance().runLater(() -> this.accountInfoRefresh());
         });
     }
 
@@ -722,10 +722,9 @@ public class MainController implements Initializable {
             labelActCreateTime.setText(actCreateTimeStr);
         }
         textFieldActId.setText(QsConstant.nowAccount.getId().substring(0, 5) + "******");
-
         // 获取游戏点数
         String pointsText = this.getPointsText();
-        FrameManager.getInstance().runLater(() -> labelActPoint.setText(pointsText));
+        labelActPoint.setText(pointsText);
     }
 
     public void expandableBarAction(MouseEvent mouseEvent) {

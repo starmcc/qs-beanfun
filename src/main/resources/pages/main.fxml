@@ -166,7 +166,7 @@
                      </GridPane.margin></Button>
                         <HBox alignment="CENTER_LEFT" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" spacing="5.0" GridPane.columnIndex="1" GridPane.hgrow="ALWAYS" GridPane.vgrow="ALWAYS">
                             <children>
-                                <ChoiceBox fx:id="choiceBoxActList" maxWidth="1.7976931348623157E308" onDragDetected="#changeAccountNowAction" style="-fx-font-size: 12;" HBox.hgrow="ALWAYS" />
+                                <ChoiceBox fx:id="choiceBoxActList" maxWidth="1.7976931348623157E308" onAction="#changeAccountNowAction" style="-fx-font-size: 12;" HBox.hgrow="ALWAYS" />
                             </children>
                      <GridPane.margin>
                         <Insets />
