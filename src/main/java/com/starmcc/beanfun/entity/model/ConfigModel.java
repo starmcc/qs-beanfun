@@ -40,6 +40,8 @@ public class ConfigModel implements Serializable {
     private String vipSecrect;
     private Boolean minimizeMode;
     private Boolean expandSettingPane;
+    private String advVerifyLoginPhone;
+    private Boolean advVerifyLoginPhoneSave;
 
     public ConfigModel() {
         // 默认配置
@@ -78,6 +80,10 @@ public class ConfigModel implements Serializable {
         this.minimizeMode = true;
         // 展开工具设置面板
         this.expandSettingPane = false;
+        // 台湾进阶登录验证手机号
+        this.advVerifyLoginPhone = "";
+        // 台湾进阶登录验证手机号保存开关
+        this.advVerifyLoginPhoneSave = false;
     }
 
 
@@ -213,6 +219,7 @@ public class ConfigModel implements Serializable {
      * @author starmcc
      * @date 2023/01/12
      */
+    @Getter
     public static enum UpdateChannel {
         GITHUB((short) 1),
         GITEE((short) 2),
@@ -222,10 +229,6 @@ public class ConfigModel implements Serializable {
 
         UpdateChannel(short channel) {
             this.channel = channel;
-        }
-
-        public short getChannel() {
-            return channel;
         }
 
         public static UpdateChannel get(short channel) {

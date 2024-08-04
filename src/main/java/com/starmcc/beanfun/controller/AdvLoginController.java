@@ -2,9 +2,11 @@ package com.starmcc.beanfun.controller;
 
 import com.starmcc.beanfun.client.HttpClient;
 import com.starmcc.beanfun.constant.FXPageEnum;
+import com.starmcc.beanfun.constant.QsConstant;
 import com.starmcc.beanfun.entity.client.QsHttpResponse;
 import com.starmcc.beanfun.entity.client.ReqParams;
 import com.starmcc.beanfun.manager.FrameManager;
+import com.starmcc.beanfun.utils.FileTools;
 import com.starmcc.beanfun.utils.RegexUtils;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
@@ -45,8 +47,17 @@ public class AdvLoginController implements Initializable {
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
-        imageViewCode.setOnMouseClicked(event -> this.openAdvanceCheck());
+        initUi();
         openAdvanceCheck();
+    }
+
+    private void initUi() {
+        imageViewCode.setOnMouseClicked(event -> this.openAdvanceCheck());
+        checkBoxSave.setSelected(QsConstant.config.getAdvVerifyLoginPhoneSave());
+        checkBoxSave.setOnAction(event -> {
+            QsConstant.config.setAdvVerifyLoginPhoneSave(checkBoxSave.isSelected());
+            FileTools.saveConfig(QsConstant.config);
+        });
     }
 
     private void openAdvanceCheck() {
@@ -124,6 +135,12 @@ public class AdvLoginController implements Initializable {
             if (StringUtils.isNotBlank(msg)) {
                 FrameManager.getInstance().messageMaster(msg, Alert.AlertType.INFORMATION, FXPageEnum.ADV_LOGIN);
             }
+            //记录
+            if (checkBoxSave.isSelected()) {
+                QsConstant.config.setAdvVerifyLoginPhone(textFieldPhone.getText());
+                FileTools.saveConfig(QsConstant.config);
+            }
+
             FrameManager.getInstance().closeWindow(FXPageEnum.ADV_LOGIN);
 
 
