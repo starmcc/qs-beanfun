@@ -1,6 +1,7 @@
 package com.starmcc.beanfun.entity.client;
 
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 
 import java.io.Serializable;
 
@@ -10,6 +11,7 @@ import java.io.Serializable;
  * @author starmcc
  * @date 2022/10/01
  */
+@EqualsAndHashCode(callSuper = true)
 @Data
 public class BeanfunQrCodeResult extends BeanfunResult implements Serializable {
 

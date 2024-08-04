@@ -37,7 +37,7 @@ import javax.net.ssl.HostnameVerifier;
 import javax.net.ssl.SSLContext;
 import java.net.URI;
 import java.net.URLEncoder;
-import java.nio.charset.Charset;
+import java.nio.charset.StandardCharsets;
 import java.security.cert.CertificateException;
 import java.security.cert.X509Certificate;
 import java.util.*;
@@ -106,7 +106,7 @@ public class HttpClientImpl extends HttpClient {
         final ReqParams finalParams = Objects.isNull(reqParams) ? new ReqParams() : reqParams;
         return request(() -> {
             HttpGet httpGet = null;
-            if (finalParams.getParams().size() == 0) {
+            if (finalParams.getParams().isEmpty()) {
                 httpGet = new HttpGet(url);
             } else {
                 // 参数
@@ -211,14 +211,16 @@ public class HttpClientImpl extends HttpClient {
             // 从响应模型中获取响应实体
             qsHttpResponse.setRedirectLocations(context.getRedirectLocations());
             qsHttpResponse.setCode(response.getStatusLine().getStatusCode());
-            HttpEntity responseEntity = response.getEntity();
-            if (Objects.isNull(responseEntity)) {
+            HttpEntity rspEntity = response.getEntity();
+            if (Objects.isNull(rspEntity)) {
                 return qsHttpResponse.build();
             }
             qsHttpResponse.setCookieMap(this.getCookie(httpUriRequest.getURI()));
-            qsHttpResponse.setContentLength(responseEntity.getContentLength());
-            String content = EntityUtils.toString(responseEntity, Charset.forName("UTF-8"));
+            qsHttpResponse.setContentLength(rspEntity.getContentLength());
+            byte[] byteArray = EntityUtils.toByteArray(rspEntity);
+            String content = new String(byteArray, StandardCharsets.UTF_8);
             qsHttpResponse.setContent(StringEscapeUtils.unescapeHtml4(content));
+            qsHttpResponse.setByteData(byteArray);
         } catch (Exception e) {
             log.error("请求异常 e={}", e.getMessage(), e);
             qsHttpResponse.setCode(500);

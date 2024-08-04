@@ -34,7 +34,7 @@ public abstract class HttpClient {
     /**
      * 获取URI cookies
      *
-     * @param URI URI
+     * @param uri URI
      * @return {@link Map}<{@link String}, {@link String}>
      */
     public abstract Map<String, String> getCookie(URI uri);
@@ -49,7 +49,7 @@ public abstract class HttpClient {
     /**
      * 设置cookie
      *
-     * @param URI    URI
+     * @param uri    URI
      * @param cookie cookie
      */
     public abstract void setCookie(URI uri, Map<String, String> cookie);

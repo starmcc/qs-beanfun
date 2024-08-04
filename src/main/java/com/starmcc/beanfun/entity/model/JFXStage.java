@@ -120,7 +120,7 @@ public class JFXStage implements EventHandler<MouseEvent> {
         HBox hbox = new HBox();
         hbox.setPrefHeight(26);
         String cssFile = "/static/css/title.css";
-        if (page == FXPageEnum.登录页) {
+        if (page == FXPageEnum.LOGIN) {
             cssFile = "/static/css/login.css";
         }
         hbox.getStylesheets().add(this.getClass().getResource(cssFile).toExternalForm());
@@ -135,7 +135,7 @@ public class JFXStage implements EventHandler<MouseEvent> {
         }
         // TITLE
         Label titleLbl = new Label(page.getTitle());
-        if (page == FXPageEnum.主页) {
+        if (page == FXPageEnum.MAIN) {
             titleLbl.setText(page.getTitle() + "-" + QsConstant.APP_VERSION);
         }
         titleLbl.setId("customTitle");
@@ -154,7 +154,7 @@ public class JFXStage implements EventHandler<MouseEvent> {
         close.setPrefHeight(22);
         close.getStyleClass().add(CLOSE_CSS_CLASS);
         close.setOnMouseClicked(e -> {
-            if (page == FXPageEnum.登录页 || page == FXPageEnum.主页) {
+            if (page == FXPageEnum.LOGIN || page == FXPageEnum.MAIN) {
                 FrameManager.getInstance().exit();
                 return;
             }
@@ -169,7 +169,7 @@ public class JFXStage implements EventHandler<MouseEvent> {
             about.getStyleClass().add(ABOUT_CSS_CLASS);
             about.setOnMouseClicked(event -> {
                 try {
-                    FrameManager.getInstance().openWindow(FXPageEnum.关于我, page);
+                    FrameManager.getInstance().openWindow(FXPageEnum.ABOUT, page);
                 } catch (Exception e) {
                     log.error("发生异常 e={}", e.getMessage(), e);
                 }

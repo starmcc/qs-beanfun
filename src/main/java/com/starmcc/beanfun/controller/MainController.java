@@ -10,7 +10,7 @@ import com.starmcc.beanfun.entity.model.ConfigModel;
 import com.starmcc.beanfun.entity.model.LoadPage;
 import com.starmcc.beanfun.entity.model.QsTray;
 import com.starmcc.beanfun.handler.*;
-import com.starmcc.beanfun.manager.AdvancedTimerMamager;
+import com.starmcc.beanfun.manager.AdvancedTimerManager;
 import com.starmcc.beanfun.manager.FrameManager;
 import com.starmcc.beanfun.manager.WindowManager;
 import com.starmcc.beanfun.manager.impl.AdvancedTimerTask;
@@ -38,6 +38,7 @@ import org.apache.commons.lang3.StringUtils;
 import java.awt.event.KeyEvent;
 import java.io.File;
 import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.net.URL;
 import java.text.MessageFormat;
 import java.text.SimpleDateFormat;
@@ -73,8 +74,6 @@ public class MainController implements Initializable {
     private ChoiceBox<Account> choiceBoxActList;
     @FXML
     private Label labelActPoint;
-    @FXML
-    private Label labelActStatusTips;
     @FXML
     private Label labelActStatus;
     @FXML
@@ -114,8 +113,6 @@ public class MainController implements Initializable {
     @FXML
     private MenuItem menuItemBahamuteUrl;
     @FXML
-    private MenuItem qstmsUrlMenu;
-    @FXML
     private MenuItem tmsTieBaUrlMenu;
     @FXML
     private MenuItem qsbiliUrlMenu;
@@ -131,8 +128,6 @@ public class MainController implements Initializable {
     private CheckBox checkBoxHookInput;
     @FXML
     public CheckBox checkBoxMinimizeHide;
-    @FXML
-    private MenuItem menuItemEquipment;
     @FXML
     private MenuItem menuItemNgs;
     @FXML
@@ -155,15 +150,22 @@ public class MainController implements Initializable {
     private Tooltip tooltipRefeshPoint;
     @FXML
     private Tooltip tooltipVideoConfig;
+    @FXML
+    private MenuItem menuItemCoreCalc;
+    @FXML
+    private MenuItem menuItemLoginOut;
+    @FXML
+    private MenuItem menuItemExpCalc;
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
         // 加载页面
+
         FrameManager.getInstance().runLater(() -> {
 
             switchExpandablePane(QsConstant.config.getExpandSettingPane(), true);
             // 托盘菜单
-            QsConstant.trayIcon = QsTray.init(QsConstant.JFX_STAGE_DATA.get(FXPageEnum.主页).getStage());
+            QsConstant.trayIcon = QsTray.init(QsConstant.JFX_STAGE_DATA.get(FXPageEnum.MAIN).getStage());
             QsTray.show(QsConstant.trayIcon);
             try {
                 this.initEvent();
@@ -174,7 +176,7 @@ public class MainController implements Initializable {
                 log.error("error={}", e.getMessage(), e);
             }
             // 获取账号数据
-            LoadPage.task(FXPageEnum.主页, label -> {
+            LoadPage.task(FXPageEnum.MAIN, label -> {
                 label.setText("加载账号信息..");
                 refeshAccounts(null);
             });
@@ -185,7 +187,7 @@ public class MainController implements Initializable {
             final int delay = 1000 * 60 * 5;
             // 10分钟后开始
             final int waitTime = 1000 * 60 * 10;
-            AdvancedTimerMamager.getInstance().addTask(new AdvancedTimerTask() {
+            AdvancedTimerManager.getInstance().addTask(new AdvancedTimerTask() {
                 @Override
                 public void start() throws Exception {
                     BeanfunClient.run().heartbeat();
@@ -297,23 +299,17 @@ public class MainController implements Initializable {
         menuItemTwBeanfunUrl.setOnAction(event -> FrameManager.getInstance().openWebUrl("https://tw.beanfun.com"));
         menuItemTechbangUrl.setOnAction(event -> FrameManager.getInstance().openWebUrl("http://gametsg.techbang.com/maplestory/"));
         menuItemBahamuteUrl.setOnAction(event -> FrameManager.getInstance().openWebUrl("https://forum.gamer.com.tw/A.php?bsn=7650/"));
-        qstmsUrlMenu.setOnAction(event -> FrameManager.getInstance().openWebUrl("https://www.qstms.com"));
         tmsTieBaUrlMenu.setOnAction(event -> FrameManager.getInstance().openWebUrl("https://tieba.baidu.com/f?kw=%E6%96%B0%E6%9E%AB%E4%B9%8B%E8%B0%B7"));
         qsbiliUrlMenu.setOnAction(event -> FrameManager.getInstance().openWebUrl("https://space.bilibili.com/391919722"));
-        menuItemEquipment.setOnAction(event -> {
-            try {
-                FrameManager.getInstance().openWindow(FXPageEnum.装备计算器);
-            } catch (Exception e) {
-                log.error("equipment open error e={}", e.getMessage(), e);
-                FrameManager.getInstance().message("打开装备窗失败!", Alert.AlertType.ERROR);
-            }
-        });
         menuItemNgs.setOnAction(event -> {
             if (FrameManager.getInstance().dialogConfirm("结束NGS", "是否结束NGS进程?")) {
                 WindowManager.getInstance().killBlackXchg();
             }
         });
         menuItemSystemCalc.setOnAction(event -> WindowManager.getInstance().openSystemCalc());
+        menuItemCoreCalc.setOnAction(event -> FrameManager.getInstance().openWebUrl("https://starmcc.github.io/MapleStoryCoreCalc/"));
+        menuItemLoginOut.setOnAction(event -> this.exitLoginAction());
+        menuItemExpCalc.setOnAction(event -> FrameManager.getInstance().openWebUrl("https://mapleroad.kr/utils/exp_coupon"));
 
         menuItemExit.setOnAction(event -> {
             try {
@@ -326,8 +322,7 @@ public class MainController implements Initializable {
 
         menuItemPaperDoll.setOnAction(event -> QsConstant.PluginEnum.MAPLESTORY_EMULATOR.run());
 
-        menuItemAlliance.setOnAction(event ->
-                FrameManager.getInstance().openWebBrowser(QsConstant.PluginEnum.WAR_ALLIANCE_HTML.getMainPath()));
+        menuItemAlliance.setOnAction(event -> FrameManager.getInstance().openWebBrowser(QsConstant.PluginEnum.WAR_ALLIANCE_HTML.getMainPath()));
 
         menuItemTheSeed.setOnAction(event -> FrameManager.getInstance().openWebUrl("https://seed.qstms.com"));
 
@@ -348,21 +343,21 @@ public class MainController implements Initializable {
 
     @FXML
     public void exitLoginAction() {
-        LoadPage.task(FXPageEnum.主页, label -> {
+        LoadPage.task(FXPageEnum.MAIN, label -> {
             label.setText("正在退出登录..");
             BeanfunClient.run().loginOut(QsConstant.beanfunModel.getToken());
             FrameManager.getInstance().runLater(() -> {
-                FrameManager.getInstance().openWindow(FXPageEnum.登录页);
-                FrameManager.getInstance().closeWindow(FXPageEnum.主页);
+                FrameManager.getInstance().openWindow(FXPageEnum.LOGIN);
+                FrameManager.getInstance().closeWindow(FXPageEnum.MAIN);
             });
         });
     }
 
     @FXML
     public void changeAccountNowAction() {
-        LoadPage.task(FXPageEnum.主页, label -> {
+        LoadPage.task(FXPageEnum.MAIN, label -> {
             label.setText("变更账户..");
-            FrameManager.getInstance().runLater(() -> this.accountInfoRefresh());
+            FrameManager.getInstance().runLater(this::accountInfoRefresh);
         });
     }
 
@@ -372,19 +367,17 @@ public class MainController implements Initializable {
      */
     @FXML
     public void getDynamicPasswordAction() {
-        LoadPage.task(FXPageEnum.主页, label -> {
+        LoadPage.task(FXPageEnum.MAIN, label -> {
             label.setText("获取动态密码..");
             AccountHandler.getDynamicPassword(QsConstant.nowAccount, (id, password) -> {
                 FrameManager.getInstance().runLater(() -> textFieldDynamicPwd.setText(password));
                 // 自动输入 并检查游戏是否存在
-                if (BooleanUtils.isTrue(QsConstant.config.getAutoInput())
-                        && StringUtils.isNotBlank(password)
-                        && WindowManager.getInstance().checkMapleStoryRunning()) {
+                if (BooleanUtils.isTrue(QsConstant.config.getAutoInput()) && StringUtils.isNotBlank(password) && WindowManager.getInstance().checkMapleStoryRunning()) {
                     try {
                         WindowManager.getInstance().autoInputActPwd(id, password);
                     } catch (Exception e) {
-                        log.error("error={}", e, e.getMessage());
-                        FrameManager.getInstance().message("自动输入异常", Alert.AlertType.ERROR);
+                        log.error("error={}", e.getMessage(), e);
+                        FrameManager.getInstance().messageMaster("自动输入异常", Alert.AlertType.ERROR, FXPageEnum.MAIN);
                     }
                 }
             });
@@ -395,7 +388,7 @@ public class MainController implements Initializable {
     @FXML
     public void startGameAction(ActionEvent actionEvent) {
         if (StringUtils.isBlank(textFieldGamePath.getText())) {
-            FrameManager.getInstance().messageSync("请配置游戏路径!", Alert.AlertType.INFORMATION);
+            FrameManager.getInstance().messageMaster("请配置游戏路径!", Alert.AlertType.INFORMATION, FXPageEnum.MAIN);
             gamePathOpenAction(actionEvent);
             return;
         } else if (!new File(textFieldGamePath.getText()).exists()) {
@@ -405,7 +398,7 @@ public class MainController implements Initializable {
         }
         // 检查VC环境是否安装
         if (!WindowManager.getInstance().checkVcRuntimeEnvironment()) {
-            FrameManager.getInstance().messageSync("请安装VC环境!", Alert.AlertType.INFORMATION);
+            FrameManager.getInstance().messageMaster("请安装VC环境!", Alert.AlertType.INFORMATION, FXPageEnum.MAIN);
             boolean goDownload = FrameManager.getInstance().dialogConfirm("VcRuntime Error", "模拟繁体环境需要拥有VC环境,是否前往下载并安装?");
             if (goDownload) {
                 FrameManager.getInstance().openWebUrl("https://aka.ms/vs/17/release/vc_redist.x64.exe");
@@ -414,7 +407,7 @@ public class MainController implements Initializable {
         }
         // 启动游戏 如果免输入模式，组装账密
         if (BooleanUtils.isTrue(QsConstant.config.getPassInput())) {
-            LoadPage.task(FXPageEnum.主页, label -> {
+            LoadPage.task(FXPageEnum.MAIN, label -> {
                 label.setText("正在获取动态密码...");
                 try {
                     AccountHandler.getDynamicPassword(QsConstant.nowAccount, (id, password) -> {
@@ -425,7 +418,7 @@ public class MainController implements Initializable {
                     });
                 } catch (Exception e) {
                     log.error("获取密码失败 e={}", e.getMessage(), e);
-                    FrameManager.getInstance().message("获取动态密码异常:" + e.getMessage(), Alert.AlertType.ERROR);
+                    FrameManager.getInstance().messageMaster("获取动态密码异常:" + e.getMessage(), Alert.AlertType.ERROR, FXPageEnum.MAIN);
                 }
             });
         } else {
@@ -438,7 +431,7 @@ public class MainController implements Initializable {
         FileChooser fileChooser = new FileChooser();
         FileChooser.ExtensionFilter extFilter = new FileChooser.ExtensionFilter("新枫之谷启动程序(MapleStory.exe)", "MapleStory.exe");
         fileChooser.getExtensionFilters().add(extFilter);
-        File file = fileChooser.showOpenDialog(QsConstant.JFX_STAGE_DATA.get(FXPageEnum.主页).getStage());
+        File file = fileChooser.showOpenDialog(QsConstant.JFX_STAGE_DATA.get(FXPageEnum.MAIN).getStage());
         if (Objects.isNull(file)) {
             return;
         }
@@ -448,7 +441,7 @@ public class MainController implements Initializable {
         }
         // 判断中文路径
         if (RegexUtils.test(RegexUtils.Constant.COMMON_CHINA_STRING, path)) {
-            FrameManager.getInstance().messageSync("路径中不能包含中文!", Alert.AlertType.WARNING);
+            FrameManager.getInstance().messageMaster("路径中不能包含中文!", Alert.AlertType.WARNING, FXPageEnum.MAIN);
             return;
         }
 
@@ -462,8 +455,8 @@ public class MainController implements Initializable {
      * 更新游戏点数事件
      */
     @FXML
-    public void updatePointsAction(MouseEvent actionEvent) {
-        LoadPage.task(FXPageEnum.主页, label -> {
+    public void updatePointsAction() {
+        LoadPage.task(FXPageEnum.MAIN, label -> {
             label.setText("获取游戏点数...");
             // 获取游戏点数
             String pointsText = getPointsText();
@@ -476,12 +469,12 @@ public class MainController implements Initializable {
      * 添加账号事件
      */
     @FXML
-    public void addActAction(MouseEvent actionEvent) {
+    public void addActAction() {
         String name = FrameManager.getInstance().dialogText("添加账号", "");
         if (StringUtils.isBlank(name)) {
             return;
         }
-        LoadPage.task(FXPageEnum.主页, label -> {
+        LoadPage.task(FXPageEnum.MAIN, label -> {
             label.setText("添加账号..");
             try {
                 BeanfunStringResult result = BeanfunClient.run().addAccount(name);
@@ -491,11 +484,11 @@ public class MainController implements Initializable {
                         btnAddActLabel.setVisible(false);
                     }));
                 } else {
-                    FrameManager.getInstance().message(result.getMsg(), Alert.AlertType.WARNING);
+                    FrameManager.getInstance().messageMaster(result.getMsg(), Alert.AlertType.WARNING, FXPageEnum.MAIN);
                 }
             } catch (Exception e) {
                 log.error("添加账号异常 e={}", e.getMessage(), e);
-                FrameManager.getInstance().message("创建失败!", Alert.AlertType.WARNING);
+                FrameManager.getInstance().messageMaster("创建失败!", Alert.AlertType.WARNING, FXPageEnum.MAIN);
             }
         });
     }
@@ -504,17 +497,17 @@ public class MainController implements Initializable {
      * 编辑账号事件
      */
     @FXML
-    public void editActAction(ActionEvent actionEvent) {
+    public void editActAction() {
         String newName = FrameManager.getInstance().dialogText("编辑账号", QsConstant.nowAccount.getName());
         if (StringUtils.isBlank(newName)) {
             return;
         }
-        LoadPage.task(FXPageEnum.主页, label -> {
+        LoadPage.task(FXPageEnum.MAIN, label -> {
             label.setText("编辑账号..");
             try {
                 BeanfunStringResult result = BeanfunClient.run().changeAccountName(QsConstant.nowAccount.getId(), newName);
                 if (!result.isSuccess()) {
-                    FrameManager.getInstance().message(result.getMsg(), Alert.AlertType.WARNING);
+                    FrameManager.getInstance().messageMaster(result.getMsg(), Alert.AlertType.WARNING, FXPageEnum.MAIN);
                     return;
                 }
                 refeshAccounts(null);
@@ -525,20 +518,20 @@ public class MainController implements Initializable {
     }
 
     @FXML
-    public void memberTopUpAction(ActionEvent actionEvent) throws Exception {
+    public void memberTopUpAction() throws Exception {
         String jumpUrl = BeanfunClient.run().getWebUrlMemberTopUp(QsConstant.beanfunModel.getToken());
         FrameManager.getInstance().openWebBrowser(jumpUrl);
     }
 
 
     @FXML
-    public void memberCenterAction(ActionEvent actionEvent) throws Exception {
+    public void memberCenterAction() throws Exception {
         String jumpUrl = BeanfunClient.run().getWebUrlMemberCenter(QsConstant.beanfunModel.getToken());
         FrameManager.getInstance().openWebBrowser(jumpUrl);
     }
 
     @FXML
-    public void serviceCenterAction(ActionEvent actionEvent) throws Exception {
+    public void serviceCenterAction() throws Exception {
         String jumpUrl = BeanfunClient.run().getWebUrlServiceCenter();
         FrameManager.getInstance().openWebBrowser(jumpUrl);
     }
@@ -546,21 +539,17 @@ public class MainController implements Initializable {
 
     /**
      * 窗口置顶
-     *
-     * @param actionEvent 行动事件
      */
     @FXML
-    public void alwaysOnTopAction(ActionEvent actionEvent) {
-        QsConstant.JFX_STAGE_DATA.get(FXPageEnum.主页).getStage().setAlwaysOnTop(checkMenuItemAlwaysOnTop.isSelected());
+    public void alwaysOnTopAction() {
+        QsConstant.JFX_STAGE_DATA.get(FXPageEnum.MAIN).getStage().setAlwaysOnTop(checkMenuItemAlwaysOnTop.isSelected());
     }
 
     /**
      * 自动轮烧
-     *
-     * @param actionEvent 行动事件
      */
     @FXML
-    public void autoLunShaoAction(ActionEvent actionEvent) {
+    public void autoLunShaoAction() {
         // 获取当前状态
         if (checkMenuItemAutoLunShao.isSelected()) {
             // 需要启动
@@ -577,24 +566,21 @@ public class MainController implements Initializable {
 
     /**
      * 打开工具窗口操作
-     *
-     * @param actionEvent 行动事件
      */
     @FXML
-    public void openToolsWindowAction(ActionEvent actionEvent) throws Exception {
-        FrameManager.getInstance().openWindow(FXPageEnum.关于我, FXPageEnum.主页);
+    public void openToolsWindowAction() throws Exception {
+        FrameManager.getInstance().openWindow(FXPageEnum.ABOUT, FXPageEnum.MAIN);
     }
 
     @FXML
-    public void recordVideoAction(ActionEvent actionEvent) {
-        if (Objects.equals(QsConstant.config.getRecordVideo().getCaptureType(), ConfigModel.RecordVideo.CaptureTypeEnum.游戏窗口.getType())
-                && buttonRecordVideo.isSelected()) {
+    public void recordVideoAction() {
+        if (Objects.equals(QsConstant.config.getRecordVideo().getCaptureType(), ConfigModel.RecordVideo.CaptureTypeEnum.GAME_WINDOW.getType()) && buttonRecordVideo.isSelected()) {
             // 如果是录制游戏窗口，且是开始录制状态，则检查游戏运行状态
             boolean is = WindowManager.getInstance().checkMapleStoryRunning();
             if (!is) {
                 // 如果游戏不存在，则不进行录制
                 buttonRecordVideo.setSelected(!buttonRecordVideo.isSelected());
-                FrameManager.getInstance().messageSync("游戏并未运行,请运行游戏后再尝试录制!", Alert.AlertType.WARNING);
+                FrameManager.getInstance().messageMaster("游戏并未运行,请运行游戏后再尝试录制!", Alert.AlertType.WARNING, FXPageEnum.MAIN);
                 return;
             }
         }
@@ -621,19 +607,19 @@ public class MainController implements Initializable {
     }
 
     @FXML
-    public void autoInputAction(ActionEvent actionEvent) {
+    public void autoInputAction() {
         QsConstant.config.setAutoInput(toggleButtonAutoInput.isSelected());
         FileTools.saveConfig(QsConstant.config);
     }
 
     @FXML
-    public void openVideoSettingWindowAction(ActionEvent actionEvent) throws Exception {
-        FrameManager.getInstance().openWindow(FXPageEnum.录像设置, FXPageEnum.主页);
+    public void openVideoSettingWindowAction() throws Exception {
+        FrameManager.getInstance().openWindow(FXPageEnum.RECORD_VIDEO, FXPageEnum.MAIN);
     }
 
     @FXML
-    public void openCurrencyWindowAction(ActionEvent actionEvent) throws Exception {
-        FrameManager.getInstance().openWindow(FXPageEnum.汇率查询, FXPageEnum.主页);
+    public void openCurrencyWindowAction() throws Exception {
+        FrameManager.getInstance().openWindow(FXPageEnum.CURRENCY, FXPageEnum.MAIN);
     }
 
 
@@ -645,7 +631,7 @@ public class MainController implements Initializable {
         if (actResult.isSuccess()) {
             QsConstant.beanfunModel.build(actResult);
         } else {
-            FrameManager.getInstance().message(actResult.getMsg(), Alert.AlertType.ERROR);
+            FrameManager.getInstance().messageMaster(actResult.getMsg(), Alert.AlertType.ERROR, FXPageEnum.MAIN);
             return;
         }
 
@@ -653,10 +639,10 @@ public class MainController implements Initializable {
 
         if (!QsConstant.beanfunModel.isCertStatus()) {
             // 需要进阶认证
-            FrameManager.getInstance().message("请前往用户中心 -> 会员中心进行进阶认证!\n" + "做完进阶认证后请退出登录器重新登录!", Alert.AlertType.INFORMATION);
+            FrameManager.getInstance().messageMaster("请前往用户中心 -> 会员中心进行进阶认证!\n" + "做完进阶认证后请退出登录器重新登录!", Alert.AlertType.INFORMATION, FXPageEnum.MAIN);
         } else if (QsConstant.beanfunModel.isNewAccount()) {
             // 需要创建账号
-            FrameManager.getInstance().message("新账号请点击游戏账号创建按钮!", Alert.AlertType.INFORMATION);
+            FrameManager.getInstance().messageMaster("新账号请点击游戏账号创建按钮!", Alert.AlertType.INFORMATION, FXPageEnum.MAIN);
         }
 
         btnAddAct.setVisible(QsConstant.beanfunModel.isNewAccount());
@@ -666,7 +652,7 @@ public class MainController implements Initializable {
         FrameManager.getInstance().runLater(() -> {
             ObservableList<Account> options = FXCollections.observableArrayList();
             options.clear();
-            QsConstant.beanfunModel.getAccountList().forEach(account -> options.add(account));
+            options.addAll(QsConstant.beanfunModel.getAccountList());
             choiceBoxActList.setItems(options);
             choiceBoxActList.getSelectionModel().selectFirst();
             this.accountInfoRefresh();
@@ -695,7 +681,7 @@ public class MainController implements Initializable {
             return MessageFormat.format(template, 0, 0);
         }
         BigDecimal points = new BigDecimal(gamePoints);
-        BigDecimal divide = points.divide(new BigDecimal("2.5"), 2, BigDecimal.ROUND_DOWN);
+        BigDecimal divide = points.divide(new BigDecimal("2.5"), 2, RoundingMode.DOWN);
         return MessageFormat.format(template, gamePoints, divide.intValue());
     }
 
@@ -751,7 +737,7 @@ public class MainController implements Initializable {
                 mainPane.getChildren().remove(expandablePane);
             }
 
-            final Stage stage = QsConstant.JFX_STAGE_DATA.get(FXPageEnum.主页).getStage();
+            final Stage stage = QsConstant.JFX_STAGE_DATA.get(FXPageEnum.MAIN).getStage();
             stage.sizeToScene();
         });
     }

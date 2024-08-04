@@ -1,117 +1,127 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<?import javafx.geometry.Insets?>
+<?import javafx.geometry.*?>
+<?import javafx.scene.control.*?>
 <?import javafx.scene.Cursor?>
-<?import javafx.scene.control.Button?>
-<?import javafx.scene.control.CheckBox?>
-<?import javafx.scene.control.ChoiceBox?>
-<?import javafx.scene.control.ComboBox?>
-<?import javafx.scene.control.Hyperlink?>
-<?import javafx.scene.control.PasswordField?>
-<?import javafx.scene.image.Image?>
-<?import javafx.scene.image.ImageView?>
-<?import javafx.scene.layout.AnchorPane?>
-<?import javafx.scene.layout.ColumnConstraints?>
-<?import javafx.scene.layout.GridPane?>
-<?import javafx.scene.layout.RowConstraints?>
-<?import javafx.scene.layout.VBox?>
-
-<AnchorPane xmlns="http://javafx.com/javafx/8.0.171" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.starmcc.beanfun.controller.LoginController">
+<?import javafx.scene.image.*?>
+<?import javafx.scene.layout.*?>
+<AnchorPane xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1"
+            fx:controller="com.starmcc.beanfun.controller.LoginController">
     <children>
-      <VBox prefWidth="350.0">
-         <children>
-            <VBox alignment="CENTER" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" prefHeight="60.0" style="-fx-background-color: #40444f;">
-               <children>
-                      <ImageView fx:id="logo" fitHeight="60.0" fitWidth="210.0" pickOnBounds="true" smooth="false">
-                          <image>
-                              <Image url="@../static/images/logo.png" />
-                          </image>
-                      </ImageView>
-               </children>
-            </VBox>
-            <GridPane hgap="3.0" vgap="3.0">
-              <columnConstraints>
-                  <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
-                  <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
-                <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
-                  <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
-                <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
-                  <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
-                  <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
-                  <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
-                  <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
-              </columnConstraints>
-              <rowConstraints>
-                  <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
-                  <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
-                  <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
-                  <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
-                  <RowConstraints minHeight="10.0" prefHeight="36.0" vgrow="SOMETIMES" />
-              </rowConstraints>
-               <children>
-                    <ChoiceBox fx:id="choiceBoxLoginType" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" onAction="#selectLoginTypeAction" GridPane.columnIndex="6" GridPane.columnSpan="2" GridPane.halignment="RIGHT" GridPane.valignment="CENTER">
-                     <GridPane.margin>
-                        <Insets bottom="2.0" left="2.0" right="2.0" top="2.0" />
-                     </GridPane.margin>
-                  </ChoiceBox>
-                    <ImageView fitHeight="22.0" fitWidth="22.0" pickOnBounds="true" preserveRatio="true" GridPane.columnIndex="1" GridPane.halignment="CENTER" GridPane.rowIndex="1">
-                        <image>
-                            <Image url="@../static/images/ico.png" />
-                        </image>
-                     <GridPane.margin>
-                        <Insets />
-                     </GridPane.margin>
-                    </ImageView>
-            
-                    <ComboBox fx:id="comboBoxAccount" editable="true" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" onAction="#selectAccountAction" style="-fx-border-color: D3D3D3; -fx-outer-border: transparent;" GridPane.columnIndex="2" GridPane.columnSpan="6" GridPane.rowIndex="1">
-                     <GridPane.margin>
-                        <Insets />
-                     </GridPane.margin>
-                  </ComboBox>
-                    <ImageView fitHeight="22.0" fitWidth="22.0" pickOnBounds="true" preserveRatio="true" GridPane.columnIndex="1" GridPane.halignment="CENTER" GridPane.rowIndex="2">
-                        <image>
-                            <Image url="@../static/images/pwd.png" />
-                        </image>
-                     <GridPane.margin>
-                        <Insets />
-                     </GridPane.margin>
-                    </ImageView>
-                    <PasswordField fx:id="passwordFieldPassword" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" GridPane.columnIndex="2" GridPane.columnSpan="6" GridPane.rowIndex="2" />
-                  <CheckBox fx:id="checkBoxDualVerify" focusTraversable="false" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" mnemonicParsing="false" onAction="#dualVerifyClickAction" text="双重验证" GridPane.columnIndex="2" GridPane.columnSpan="2">
-                     <cursor>
-                        <Cursor fx:constant="DEFAULT" />
-                     </cursor>
-                  </CheckBox>
-                    <CheckBox fx:id="checkBoxRemember" focusTraversable="false" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" mnemonicParsing="false" onAction="#rememberClickAction" text="记住密码" GridPane.columnIndex="6" GridPane.columnSpan="2" GridPane.rowIndex="3">
-                        <cursor>
-                            <Cursor fx:constant="DEFAULT" />
-                        </cursor>
-                    </CheckBox>
-                    <Hyperlink fx:id="hyperlinkForgetPwd" focusTraversable="false" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" onAction="#forgotPwdAction" style="-fx-text-fill: black;" text="忘记密码" GridPane.columnIndex="1" GridPane.columnSpan="2" GridPane.rowIndex="3">
-                        <cursor>
-                            <Cursor fx:constant="DEFAULT" />
-                        </cursor>
-                    </Hyperlink>
-                    <Hyperlink fx:id="hyperlinkRegister" focusTraversable="false" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" onAction="#registerAction" style="-fx-text-fill: black;" text="注册账号" GridPane.columnIndex="3" GridPane.columnSpan="2" GridPane.rowIndex="3">
-                        <cursor>
-                            <Cursor fx:constant="DEFAULT" />
-                        </cursor>
-                    </Hyperlink>
-                    <Button maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" mnemonicParsing="false" onAction="#loginAction" text="登录" GridPane.columnIndex="1" GridPane.columnSpan="7" GridPane.rowIndex="4" />
-                    <ImageView fx:id="imageViewQrCode" fitHeight="26.0" fitWidth="26.0" onMouseClicked="#qrCodeClick" pickOnBounds="true" preserveRatio="true" GridPane.columnIndex="8" GridPane.halignment="CENTER" GridPane.rowIndex="4" GridPane.valignment="CENTER">
-                        <image>
-                            <Image url="@../static/images/二维码.png" />
-                        </image>
-                        <cursor>
-                            <Cursor fx:constant="HAND" />
-                        </cursor>
-                    </ImageView>
-               </children>
-               <padding>
-                  <Insets bottom="10.0" left="5.0" right="5.0" top="10.0" />
-               </padding>
-            </GridPane>
-         </children>
-      </VBox>
+        <VBox prefWidth="350.0">
+            <children>
+                <VBox alignment="CENTER" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308"
+                      prefHeight="60.0" style="-fx-background-color: #40444f;">
+                    <children>
+                        <ImageView fx:id="logo" fitHeight="60.0" fitWidth="210.0" pickOnBounds="true" smooth="false">
+                            <image>
+                                <Image url="@../static/images/logo.png"/>
+                            </image>
+                        </ImageView>
+                    </children>
+                </VBox>
+                <GridPane hgap="3.0" vgap="3.0">
+                    <columnConstraints>
+                        <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0"/>
+                        <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0"/>
+                        <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0"/>
+                        <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0"/>
+                        <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0"/>
+                        <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0"/>
+                        <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0"/>
+                        <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0"/>
+                        <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0"/>
+                    </columnConstraints>
+                    <rowConstraints>
+                        <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES"/>
+                        <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES"/>
+                        <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES"/>
+                        <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES"/>
+                        <RowConstraints minHeight="10.0" prefHeight="36.0" vgrow="SOMETIMES"/>
+                    </rowConstraints>
+                    <children>
+                        <ChoiceBox fx:id="choiceBoxLoginType" maxHeight="1.7976931348623157E308"
+                                   maxWidth="1.7976931348623157E308" onAction="#selectLoginTypeAction"
+                                   GridPane.columnIndex="6" GridPane.columnSpan="2" GridPane.halignment="RIGHT"
+                                   GridPane.valignment="CENTER">
+                            <GridPane.margin>
+                                <Insets bottom="2.0" left="2.0" right="2.0" top="2.0"/>
+                            </GridPane.margin>
+                        </ChoiceBox>
+                        <ImageView fitHeight="22.0" fitWidth="22.0" pickOnBounds="true" preserveRatio="true"
+                                   GridPane.columnIndex="1" GridPane.halignment="CENTER" GridPane.rowIndex="1">
+                            <image>
+                                <Image url="@../static/images/ico.png"/>
+                            </image>
+                            <GridPane.margin>
+                                <Insets/>
+                            </GridPane.margin>
+                        </ImageView>
+
+                        <ComboBox fx:id="comboBoxAccount" editable="true" maxHeight="1.7976931348623157E308"
+                                  maxWidth="1.7976931348623157E308" onAction="#selectAccountAction"
+                                  style="-fx-border-color: D3D3D3; -fx-outer-border: transparent;"
+                                  GridPane.columnIndex="2" GridPane.columnSpan="6" GridPane.rowIndex="1">
+                            <GridPane.margin>
+                                <Insets/>
+                            </GridPane.margin>
+                        </ComboBox>
+                        <ImageView fitHeight="22.0" fitWidth="22.0" pickOnBounds="true" preserveRatio="true"
+                                   GridPane.columnIndex="1" GridPane.halignment="CENTER" GridPane.rowIndex="2">
+                            <image>
+                                <Image url="@../static/images/pwd.png"/>
+                            </image>
+                            <GridPane.margin>
+                                <Insets/>
+                            </GridPane.margin>
+                        </ImageView>
+                        <PasswordField fx:id="passwordFieldPassword" maxHeight="1.7976931348623157E308"
+                                       maxWidth="1.7976931348623157E308" GridPane.columnIndex="2"
+                                       GridPane.columnSpan="6" GridPane.rowIndex="2"/>
+                        <CheckBox fx:id="checkBoxRemember" focusTraversable="false" maxHeight="1.7976931348623157E308"
+                                  maxWidth="1.7976931348623157E308" mnemonicParsing="false"
+                                  onAction="#rememberClickAction" text="记住密码" GridPane.columnIndex="6"
+                                  GridPane.columnSpan="2" GridPane.rowIndex="3">
+                            <cursor>
+                                <Cursor fx:constant="DEFAULT"/>
+                            </cursor>
+                        </CheckBox>
+                        <Hyperlink fx:id="hyperlinkForgetPwd" focusTraversable="false"
+                                   maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308"
+                                   onAction="#forgotPwdAction" style="-fx-text-fill: black;" text="忘记密码"
+                                   GridPane.columnIndex="1" GridPane.columnSpan="2" GridPane.rowIndex="3">
+                            <cursor>
+                                <Cursor fx:constant="DEFAULT"/>
+                            </cursor>
+                        </Hyperlink>
+                        <Hyperlink fx:id="hyperlinkRegister" focusTraversable="false" maxHeight="1.7976931348623157E308"
+                                   maxWidth="1.7976931348623157E308" onAction="#registerAction"
+                                   style="-fx-text-fill: black;" text="注册账号" GridPane.columnIndex="3"
+                                   GridPane.columnSpan="2" GridPane.rowIndex="3">
+                            <cursor>
+                                <Cursor fx:constant="DEFAULT"/>
+                            </cursor>
+                        </Hyperlink>
+                        <Button maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308"
+                                mnemonicParsing="false" onAction="#loginAction" text="登录" GridPane.columnIndex="1"
+                                GridPane.columnSpan="7" GridPane.rowIndex="4"/>
+                        <ImageView fx:id="imageViewQrCode" fitHeight="26.0" fitWidth="26.0"
+                                   onMouseClicked="#qrCodeClick" pickOnBounds="true" preserveRatio="true"
+                                   GridPane.columnIndex="8" GridPane.halignment="CENTER" GridPane.rowIndex="4"
+                                   GridPane.valignment="CENTER">
+                            <image>
+                                <Image url="@../static/images/二维码.png"/>
+                            </image>
+                            <cursor>
+                                <Cursor fx:constant="HAND"/>
+                            </cursor>
+                        </ImageView>
+                    </children>
+                    <padding>
+                        <Insets bottom="10.0" left="5.0" right="5.0" top="10.0"/>
+                    </padding>
+                </GridPane>
+            </children>
+        </VBox>
     </children>
 </AnchorPane>

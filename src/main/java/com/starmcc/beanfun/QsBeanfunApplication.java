@@ -5,8 +5,10 @@ import com.starmcc.beanfun.constant.QsConstant;
 import com.starmcc.beanfun.manager.FrameManager;
 import javafx.application.Application;
 import javafx.application.Platform;
+import javafx.scene.control.Alert;
 import javafx.stage.Stage;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.StringUtils;
 
 
 /**
@@ -48,9 +50,11 @@ public class QsBeanfunApplication extends Application {
         InitApplication.initApp();
         // ====================== 加载界面 ======================
         Platform.setImplicitExit(false);
-        FrameManager.getInstance().openWindow(FXPageEnum.登录页, primaryStage);
+        FrameManager.getInstance().openWindow(FXPageEnum.LOGIN, primaryStage);
         log.info("QsBeanfun" + QsConstant.APP_VERSION + "启动成功..");
+        if (!StringUtils.equals(QsConstant.ENV.toLowerCase(), "prod")) {
+            FrameManager.getInstance().messageMaster("此为内部测试版", Alert.AlertType.WARNING);
+            return;
+        }
     }
-
-
 }

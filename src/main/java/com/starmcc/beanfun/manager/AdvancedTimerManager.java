@@ -18,25 +18,26 @@ import java.util.concurrent.TimeUnit;
  * @author starmcc
  * @date 2022/09/20
  */
-public class AdvancedTimerMamager {
-    private ScheduledExecutorService scheduledExecutorService;
-    private List<AdvancedTimerTask> taskList;
-    private static AdvancedTimerMamager advancedTimerMamager;
+public class AdvancedTimerManager {
+
+    private final ScheduledExecutorService scheduledExecutorService;
+    private final List<AdvancedTimerTask> taskList;
+    private static AdvancedTimerManager advancedTimerManager;
 
     /**
      * 获得单例
      *
-     * @return {@link AdvancedTimerMamager}
+     * @return {@link AdvancedTimerManager}
      */
-    public static AdvancedTimerMamager getInstance() {
-        if (Objects.isNull(advancedTimerMamager)) {
-            advancedTimerMamager = new AdvancedTimerMamager();
+    public static AdvancedTimerManager getInstance() {
+        if (Objects.isNull(advancedTimerManager)) {
+            advancedTimerManager = new AdvancedTimerManager();
         }
-        return advancedTimerMamager;
+        return advancedTimerManager;
     }
 
 
-    private AdvancedTimerMamager() {
+    private AdvancedTimerManager() {
         int coreSize = Runtime.getRuntime().availableProcessors() * 2;
         coreSize = Math.min(8, Math.max(4, coreSize));
         this.scheduledExecutorService = new AdvancedScheduledThreadPoolExecutor(coreSize);
@@ -53,8 +54,8 @@ public class AdvancedTimerMamager {
     public String addTask(AdvancedTimerTask task, long waitTime, long delay) {
         String taskName = "TASK-" + System.currentTimeMillis();
         task.setTaskName(taskName);
-        advancedTimerMamager.taskList.add(task);
-        advancedTimerMamager.scheduledExecutorService.scheduleWithFixedDelay(task, waitTime, delay, TimeUnit.MILLISECONDS);
+        advancedTimerManager.taskList.add(task);
+        advancedTimerManager.scheduledExecutorService.scheduleWithFixedDelay(task, waitTime, delay, TimeUnit.MILLISECONDS);
         return taskName;
     }
 
@@ -64,52 +65,46 @@ public class AdvancedTimerMamager {
      *
      * @param taskName 任务名称
      */
-    public boolean removeTask(String taskName) {
+    public void removeTask(String taskName) {
         if (StringUtils.isBlank(taskName)) {
-            return false;
+            return;
         }
-        Iterator<AdvancedTimerTask> iterator = advancedTimerMamager.taskList.iterator();
+        Iterator<AdvancedTimerTask> iterator = advancedTimerManager.taskList.iterator();
         while (iterator.hasNext()) {
             AdvancedTimerTask task = iterator.next();
             if (StringUtils.equals(task.getTaskName(), taskName)) {
                 task.cancel(false);
                 iterator.remove();
-                return true;
+                return;
             }
         }
-        return false;
     }
 
     /**
      * 删除任务
      *
-     * @param taskName 任务名称
+     * @param taskNames 任务名称
      */
-    public int removeTask(List<String> taskNames) {
+    public void removeTask(List<String> taskNames) {
         if (DataTools.collectionIsEmpty(taskNames)) {
-            return 0;
+            return;
         }
-        int result = 0;
-        Iterator<AdvancedTimerTask> iterator = advancedTimerMamager.taskList.iterator();
+        Iterator<AdvancedTimerTask> iterator = advancedTimerManager.taskList.iterator();
         while (iterator.hasNext()) {
             AdvancedTimerTask task = iterator.next();
             if (taskNames.contains(task.getTaskName())) {
                 task.cancel(false);
                 iterator.remove();
-                result++;
             }
         }
-        return result;
     }
 
     /**
      * 删除所有任务
      */
-    public int removeAllTask() {
-        int result = advancedTimerMamager.taskList.size();
-        advancedTimerMamager.taskList.forEach(task -> task.cancel(false));
-        advancedTimerMamager.taskList.clear();
-        return result;
+    public void removeAllTask() {
+        advancedTimerManager.taskList.forEach(task -> task.cancel(false));
+        advancedTimerManager.taskList.clear();
     }
 
 
@@ -117,8 +112,8 @@ public class AdvancedTimerMamager {
      * 关闭
      */
     public static void shutdown() {
-        advancedTimerMamager.removeAllTask();
-        advancedTimerMamager.scheduledExecutorService.shutdownNow();
-        advancedTimerMamager = null;
+        advancedTimerManager.removeAllTask();
+        advancedTimerManager.scheduledExecutorService.shutdownNow();
+        advancedTimerManager = null;
     }
 }

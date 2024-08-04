@@ -25,7 +25,6 @@ public interface WindowManager {
     /**
      * 关闭新枫之谷启动窗口
      *
-     * @return int
      */
     void closeMapleStoryStart();
 

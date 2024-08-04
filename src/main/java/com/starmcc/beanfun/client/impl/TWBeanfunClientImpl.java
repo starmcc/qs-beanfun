@@ -5,6 +5,8 @@ import com.alibaba.fastjson.JSONObject;
 import com.starmcc.beanfun.client.BeanfunClient;
 import com.starmcc.beanfun.client.HttpClient;
 import com.starmcc.beanfun.entity.client.*;
+import com.starmcc.beanfun.manager.AdvancedTimerManager;
+import com.starmcc.beanfun.manager.impl.AdvancedTimerTask;
 import com.starmcc.beanfun.utils.DataTools;
 import com.starmcc.beanfun.utils.RegexUtils;
 import lombok.extern.slf4j.Slf4j;
@@ -12,11 +14,10 @@ import org.apache.commons.lang3.StringUtils;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
-import java.util.Objects;
+import java.util.*;
+import java.util.concurrent.CountDownLatch;
 import java.util.function.Consumer;
+import java.util.function.Function;
 
 /**
  * twbeanfun客户端实现
@@ -58,8 +59,46 @@ public class TWBeanfunClientImpl extends BeanfunClient {
         return result.success();
     }
 
+    public String davLogin(String lt, Function<Object, Object> extendFnc) throws Exception {
+        CountDownLatch latch = new CountDownLatch(1);
+        Map<String, String> result = new HashMap<>();
+        result.put("aKey", "");
+        AdvancedTimerManager.getInstance().addTask(new AdvancedTimerTask() {
+            @Override
+            public void start() {
+                try {
+                    QsHttpResponse rsp = HttpClient.getInstance().post(
+                            "https://tw.newlogin.beanfun.com/login/bfAPPAutoLogin.ashx",
+                            ReqParams.getInstance().addParam("lt", lt));
+                    if (!rsp.getSuccess()) {
+                        return;
+                    }
+                    JSONObject jsonObject = JSON.parseObject(rsp.getContent());
+                    if (jsonObject.getInteger("IntResult") != 2) {
+                        return;
+                    }
+                    String strReslut = jsonObject.getString("StrReslut");
+                    rsp = HttpClient.getInstance().get("https://tw.newlogin.beanfun.com/login/" + strReslut);
+                    if (!rsp.getSuccess()) {
+                        return;
+                    }
+                    List<List<String>> dataList = RegexUtils.regex(RegexUtils.Constant.TW_LOGIN_AKEY, rsp.getContent());
+                    String aKey = RegexUtils.getIndex(0, 1, dataList);
+                    result.put("aKey", StringUtils.isBlank(aKey) ? "" : aKey);
+                    latch.countDown();
+                } catch (Exception e) {
+                    log.error("error = {}", e.getMessage(), e);
+                    latch.countDown();
+                }
+            }
+        }, 0, 3000);
+        extendFnc.apply(null);
+        latch.await();
+        return result.get("aKey");
+    }
+
     @Override
-    public BeanfunStringResult login(String account, String password,Object extend, Consumer<Double> process) throws Exception {
+    public BeanfunStringResult login(String account, String password, Function<Object, Object> extendFnc, Consumer<Double> process) throws Exception {
         BeanfunStringResult result = new BeanfunStringResult();
         if (StringUtils.isEmpty(account) || StringUtils.isEmpty(password)) {
             return result.error(BeanfunResult.CodeEnum.ACT_PWD_IS_NULL);
@@ -117,13 +156,30 @@ public class TWBeanfunClientImpl extends BeanfunClient {
         content = response.getContent();
 
         dataList = RegexUtils.regex(RegexUtils.Constant.TW_LOGIN_ERROR_MSG, content);
-        String errMsg = RegexUtils.getIndex(0, 1, dataList);
-        if (StringUtils.isNotBlank(errMsg)) {
-            return result.error(BeanfunResult.CodeEnum.LOGIN_ERROR_MSG, errMsg);
+        String msg = RegexUtils.getIndex(0, 1, dataList);
+        if (StringUtils.isNotBlank(msg)) {
+            return result.error(BeanfunResult.CodeEnum.LOGIN_ERROR_MSG, msg);
+        }
+
+        dataList = RegexUtils.regex(RegexUtils.Constant.TW_LOGIN_DAV_VERIFY, content);
+        msg = RegexUtils.getIndex(0, 1, dataList);
+        String location = RegexUtils.getIndex(0, 2, dataList);
+        if (StringUtils.isNotBlank(msg)) {
+            // 进阶登录时，出现需要图形认证
+            if (!location.contains("AdvanceCheck")) {
+                return result.error(BeanfunResult.CodeEnum.LOGIN_ADV_VERIFY_ERROR, msg);
+            }
+            return result.success(BeanfunResult.CodeEnum.LOGIN_ADV_VERIFY, msg);
         }
 
         dataList = RegexUtils.regex(RegexUtils.Constant.TW_LOGIN_AKEY, content);
         String aKey = RegexUtils.getIndex(0, 1, dataList);
+        dataList = RegexUtils.regex(RegexUtils.Constant.TW_LOGIN_POLL_REQUEST, content);
+        String lt = RegexUtils.getIndex(0, 1, dataList);
+        if (StringUtils.isNotBlank(lt)) {
+            // 这里是进阶登录
+            aKey = davLogin(lt, extendFnc);
+        }
 
         if (StringUtils.isBlank(aKey)) {
             return result.error(BeanfunResult.CodeEnum.LOGIN_ERROR_MSG);
@@ -168,7 +224,7 @@ public class TWBeanfunClientImpl extends BeanfunClient {
 
         List<List<String>> dataList = RegexUtils.regex(RegexUtils.Constant.TW_ACCOUNT_MAX, content);
         String maxActNumberStr = RegexUtils.getIndex(0, 1, dataList);
-        Integer maxActNumber = 0;
+        int maxActNumber = 0;
         if (StringUtils.isNotBlank(maxActNumberStr)) {
             maxActNumber = Integer.parseInt(maxActNumberStr);
         }
@@ -192,7 +248,7 @@ public class TWBeanfunClientImpl extends BeanfunClient {
         List<Account> accountList = new ArrayList<>();
         for (int i = 0; i < dataList.size(); i++) {
             Account account = new Account();
-            account.setStatus(RegexUtils.getIndex(i, 1, dataList) != "");
+            account.setStatus(!Objects.equals(RegexUtils.getIndex(i, 1, dataList), ""));
             account.setId(RegexUtils.getIndex(i, 2, dataList));
             account.setSn(RegexUtils.getIndex(i, 3, dataList));
             account.setName(RegexUtils.getIndex(i, 4, dataList));
@@ -399,11 +455,10 @@ public class TWBeanfunClientImpl extends BeanfunClient {
     }
 
     @Override
-    public boolean heartbeat() throws Exception {
+    public void heartbeat() throws Exception {
         String url = "https://tw.beanfun.com/beanfun_block/generic_handlers/echo_token.ashx?webtoken=1";
         QsHttpResponse response = HttpClient.getInstance().get(url, ReqParams.getInstance().addParam("webtoken", "1"));
         log.info("心跳 = {}", response.getContent());
-        return true;
     }
 
 

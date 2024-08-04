@@ -1,7 +1,7 @@
 package com.starmcc.beanfun.client.impl;
 
 import com.starmcc.beanfun.client.DownloadClient;
-import com.starmcc.beanfun.manager.AdvancedTimerMamager;
+import com.starmcc.beanfun.manager.AdvancedTimerManager;
 import com.starmcc.beanfun.manager.WindowManager;
 import com.starmcc.beanfun.manager.impl.AdvancedTimerTask;
 import com.starmcc.beanfun.utils.SystemTools;
@@ -41,7 +41,7 @@ public class DownloadClientImpl extends DownloadClient {
     @Override
 
     public void execute(URL url, File saveFile, DownloadClient.Process process) {
-        process.call(DownloadClient.Process.State.准备开始, null, 0, null, null);
+        process.call(DownloadClient.Process.State.READY_START, null, 0, null, null);
         FileOutputStream fos = null;
         try {
             HttpClientBuilder httpClientBuilder = HttpClientBuilder.create();
@@ -64,23 +64,23 @@ public class DownloadClientImpl extends DownloadClient {
                     .build()
             );
             CloseableHttpClient httpClient = httpClientBuilder.build();
-            process.call(DownloadClient.Process.State.正在连接, null, null, null, null);
+            process.call(DownloadClient.Process.State.CONNECT_RUNNING, null, null, null, null);
             CloseableHttpResponse response = httpClient.execute(new HttpGet(url.toString()));
             if (response.getStatusLine().getStatusCode() != 200) {
-                process.call(DownloadClient.Process.State.请求状态码异常, null, null, null, null);
+                process.call(DownloadClient.Process.State.REQUEST_STATUS_ERR, null, null, null, null);
                 return;
             }
-            process.call(DownloadClient.Process.State.创建文件, null, null, null, null);
+            process.call(DownloadClient.Process.State.CREATE_FILE, null, null, null, null);
             byte[] bytes = readDownloadFile(process, response);
             if (Objects.isNull(bytes)) {
                 return;
             }
             fos = new FileOutputStream(saveFile);
             fos.write(bytes);
-            process.call(DownloadClient.Process.State.下载完毕, saveFile, null, null, null);
+            process.call(DownloadClient.Process.State.DOWNLOAD_OK, saveFile, null, null, null);
         } catch (Exception e) {
             log.error("下载异常 e={}", e.getMessage(), e);
-            process.call(DownloadClient.Process.State.连接超时, null, null, null, e);
+            process.call(DownloadClient.Process.State.CONNECT_TIMEOUT, null, null, null, e);
         } finally {
             SystemTools.close(fos);
         }
@@ -92,7 +92,6 @@ public class DownloadClientImpl extends DownloadClient {
      * @param process  过程
      * @param response 响应
      * @return {@link byte[]}
-     * @throws IOException ioexception
      */
     private byte[] readDownloadFile(DownloadClient.Process process, CloseableHttpResponse response) {
         ByteArrayOutputStream bos = null;
@@ -107,7 +106,7 @@ public class DownloadClientImpl extends DownloadClient {
             int len = 0;
             long unit = contentLength / 100;
             bos = new ByteArrayOutputStream();
-            taskName = AdvancedTimerMamager.getInstance().addTask(new AdvancedTimerTask() {
+            taskName = AdvancedTimerManager.getInstance().addTask(new AdvancedTimerTask() {
                 private long temp = 0;
                 private BigDecimal speed = BigDecimal.ZERO;
 
@@ -115,7 +114,7 @@ public class DownloadClientImpl extends DownloadClient {
                 public void start() throws Exception {
                     speed = new BigDecimal(progres - temp);
                     temp = progres;
-                    process.call(Process.State.速度回显, null, null, speed.divide(new BigDecimal(1000), 2, RoundingMode.HALF_UP), null);
+                    process.call(Process.State.SPEED_ECHO, null, null, speed.divide(new BigDecimal(1000), 2, RoundingMode.HALF_UP), null);
                 }
             }, 0, 1000);
             while ((len = inputStream.read(buffer)) != -1) {
@@ -128,16 +127,16 @@ public class DownloadClientImpl extends DownloadClient {
                 if (temp >= 1 && temp > unitProgress) {
                     //保存当前百分比
                     unitProgress = temp;
-                    process.call(DownloadClient.Process.State.下载中, null, unitProgress, null, null);
+                    process.call(DownloadClient.Process.State.DOWNLOAD_RUNNING, null, unitProgress, null, null);
                 }
             }
         } catch (Exception e) {
             log.error("下载异常 e={}", e.getMessage(), e);
-            process.call(DownloadClient.Process.State.未知异常, null, null, null, e);
+            process.call(DownloadClient.Process.State.UNKNOWN_ERR, null, null, null, e);
             error = true;
         } finally {
             SystemTools.close(bos);
-            AdvancedTimerMamager.getInstance().removeTask(taskName);
+            AdvancedTimerManager.getInstance().removeTask(taskName);
         }
         return Objects.nonNull(bos) && !error ? bos.toByteArray() : null;
     }

@@ -13,7 +13,9 @@
     -fx-background-image: url("../images/ico.png");
     -fx-border-width: 0;
 }
-
+.dialog-pane {
+    -fx-graphic: url("../images/ico.png");
+}
 .title{
     -fx-text-fill: #fff;
     -fx-padding: 5px 10px;

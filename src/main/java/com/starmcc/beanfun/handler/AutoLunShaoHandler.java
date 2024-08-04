@@ -1,7 +1,8 @@
 package com.starmcc.beanfun.handler;
 
+import com.starmcc.beanfun.constant.FXPageEnum;
 import com.starmcc.beanfun.constant.QsConstant;
-import com.starmcc.beanfun.manager.AdvancedTimerMamager;
+import com.starmcc.beanfun.manager.AdvancedTimerManager;
 import com.starmcc.beanfun.manager.FrameManager;
 import com.starmcc.beanfun.manager.WindowManager;
 import com.starmcc.beanfun.manager.impl.AdvancedTimerTask;
@@ -48,7 +49,7 @@ public class AutoLunShaoHandler {
         Integer ranShaoKey = QsConstant.config.getRanShaoKey();
         if (Objects.isNull(lunHuiKey) || Objects.isNull(ranShaoKey)) {
             // 没有设置键位
-            FrameManager.getInstance().message("没有设置自动轮烧键位", Alert.AlertType.WARNING);
+            FrameManager.getInstance().messageMaster("没有设置自动轮烧键位", Alert.AlertType.WARNING, FXPageEnum.MAIN);
             return false;
         }
         String lunHuiKeyStr = KeyEvent.getKeyText(lunHuiKey);
@@ -60,9 +61,9 @@ public class AutoLunShaoHandler {
         // 启动轮烧
         log.info("正在启动自动轮烧 键位{}轮回，{}燃烧", lunHuiKeyStr, ranShaoKeyStr);
         runTime = new Date();
-        AdvancedTimerMamager.getInstance().removeTask(taskNames);
+        AdvancedTimerManager.getInstance().removeTask(taskNames);
         // 5秒后开始
-        String lhTaskName = AdvancedTimerMamager.getInstance().addTask(new AdvancedTimerTask() {
+        String lhTaskName = AdvancedTimerManager.getInstance().addTask(new AdvancedTimerTask() {
             @Override
             public void start() throws Exception {
                 // 自动聚焦游戏
@@ -73,7 +74,7 @@ public class AutoLunShaoHandler {
             }
         }, 5000, LUN_HUI);
         taskNames.add(lhTaskName);
-        String rsTaskName = AdvancedTimerMamager.getInstance().addTask(new AdvancedTimerTask() {
+        String rsTaskName = AdvancedTimerManager.getInstance().addTask(new AdvancedTimerTask() {
             @Override
             public void start() throws Exception {
                 // 自动聚焦游戏
@@ -108,7 +109,7 @@ public class AutoLunShaoHandler {
             return false;
         }
         // 停止轮烧
-        AdvancedTimerMamager.getInstance().removeTask(taskNames);
+        AdvancedTimerManager.getInstance().removeTask(taskNames);
         runTime = null;
         log.info("关闭自动轮烧");
         return true;

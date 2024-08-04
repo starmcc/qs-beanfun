@@ -1,7 +1,7 @@
 package com.starmcc.beanfun.manager.impl;
 
 import com.starmcc.beanfun.dll.CustomUser32;
-import com.starmcc.beanfun.manager.AdvancedTimerMamager;
+import com.starmcc.beanfun.manager.AdvancedTimerManager;
 import com.starmcc.beanfun.manager.WindowManager;
 import com.starmcc.beanfun.utils.ProxyTools;
 import com.sun.jna.platform.win32.*;
@@ -80,7 +80,7 @@ public class WindowManagerImpl implements WindowManager {
     public void closeMapleStoryStart() {
         // 200毫秒检查一次
         final long time = System.currentTimeMillis();
-        AdvancedTimerMamager.getInstance().addTask(new AdvancedTimerTask() {
+        AdvancedTimerManager.getInstance().addTask(new AdvancedTimerTask() {
             @Override
             public void start() throws Exception {
                 WinDef.HWND hwnd = null;
@@ -95,7 +95,7 @@ public class WindowManagerImpl implements WindowManager {
                 } finally {
                     if (hwnd != null || System.currentTimeMillis() - time > SCANNER_SECONDS) {
                         // 进程句柄找到了或超过5秒，结束该任务
-                        AdvancedTimerMamager.getInstance().removeTask(this.getTaskName());
+                        AdvancedTimerManager.getInstance().removeTask(this.getTaskName());
                     }
                 }
             }
@@ -105,7 +105,7 @@ public class WindowManagerImpl implements WindowManager {
     @Override
     public void stopAutoPatcher(Consumer<Process> callback) {
         final long time = System.currentTimeMillis();
-        AdvancedTimerMamager.getInstance().addTask(new AdvancedTimerTask() {
+        AdvancedTimerManager.getInstance().addTask(new AdvancedTimerTask() {
             @Override
             public void start() throws Exception {
                 int patcherPid = 0;
@@ -122,7 +122,7 @@ public class WindowManagerImpl implements WindowManager {
                 } finally {
                     if (patcherPid != 0 || System.currentTimeMillis() - time > SCANNER_SECONDS) {
                         // 进程PID找到了或超过设置的等待秒数，结束该线程池
-                        AdvancedTimerMamager.getInstance().removeTask(this.getTaskName());
+                        AdvancedTimerManager.getInstance().removeTask(this.getTaskName());
                     }
                 }
             }
@@ -246,8 +246,7 @@ public class WindowManagerImpl implements WindowManager {
     private static void inputString(WinDef.HWND hwnd, String val) {
         char[] chars = val.toCharArray();
         for (char ch : chars) {
-            Integer vKey = Integer.valueOf(ch);
-            CustomUser32.INSTANCE.PostMessage(hwnd, 0x102, new WinDef.WPARAM(vKey), new WinDef.LPARAM(0));
+            CustomUser32.INSTANCE.PostMessage(hwnd, 0x102, new WinDef.WPARAM((int) ch), new WinDef.LPARAM(0));
         }
     }
 

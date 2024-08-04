@@ -56,7 +56,7 @@ public class JxBrowserManager {
             f.set(null, new BigInteger("1"));
             modifersField.setAccessible(false);
         } catch (Exception e) {
-            e.printStackTrace();
+            log.error("e={}", e.getMessage(), e);
         }
     }
 
@@ -91,7 +91,7 @@ public class JxBrowserManager {
         view.setPrefHeight(DEFAULT_HEIGHT);
         stage.setOnCloseRequest(event -> {
             // 使用线程异步关闭引擎
-            ThreadPoolManager.execute(() -> browser.dispose());
+            ThreadPoolManager.execute(browser::dispose);
             // 关闭窗口
             stage.close();
         });

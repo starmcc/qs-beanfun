@@ -21,7 +21,7 @@ import java.util.function.Consumer;
  */
 public class ComBoBoxListCell extends ListCell<String> {
 
-    private Consumer<String> consumer;
+    private final Consumer<String> consumer;
 
     public ComBoBoxListCell(Consumer<String> consumer) {
         this.consumer = consumer;

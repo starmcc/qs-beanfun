@@ -20,7 +20,7 @@
         <version.logback-classic>1.2.3</version.logback-classic>
         <version.jna-platform-jpms>5.10.0</version.jna-platform-jpms>
         <version.maven-shade-plugin>1.2.1</version.maven-shade-plugin>
-        <version.launch4j-maven-plugin>2.3.2</version.launch4j-maven-plugin>
+        <version.launch4j-maven-plugin>2.5.1</version.launch4j-maven-plugin>
     </properties>
 
     <dependencies>
@@ -136,15 +136,14 @@
                             </classPath>
                             <icon>./build/ico.ico</icon>
                             <dontWrapJar>false</dontWrapJar>
-                            <customProcName>true</customProcName>
                             <stayAlive>true</stayAlive>
                             <manifest>./build/exe.manifest</manifest>
                             <downloadUrl>https://www.oracle.com/java/technologies/downloads/#jre8-windows</downloadUrl>
                             <priority>high</priority>
-                            <singleInstance>
-                                <mutexName>${name}</mutexName>
-                                <windowTitle>${name}</windowTitle>
-                            </singleInstance>
+<!--                            <singleInstance>-->
+<!--                                <mutexName>${name}</mutexName>-->
+<!--                                <windowTitle>${name}</windowTitle>-->
+<!--                            </singleInstance>-->
                             <!--配置jre-->
                             <jre>
                                 <minVersion>1.8.0</minVersion>

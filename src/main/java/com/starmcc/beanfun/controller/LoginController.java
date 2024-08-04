@@ -5,12 +5,13 @@ import com.starmcc.beanfun.constant.FXPageEnum;
 import com.starmcc.beanfun.constant.QsConstant;
 import com.starmcc.beanfun.entity.LoginType;
 import com.starmcc.beanfun.entity.client.BeanfunModel;
+import com.starmcc.beanfun.entity.client.BeanfunResult;
 import com.starmcc.beanfun.entity.client.BeanfunStringResult;
 import com.starmcc.beanfun.entity.model.ComBoBoxListCell;
 import com.starmcc.beanfun.entity.model.ConfigModel;
 import com.starmcc.beanfun.entity.model.LoadPage;
 import com.starmcc.beanfun.handler.AccountHandler;
-import com.starmcc.beanfun.manager.AdvancedTimerMamager;
+import com.starmcc.beanfun.manager.AdvancedTimerManager;
 import com.starmcc.beanfun.manager.FrameManager;
 import com.starmcc.beanfun.manager.impl.AdvancedTimerTask;
 import com.starmcc.beanfun.utils.AesTools;
@@ -18,13 +19,11 @@ import com.starmcc.beanfun.utils.DataTools;
 import com.starmcc.beanfun.utils.FileTools;
 import com.starmcc.beanfun.utils.RegexUtils;
 import javafx.collections.ObservableList;
-import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.*;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.KeyCode;
-import javafx.scene.input.MouseEvent;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.BooleanUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -57,8 +56,6 @@ public class LoginController implements Initializable {
     private Hyperlink hyperlinkForgetPwd;
     @FXML
     private ImageView imageViewQrCode;
-    @FXML
-    private CheckBox checkBoxDualVerify;
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
@@ -77,13 +74,11 @@ public class LoginController implements Initializable {
                 this.loginAction();
             }
         });
-        checkBoxDualVerify.setSelected(BooleanUtils.isTrue(QsConstant.config.getDualVerify()));
         checkBoxRemember.setSelected(BooleanUtils.isTrue(QsConstant.config.getRecordActPwd()));
         hyperlinkRegister.setFocusTraversable(false);
         hyperlinkForgetPwd.setFocusTraversable(false);
         imageViewQrCode.setFocusTraversable(false);
         choiceBoxLoginType.setFocusTraversable(false);
-        checkBoxDualVerify.setFocusTraversable(false);
         checkBoxRemember.setFocusTraversable(false);
         Integer configLoginType = QsConstant.config.getLoginType();
         LoginType selectLoginType = new LoginType();
@@ -130,51 +125,72 @@ public class LoginController implements Initializable {
      */
     @FXML
     public void loginAction() {
-        // 双重验证时请用户填写数据
-        final List<Integer> dvData = checkBoxDualVerify.isSelected() ? this.getDvData() : new ArrayList<>();
-        LoadPage.task(FXPageEnum.登录页, (label) -> {
+        comboBoxAccount.setValue("qiushuixiaomeng@outlook.com");
+        passwordFieldPassword.setText("Xmbpt46183790");
+        LoadPage.task(FXPageEnum.LOGIN, (label) -> {
             String taskName = "";
             try {
                 label.setText("正在登录..");
                 final Map<String, Double> map = new HashMap<>(16);
                 taskName = buildTaskByLoadTips(label, map);
                 // 执行登录方法
-                BeanfunStringResult loginResult = BeanfunClient.run().login(comboBoxAccount.getValue(), passwordFieldPassword.getText(), dvData, process -> map.put("process", process * 100));
+                BeanfunStringResult loginResult = BeanfunClient.run().login(comboBoxAccount.getValue(), passwordFieldPassword.getText(),
+                        this::extendFnc, process -> map.put("process", process * 100));
+
                 if (!loginResult.isSuccess()) {
-                    FrameManager.getInstance().message(loginResult.getMsg(), Alert.AlertType.ERROR);
+                    FrameManager.getInstance().messageMaster(loginResult.getMsg(), Alert.AlertType.ERROR, FXPageEnum.LOGIN);
                     return;
                 }
+                if (Objects.equals(loginResult.getCode(), BeanfunResult.CodeEnum.LOGIN_ADV_VERIFY.getCode())) {
+                    // 进阶登录验证
+                    FrameManager.getInstance().messageMaster(loginResult.getMsg(), Alert.AlertType.INFORMATION, FXPageEnum.LOGIN, alert -> {
+                        try {
+                            FrameManager.getInstance().openWindow(FXPageEnum.ADV_LOGIN, FXPageEnum.LOGIN);
+                        } catch (Exception e) {
+                            log.info("login error e={}", e.getMessage(), e);
+                        }
+                    });
+                    return;
+                }
+
                 BeanfunModel beanfunModel = new BeanfunModel();
                 beanfunModel.setToken(loginResult.getData());
                 QsConstant.beanfunModel = beanfunModel;
                 // 登录成功后操作
-                FrameManager.getInstance().runLater(() -> loginSuccessGoMain());
+                FrameManager.getInstance().runLater(this::loginSuccessGoMain);
             } catch (HttpHostConnectException e) {
                 log.info("login error e={}", e.getMessage(), e);
-                FrameManager.getInstance().message("连接超时,请检查网络环境", Alert.AlertType.ERROR);
+                FrameManager.getInstance().messageMaster("连接超时,请检查网络环境", Alert.AlertType.ERROR, FXPageEnum.LOGIN);
             } catch (Exception e) {
                 log.info("login error e={}", e.getMessage(), e);
-                FrameManager.getInstance().message("error:" + e.getMessage(), Alert.AlertType.ERROR);
+                FrameManager.getInstance().messageMaster("error:" + e.getMessage(), Alert.AlertType.ERROR, FXPageEnum.LOGIN);
             } finally {
-                AdvancedTimerMamager.getInstance().removeTask(taskName);
+                AdvancedTimerManager.getInstance().removeTask(taskName);
             }
         });
     }
 
-    @FXML
-    private void dualVerifyClickAction() {
-        QsConstant.config.setDualVerify(checkBoxDualVerify.isSelected());
-        FileTools.saveConfig(QsConstant.config);
+
+    private Object extendFnc(Object msg) {
+        LoginType.TypeEnum type = LoginType.TypeEnum.getData(QsConstant.config.getLoginType());
+        if (type == LoginType.TypeEnum.HK) {
+            // 香港双重验证
+            return this.getHkDvData();
+        } else {
+            // 台湾进阶登录等待操作..
+            FrameManager.getInstance().messageMasterAsync("等待App确认..", Alert.AlertType.INFORMATION, FXPageEnum.LOGIN);
+        }
+        return null;
     }
 
-    private List<Integer> getDvData() {
+    private List<Integer> getHkDvData() {
         // 用户请输入一个验证
-        String data = FrameManager.getInstance().dialogText("請輸入雙重驗證碼", "");
+        String data = FrameManager.getInstance().dialogText("请输入双重验证码", "");
         data = data.trim();
         boolean is = RegexUtils.test(RegexUtils.Constant.COMMON_SIX_NUMBER, data);
         if (!is) {
-            if (FrameManager.getInstance().dialogConfirm("驗證碼錯誤", "您输入的驗證碼錯誤，是否重新输入？")) {
-                return getDvData();
+            if (FrameManager.getInstance().dialogConfirm("验证码错误", "您输入的验证码错误,是否重新输入？")) {
+                return getHkDvData();
             }
             return new ArrayList<>();
         }
@@ -210,30 +226,19 @@ public class LoginController implements Initializable {
 
 
     @FXML
-    public void selectLoginTypeAction(ActionEvent actionEvent) {
+    public void selectLoginTypeAction() {
         LoginType selectedItem = choiceBoxLoginType.getSelectionModel().getSelectedItem();
         QsConstant.config.setLoginType(selectedItem.getType());
         FileTools.saveConfig(QsConstant.config);
         LoginType.TypeEnum typeEnum = LoginType.TypeEnum.getData(QsConstant.config.getLoginType());
         imageViewQrCode.setVisible(typeEnum == LoginType.TypeEnum.TW);
-        checkBoxDualVerify.setVisible(typeEnum == LoginType.TypeEnum.HK);
         refeshAccounts();
     }
 
     @FXML
     public void qrCodeClick() throws Exception {
 
-        FrameManager.getInstance().openWindow(FXPageEnum.二维码登录, FXPageEnum.登录页);
-    }
-
-    @FXML
-    public void closeApplication() {
-        FrameManager.getInstance().exit();
-    }
-
-    @FXML
-    public void aboutAction(MouseEvent mouseEvent) throws Exception {
-        FrameManager.getInstance().openWindow(FXPageEnum.关于我, FXPageEnum.登录页);
+        FrameManager.getInstance().openWindow(FXPageEnum.QR_CODE, FXPageEnum.LOGIN);
     }
 
 
@@ -252,9 +257,9 @@ public class LoginController implements Initializable {
         AccountHandler.recordActPwd(act, pwd, choiceBoxLoginType.getValue());
         try {
             // 窗口显示
-            FrameManager.getInstance().openWindow(FXPageEnum.主页);
-            FrameManager.getInstance().closeWindow(FXPageEnum.登录页);
-            FrameManager.getInstance().closeWindow(FXPageEnum.二维码登录);
+            FrameManager.getInstance().openWindow(FXPageEnum.MAIN);
+            FrameManager.getInstance().closeWindow(FXPageEnum.LOGIN);
+            FrameManager.getInstance().closeWindow(FXPageEnum.QR_CODE);
         } catch (Exception e) {
             log.error("loginSuccessGoMain e={}", e.getMessage(), e);
         }
@@ -300,7 +305,7 @@ public class LoginController implements Initializable {
      */
     private static String buildTaskByLoadTips(Label label, final Map<String, Double> map) {
         map.put("nowProcess", 0D);
-        return AdvancedTimerMamager.getInstance().addTask(new AdvancedTimerTask() {
+        return AdvancedTimerManager.getInstance().addTask(new AdvancedTimerTask() {
             @Override
             public void start() throws Exception {
                 FrameManager.getInstance().runLater(() -> {

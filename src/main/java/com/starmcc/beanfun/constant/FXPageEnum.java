@@ -13,16 +13,17 @@ import java.util.function.Consumer;
  */
 @Getter
 public enum FXPageEnum {
-    登录页("login", false, "小梦出品", false, true, true,
+    LOGIN("login", false, "QsBeanfun", false, true, true,
             jfxStage -> jfxStage.getRoot().getStylesheets().add(QsConstant.class.getResource("/static/css/login.css").toExternalForm())),
-    主页("main", true, "QsBeanfun", true, false, true,
+    MAIN("main", true, "QsBeanfun", true, false, true,
             jfxStage -> jfxStage.getRoot().getStylesheets().add(QsConstant.class.getResource("/static/css/main.css").toExternalForm())),
-    二维码登录("qrCode", true, "二维码登录", false, false, true, null),
-    更新页("update", true, "自动更新", false, false, true, null),
-    关于我("about", false, "关于..", false, false, false, null),
-    装备计算器("equipment", true, "装备卷轴计算器", false, false, false, null),
-    汇率查询("currency", true, "汇率查询", false, false, false, null),
-    录像设置("recordVideo", true, "录像设置", false, false, false, null),
+    QR_CODE("qrCode", true, "二维码登录", false, false, true, null),
+    UPDATE("update", true, "自动更新", false, false, true, null),
+    ABOUT("about", false, "关于..", false, false, false, null),
+    CURRENCY("currency", true, "汇率查询", false, false, false, null),
+    RECORD_VIDEO("recordVideo", true, "录像设置", false, false, false, null),
+    ADV_LOGIN("advLogin", true, "进阶登录", false, false, false, null),
+
     ;
 
     /**

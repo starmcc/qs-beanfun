@@ -83,7 +83,7 @@ public class ProxyTools {
             return null;
         }
         String ip = split[0];
-        int port = Integer.valueOf(split[1]);
+        int port = Integer.parseInt(split[1]);
         return new HttpHost(ip, port, "http");
     }
 

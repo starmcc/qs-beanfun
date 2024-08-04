@@ -4,6 +4,7 @@ import com.starmcc.beanfun.constant.FXPageEnum;
 import com.starmcc.beanfun.constant.QsConstant;
 import com.starmcc.beanfun.entity.model.JFXStage;
 import com.starmcc.beanfun.entity.model.QsTray;
+import com.starmcc.beanfun.entity.param.WindowXyParam;
 import com.starmcc.beanfun.entity.thread.ThrowRunnable;
 import com.starmcc.beanfun.manager.*;
 import javafx.application.Platform;
@@ -33,23 +34,39 @@ import java.util.function.Consumer;
 public class FrameManagerImpl implements FrameManager {
     @Override
     public void openWindow(FXPageEnum page, FXPageEnum parentPage) throws Exception {
-        openWindow(page, QsConstant.JFX_STAGE_DATA.get(parentPage).getStage(), page.getBuildMethod());
+        openWindow(page, QsConstant.JFX_STAGE_DATA.get(parentPage).getStage(), page.getBuildMethod(), false);
     }
 
     @Override
     public void openWindow(FXPageEnum page, Stage parentStage) throws Exception {
-        openWindow(page, parentStage, page.getBuildMethod());
+        openWindow(page, parentStage, page.getBuildMethod(), false);
     }
 
     @Override
     public void openWindow(FXPageEnum page) throws Exception {
-        openWindow(page, null, page.getBuildMethod());
+        openWindow(page, null, page.getBuildMethod(), false);
+    }
+
+    @Override
+    public void openWindowSync(FXPageEnum page, FXPageEnum parentPage) throws Exception {
+        openWindow(page, QsConstant.JFX_STAGE_DATA.get(parentPage).getStage(), page.getBuildMethod(), true);
+    }
+
+    @Override
+    public void openWindowSync(FXPageEnum page, Stage parentStage) throws Exception {
+        openWindow(page, parentStage, page.getBuildMethod(), true);
+    }
+
+    @Override
+    public void openWindowSync(FXPageEnum page) throws Exception {
+        openWindow(page, null, page.getBuildMethod(), true);
+
     }
 
     @Override
     public void killAllTask() {
         ThreadPoolManager.shutdown();
-        AdvancedTimerMamager.getInstance().removeAllTask();
+        AdvancedTimerManager.getInstance().removeAllTask();
         RecordVideoManager.getInstance().stop();
         if (Objects.nonNull(QsConstant.trayIcon)) {
             QsTray.remove(QsConstant.trayIcon);
@@ -70,6 +87,7 @@ public class FrameManagerImpl implements FrameManager {
         if (Objects.isNull(jfxStage) || Objects.isNull(jfxStage.getStage())) {
             return false;
         }
+        QsConstant.pageXyParams.put(page, new WindowXyParam(jfxStage.getStage().getX(), jfxStage.getStage().getY()));
         jfxStage.getStage().close();
         return true;
     }
@@ -78,7 +96,7 @@ public class FrameManagerImpl implements FrameManager {
     @Override
     public void exit() {
         this.killAllTask();
-        AdvancedTimerMamager.shutdown();
+        AdvancedTimerManager.shutdown();
         Platform.exit();
     }
 
@@ -109,13 +127,13 @@ public class FrameManagerImpl implements FrameManager {
     }
 
 
-    private void openWindow(FXPageEnum page, Stage parentStage, Consumer<JFXStage> build) throws Exception {
+    private void openWindow(FXPageEnum page, Stage parentStage, Consumer<JFXStage> build, boolean sync) throws Exception {
         Stage stage = new Stage();
         if (Objects.nonNull(parentStage)) {
             stage.initOwner(parentStage);
             stage.initModality(Modality.APPLICATION_MODAL);
         }
-        Parent parent = FXMLLoader.load(FrameManagerImpl.class.getResource(page.buildPath()));
+        Parent parent = FXMLLoader.load(Objects.requireNonNull(FrameManagerImpl.class.getResource(page.buildPath())));
         JFXStage jfxStage = JFXStage.of(stage, parent);
         // 构建外部方法
         if (Objects.nonNull(build)) {
@@ -125,9 +143,20 @@ public class FrameManagerImpl implements FrameManager {
         stage.getIcons().add(new Image("static/images/ico.png"));
         stage.setResizable(false);
         stage.setTitle(page.getTitle());
-        stage.show();
+        WindowXyParam windowXyParam = QsConstant.pageXyParams.get(page);
+        if (Objects.nonNull(windowXyParam)) {
+            jfxStage.getStage().setX(windowXyParam.getX());
+            jfxStage.getStage().setY(windowXyParam.getY());
+        }
+
         // 保存该Stage
         QsConstant.JFX_STAGE_DATA.put(page, jfxStage);
+        if (sync) {
+            stage.showAndWait();
+        } else {
+            stage.show();
+        }
+
     }
 
     @Override
@@ -144,32 +173,87 @@ public class FrameManagerImpl implements FrameManager {
         }
     }
 
-
-    @Override
-    public void messageSync(String msg, Alert.AlertType alertType, Runnable runnable) {
-        final Alert alert = new Alert(alertType);
-        alert.setTitle("");
-        alert.setHeaderText("");
-        alert.setContentText(msg);
-        alert.showAndWait();
-        if (Objects.nonNull(runnable)) {
-            runnable.run();
-        }
-    }
-
-    @Override
-    public void messageSync(String msg, Alert.AlertType alertType) {
-        this.messageSync(msg, alertType, null);
-    }
-
     @Override
     public void message(String msg, Alert.AlertType alertType) {
-        this.runLater(() -> this.messageSync(msg, alertType, null));
+        this.message(msg, alertType, null, null, true);
     }
 
     @Override
-    public void message(String msg, Alert.AlertType alertType, Runnable runnable) {
-        this.runLater(() -> this.messageSync(msg, alertType, runnable));
+    public void message(String msg, Alert.AlertType alertType, FXPageEnum parentPage) {
+        this.message(msg, alertType, parentPage, null, true);
+    }
+
+
+    @Override
+    public void message(String msg, Alert.AlertType alertType, FXPageEnum parentPage, Consumer<Alert> consumer) {
+        this.message(msg, alertType, parentPage, consumer, true);
+    }
+
+
+    @Override
+    public void messageAsync(String msg, Alert.AlertType alertType) {
+        this.message(msg, alertType, null, null, false);
+    }
+
+    @Override
+    public void messageAsync(String msg, Alert.AlertType alertType, FXPageEnum parentPage) {
+        this.message(msg, alertType, parentPage, null, false);
+    }
+
+    @Override
+    public void messageAsync(String msg, Alert.AlertType alertType, FXPageEnum parentPage, Consumer<Alert> consumer) {
+        this.message(msg, alertType, parentPage, consumer, false);
+    }
+
+    @Override
+    public void messageMaster(String msg, Alert.AlertType alertType) {
+        this.runLater(() -> this.message(msg, alertType, null, null, true));
+    }
+
+    @Override
+    public void messageMaster(String msg, Alert.AlertType alertType, FXPageEnum parentPage) {
+        this.runLater(() -> this.message(msg, alertType, parentPage, null, true));
+    }
+
+    @Override
+    public void messageMaster(String msg, Alert.AlertType alertType, FXPageEnum parentPage, Consumer<Alert> consumer) {
+        this.runLater(() -> this.message(msg, alertType, parentPage, consumer, true));
+    }
+
+    @Override
+    public void messageMasterAsync(String msg, Alert.AlertType alertType) {
+        this.runLater(() -> this.message(msg, alertType, null, null, false));
+    }
+
+    @Override
+    public void messageMasterAsync(String msg, Alert.AlertType alertType, FXPageEnum parentPage) {
+        this.runLater(() -> this.message(msg, alertType, parentPage, null, false));
+    }
+
+    @Override
+    public void messageMasterAsync(String msg, Alert.AlertType alertType, FXPageEnum parentPage, Consumer<Alert> consumer) {
+        this.runLater(() -> this.message(msg, alertType, parentPage, consumer, false));
+    }
+
+    private void message(String msg, Alert.AlertType alertType, FXPageEnum parentPage, Consumer<Alert> consumer, boolean sync) {
+        final Alert alert = new Alert(alertType);
+        if (Objects.nonNull(parentPage)) {
+            JFXStage jfxStage = QsConstant.JFX_STAGE_DATA.get(parentPage);
+            if (Objects.nonNull(jfxStage)) {
+                alert.initOwner(jfxStage.getStage());
+            }
+        }
+        alert.setTitle("tips");
+        alert.setHeaderText(null);
+        alert.setContentText(msg);
+        if (sync) {
+            alert.showAndWait();
+        } else {
+            alert.show();
+        }
+        if (Objects.nonNull(consumer)) {
+            consumer.accept(alert);
+        }
     }
 
     @Override
@@ -178,7 +262,7 @@ public class FrameManagerImpl implements FrameManager {
         dialog.setTitle("");
         dialog.setHeaderText(tips);
         Optional<String> s = dialog.showAndWait();
-        return s.isPresent() ? s.get() : "";
+        return s.orElse("");
     }
 
 
@@ -188,6 +272,7 @@ public class FrameManagerImpl implements FrameManager {
         alert.setTitle(title);
         alert.setHeaderText("");
         alert.setContentText(tips);
-        return alert.showAndWait().get() == ButtonType.OK;
+        Optional<ButtonType> buttonType = alert.showAndWait();
+        return buttonType.filter(type -> type == ButtonType.OK).isPresent();
     }
 }

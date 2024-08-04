@@ -32,12 +32,24 @@ public abstract class BeanfunResult {
     }
 
     public boolean isSuccess() {
-        return Objects.equals(this.code, CodeEnum.SUCCESS.getCode());
+        return Objects.equals(this.code, CodeEnum.SUCCESS.getCode())
+                || Objects.equals(this.code, CodeEnum.LOGIN_ADV_VERIFY.getCode());
     }
 
     public <T extends BeanfunResult> T success() {
         this.setMsg(CodeEnum.SUCCESS.getDesc());
         this.setCode(CodeEnum.SUCCESS.getCode());
+        return (T) this;
+    }
+
+    public <T extends BeanfunResult> T success(CodeEnum codeEnum) {
+        this.setMsg(codeEnum.getDesc());
+        this.setCode(codeEnum.getCode());
+        return (T) this;
+    }
+        public <T extends BeanfunResult> T success(CodeEnum codeEnum, String msg) {
+        this.setMsg(msg);
+        this.setCode(codeEnum.getCode());
         return (T) this;
     }
 
@@ -131,6 +143,8 @@ public abstract class BeanfunResult {
          * 双重验证失败
          */
         DUAL_VERIFICATIONS_ERROR(14, "双重验证失败!"),
+        LOGIN_ADV_VERIFY(15, "进阶登录验证"),
+        LOGIN_ADV_VERIFY_ERROR(16, "进阶登录验证"),
         ;
 
         private final int code;

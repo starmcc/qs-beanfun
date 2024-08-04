@@ -24,6 +24,32 @@ public class QsTray {
         }
         // 创建一个托盘图标对象
         Image image = Toolkit.getDefaultToolkit().getImage(QsBeanfunApplication.class.getClassLoader().getResource("static/images/ico.png"));
+        TrayIcon trayIcon = getTrayIcon(stage, image);
+        // 将托盘图表添加到系统托盘
+        trayIcon.addMouseListener(new MouseAdapter() {
+            @Override
+            public void mouseClicked(MouseEvent evt) {
+                // 处理鼠标双击
+                if (evt.getClickCount() == 2) {
+                    FrameManager.getInstance().runLater(() -> {
+                        if (stage.isIconified()) {
+                            stage.setIconified(false);
+                        }
+                        if (stage.isShowing()) {
+                            stage.hide();
+                        } else {
+                            stage.show();
+                            stage.toFront();
+                        }
+                    });
+                }
+                super.mouseClicked(evt);
+            }
+        });
+        return trayIcon;
+    }
+
+    private static TrayIcon getTrayIcon(Stage stage, Image image) {
         TrayIcon trayIcon = new TrayIcon(image);
         trayIcon.setToolTip(QsConstant.APP_NAME);
         trayIcon.setImageAutoSize(true);
@@ -56,27 +82,6 @@ public class QsTray {
         // 添加弹出菜单到托盘图标
         menu.add(exitOpen);
         trayIcon.setPopupMenu(menu);
-        // 将托盘图表添加到系统托盘
-        trayIcon.addMouseListener(new MouseAdapter() {
-            @Override
-            public void mouseClicked(MouseEvent evt) {
-                // 处理鼠标双击
-                if (evt.getClickCount() == 2) {
-                    FrameManager.getInstance().runLater(() -> {
-                        if (stage.isIconified()) {
-                            stage.setIconified(false);
-                        }
-                        if (stage.isShowing()) {
-                            stage.hide();
-                        } else {
-                            stage.show();
-                            stage.toFront();
-                        }
-                    });
-                }
-                super.mouseClicked(evt);
-            }
-        });
         return trayIcon;
     }
 

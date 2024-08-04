@@ -21,18 +21,15 @@ public class LocaleRemulatorHandler {
      * 设置输入法钩子
      *
      * @param hook 钩
-     * @return boolean
      */
-    public static boolean settingHookInput(boolean hook) {
+    public static void settingHookInput(boolean hook) {
         try {
             String xmlContent = FileTools.readFile(new File(LR_CONFIG_XML_PATH));
             String replaceContent = "<HookIME>" + String.valueOf(hook) + "</HookIME>";
             xmlContent = xmlContent.replaceAll("<HookIME>(.*)</HookIME>", replaceContent);
             FileTools.writeFile(xmlContent, LR_CONFIG_XML_PATH);
-            return true;
         } catch (Exception e) {
             log.error("error e={}", e.getMessage(), e);
         }
-        return false;
     }
 }

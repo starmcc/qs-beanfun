@@ -9,6 +9,7 @@ import javax.crypto.Cipher;
 import javax.crypto.KeyGenerator;
 import javax.crypto.SecretKey;
 import javax.crypto.spec.SecretKeySpec;
+import java.nio.charset.StandardCharsets;
 import java.security.SecureRandom;
 
 /**
@@ -31,7 +32,7 @@ public class AesTools {
      *
      * @param key     秘钥
      * @param content 内容
-     * @return
+     * @return string
      */
     public static String encode(final String key, String content) {
         try {
@@ -54,16 +55,15 @@ public class AesTools {
             //7.初始化密码器，第一个参数为加密(Encrypt_mode)或者解密解密(Decrypt_mode)操作，第二个参数为使用的KEY
             cipher.init(Cipher.ENCRYPT_MODE, secretKey);
             //8.获取加密内容的字节数组(这里要设置为utf-8)不然内容中如果有中文和英文混合中文就会解密为乱码
-            byte[] byte_encode = content.getBytes("utf-8");
+            byte[] byte_encode = content.getBytes(StandardCharsets.UTF_8);
             //9.根据密码器的初始化方式--加密：将数据加密
             byte[] byte_AES = cipher.doFinal(byte_encode);
             //10.将加密后的数据转换为字符串
             //这里用Base64Encoder中会找不到包
             //解决办法：
             //在项目的Build path中先移除JRE System Library，再添加库JRE System Library，重新编译后就一切正常了。
-            String AES_encode = new String(new BASE64Encoder().encode(byte_AES));
             //11.将字符串返回
-            return AES_encode;
+            return new BASE64Encoder().encode(byte_AES);
         } catch (Exception e) {
             log.error("异常 e={}", e.getMessage(), e);
         }
@@ -77,9 +77,9 @@ public class AesTools {
      * 2.将加密后的字符串反纺成byte[]数组
      * 3.将加密内容解密
      *
-     * @param encodeRules   秘钥
+     * @param key   秘钥
      * @param encodeContent 密文
-     * @return
+     * @return string
      */
     public static String dncode(final String key, String encodeContent) {
         try {
@@ -103,8 +103,7 @@ public class AesTools {
             //解密
             byte[] byte_decode = cipher.doFinal(byte_content);
             //输出字符串
-            String AES_decode = new String(byte_decode, "utf-8");
-            return AES_decode;
+            return new String(byte_decode, StandardCharsets.UTF_8);
         } catch (Exception e) {
             log.error("异常 e={}", e.getMessage(), e);
         }

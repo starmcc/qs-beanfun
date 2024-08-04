@@ -12,6 +12,7 @@ import org.apache.commons.lang3.StringUtils;
 import java.io.*;
 import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
 import java.util.Objects;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
@@ -32,7 +33,7 @@ public class FileTools {
                 return "";
             }
             FileReader fileReader = new FileReader(file);
-            reader = new InputStreamReader(new FileInputStream(file), "utf-8");
+            reader = new InputStreamReader(Files.newInputStream(file.toPath()), StandardCharsets.UTF_8);
             int ch = 0;
             StringBuffer sb = new StringBuffer();
             while ((ch = reader.read()) != -1) {
@@ -101,17 +102,17 @@ public class FileTools {
         }
         boolean flag = true;
         File[] files = folder.listFiles();
-        for (int i = 0; i < files.length; i++) {
+        for (File file : files) {
             // 删除子文件
-            if (files[i].isFile()) {
-                flag = deleteFile(files[i]);
+            if (file.isFile()) {
+                flag = deleteFile(file);
                 if (!flag) {
                     break;
                 }
             }
             // 删除子文件夹
-            else if (files[i].isDirectory()) {
-                flag = deleteFolder(files[i]);
+            else if (file.isDirectory()) {
+                flag = deleteFolder(file);
                 if (!flag) {
                     break;
                 }
@@ -121,11 +122,7 @@ public class FileTools {
             return false;
         }
         // 删除当前文件夹
-        if (folder.delete()) {
-            return true;
-        } else {
-            return false;
-        }
+        return folder.delete();
     }
 
 
@@ -138,11 +135,7 @@ public class FileTools {
     public synchronized static boolean deleteFile(File file) {
         // 如果文件路径只有单个文件
         if (file.exists() && file.isFile()) {
-            if (file.delete()) {
-                return true;
-            } else {
-                return false;
-            }
+            return file.delete();
         } else {
             return false;
         }
@@ -196,7 +189,7 @@ public class FileTools {
                 // 创建文件
                 file.createNewFile();
                 // 写入文件
-                Writer write = new OutputStreamWriter(new FileOutputStream(file), StandardCharsets.UTF_8);
+                Writer write = new OutputStreamWriter(Files.newOutputStream(file.toPath()), StandardCharsets.UTF_8);
                 write.write(content);
                 write.flush();
                 write.close();
@@ -229,7 +222,7 @@ public class FileTools {
             // 创建文件
             file.createNewFile();
             // 写入文件
-            write = new OutputStreamWriter(new FileOutputStream(file), StandardCharsets.UTF_8);
+            write = new OutputStreamWriter(Files.newOutputStream(file.toPath()), StandardCharsets.UTF_8);
             write.write(content);
             write.flush();
         } catch (Exception e) {

@@ -1,96 +1,108 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<?import javafx.scene.control.Button?>
-<?import javafx.scene.control.CheckBox?>
-<?import javafx.scene.control.Hyperlink?>
-<?import javafx.scene.control.RadioButton?>
-<?import javafx.scene.control.Separator?>
-<?import javafx.scene.control.ToggleGroup?>
-<?import javafx.scene.control.Tooltip?>
+<?import javafx.scene.control.*?>
 <?import javafx.scene.image.Image?>
 <?import javafx.scene.image.ImageView?>
 <?import javafx.scene.layout.AnchorPane?>
-<?import javafx.scene.text.Font?>
-<?import javafx.scene.text.Text?>
-
-<?import javafx.scene.control.Label?>
-<?import javafx.scene.layout.VBox?>
-<AnchorPane prefHeight="380.0" prefWidth="370.0" style="-fx-background-color: white;" xmlns="http://javafx.com/javafx/8.0.171" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.starmcc.beanfun.controller.AboutController">
+<?import javafx.scene.text.*?>
+<AnchorPane prefHeight="380.0" prefWidth="370.0" style="-fx-background-color: white;"
+            xmlns="http://javafx.com/javafx/8.0.171" xmlns:fx="http://javafx.com/fxml/1"
+            fx:controller="com.starmcc.beanfun.controller.AboutController">
     <children>
-        <Text fill="RED" layoutX="22.0" layoutY="95.0" strokeType="OUTSIDE" strokeWidth="0.0" text="本登录器不是游戏橘子数位科技开发的客户端程序" textAlignment="CENTER" wrappingWidth="332.240234375">
+        <Text fill="RED" layoutX="22.0" layoutY="95.0" strokeType="OUTSIDE" strokeWidth="0.0"
+              text="本登录器不是游戏橘子数位科技开发的客户端程序" textAlignment="CENTER" wrappingWidth="332.240234375">
             <font>
-                <Font size="15.0" />
+                <Font size="15.0"/>
             </font>
         </Text>
-        <Text fill="#0062ff" layoutX="45.0" layoutY="127.0" strokeType="OUTSIDE" strokeWidth="0.0" text="关于使用本登录器请确保下载途径是否安全" textAlignment="CENTER" wrappingWidth="286.240234375">
+        <Text fill="#0062ff" layoutX="45.0" layoutY="127.0" strokeType="OUTSIDE" strokeWidth="0.0"
+              text="关于使用本登录器请确保下载途径是否安全" textAlignment="CENTER" wrappingWidth="286.240234375">
             <font>
-                <Font size="15.0" />
+                <Font size="15.0"/>
             </font>
         </Text>
-        <Text layoutX="121.0" layoutY="360.0" strokeType="OUTSIDE" strokeWidth="0.0" text="联系开发者：" wrappingWidth="94.240234375">
+        <Text layoutX="121.0" layoutY="360.0" strokeType="OUTSIDE" strokeWidth="0.0" text="联系开发者："
+              wrappingWidth="94.240234375">
             <font>
-                <Font size="15.0" />
+                <Font size="15.0"/>
             </font>
         </Text>
-        <Separator disable="true" focusTraversable="false" layoutY="332.0" prefHeight="2.0" prefWidth="366.0" />
-        <Hyperlink focusTraversable="false" layoutX="215.0" layoutY="340.0" onAction="#contactQqAction" text="QQ：1140526018">
+        <Separator disable="true" focusTraversable="false" layoutY="332.0" prefHeight="2.0" prefWidth="366.0"/>
+        <Hyperlink focusTraversable="false" layoutX="215.0" layoutY="340.0" onAction="#contactQqAction"
+                   text="QQ：1140526018">
             <font>
-                <Font size="15.0" />
+                <Font size="15.0"/>
             </font>
         </Hyperlink>
-        <ImageView fx:id="logoImg" fitHeight="47.0" fitWidth="184.0" layoutX="24.0" layoutY="16.0" pickOnBounds="true" preserveRatio="true">
-         <image>
-            <Image url="@../static/images/ico.png" />
-         </image></ImageView>
+        <ImageView fx:id="logoImg" fitHeight="47.0" fitWidth="184.0" layoutX="24.0" layoutY="16.0" pickOnBounds="true"
+                   preserveRatio="true">
+            <image>
+                <Image url="@../static/images/ico.png"/>
+            </image>
+        </ImageView>
         <Text layoutX="82.0" layoutY="56.0" strokeType="OUTSIDE" strokeWidth="0.0" text="版本">
             <font>
-                <Font size="15.0" />
+                <Font size="15.0"/>
             </font>
         </Text>
-        <Hyperlink fx:id="versionBtn" alignment="CENTER" contentDisplay="CENTER" focusTraversable="false" layoutX="112.0" layoutY="40.0" onAction="#verifyVersionAction" prefHeight="21.0" prefWidth="71.0" text="0.0.0" />
-      <Text fill="#8c00ff" layoutX="33.0" layoutY="158.0" strokeType="OUTSIDE" strokeWidth="0.0" text="使用本登录器造成的一切后果由使用者承担" textAlignment="CENTER" wrappingWidth="309.240234375">
-         <font>
-            <Font size="15.0" />
-         </font>
-      </Text>
-      <ImageView fitHeight="150.0" fitWidth="150.0" layoutX="188.0" layoutY="170.0" pickOnBounds="true" preserveRatio="true">
-         <image>
-            <Image url="@../static/images/sponsor.png" />
-         </image>
-      </ImageView>
-      <Text fill="#006aa8" layoutX="22.0" layoutY="274.0" strokeType="OUTSIDE" strokeWidth="0.0" text="如果您条件允许..." textAlignment="CENTER" wrappingWidth="129.240234375">
-         <font>
-            <Font size="15.0" />
-         </font>
-      </Text>
-      <Text fill="#26a619" layoutX="76.0" layoutY="312.0" strokeType="OUTSIDE" strokeWidth="0.0" text="望君赞赏" textAlignment="CENTER" wrappingWidth="108.24023367464542">
-         <font>
-            <Font size="25.0" />
-         </font>
-      </Text>
-      <Button fx:id="buttonOpenSource" layoutX="17.0" layoutY="341.0" mnemonicParsing="false" onAction="#gitHubBtnAction" prefHeight="28.0" prefWidth="83.0" text="" />
-      <Text fill="#ff4000" layoutX="11.0" layoutY="203.0" strokeType="OUTSIDE" strokeWidth="0.0" text="所有不怀好意的指责..." textAlignment="CENTER" wrappingWidth="150.00000132247806">
-         <font>
-            <Font size="15.0" />
-         </font>
-      </Text>
-      <Text fill="#ff4000" layoutX="50.0" layoutY="232.0" strokeType="OUTSIDE" strokeWidth="0.0" text="都需要时间去验证！">
-         <font>
-            <Font size="15.0" />
-         </font>
-      </Text>
-      <Button layoutX="258.0" layoutY="39.0" mnemonicParsing="false" onAction="#resetConfigBtnAction" text="重置所有配置" />
-      <CheckBox fx:id="checkBoxPacSwitch" layoutX="249.0" layoutY="15.0" mnemonicParsing="false" prefHeight="16.0" prefWidth="101.0" text="适配PAC代理">
-         <tooltip>
-            <Tooltip fx:id="tooltipPac" style="-fx-font-size: 14px" text="开启后登录器将会适配当前电脑中存在的加速器效果&#10;读取系统中PAC的脚本代理地址&#10;如果登录过程中出现错误请关闭加速器或关闭此功能">
+        <Hyperlink fx:id="versionBtn" alignment="CENTER" contentDisplay="CENTER" focusTraversable="false"
+                   layoutX="112.0" layoutY="40.0" onAction="#verifyVersionAction" prefHeight="21.0" prefWidth="71.0"
+                   text="0.0.0"/>
+        <Text fill="#8c00ff" layoutX="33.0" layoutY="158.0" strokeType="OUTSIDE" strokeWidth="0.0"
+              text="使用本登录器造成的一切后果由使用者承担" textAlignment="CENTER" wrappingWidth="309.240234375">
+            <font>
+                <Font size="15.0"/>
+            </font>
+        </Text>
+        <ImageView fitHeight="150.0" fitWidth="150.0" layoutX="188.0" layoutY="170.0" pickOnBounds="true"
+                   preserveRatio="true">
+            <image>
+                <Image url="@../static/images/sponsor.png"/>
+            </image>
+        </ImageView>
+        <Text fill="#006aa8" layoutX="22.0" layoutY="274.0" strokeType="OUTSIDE" strokeWidth="0.0"
+              text="如果您条件允许..." textAlignment="CENTER" wrappingWidth="129.240234375">
+            <font>
+                <Font size="15.0"/>
+            </font>
+        </Text>
+        <Text fill="#26a619" layoutX="76.0" layoutY="312.0" strokeType="OUTSIDE" strokeWidth="0.0" text="望君赞赏"
+              textAlignment="CENTER" wrappingWidth="108.24023367464542">
+            <font>
+                <Font size="25.0"/>
+            </font>
+        </Text>
+        <Button fx:id="buttonOpenSource" layoutX="17.0" layoutY="341.0" mnemonicParsing="false"
+                onAction="#gitHubBtnAction" prefHeight="28.0" prefWidth="83.0" text=""/>
+        <Text fill="#ff4000" layoutX="11.0" layoutY="203.0" strokeType="OUTSIDE" strokeWidth="0.0"
+              text="所有不怀好意的指责..." textAlignment="CENTER" wrappingWidth="150.00000132247806">
+            <font>
+                <Font size="15.0"/>
+            </font>
+        </Text>
+        <Text fill="#ff4000" layoutX="50.0" layoutY="232.0" strokeType="OUTSIDE" strokeWidth="0.0"
+              text="都需要时间去验证！">
+            <font>
+                <Font size="15.0"/>
+            </font>
+        </Text>
+        <Button layoutX="258.0" layoutY="39.0" mnemonicParsing="false" onAction="#resetConfigBtnAction"
+                text="重置所有配置"/>
+        <CheckBox fx:id="checkBoxPacSwitch" layoutX="249.0" layoutY="15.0" mnemonicParsing="false" prefHeight="16.0"
+                  prefWidth="101.0" text="适配PAC代理">
+            <tooltip>
+                <Tooltip fx:id="tooltipPac" style="-fx-font-size: 14px"
+                         text="开启后登录器将会适配当前电脑中存在的加速器效果&#10;读取系统中PAC的脚本代理地址&#10;如果登录过程中出现错误请关闭加速器或关闭此功能">
 
-            </Tooltip>
-         </tooltip></CheckBox>
-      <RadioButton layoutX="86.0" layoutY="15.0" mnemonicParsing="false" text="GitHub" userData="1">
-         <toggleGroup>
-            <ToggleGroup fx:id="toggleGroupUpdateChannel" />
-         </toggleGroup>
-      </RadioButton>
-      <RadioButton layoutX="152.0" layoutY="15.0" mnemonicParsing="false" text="Gitee" toggleGroup="$toggleGroupUpdateChannel" userData="2" />
+                </Tooltip>
+            </tooltip>
+        </CheckBox>
+        <RadioButton layoutX="86.0" layoutY="15.0" mnemonicParsing="false" text="GitHub" userData="1">
+            <toggleGroup>
+                <ToggleGroup fx:id="toggleGroupUpdateChannel"/>
+            </toggleGroup>
+        </RadioButton>
+        <RadioButton layoutX="152.0" layoutY="15.0" mnemonicParsing="false" text="Gitee"
+                     toggleGroup="$toggleGroupUpdateChannel" userData="2"/>
     </children>
 </AnchorPane>

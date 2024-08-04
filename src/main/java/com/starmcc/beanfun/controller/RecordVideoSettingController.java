@@ -8,7 +8,6 @@ import com.starmcc.beanfun.utils.FileTools;
 import com.starmcc.beanfun.utils.RegexUtils;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
-import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.*;
@@ -22,8 +21,7 @@ import java.net.URL;
 import java.util.Objects;
 import java.util.ResourceBundle;
 
-public class RecordVideoSettingController implements Initializable
-{
+public class RecordVideoSettingController implements Initializable {
     @FXML
     private ChoiceBox<Integer> choiceBoxVideoFps;
     @FXML
@@ -38,8 +36,7 @@ public class RecordVideoSettingController implements Initializable
     private TextField textFieldVideoPath;
 
     @Override
-    public void initialize(URL location, ResourceBundle resources)
-    {
+    public void initialize(URL location, ResourceBundle resources) {
         FrameManager.getInstance().runLater(() ->
         {
             // 录像配置
@@ -60,12 +57,9 @@ public class RecordVideoSettingController implements Initializable
             comboBoxVideoCodeRate.setValue(String.valueOf(recordVideo.getCodeRate()));
 
             Integer captureType = recordVideo.getCaptureType();
-            if (Objects.equals(captureType, ConfigModel.RecordVideo.CaptureTypeEnum.游戏窗口.getType()))
-            {
+            if (Objects.equals(captureType, ConfigModel.RecordVideo.CaptureTypeEnum.GAME_WINDOW.getType())) {
                 radioButtonGame.setSelected(true);
-            }
-            else
-            {
+            } else {
                 radioButtonScreen.setSelected(true);
             }
             textFieldFFmpegPath.setText(recordVideo.getFfmpegPath());
@@ -73,15 +67,13 @@ public class RecordVideoSettingController implements Initializable
             comboBoxVideoCodeRate.valueProperty().addListener((obsVal, oldVal, newVal) ->
             {
                 // 只能输入数字
-                if (!RegexUtils.test(RegexUtils.Constant.COMMON_NUMBER, newVal))
-                {
+                if (!RegexUtils.test(RegexUtils.Constant.COMMON_NUMBER, newVal)) {
                     comboBoxVideoCodeRate.setValue(oldVal);
                     return;
                 }
                 ConfigModel.RecordVideo recordVideoTemp = QsConstant.config.getRecordVideo();
-                int number = Integer.valueOf(newVal);
-                if (number == 0)
-                {
+                int number = Integer.parseInt(newVal);
+                if (number == 0) {
                     number = recordVideoTemp.getCodeRate();
                 }
                 recordVideoTemp.setCodeRate(number);
@@ -95,30 +87,27 @@ public class RecordVideoSettingController implements Initializable
             radioButtonScreen.setToggleGroup(group);
             radioButtonGame.setOnAction(event ->
             {
-                QsConstant.config.getRecordVideo().setCaptureType(ConfigModel.RecordVideo.CaptureTypeEnum.游戏窗口.getType());
+                QsConstant.config.getRecordVideo().setCaptureType(ConfigModel.RecordVideo.CaptureTypeEnum.GAME_WINDOW.getType());
                 FileTools.saveConfig(QsConstant.config);
             });
             radioButtonScreen.setOnAction(event ->
             {
-                QsConstant.config.getRecordVideo().setCaptureType(ConfigModel.RecordVideo.CaptureTypeEnum.全屏.getType());
+                QsConstant.config.getRecordVideo().setCaptureType(ConfigModel.RecordVideo.CaptureTypeEnum.FULL_SCREEN.getType());
                 FileTools.saveConfig(QsConstant.config);
             });
         });
     }
 
     @FXML
-    public void videoPathOpenAction(ActionEvent actionEvent) throws Exception
-    {
+    public void videoPathOpenAction() throws Exception {
         DirectoryChooser directoryChooser = new DirectoryChooser();
         directoryChooser.setTitle("录像目录");
-        File selectedfolder = directoryChooser.showDialog(QsConstant.JFX_STAGE_DATA.get(FXPageEnum.主页).getStage());
-        if (Objects.isNull(selectedfolder))
-        {
+        File selectedfolder = directoryChooser.showDialog(QsConstant.JFX_STAGE_DATA.get(FXPageEnum.MAIN).getStage());
+        if (Objects.isNull(selectedfolder)) {
             return;
         }
         String path = selectedfolder.getPath();
-        if (StringUtils.isBlank(path))
-        {
+        if (StringUtils.isBlank(path)) {
             return;
         }
         textFieldVideoPath.setText(path);
@@ -127,27 +116,23 @@ public class RecordVideoSettingController implements Initializable
     }
 
     @FXML
-    public void selectVideoFpsAction(ActionEvent actionEvent)
-    {
+    public void selectVideoFpsAction() {
         Integer value = choiceBoxVideoFps.getValue();
         QsConstant.config.getRecordVideo().setFps(value);
         FileTools.saveConfig(QsConstant.config);
     }
 
     @FXML
-    public void ffmpegOpenAction(ActionEvent actionEvent)
-    {
+    public void ffmpegOpenAction() {
         FileChooser fileChooser = new FileChooser();
         FileChooser.ExtensionFilter extFilter = new FileChooser.ExtensionFilter("FFmpeg.exe(*.exe)", "*.exe");
         fileChooser.getExtensionFilters().add(extFilter);
-        File file = fileChooser.showOpenDialog(QsConstant.JFX_STAGE_DATA.get(FXPageEnum.主页).getStage());
-        if (Objects.isNull(file))
-        {
+        File file = fileChooser.showOpenDialog(QsConstant.JFX_STAGE_DATA.get(FXPageEnum.MAIN).getStage());
+        if (Objects.isNull(file)) {
             return;
         }
         String path = file.getPath();
-        if (StringUtils.isBlank(path))
-        {
+        if (StringUtils.isBlank(path)) {
             return;
         }
         textFieldFFmpegPath.setText(path);
@@ -156,31 +141,30 @@ public class RecordVideoSettingController implements Initializable
     }
 
     @FXML
-    public void clearRecordVideoAction(ActionEvent actionEvent)
-    {
+    public void clearRecordVideoAction() {
         String folder = QsConstant.config.getRecordVideo().getFolder();
         File file = new File(folder);
-        if (!file.exists())
-        {
-            FrameManager.getInstance().messageSync("该目录不存在!", Alert.AlertType.WARNING);
+        if (!file.exists()) {
+            FrameManager.getInstance().messageMaster("该目录不存在!", Alert.AlertType.WARNING, FXPageEnum.RECORD_VIDEO);
             return;
         }
         File[] files = file.listFiles(pathname -> pathname.getName().endsWith(".mp4"));
-        if (ArrayUtils.isEmpty(files))
-        {
-            FrameManager.getInstance().messageSync("没有录像可清空!", Alert.AlertType.WARNING);
+        if (ArrayUtils.isEmpty(files)) {
+            FrameManager.getInstance().messageMaster("没有录像可清空!", Alert.AlertType.WARNING, FXPageEnum.RECORD_VIDEO);
             return;
         }
         int delNum = 0;
-        for (File f : files)
-        {
-            delNum = f.delete() ? delNum++ : delNum;
+        if (files != null) {
+            for (File f : files) {
+                delNum = f.delete() ? delNum++ : delNum;
+            }
         }
-        FrameManager.getInstance().messageSync("已清理" + delNum + "个录像", Alert.AlertType.INFORMATION);
+
+        FrameManager.getInstance().messageMaster("已清理" + delNum + "个录像", Alert.AlertType.INFORMATION, FXPageEnum.RECORD_VIDEO);
     }
 
     @FXML
-    public void downloadFFmpegAction(ActionEvent actionEvent) {
+    public void downloadFFmpegAction() {
         FrameManager.getInstance().openWebUrl("https://ffmpeg.org/download.html");
     }
 }

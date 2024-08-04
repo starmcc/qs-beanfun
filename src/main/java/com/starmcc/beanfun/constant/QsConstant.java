@@ -3,6 +3,8 @@ package com.starmcc.beanfun.constant;
 import com.starmcc.beanfun.entity.client.Account;
 import com.starmcc.beanfun.entity.client.BeanfunModel;
 import com.starmcc.beanfun.entity.model.ConfigModel;
+import com.starmcc.beanfun.entity.model.Version;
+import com.starmcc.beanfun.entity.param.WindowXyParam;
 import com.starmcc.beanfun.utils.SystemTools;
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
@@ -11,6 +13,8 @@ import java.awt.*;
 import java.io.IOException;
 import java.io.InputStream;
 import java.math.BigDecimal;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Properties;
 
 
@@ -25,7 +29,7 @@ public class QsConstant {
 
     private static final Properties DATA_PROS;
     public static final String ENV;
-    public static final String APP_VERSION;
+    public static final Version APP_VERSION;
     public static final String APP_NAME;
     public static final String GITHUB_URL;
     public static final String GITHUB_API_LATSET;
@@ -40,6 +44,7 @@ public class QsConstant {
     public static BigDecimal currentRateChinaToTw = new BigDecimal("4.5");
     public static BeanfunModel beanfunModel;
     public static Account nowAccount;
+    public static Map<FXPageEnum, WindowXyParam> pageXyParams = new HashMap<>(16);
 
     static {
         DATA_PROS = new Properties();
@@ -52,7 +57,7 @@ public class QsConstant {
         } finally {
             SystemTools.close(in);
         }
-        APP_VERSION = DATA_PROS.getProperty("app.version");
+        APP_VERSION = new Version(DATA_PROS.getProperty("app.version"));
         APP_NAME = DATA_PROS.getProperty("app.name");
         ENV = DATA_PROS.getProperty("app.env", "prod");
         GITHUB_URL = DATA_PROS.getProperty("github.url");

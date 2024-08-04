@@ -10,6 +10,7 @@ import com.starmcc.beanfun.controller.UpdateController;
 import com.starmcc.beanfun.entity.client.QsHttpResponse;
 import com.starmcc.beanfun.entity.model.ConfigModel;
 import com.starmcc.beanfun.entity.model.UpdateModel;
+import com.starmcc.beanfun.entity.model.Version;
 import javafx.scene.control.Alert;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
@@ -52,7 +53,7 @@ public class UpdateManager {
         // 检查是否生产版本，如果不是，则不进行版本校验
         if (!StringUtils.equals(QsConstant.ENV.toLowerCase(), "prod")) {
             if (!quiet) {
-                FrameManager.getInstance().message("当前版本不支持更新功能", Alert.AlertType.WARNING);
+                FrameManager.getInstance().messageMaster("当前版本不支持更新功能", Alert.AlertType.WARNING);
             }
             return;
         }
@@ -60,14 +61,14 @@ public class UpdateManager {
         // 获取更新内容
         manager.getUpdateModel(model);
 
-        if (model.getState() != UpdateModel.State.有新版本) {
+        if (model.getState() != UpdateModel.State.NEW_VERSION) {
             if (quiet) {
                 return;
             }
-            if (model.getState() == UpdateModel.State.获取失败) {
-                FrameManager.getInstance().message("网络超时,无法获取最新版本信息", Alert.AlertType.WARNING);
-            } else if (model.getState() == UpdateModel.State.已是最新版本) {
-                FrameManager.getInstance().message("当前已经是最新版本", Alert.AlertType.INFORMATION);
+            if (model.getState() == UpdateModel.State.GET_ERROR) {
+                FrameManager.getInstance().messageMaster("网络超时,无法获取最新版本信息", Alert.AlertType.WARNING);
+            } else if (model.getState() == UpdateModel.State.LATEST_VERSION) {
+                FrameManager.getInstance().messageMaster("当前已经是最新版本", Alert.AlertType.INFORMATION);
             }
             return;
         }
@@ -80,7 +81,7 @@ public class UpdateManager {
             }
             // 不是手动更新，则弹出下载页面
             UpdateController.model = model;
-            FrameManager.getInstance().openWindow(FXPageEnum.更新页);
+            FrameManager.getInstance().openWindow(FXPageEnum.UPDATE);
         });
     }
 
@@ -107,29 +108,36 @@ public class UpdateManager {
             }
             QsHttpResponse qsHttpResponse = HttpClient.getInstance().get(url);
             if (!qsHttpResponse.getSuccess()) {
-                updateModel.setState(UpdateModel.State.获取失败);
+                updateModel.setState(UpdateModel.State.GET_ERROR);
                 return;
             }
             String json = qsHttpResponse.getContent();
             if (StringUtils.isBlank(json)) {
-                updateModel.setState(UpdateModel.State.获取失败);
+                updateModel.setState(UpdateModel.State.GET_ERROR);
                 return;
             }
             JSONObject jsonObj = JSON.parseObject(json);
             String githubVersion = jsonObj.getString("tag_name");
 
             if (StringUtils.isBlank(githubVersion)) {
-                updateModel.setState(UpdateModel.State.获取失败);
+                updateModel.setState(UpdateModel.State.GET_ERROR);
                 return;
             }
+            githubVersion = "v5.1";
+            Version version = new Version(githubVersion);
 
-            if (StringUtils.equals(QsConstant.APP_VERSION, githubVersion)) {
-                updateModel.setState(UpdateModel.State.已是最新版本);
+            if (QsConstant.APP_VERSION.compareTo(version) >= 0) {
+                updateModel.setState(UpdateModel.State.LATEST_VERSION);
+                return;
+            }
+            if (version.getMajor() > 4) {
+                // 检查大版本，如果大于4，则不继续更新
+                updateModel.setState(UpdateModel.State.LATEST_VERSION);
                 return;
             }
 
             StringBuffer tipsBf = new StringBuffer();
-            tipsBf.append("最新版本:").append(githubVersion).append("\n");
+            tipsBf.append("最新版本:").append(version).append("\n");
             tipsBf.append("--------------------\n");
             tipsBf.append(jsonObj.getString("body"));
             JSONArray assets = jsonObj.getJSONArray("assets");
@@ -142,13 +150,13 @@ public class UpdateManager {
                 }
             }
             log.info("新版本下载地址: {}", downloadUrl);
-            updateModel.setState(UpdateModel.State.有新版本);
-            updateModel.setVersion(githubVersion);
+            updateModel.setState(UpdateModel.State.NEW_VERSION);
+            updateModel.setVersion(version);
             updateModel.setUrl(downloadUrl);
             updateModel.setContent(tipsBf.toString());
         } catch (Exception e) {
             log.error("获取版本异常 e={}", e.getMessage(), e);
-            updateModel.setState(UpdateModel.State.获取失败);
+            updateModel.setState(UpdateModel.State.GET_ERROR);
         }
     }
 

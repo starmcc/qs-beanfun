@@ -1,6 +1,7 @@
 package com.starmcc.beanfun.handler;
 
 import com.starmcc.beanfun.client.BeanfunClient;
+import com.starmcc.beanfun.constant.FXPageEnum;
 import com.starmcc.beanfun.constant.QsConstant;
 import com.starmcc.beanfun.entity.LoginType;
 import com.starmcc.beanfun.entity.client.Account;
@@ -87,7 +88,7 @@ public class AccountHandler {
         try {
             BeanfunStringResult pwdResult = BeanfunClient.run().getDynamicPassword(account, QsConstant.beanfunModel.getToken());
             if (!pwdResult.isSuccess()) {
-                FrameManager.getInstance().message(pwdResult.getMsg(), Alert.AlertType.ERROR);
+                FrameManager.getInstance().messageMaster(pwdResult.getMsg(), Alert.AlertType.ERROR, FXPageEnum.MAIN);
                 return;
             }
             log.debug("动态密码 ={}", pwdResult.getData());
@@ -98,7 +99,7 @@ public class AccountHandler {
             }
         } catch (Exception e) {
             log.error("error={}", e, e.getMessage());
-            FrameManager.getInstance().message("自动输入异常", Alert.AlertType.ERROR);
+            FrameManager.getInstance().messageMaster("自动输入异常", Alert.AlertType.ERROR, FXPageEnum.MAIN);
         }
     }
 }

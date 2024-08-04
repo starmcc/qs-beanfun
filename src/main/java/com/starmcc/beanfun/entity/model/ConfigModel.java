@@ -3,6 +3,7 @@ package com.starmcc.beanfun.entity.model;
 import com.starmcc.beanfun.constant.QsConstant;
 import com.starmcc.beanfun.entity.LoginType;
 import lombok.Data;
+import lombok.Getter;
 
 import java.io.File;
 import java.io.Serializable;
@@ -39,7 +40,6 @@ public class ConfigModel implements Serializable {
     private String vipSecrect;
     private Boolean minimizeMode;
     private Boolean expandSettingPane;
-    private Boolean dualVerify;
 
     public ConfigModel() {
         // 默认配置
@@ -152,8 +152,9 @@ public class ConfigModel implements Serializable {
          * @author starmcc
          * @date 2022/09/22
          */
+        @Getter
         public static enum CaptureTypeEnum {
-            游戏窗口(1), 全屏(2),
+            GAME_WINDOW(1), FULL_SCREEN(2),
             ;
             private final int type;
 
@@ -161,9 +162,6 @@ public class ConfigModel implements Serializable {
                 this.type = type;
             }
 
-            public int getType() {
-                return type;
-            }
         }
     }
 

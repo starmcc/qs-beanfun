@@ -5,6 +5,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 
 import java.math.BigDecimal;
+import java.math.RoundingMode;
 
 /**
  * 计算处理程序
@@ -27,9 +28,9 @@ public class CellHandler {
             }
             BigDecimal bigDecimal = new BigDecimal(val);
             if (type == 1) {
-                bigDecimal = bigDecimal.multiply(QsConstant.currentRateChinaToTw).setScale(2, BigDecimal.ROUND_HALF_EVEN);
+                bigDecimal = bigDecimal.multiply(QsConstant.currentRateChinaToTw).setScale(2, RoundingMode.HALF_EVEN);
             } else {
-                bigDecimal = bigDecimal.divide(QsConstant.currentRateChinaToTw, 2, BigDecimal.ROUND_HALF_EVEN);
+                bigDecimal = bigDecimal.divide(QsConstant.currentRateChinaToTw, 2, RoundingMode.HALF_EVEN);
             }
             return bigDecimal.stripTrailingZeros();
         } catch (Exception e) {

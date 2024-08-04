@@ -44,7 +44,7 @@ public class RecordVideoManager {
     public void start(ConfigModel.RecordVideo config, Consumer<String> callback) {
         String command = recordVideoManager.buildFFmpegScript(config);
         // 如果是游戏窗口录制模式，前置游戏窗口
-        if (Objects.equals(config.getCaptureType(), ConfigModel.RecordVideo.CaptureTypeEnum.游戏窗口.getType())) {
+        if (Objects.equals(config.getCaptureType(), ConfigModel.RecordVideo.CaptureTypeEnum.GAME_WINDOW.getType())) {
             WindowManager.getInstance().setMapleStoryForegroundWindow();
         }
         recordVideoManager.exec(command, callback);
@@ -87,7 +87,7 @@ public class RecordVideoManager {
         StringBuffer sbf = new StringBuffer();
         sbf.append(config.getFfmpegPath());
         sbf.append(" -f gdigrab -framerate ").append(config.getFps());
-        if (Objects.equals(config.getCaptureType(), ConfigModel.RecordVideo.CaptureTypeEnum.游戏窗口.getType())) {
+        if (Objects.equals(config.getCaptureType(), ConfigModel.RecordVideo.CaptureTypeEnum.GAME_WINDOW.getType())) {
             sbf.append(" -i title=\"MapleStory\"");
         } else {
             sbf.append(" -i desktop");

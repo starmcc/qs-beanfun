@@ -16,6 +16,7 @@ import org.apache.http.cookie.Cookie;
 import java.util.List;
 import java.util.Objects;
 import java.util.function.Consumer;
+import java.util.function.Function;
 
 /**
  * beanfun客户端
@@ -50,7 +51,7 @@ public abstract class BeanfunClient {
     /**
      * 获得会话密钥
      *
-     * @return {@link SessionKeyResult}
+     * @return {@link Exception}
      */
     public abstract BeanfunStringResult getSessionKey() throws Exception;
 
@@ -58,14 +59,14 @@ public abstract class BeanfunClient {
     /**
      * 登录
      *
-     * @param account  账户
-     * @param password 密码
-     * @param extend   附加参数
-     * @param process  进度
+     * @param account   账户
+     * @param password  密码
+     * @param extendFnc 额外方法 香港登录的二重验证 台湾登录的进阶登录
+     * @param process   进度
      * @return {@link BeanfunStringResult}
      * @throws Exception 异常
      */
-    public abstract BeanfunStringResult login(String account, String password, Object extend, Consumer<Double> process) throws Exception;
+    public abstract BeanfunStringResult login(String account, String password, Function<Object, Object> extendFnc, Consumer<Double> process) throws Exception;
 
 
     /**
@@ -107,8 +108,7 @@ public abstract class BeanfunClient {
     /**
      * 添加账户
      *
-     * @param accountId 帐户id
-     * @param newName   新名字
+     * @param newName 新名字
      * @return boolean
      * @throws Exception 异常
      */
@@ -166,10 +166,9 @@ public abstract class BeanfunClient {
     /**
      * 心跳
      *
-     * @return boolean
      * @throws Exception 异常
      */
-    public abstract boolean heartbeat() throws Exception;
+    public abstract void heartbeat() throws Exception;
 
 
     protected String getBfWebToken() {
@@ -211,18 +210,4 @@ public abstract class BeanfunClient {
         }
     }
 
-
-    @FunctionalInterface
-    public interface loginProcess<T, K> {
-
-        /**
-         * 接受
-         *
-         * @param process 过程
-         * @param type    类型
-         * @return {@link List}<{@link K}>
-         */
-        List<K> accept(T process, int type);
-
-    }
 }

@@ -26,7 +26,6 @@ public class GameHandler {
      * @param gamePath            游戏路径
      * @param accountId           帐户id
      * @param password            密码
-     * @param killStartPalyWindow 关闭开始窗口
      */
     public static void runGame(String gamePath, String accountId, String password) {
         String runParam = "./MapleStory.exe";
@@ -47,7 +46,7 @@ public class GameHandler {
             }
             if (BooleanUtils.isTrue(QsConstant.config.getKillGamePatcher())) {
                 WindowManager.getInstance().stopAutoPatcher(process -> {
-                    FrameManager.getInstance().message("当前游戏版本不是最新版本\n已为您阻止自动更新!", Alert.AlertType.INFORMATION);
+                    FrameManager.getInstance().messageMaster("当前游戏版本不是最新版本\n已为您阻止自动更新!", Alert.AlertType.INFORMATION);
                 });
             }
         } catch (Exception e) {

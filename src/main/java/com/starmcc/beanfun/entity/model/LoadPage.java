@@ -6,7 +6,6 @@ import com.starmcc.beanfun.entity.thread.ThrowConsumer;
 import com.starmcc.beanfun.manager.FrameManager;
 import com.starmcc.beanfun.manager.ThreadPoolManager;
 import javafx.geometry.Pos;
-import javafx.scene.Node;
 import javafx.scene.control.Label;
 import javafx.scene.control.ProgressIndicator;
 import javafx.scene.layout.BorderPane;
@@ -36,8 +35,7 @@ public class LoadPage {
      * 同步任务
      *
      * @param pageEnum 页面枚举
-     * @param message  消息
-     * @return {@link Pane}
+     * @param consumer 消费者
      */
     public static void task(FXPageEnum pageEnum, ThrowConsumer<Label> consumer) {
         Pane stagePane = getStageParentPane(pageEnum);

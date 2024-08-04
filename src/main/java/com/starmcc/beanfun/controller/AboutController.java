@@ -1,12 +1,12 @@
 package com.starmcc.beanfun.controller;
 
+import com.starmcc.beanfun.constant.FXPageEnum;
 import com.starmcc.beanfun.constant.QsConstant;
 import com.starmcc.beanfun.entity.model.ConfigModel;
 import com.starmcc.beanfun.manager.FrameManager;
 import com.starmcc.beanfun.manager.ThreadPoolManager;
 import com.starmcc.beanfun.manager.UpdateManager;
 import com.starmcc.beanfun.utils.FileTools;
-import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.*;
@@ -36,13 +36,9 @@ public class AboutController implements Initializable {
     private ToggleGroup toggleGroupUpdateChannel;
     @FXML
     private Button buttonOpenSource;
-    @FXML
-    private Tooltip tooltipPac;
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
-        // Tooltip
-//        tooltipPac.setText("abc\nabc");
         ConfigModel.UpdateChannel updateChannel = ConfigModel.UpdateChannel.get(QsConstant.config.getUpdateChannel());
         if (updateChannel == ConfigModel.UpdateChannel.GITHUB) {
             buttonOpenSource.setText("开源GitHub");
@@ -58,7 +54,7 @@ public class AboutController implements Initializable {
             FileTools.saveConfig(QsConstant.config);
         });
 
-        versionBtn.setText(QsConstant.APP_VERSION);
+        versionBtn.setText(QsConstant.APP_VERSION.toString());
         if (Objects.nonNull(QsConstant.config.getProxyConfig())) {
             checkBoxPacSwitch.setSelected(!BooleanUtils.isTrue(QsConstant.config.getProxyConfig().getBan()));
         }
@@ -76,18 +72,18 @@ public class AboutController implements Initializable {
     }
 
     @FXML
-    public void contactQqAction(ActionEvent actionEvent) {
+    public void contactQqAction() {
         FrameManager.getInstance().openWebUrl("http://wpa.qq.com/msgrd?v=3&uin=1140526018&site=qq&menu=yes");
     }
 
 
     @FXML
-    public void verifyVersionAction(ActionEvent actionEvent) {
+    public void verifyVersionAction() {
         ThreadPoolManager.execute(() -> UpdateManager.getInstance().verifyAppVersion(false));
     }
 
     @FXML
-    public void gitHubBtnAction(ActionEvent actionEvent) {
+    public void gitHubBtnAction() {
         ConfigModel.UpdateChannel updateChannel = ConfigModel.UpdateChannel.get(QsConstant.config.getUpdateChannel());
         if (updateChannel == ConfigModel.UpdateChannel.GITHUB) {
             FrameManager.getInstance().openWebUrl(QsConstant.GITHUB_URL);
@@ -97,7 +93,7 @@ public class AboutController implements Initializable {
     }
 
     @FXML
-    public void resetConfigBtnAction(ActionEvent actionEvent) {
+    public void resetConfigBtnAction() {
         boolean is = FrameManager.getInstance().dialogConfirm("重置所有配置", "是否重置所有配置？\n注意：\n该操作会清空所有账号记录!");
         if (!is) {
             return;
@@ -108,7 +104,7 @@ public class AboutController implements Initializable {
         }
         is = FileTools.deleteFolder(file);
         if (!is) {
-            FrameManager.getInstance().messageSync("所有配置重置失败!", Alert.AlertType.ERROR);
+            FrameManager.getInstance().messageMaster("所有配置重置失败!", Alert.AlertType.ERROR, FXPageEnum.ABOUT);
             return;
         }
         FrameManager.getInstance().exit();

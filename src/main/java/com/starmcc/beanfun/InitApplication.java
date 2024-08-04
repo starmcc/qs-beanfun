@@ -34,7 +34,7 @@ public class InitApplication {
             StringBuffer msg = new StringBuffer();
             msg.append("读取配置异常,请检查以下路径文件,尝试删除该文件重新打开!\n");
             msg.append(QsConstant.PATH_APP_CONFIG);
-            FrameManager.getInstance().messageSync(msg.toString(), Alert.AlertType.ERROR);
+            FrameManager.getInstance().messageMaster(msg.toString(), Alert.AlertType.ERROR);
             FrameManager.getInstance().exit();
             return;
         }

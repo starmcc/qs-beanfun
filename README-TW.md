@@ -1,4 +1,4 @@
-# QsBeanfun
+# QsBeanfun 4
 
 <p align="center">
     <a target="_blank" href="https://github.com/starmcc/qs-beanfun/blob/master/LICENSE">
@@ -11,9 +11,9 @@
         <img alt="Releases" src="https://img.shields.io/github/v/release/starmcc/qs-beanfun?display_name=tag&label=Latest&color=red"/>
     </a>
     <a target="_blank" href="https://www.qstms.com/">
-        <img alt="QSTMS" src="https://img.shields.io/badge/HomePage-QSTMS-orange"/>
+        <img alt="童年小夢" src="https://img.shields.io/badge/HomePage-%E7%AB%A5%E5%B9%B4%E5%B0%8F%E6%A2%A6-orange"/>
     </a>
-</p>
+  </p>
 <p align="center">
     <a target="_blank" href="https://github.com/starmcc/qs-beanfun/releases/latest">
         <img alt="Downloads" src="https://img.shields.io/github/downloads/starmcc/qs-beanfun/total?label=Downloads"/>
@@ -27,12 +27,12 @@
 </p>
 <p align="center">
     <a href="./README.md">简体中文</a>
-    <span style="font-weight:bold;">繁體中文</span>
+    <span style="font-weight:bold;color:#F57C00;">繁體中字</span>
 </p>
 
 ## 介紹
 
-![logo](./src/main/resources/static/images/ico.png)
+<image style="width: 120px; height: 120px;" src="./src/main/resources/static/images/ico.png"></image>
 
 Please forgive me for not writing this document in English.
 
@@ -42,23 +42,24 @@ I don't have a lot of energy to do it.
 
 引用[LR區域模擬元件](https://github.com/InWILL/Locale_Remulator)，支持`32/64bit`臺服新楓之谷遊戲運行。
 
+<p style="font-size: 20px;color: palevioletred">於2024年7月我做了個糊塗又明智的決定</p>
+<p style="font-size: 20px;color: palevioletred">QsBeanfun5.x系列將采用Python語言重新開發！</p>
+<p style="color: palevioletred">至於什麽時候完成，慢慢等吧，或許很快！</p>
+<p style="font-size: 18px;color: #00a1ff">QsBeanfun 4.x.x 系列為永存維護版本</p>
+
 > 支持登錄方式
 
-1. 香港賬號
-2. 臺灣賬號
-3. 臺灣賬號(二維碼/QR碼)
+1. 香港賬號 - (賬密/雙重驗證)
+2. 臺灣賬號 - (賬密/二維碼/QR碼)
+3. 內置各種實用小功能
 
-內置各種實用小功能
-
-香港登錄渠道已替換為新版（不用需要安裝橘子插件）
-
-**遵循MIT開源協議**，如遇問題或 Bug 歡迎提交 Issues。
+**遵循MIT開源協議**，如遇問題或 Bug 亦或交流，請移步 Issues。
 
 ## 安裝
 
 [**Releases-點擊進入下載頁面**](https://github.com/starmcc/qs-beanfun/releases)
 
-**請下載最新`QsBeanfun-install.exe`進行安裝即可。**
+**下載最新`QsBeanfun.zip`開箱即用。**
 
 ---
 
@@ -74,7 +75,9 @@ I don't have a lot of energy to do it.
 
 以釋放依賴文件和日誌文件使用。
 
-**特別註意：秋水登錄器安裝路徑不能存在中文，不然無法啟動遊戲**
+> **特別註意：**
+
+`QsBeanfun.exe`目錄不能存在中文，否則無法啟動遊戲
 
 ## 更新
 
@@ -86,56 +89,54 @@ I don't have a lot of energy to do it.
 
 使用秋水登錄器內置自動更新功能。
 
-> 註意
+## 實現功能
 
-`4.1.0`之前的版本更新需要卸載後重新安裝`install`
+| 功能                                              |
+|-------------------------------------------------|
+| 香港/臺灣橘子 <br/>普通登錄、雙重登錄、二維碼登錄<br/>Ps: 無需安裝遊戲橘子插件 |
+| 模擬繁體操作系統環境運行[新楓之谷]                              |
+| 內置會員充值、客服中心、會員中心                                |
+| 免輸賬密啟動/進入遊戲                                     |
+| 自動屏蔽遊戲啟動窗口（可選）                                  |
+| 自動阻止遊戲自動更新（可選）                                  | 
+| 一鍵跳過NGS進程                                       | 
+| 新楓之谷實用網站快捷導航                                    |
+| 遊戲自動錄像功能(需FFMPEG支持)                             |
+| 其他內置功能                                          |
 
-PS: 需更換JRE環境64位
+## 環境與依賴
 
-## 實現
-
-| 功能                  |      版本      |            描述            |
-|---------------------|:------------:|:------------------------:|
-| 香港/臺灣橘子 賬號登錄/二維碼登錄  | 臺號登錄需4.0.0以上 |  通過模擬網頁登錄，從此告別在網頁上啟動遊戲   |
-| 模擬繁體環境啟動新楓之谷遊戲      |     ALL      |     告別入谷需要設置區域語言的麻煩      |
-| 內置會員充值、客服中心、會員中心    |     ALL      |     方便充值、反饋問題、查閱賬號資料     |
-| 裝備卷軸計算器             |     ALL      |         方便計算裝備價值         |
-| 免輸入賬號密碼進遊戲模式        |     ALL      |       實現方式與網頁登錄相同        |
-| 自動關閉遊戲Play開始窗口      |     ALL      |         加快進入遊戲速度         |
-| 中臺實時匯率計算            |     ALL      |         一個實用的小功能         |
-| 新楓之谷實用網站快捷導航        |     ALL      | 一些常用的網站整理，媽媽再也不用擔心找不到官網啦 |
-| 免Beanfun插件安裝        |   3.0.1以上    |    登錄器在手,登錄->啟動一氣呵成~     |
-| 遊戲自動錄像功能(需FFMPEG支持) |   4.0.0以上    |    避免交易/搶圖爭議、檢舉外掛/輔助     |
-| JRE(64位)            |   4.1.0以上    |   4.1.0之前使用32位JRE運行環境    |
-| 自動阻止遊戲自動更新          |   4.0.0以上    |    防止自動更新帶來的災難，比如文件損壞    |
-| 其他內置功能              |   4.0.0以上    |           便捷功能           |
-
-## 環境
-
+> 環境
+ 
 - `Windows7`以上，以`Win10`環境為發布標準。
-- [JRE1.8 x64-64位 (Install包已內置)](https://www.oracle.com/java/technologies/downloads/#jre8-windows)
+- [JRE1.8 x64-64位(Zip已包含)](https://www.oracle.com/java/technologies/downloads/#jre8-windows)
 - [Microsoft Visual C++ Redistributable VC環境](https://aka.ms/vs/17/release/vc_redist.x64.exe)
 
-## 依賴
+> 依賴
 
 - JNA - Java 調用DLL支持
 - FastJson - 阿裏JSON解析支持
 - JavaFX - JavaFX-UI庫
 - Httpclient - apache HTTP請求支持
 - [LR區域模擬元件支持](https://github.com/InWILL/Locale_Remulator) 模擬繁體區域啟動遊戲
-- JxBrowser 第三方瀏覽器插件 [來源](https://blog.csdn.net/weixin_43852094/article/details/121157752) [官網](https://jxbrowser-support.teamdev.com/)
+- JxBrowser
+  第三方瀏覽器插件 [來源](https://blog.csdn.net/weixin_43852094/article/details/121157752) [官網](https://jxbrowser-support.teamdev.com/)
 
-## 開發/編譯
+## 開發與編譯
+
+> 開發
 
 1. 導入項目後，需要手動將`lib`目錄下的第三方依賴打入本地倉庫，否則報紅。
+
 ```
 mvn install:install-file -Dfile=./lib/jxbrowser-6.21.jar -DgroupId=com.teamdev.jxbrowser -DartifactId=jxbrowser -Dversion=6.21 -Dpackaging=jar
 mvn install:install-file -Dfile=./lib/jxbrowser-win64-6.21.jar -DgroupId=com.teamdev.jxbrowser -DartifactId=jxbrowser-win64 -Dversion=6.21 -Dpackaging=jar
 mvn install:install-file -Dfile=./lib/license-6.21.jar -DgroupId=com.teamdev.jxbrowser -DartifactId=license -Dversion=6.21 -Dpackaging=jar
 ```
+
 請直接運行上述命令即可。
 
-[編譯詳細教程](./build/README.md)
+> 編譯 -> [編譯詳細教程](./build/README.md)
 
 ## 安全
 
@@ -159,28 +160,28 @@ certutil -hashfile 該程序路徑
 
 `com/starmcc`目錄下即是登錄器源碼。
 
-怎麼反編譯`class`文件？
-
-[class文件的反編譯過程](https://blog.csdn.net/qq_39674002/article/details/109735298)
+> 怎麼反編譯`class`文件？ [class文件的反編譯過程](https://blog.csdn.net/qq_39674002/article/details/109735298)
 
 ## 結語
 
-1. 所有不懷好意的指責，都需要時間去驗證和打磨。
-2. 能夠幫助別人，分享自己的技術實現方案是一件非常愉快的事情，也希望有一些會本系語言的朋友一起優化它，讓它更人性化，即使只是我的一廂情願~~
-3. 凡是第三方工具都是橘子官方明令禁止使用的，最好的方式就是將系統轉為繁體語言後使用網頁登錄，望客官悉知。
-4. 我只是茫茫人海中一個熱愛楓谷懂點皮毛技術的玩家，希望新楓之谷會一直運營下去，長盛不衰！
-5. **工具僅供學習使用，下載後請24小時內刪除，遵循MIT開源協議**
+1. 所有惡意的指責，都需歷經時間的檢驗與雕琢。
+2. 能幫助他人、分享自身的技術實現方案是極為愉悅之事，也期望能有一些朋友共同對其進行優化，哪怕這只是我的一己之願~~
+3. 任何第三方工具皆被遊戲橘子官方嚴令禁止使用，最佳方式是將系統轉為繁體語言後使用網頁登錄，望客官知悉。
+4. 我僅是茫茫人海中一位熱愛新楓之谷且略懂些許技術的玩家，衷心希望新楓之谷能夠一直運營，長盛不衰！
 
-最後奉勸那些指鹿為馬的家夥，請心存善念，人生才會充滿陽光，加油楓谷人。
+**<p style="font-size:18px">本軟件僅供學習使用，下載後請24小時內刪除</p>**
+**<p style="font-size:22px">遵循MIT開源協議</p>**
+
+最後奉勸那些指鹿為馬的家夥，請心存善念，人生才會充滿陽光。
 
 > 楓谷作伴，瀟瀟灑灑...
 
 # 贊賞
 
-如果您也覺得本項目對您有所幫助，請慷慨的為作者送上一筆贊賞。
+倘若您也認為本項目對您有益，煩請您慷慨地為作者給予一筆贊賞。
 
-在此的每一筆犒勞都將讓作者銘記於心！
+在此收到的每一筆贊賞，都將被作者深深銘記！
 
-![Appreciate](./Appreciate.png)
+<image style="width: 200px; height: 200px;" src="./Appreciate.png"></image>
 
-> 打賞大佬名單,請參照[簡體版本說明](./README.md)
+> 打賞大佬名單,請參照[簡中文档說明](./README.md)

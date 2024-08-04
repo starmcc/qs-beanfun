@@ -22,7 +22,8 @@ public class RegexUtils {
         HK_ACCOUNT_MAX(Pattern.compile("<div\\sid=\\\"divServiceAccountAmountLimitNotice\\\".*>.*:(\\d+)</div>")),
         HK_ACCOUNT_LIST(Pattern.compile("onclick=\\\"([^\\\"]*)\\\"><div id=\\\"(\\w+)\\\" sn=\\\"(\\d+)\\\" name=\\\"([^\\\"]+)\\\"")),
         HK_CREATE_ACCOUNT(Pattern.compile("<div\\sid\\=\"divServiceInstruction\">請先創立新帳戶</div>")),
-        HK_LOGIN_ERROR_MSG(Pattern.compile("<script>ShowMsgBox\\('(.*?)'\\);</script>")),
+        HK_LOGIN_ERROR_MSG(Pattern.compile("<script>ShowMsgBox\\('(.*?)'")),
+        HK_LOGIN_DUAL(Pattern.compile("請輸入雙重驗證碼")),
         HK_LOGIN_AKEY(Pattern.compile("AuthKey\\.value\\s=\\s\"(.*?)\";parent")),
         HK_GET_PWD_OTP_KEY(Pattern.compile("GetResultByLongPolling&key=(.*?)\"")),
         HK_GET_SERVICE_CREATE_TIME(Pattern.compile("ServiceAccountCreateTime:\\s\\\"([^\\\"]+)\\\"")),
@@ -47,7 +48,8 @@ public class RegexUtils {
         TW_GET_PWD_OTP_SECRET(Pattern.compile("var\\sm_strSecretCode\\s=\\s'(.*)'")),
         TW_GAME_POINTS(Pattern.compile("\"RemainPoint\"\\s:\\s\"(\\d+)\"")),
         TW_QRCODE_AKEY(Pattern.compile("akey=(.*)&authkey=(.*)&")),
-
+        TW_LOGIN_POLL_REQUEST(Pattern.compile("pollRequest\\(\"bfAPPAutoLogin\\.ashx\",\"([A-F0-9]+)\"")),
+        TW_LOGIN_DAV_VERIFY(Pattern.compile("alert\\('([^']*)'.*?\\);window\\.top\\.location='([^']*)'")),
         // =============
         COMMON_IP_ADDRESS(Pattern.compile("PROXY\\s(\\d+\\.\\d+\\.\\d+\\.\\d+:\\d+)")),
         COMMON_CHINA_STRING(Pattern.compile("[\u4E00-\u9FFF]+")),

@@ -8,7 +8,6 @@ import com.starmcc.beanfun.handler.CellHandler;
 import com.starmcc.beanfun.manager.FrameManager;
 import com.starmcc.beanfun.manager.ThreadPoolManager;
 import javafx.beans.value.ObservableValue;
-import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.Label;
@@ -17,17 +16,16 @@ import javafx.scene.control.TextField;
 import java.net.URL;
 import java.util.ResourceBundle;
 
-public class CurrencyController implements Initializable
-{
+public class CurrencyController implements Initializable {
     @FXML
     private TextField textFieldRmbInput;
     @FXML
     private TextField textFieldXtbInput;
     @FXML
     private Label labelExchangeNow;
+
     @Override
-    public void initialize(URL location, ResourceBundle resources)
-    {
+    public void initialize(URL location, ResourceBundle resources) {
 
         // =========================== 汇率控件事件 ========================
         textFieldRmbInput.textProperty().addListener((ObservableValue<? extends String> observable, String oldValue, String newValue) -> {
@@ -51,13 +49,11 @@ public class CurrencyController implements Initializable
 
     /**
      * 更新汇率
-     *
-     * @param actionEvent 行动事件
      */
     @FXML
-    public void updateRateAction(ActionEvent actionEvent) {
+    public void updateRateAction() {
         // 获取汇率
-        LoadPage.task(FXPageEnum.汇率查询, label -> {
+        LoadPage.task(FXPageEnum.CURRENCY, label -> {
             label.setText("更新汇率..");
             QsConstant.currentRateChinaToTw = ThirdPartyApiClient.getCurrentRateChinaToTw();
             FrameManager.getInstance().runLater(() -> labelExchangeNow.setText(QsConstant.currentRateChinaToTw.toString()));

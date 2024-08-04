@@ -36,7 +36,7 @@ public abstract class AdvancedTimerTask implements Runnable {
         } catch (Exception e) {
             throw new RuntimeException(e);
         } finally {
-            log.debug("task run time consuming {}/ms", System.currentTimeMillis() - startTime);
+            log.debug("Task running time {}/ms", System.currentTimeMillis() - startTime);
         }
     }
 

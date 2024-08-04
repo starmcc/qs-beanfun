@@ -26,6 +26,7 @@ public class QsHttpResponse implements Serializable {
     private long contentLength;
     private Boolean success;
     private Map<String, String> cookieMap;
+    private byte[] byteData;
 
 
     public QsHttpResponse build() {

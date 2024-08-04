@@ -1,4 +1,4 @@
-# QsBeanfun
+# QsBeanfun 4
 
 <p align="center">
     <a target="_blank" href="https://github.com/starmcc/qs-beanfun/blob/master/LICENSE">
@@ -26,13 +26,13 @@
     </a>
 </p>
 <p align="center">
-    <span style="font-weight:bold;">简体中文</span>
-    <a href="./README-TW.md">繁體中文</a>
+    <span style="font-weight:bold; color:#F57C00;">简体中文</span>
+    <a href="./README-TW.md">繁體中字</a>
 </p>
 
 ## 介绍
 
-![logo](./src/main/resources/static/images/ico.png)
+<image style="width: 120px; height: 120px;" src="./src/main/resources/static/images/ico.png"></image>
 
 Please forgive me for not writing this document in English.
 
@@ -42,23 +42,24 @@ I don't have a lot of energy to do it.
 
 引用[LR区域模拟元件](https://github.com/InWILL/Locale_Remulator)，支持`32/64bit`台服新枫之谷游戏运行。
 
+<p style="font-size: 20px;color: palevioletred">于2024年7月我做了个糊涂又明智的决定</p>
+<p style="font-size: 20px;color: palevioletred">QsBeanfun5.x系列将采用Python语言重新开发！</p>
+<p style="color: palevioletred">至于什么时候完成，慢慢等吧，或许很快！</p>
+<p style="font-size: 18px;color: #00a1ff">QsBeanfun 4.x.x 系列为永存维护版本</p>
+
 > 支持登录方式
 
-1. 香港账号
-2. 台湾账号
-3. 台湾账号(二维码/QR码)
+1. 香港账号 - (账密/双重验证)
+2. 台湾账号 - (账密/二维码/QR码)
+3. 内置各种实用小功能
 
-内置各种实用小功能
-
-香港登录渠道已替换为新版（不用需要安装橘子插件）
-
-**遵循MIT开源协议**，如遇问题或 Bug 欢迎提交 Issues。
+**遵循MIT开源协议**，如遇问题或 Bug 亦或交流，请移步 Issues。
 
 ## 安装
 
 [**Releases-点击进入下载页面**](https://github.com/starmcc/qs-beanfun/releases)
 
-**请下载最新`QsBeanfun-install.exe`进行安装即可。**
+**下载最新`QsBeanfun.zip`开箱即用。**
 
 ---
 
@@ -74,7 +75,9 @@ I don't have a lot of energy to do it.
 
 以释放依赖文件和日志文件使用。
 
-**特别注意：秋水登录器安装路径不能存在中文，不然无法启动游戏**
+> **特别注意：**
+
+`QsBeanfun.exe`目录不能存在中文，否则无法启动游戏
 
 ## 更新
 
@@ -86,56 +89,54 @@ I don't have a lot of energy to do it.
 
 使用秋水登录器内置自动更新功能。
 
-> 注意
+## 实现功能
 
-`4.1.0`之前的版本更新需要卸载后重新安装`install`
+| 功能                                              |
+|-------------------------------------------------|
+| 香港/台湾橘子 <br/>普通登录、双重登录、二维码登录<br/>Ps: 无需安裝游戏橘子插件 |
+| 模拟繁体操作系统环境运行[新枫之谷]                              |
+| 内置会员充值、客服中心、会员中心                                |
+| 免输账密启动/进入游戏                                     |
+| 自动屏蔽游戏启动窗口（可选）                                  |
+| 自动阻止游戏自动更新（可选）                                  | 
+| 一键跳过NGS进程                                       | 
+| 新枫之谷实用网站快捷导航                                    |
+| 游戏自动录像功能(需FFMPEG支持)                             |
+| 其他内置功能                                          |
 
-PS: 需更换JRE环境64位
+## 环境与依赖
 
-## 实现
-
-| 功能                  |      版本      |            描述            |
-|---------------------|:------------:|:------------------------:|
-| 香港/台湾橘子 账号登录/二维码登录  | 台号登录需4.0.0以上 |  通过模拟网页登录，从此告别在网页上启动游戏   |
-| 模拟繁体环境启动新枫之谷游戏      |     ALL      |     告别入谷需要设置区域语言的麻烦      |
-| 内置会员充值、客服中心、会员中心    |     ALL      |     方便充值、反馈问题、查阅账号资料     |
-| 装备卷轴计算器             |     ALL      |         方便计算装备价值         |
-| 免输入账号密码进游戏模式        |     ALL      |       实现方式与网页登录相同        |
-| 自动关闭游戏Play开始窗口      |     ALL      |         加快进入游戏速度         |
-| 中台实时汇率计算            |     ALL      |         一个实用的小功能         |
-| 新枫之谷实用网站快捷导航        |     ALL      | 一些常用的网站整理，妈妈再也不用担心找不到官网啦 |
-| 免Beanfun插件安装        |   3.0.1以上    |    登录器在手,登录->启动一气呵成~     |
-| 游戏自动录像功能(需FFMPEG支持) |   4.0.0以上    |    避免交易/抢图争议、检举外挂/辅助     |
-| JRE(64位)            |   4.1.0以上    |   4.1.0之前使用32位JRE运行环境    |
-| 自动阻止游戏自动更新          |   4.0.0以上    |    防止自动更新带来的灾难，比如文件损坏    |
-| 其他内置功能              |   4.0.0以上    |           便捷功能           |
-
-## 环境
+> 环境
 
 - `Windows7`以上，以`Win10`环境为发布标准。
-- [JRE1.8 x64-64位 (Install包已内置)](https://www.oracle.com/java/technologies/downloads/#jre8-windows)
+- [JRE1.8 x64-64位(Zip已包含)](https://www.oracle.com/java/technologies/downloads/#jre8-windows)
 - [Microsoft Visual C++ Redistributable VC环境](https://aka.ms/vs/17/release/vc_redist.x64.exe)
 
-## 依赖
+> 依赖
 
 - JNA - Java 调用DLL支持
 - FastJson - 阿里JSON解析支持
 - JavaFX - JavaFX-UI库
 - Httpclient - apache HTTP请求支持
 - [LR区域模拟元件支持](https://github.com/InWILL/Locale_Remulator) 模拟繁体区域启动游戏
-- JxBrowser 第三方浏览器插件 [来源](https://blog.csdn.net/weixin_43852094/article/details/121157752) [官网](https://jxbrowser-support.teamdev.com/)
+- JxBrowser
+  第三方浏览器插件 [来源](https://blog.csdn.net/weixin_43852094/article/details/121157752) [官网](https://jxbrowser-support.teamdev.com/)
 
-## 开发/编译
+## 开发与编译
+
+> 开发
 
 1. 导入项目后，需要手动将`lib`目录下的第三方依赖打入本地仓库，否则报红。
+
 ```
 mvn install:install-file -Dfile=./lib/jxbrowser-6.21.jar -DgroupId=com.teamdev.jxbrowser -DartifactId=jxbrowser -Dversion=6.21 -Dpackaging=jar
 mvn install:install-file -Dfile=./lib/jxbrowser-win64-6.21.jar -DgroupId=com.teamdev.jxbrowser -DartifactId=jxbrowser-win64 -Dversion=6.21 -Dpackaging=jar
 mvn install:install-file -Dfile=./lib/license-6.21.jar -DgroupId=com.teamdev.jxbrowser -DartifactId=license -Dversion=6.21 -Dpackaging=jar
 ```
+
 请直接运行上述命令即可。
 
-[编译详细教程](./build/README.md)
+> 编译 -> [编译详细教程](./build/README.md)
 
 ## 安全
 
@@ -159,44 +160,45 @@ certutil -hashfile 该程序路径
 
 `com/starmcc`目录下即是登录器源码。
 
-怎麽反编译`class`文件？
-
-[class文件的反编译过程](https://blog.csdn.net/qq_39674002/article/details/109735298)
+> 怎麽反编译`class`文件？ [class文件的反编译过程](https://blog.csdn.net/qq_39674002/article/details/109735298)
 
 ## 结语
 
-1. 所有不怀好意的指责，都需要时间去验证和打磨。
-2. 能够帮助别人，分享自己的技术实现方案是一件非常愉快的事情，也希望有一些会本系语言的朋友一起优化它，让它更人性化，即使只是我的一厢情愿~~
-3. 凡是第三方工具都是橘子官方明令禁止使用的，最好的方式就是将系统转为繁体语言后使用网页登录，望客官悉知。
-4. 我只是茫茫人海中一个热爱枫谷懂点皮毛技术的玩家，希望新枫之谷会一直运营下去，长盛不衰！
-5. **工具仅供学习使用，下载后请24小时内删除，遵循MIT开源协议**
+1. 所有恶意的指责，都需历经时间的检验与雕琢。
+2. 能帮助他人、分享自身的技术实现方案是极为愉悦之事，也期望能有一些朋友共同对其进行优化，哪怕这只是我的一己之愿~~
+3. 任何第三方工具皆被游戏橘子官方严令禁止使用，最佳方式是将系统转为繁体语言后使用网页登录，望客官知悉。
+4. 我仅是茫茫人海中一位热爱新枫之谷且略懂些许技术的玩家，衷心希望新枫之谷能够一直运营，长盛不衰！
 
-最后奉劝那些指鹿为马的家伙，请心存善念，人生才会充满阳光，加油枫谷人。
+**<p style="font-size:18px">本软件仅供学习使用，下载后请24小时内删除</p>**
+**<p style="font-size:22px">遵循MIT开源协议</p>**
+
+最后奉劝那些指鹿为马的家伙，请心存善念，人生才会充满阳光。
 
 > 枫谷作伴，潇潇洒洒...
 
 # 赞赏
 
-如果您也觉得本项目对您有所帮助，请慷慨的为作者送上一笔赞赏。
+倘若您也认为本项目对您有益，烦请您慷慨地为作者给予一笔赞赏。
 
-在此的每一笔犒劳都将让作者铭记于心！
+在此收到的每一笔赞赏，都将被作者深深铭记！
 
-![Appreciate](./Appreciate.png)
+<image style="width: 200px; height: 200px;" src="./Appreciate.png"></image>
 
 > 打赏大佬名单，由近到远依次排列~
 
-名单中是微信名，如果想用游戏名请在备注上填写哦~
+名单中的是微信名，若想用游戏名，请在备注中填写哟~
 
-再次感谢各位大佬的赞赏，天使定会亲吻善良的你~
+再次衷心感谢各位大佬的赞赏，天使定会轻吻善良的您~
 
-如不想展示可单独联系我删除名字，部分并未展示是实在找不到您的名字
+若不想展示，可单独联系我删除名字，部分未展示是实在未能找到您的名字
 
-> 名单更新时间：2024-2-24
+> 名单更新时间：2024-7-29
 
 |           名单           | 金额（RMB） |
 |:----------------------:|:-------:|
-|          李素雅          |   20.24    |
-|          泡泡茶壶          |   1    |
+|          无名氏           |   200   |
+|          李素雅           |  20.24  |
+|          泡泡茶壶          |    1    |
 |          基泥胎美          |   20    |
 |         华(中国)          |   20    |
 |          奎秃子           |   10    |

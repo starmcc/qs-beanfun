@@ -59,7 +59,7 @@ public class DesTools {
      * @param bArray b组
      * @return {@link String}
      */
-    private static final String bytesToHexString(byte[] bArray) {
+    private static String bytesToHexString(byte[] bArray) {
         if (bArray == null) {
             return "";
         }
@@ -96,7 +96,7 @@ public class DesTools {
     /**
      * 自定义一个key
      *
-     * @param string
+     * @param keyRule
      */
     private static byte[] getKey(String keyRule) {
         Key key = null;

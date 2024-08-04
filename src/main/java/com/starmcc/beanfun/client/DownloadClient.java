@@ -1,7 +1,7 @@
 package com.starmcc.beanfun.client;
 
 import com.starmcc.beanfun.client.impl.DownloadClientImpl;
-import com.starmcc.beanfun.client.impl.HttpClientImpl;
+import lombok.Getter;
 
 import java.io.File;
 import java.math.BigDecimal;
@@ -41,16 +41,17 @@ public abstract class DownloadClient {
     @FunctionalInterface
     public interface Process {
 
+        @Getter
         public static enum State {
-            请求状态码异常(-3, false),
-            连接超时(-2, false),
-            未知异常(-1, false),
-            准备开始(0, true),
-            正在连接(1, true),
-            创建文件(2, true),
-            下载中(3, true),
-            速度回显(4, true),
-            下载完毕(5, true),
+            REQUEST_STATUS_ERR(-3, false),
+            CONNECT_TIMEOUT(-2, false),
+            UNKNOWN_ERR(-1, false),
+            READY_START(0, true),
+            CONNECT_RUNNING(1, true),
+            CREATE_FILE(2, true),
+            DOWNLOAD_RUNNING(3, true),
+            SPEED_ECHO(4, true),
+            DOWNLOAD_OK(5, true),
             ;
             private final int state;
             private final boolean normal;
@@ -60,13 +61,6 @@ public abstract class DownloadClient {
                 this.normal = normal;
             }
 
-            public int getState() {
-                return state;
-            }
-
-            public boolean isNormal() {
-                return normal;
-            }
         }
 
         /**

@@ -15,6 +15,7 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.*;
 import java.util.function.Consumer;
+import java.util.function.Function;
 
 
 /**
@@ -61,7 +62,7 @@ public class HKBeanfunClientImpl extends BeanfunClient {
     }
 
     @Override
-    public BeanfunStringResult login(String account, String password, Object extend, Consumer<Double> process) throws Exception {
+    public BeanfunStringResult login(String account, String password, Function<Object, Object> extendFnc, Consumer<Double> process) throws Exception {
         BeanfunStringResult result = new BeanfunStringResult();
         if (StringUtils.isEmpty(account) || StringUtils.isEmpty(password)) {
             return result.error(BeanfunResult.CodeEnum.ACT_PWD_IS_NULL);
@@ -122,19 +123,30 @@ public class HKBeanfunClientImpl extends BeanfunClient {
             return result.error(BeanfunResult.CodeEnum.LOGIN_ERROR_MSG, errMsg);
         }
 
-        dataList = RegexUtils.regex(RegexUtils.Constant.HK_LOGIN_AKEY, content);
-        String aKey = RegexUtils.getIndex(0, 1, dataList);
-        if (StringUtils.isBlank(aKey)) {
-            // 找不到AK，7月港号新增双重验证 content会返回存在 請輸入雙重驗證碼 关键字
-            if (Objects.isNull(extend)) {
+
+        String aKey = "";
+        boolean dualStatus = RegexUtils.test(RegexUtils.Constant.HK_LOGIN_DUAL, content);
+        if (dualStatus) {
+            // 双重验证 content会返回存在 請輸入雙重驗證碼 关键字
+            if (Objects.isNull(extendFnc)) {
                 return result.error(BeanfunResult.CodeEnum.LOGIN_ERROR_MSG);
             }
-            // 进入双重验证环节 并获取ak
-            result = this.dualVerify(content, sessionKeyResult.getData(), extend);
+            Object objs = extendFnc.apply(null);
+            if (Objects.isNull(objs)) {
+                return result.error(BeanfunResult.CodeEnum.LOGIN_ERROR_MSG);
+            }
+            List<?> dualList = (List<?>) objs;
+            if (DataTools.collectionIsEmpty(dualList)) {
+                return result.error(BeanfunResult.CodeEnum.LOGIN_ERROR_MSG);
+            }
+            result = this.dualVerify(content, sessionKeyResult.getData(), dualList);
             if (!result.isSuccess()) {
                 return result;
             }
             aKey = result.getData();
+        } else {
+            dataList = RegexUtils.regex(RegexUtils.Constant.HK_LOGIN_AKEY, content);
+            aKey = RegexUtils.getIndex(0, 1, dataList);
         }
         process.accept(0.7);
         // 4. 通过akey请求获取webToken
@@ -163,14 +175,13 @@ public class HKBeanfunClientImpl extends BeanfunClient {
     /**
      * 双重验证
      *
-     * @param content     内容
-     * @param otp1        otp1
-     * @param dvDataBuild dv数据
+     * @param content  内容
+     * @param otp1     otp1
+     * @param dualList dv数据
      * @return {@link BeanfunStringResult}
      * @throws Exception 异常
      */
-    private BeanfunStringResult dualVerify(String content, String otp1, Object extend) throws Exception {
-        List<Integer> dualVerifications = (List<Integer>) extend;
+    private BeanfunStringResult dualVerify(String content, String otp1, List<?> dualList) throws Exception {
         BeanfunStringResult result = new BeanfunStringResult();
         List<List<String>> dataList = RegexUtils.regex(RegexUtils.Constant.HK_VIEWSTATE, content);
         String viewstate = RegexUtils.getIndex(0, 1, dataList);
@@ -190,8 +201,8 @@ public class HKBeanfunClientImpl extends BeanfunClient {
                 .addParam("__EVENTVALIDATION", eventvalidation)
                 .addParam("token1", "")
                 .addParam("totpLoginBtn", "登入");
-        for (int i = 0; i < dualVerifications.size(); i++) {
-            params = params.addParam("otpCode" + (i + 1), dualVerifications.get(i).toString());
+        for (int i = 0; i < dualList.size(); i++) {
+            params = params.addParam("otpCode" + (i + 1), dualList.get(i).toString());
         }
         params.addHeader("Origin", "https://login.hk.beanfun.com");
         params.addHeader("Referer", url);
@@ -201,7 +212,7 @@ public class HKBeanfunClientImpl extends BeanfunClient {
             return result.error(BeanfunResult.CodeEnum.REQUEST_ERROR);
         }
         content = qsHttpResponse.getContent();
-        if (content.indexOf("驗證碼錯誤") != -1) {
+        if (content.contains("驗證碼錯誤")) {
             return result.error(BeanfunResult.CodeEnum.DUAL_VERIFICATIONS_ERROR);
         }
         dataList = RegexUtils.regex(RegexUtils.Constant.HK_LOGIN_ERROR_MSG, content);
@@ -234,7 +245,7 @@ public class HKBeanfunClientImpl extends BeanfunClient {
 
         List<List<String>> dataList = RegexUtils.regex(RegexUtils.Constant.TW_ACCOUNT_MAX, content);
         String maxActNumberStr = RegexUtils.getIndex(0, 1, dataList);
-        Integer maxActNumber = 0;
+        int maxActNumber = 0;
         if (StringUtils.isNotBlank(maxActNumberStr)) {
             maxActNumber = Integer.parseInt(maxActNumberStr);
         }
@@ -258,7 +269,7 @@ public class HKBeanfunClientImpl extends BeanfunClient {
         List<Account> accountList = new ArrayList<>();
         for (int i = 0; i < dataList.size(); i++) {
             Account account = new Account();
-            account.setStatus(RegexUtils.getIndex(i, 1, dataList) != "");
+            account.setStatus(!Objects.equals(RegexUtils.getIndex(i, 1, dataList), ""));
             account.setId(RegexUtils.getIndex(i, 2, dataList));
             account.setSn(RegexUtils.getIndex(i, 3, dataList));
             account.setName(RegexUtils.getIndex(i, 4, dataList));
@@ -463,10 +474,9 @@ public class HKBeanfunClientImpl extends BeanfunClient {
     }
 
     @Override
-    public boolean heartbeat() throws Exception {
+    public void heartbeat() throws Exception {
         HttpClient.getInstance().get("https://bfweb.hk.beanfun.com/");
         log.info("心跳 = {}", System.currentTimeMillis());
-        return true;
     }
 
 

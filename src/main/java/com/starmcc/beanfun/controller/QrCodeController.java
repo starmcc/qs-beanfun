@@ -1,13 +1,14 @@
 package com.starmcc.beanfun.controller;
 
-import com.starmcc.beanfun.client.DownloadClient;
+import com.starmcc.beanfun.client.HttpClient;
 import com.starmcc.beanfun.client.QrCodeClient;
 import com.starmcc.beanfun.constant.FXPageEnum;
 import com.starmcc.beanfun.constant.QsConstant;
 import com.starmcc.beanfun.entity.client.BeanfunModel;
 import com.starmcc.beanfun.entity.client.BeanfunQrCodeResult;
 import com.starmcc.beanfun.entity.client.BeanfunStringResult;
-import com.starmcc.beanfun.manager.AdvancedTimerMamager;
+import com.starmcc.beanfun.entity.client.QsHttpResponse;
+import com.starmcc.beanfun.manager.AdvancedTimerManager;
 import com.starmcc.beanfun.manager.FrameManager;
 import com.starmcc.beanfun.manager.ThreadPoolManager;
 import com.starmcc.beanfun.manager.impl.AdvancedTimerTask;
@@ -16,13 +17,11 @@ import javafx.fxml.Initializable;
 import javafx.scene.control.Label;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
-import javafx.scene.input.MouseEvent;
 import javafx.scene.paint.Color;
 import lombok.extern.slf4j.Slf4j;
 
-import java.io.File;
+import java.io.ByteArrayInputStream;
 import java.net.URL;
-import java.util.Objects;
 import java.util.ResourceBundle;
 
 /**
@@ -50,7 +49,7 @@ public class QrCodeController implements Initializable {
 
 
     @FXML
-    public void qrCodeClickAction(MouseEvent mouseEvent) {
+    public void qrCodeClickAction() {
         ThreadPoolManager.execute(this::loadQrCode);
     }
 
@@ -61,7 +60,7 @@ public class QrCodeController implements Initializable {
      * @throws Exception 异常
      */
     private void loadQrCode() throws Exception {
-        AdvancedTimerMamager.getInstance().removeAllTask();
+        AdvancedTimerManager.getInstance().removeAllTask();
         if (ThreadPoolManager.isShutdown()) {
             return;
         }
@@ -87,37 +86,25 @@ public class QrCodeController implements Initializable {
             ThreadPoolManager.execute(this::loadQrCode, false);
             return;
         }
-        DownloadClient.getInstance().execute(
-                new URL(beanfunQrCodeResult.getQrImageUrl()),
-                new File(QsConstant.PATH_APP_PLUGINS + "onlineQrCode.jpg"),
-                (state, file, process, speed, e) -> {
-                    if (state == DownloadClient.Process.State.下载完毕) {
-                        if (Objects.isNull(file)) {
-                            try {
-                                // 下载二维码出现问题 重新下载
-                                Thread.sleep(1000);
-                                ThreadPoolManager.execute(this::loadQrCode, false);
-                            } catch (Exception ex) {
-                                log.error("error={}", e.getMessage(), e);
-                            }
-                            return;
-                        }
-                        FrameManager.getInstance().runLater(() -> {
-                            Image image = new Image(file.toURI().toString());
-                            imageViewQrCode.setImage(image);
-                            labelQrCodeTips.setText("请扫描二维码登录");
-                            labelQrCodeTips.setTextFill(Color.GREEN);
-                        });
-                        // 开始心跳检查
-                        AdvancedTimerMamager.getInstance().addTask(new AdvancedTimerTask() {
-                            @Override
-                            public void start() throws Exception {
-                                checkQrCodeStatus();
-                            }
-                        }, 1000, 2000);
+        QsHttpResponse rsp = HttpClient.getInstance().get(beanfunQrCodeResult.getQrImageUrl());
+        if (!rsp.getSuccess()) {
+            this.loadQrCode();
+            return;
+        }
+        FrameManager.getInstance().runLater(() -> {
+            Image image = new Image(new ByteArrayInputStream(rsp.getByteData()));
+            imageViewQrCode.setImage(image);
+            labelQrCodeTips.setText("请扫描二维码登录");
+            labelQrCodeTips.setTextFill(Color.GREEN);
+        });
 
-                    }
-                });
+        // 开始心跳检查
+        AdvancedTimerManager.getInstance().addTask(new AdvancedTimerTask() {
+            @Override
+            public void start() throws Exception {
+                checkQrCodeStatus();
+            }
+        }, 1000, 2000);
     }
 
     /**
@@ -147,9 +134,9 @@ public class QrCodeController implements Initializable {
             QsConstant.beanfunModel.setToken(loginResult.getData());
             FrameManager.getInstance().runLater(() -> {
                 try {
-                    FrameManager.getInstance().openWindow(FXPageEnum.主页);
-                    FrameManager.getInstance().closeWindow(FXPageEnum.登录页);
-                    FrameManager.getInstance().closeWindow(FXPageEnum.二维码登录);
+                    FrameManager.getInstance().openWindow(FXPageEnum.MAIN);
+                    FrameManager.getInstance().closeWindow(FXPageEnum.LOGIN);
+                    FrameManager.getInstance().closeWindow(FXPageEnum.QR_CODE);
                 } catch (Exception e) {
                     log.error("error = {}", e.getMessage(), e);
                 }

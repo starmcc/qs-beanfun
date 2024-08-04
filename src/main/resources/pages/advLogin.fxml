@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.*?>
+<?import javafx.scene.image.ImageView?>
+<?import javafx.scene.layout.*?>
+<AnchorPane fx:controller="com.starmcc.beanfun.controller.AdvLoginController" xmlns="http://javafx.com/javafx/8"
+            xmlns:fx="http://javafx.com/fxml/1">
+    <children>
+        <GridPane hgap="3.0" vgap="3.0" AnchorPane.bottomAnchor="10.0" AnchorPane.leftAnchor="10.0"
+                  AnchorPane.rightAnchor="10.0" AnchorPane.topAnchor="10.0">
+            <columnConstraints>
+                <ColumnConstraints halignment="RIGHT" hgrow="SOMETIMES" minWidth="-Infinity"/>
+                <ColumnConstraints halignment="CENTER" hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0"/>
+                <ColumnConstraints halignment="CENTER" hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0"/>
+                <ColumnConstraints hgrow="SOMETIMES" minWidth="-Infinity"/>
+            </columnConstraints>
+            <rowConstraints>
+                <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES"/>
+                <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES"/>
+                <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES"/>
+                <RowConstraints minHeight="-Infinity" vgrow="SOMETIMES"/>
+                <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES"/>
+            </rowConstraints>
+            <children>
+                <Label fx:id="label1" text="提示："/>
+                <Label fx:id="label2" text="手机号码：" GridPane.rowIndex="1"/>
+                <Label fx:id="label3" text="验证码：" GridPane.rowIndex="2"/>
+                <TextField fx:id="textFieldPhone" GridPane.columnIndex="1" GridPane.columnSpan="2"
+                           GridPane.rowIndex="1"/>
+                <CheckBox fx:id="checkBoxSave" mnemonicParsing="false" text="保存" GridPane.columnIndex="3"
+                          GridPane.rowIndex="1"/>
+                <TextField fx:id="textFieldCode" GridPane.columnIndex="1" GridPane.columnSpan="2"
+                           GridPane.rowIndex="2"/>
+                <Button onAction="#continueLogin" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308"
+                        mnemonicParsing="false" text="确认送出" GridPane.columnIndex="1" GridPane.columnSpan="2"
+                        GridPane.rowIndex="4"/>
+                <ImageView fx:id="imageViewCode" fitHeight="45.0" fitWidth="200.0" pickOnBounds="true"
+                           preserveRatio="true" GridPane.columnIndex="1" GridPane.columnSpan="2" GridPane.rowIndex="3"/>
+                <Label fx:id="labelPhoneTips" text="00XXXX" GridPane.columnIndex="1" GridPane.columnSpan="2"/>
+            </children>
+        </GridPane>
+    </children>
+</AnchorPane>

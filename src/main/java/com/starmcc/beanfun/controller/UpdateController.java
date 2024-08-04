@@ -65,18 +65,18 @@ public class UpdateController implements Initializable {
             DownloadClient.getInstance().execute(new URL(model.getUrl()), new File(fileName), (state, file, process, speed, e) -> {
                 if (!state.isNormal()) {
                     FrameManager.getInstance().runLater(() -> {
-                        FrameManager.getInstance().message("更新失败-" + state.toString(), Alert.AlertType.WARNING);
+                        FrameManager.getInstance().messageMaster("更新失败-" + state.toString(), Alert.AlertType.WARNING);
                         if (Objects.nonNull(e)) {
                             log.error("更新失败 e={}", e.getMessage(), e);
                         }
-                        FrameManager.getInstance().closeWindow(FXPageEnum.更新页);
+                        FrameManager.getInstance().closeWindow(FXPageEnum.UPDATE);
                     });
                     return;
                 }
-                if (state == DownloadClient.Process.State.下载中) {
+                if (state == DownloadClient.Process.State.DOWNLOAD_RUNNING) {
                     progressBar.setProgress(process / 100D);
                     FrameManager.getInstance().runLater(() -> labelProcess.setText(process + "%"));
-                } else if (state == DownloadClient.Process.State.速度回显) {
+                } else if (state == DownloadClient.Process.State.SPEED_ECHO) {
                     FrameManager.getInstance().runLater(() -> {
                         String speedTxt = "";
                         BigDecimal b1024 = new BigDecimal(1024);
@@ -89,7 +89,7 @@ public class UpdateController implements Initializable {
                     });
                 }
 
-                if (state != DownloadClient.Process.State.下载完毕) {
+                if (state != DownloadClient.Process.State.DOWNLOAD_OK) {
                     return;
                 }
 

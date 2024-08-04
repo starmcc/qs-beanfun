@@ -6,6 +6,8 @@ import com.starmcc.beanfun.manager.impl.FrameManagerImpl;
 import javafx.scene.control.Alert;
 import javafx.stage.Stage;
 
+import java.util.function.Consumer;
+
 
 /**
  * 框架管理器
@@ -49,6 +51,33 @@ public interface FrameManager {
      * @throws Exception 异常
      */
     void openWindow(FXPageEnum page) throws Exception;
+
+
+    /**
+     * 打开窗口
+     *
+     * @param page       页面
+     * @param parentPage 父页面
+     * @throws Exception 异常
+     */
+    void openWindowSync(FXPageEnum page, FXPageEnum parentPage) throws Exception;
+
+    /**
+     * 打开窗口
+     *
+     * @param page        页面
+     * @param parentStage 父页面
+     * @throws Exception 异常
+     */
+    void openWindowSync(FXPageEnum page, Stage parentStage) throws Exception;
+
+    /**
+     * 打开窗口
+     *
+     * @param page 页面
+     * @throws Exception 异常
+     */
+    void openWindowSync(FXPageEnum page) throws Exception;
 
     /**
      * 关闭窗口
@@ -99,38 +128,64 @@ public interface FrameManager {
     void killAllTask();
 
     /**
-     * 消息框(同步)
-     *
-     * @param msg       msg
-     * @param alertType 警报类型
-     */
-    void messageSync(String msg, Alert.AlertType alertType);
-
-    /**
-     * 消息框(同步)
-     *
-     * @param msg       msg
-     * @param alertType 警报类型
-     * @param runnable  回调
-     */
-    void messageSync(String msg, Alert.AlertType alertType, Runnable runnable);
-
-    /**
-     * 消息框(主线程适配-异步)
-     *
-     * @param msg       消息
-     * @param alertType 警报类型
+     * 消息 (同步)
      */
     void message(String msg, Alert.AlertType alertType);
 
     /**
-     * 消息框(主线程适配-异步)
-     *
-     * @param msg       消息
-     * @param alertType 警报类型
-     * @param runnable  回调
+     * 消息 (同步)
      */
-    void message(String msg, Alert.AlertType alertType, Runnable runnable);
+    void message(String msg, Alert.AlertType alertType, FXPageEnum parentPage);
+
+    /**
+     * 消息 (同步)
+     */
+    void message(String msg, Alert.AlertType alertType, FXPageEnum parentPage, Consumer<Alert> consumer);
+
+    /**
+     * 消息 (异步)
+     */
+    void messageAsync(String msg, Alert.AlertType alertType);
+
+    /**
+     * 消息 (异步)
+     */
+    void messageAsync(String msg, Alert.AlertType alertType, FXPageEnum parentPage);
+
+    /**
+     * 消息 (异步)
+     */
+    void messageAsync(String msg, Alert.AlertType alertType, FXPageEnum parentPage, Consumer<Alert> consumer);
+
+    /**
+     * 消息 (主线程-同步)
+     */
+    void messageMaster(String msg, Alert.AlertType alertType);
+
+    /**
+     * 消息 (主线程-同步)
+     */
+    void messageMaster(String msg, Alert.AlertType alertType, FXPageEnum parentPage);
+
+    /**
+     * 消息 (主线程-同步)
+     */
+    void messageMaster(String msg, Alert.AlertType alertType, FXPageEnum parentPage, Consumer<Alert> consumer);
+
+    /**
+     * 消息 (主线程-异步)
+     */
+    void messageMasterAsync(String msg, Alert.AlertType alertType);
+
+    /**
+     * 消息 (主线程-异步)
+     */
+    void messageMasterAsync(String msg, Alert.AlertType alertType, FXPageEnum parentPage);
+
+    /**
+     * 消息 (主线程-异步)
+     */
+    void messageMasterAsync(String msg, Alert.AlertType alertType, FXPageEnum parentPage, Consumer<Alert> consumer);
 
     /**
      * 文本输入框
