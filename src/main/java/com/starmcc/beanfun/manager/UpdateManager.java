@@ -1,8 +1,8 @@
 package com.starmcc.beanfun.manager;
 
-import com.alibaba.fastjson.JSON;
-import com.alibaba.fastjson.JSONArray;
-import com.alibaba.fastjson.JSONObject;
+import com.alibaba.fastjson2.JSON;
+import com.alibaba.fastjson2.JSONArray;
+import com.alibaba.fastjson2.JSONObject;
 import com.starmcc.beanfun.client.HttpClient;
 import com.starmcc.beanfun.constant.FXPageEnum;
 import com.starmcc.beanfun.constant.QsConstant;
@@ -14,6 +14,8 @@ import com.starmcc.beanfun.entity.model.Version;
 import javafx.scene.control.Alert;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
+
+import java.util.Objects;
 
 /**
  * 更新客户端
@@ -96,15 +98,12 @@ public class UpdateManager {
         try {
             ConfigModel.UpdateChannel updateChannel = ConfigModel.UpdateChannel.get(QsConstant.config.getUpdateChannel());
             String url = "";
-            switch (updateChannel) {
-                case GITEE:
-                    // 使用gitee
-                    url = QsConstant.GITEE_API_LATSET;
-                    break;
-                default:
-                    // 使用github
-                    url = QsConstant.GITHUB_API_LATSET;
-                    break;
+            if (Objects.requireNonNull(updateChannel) == ConfigModel.UpdateChannel.GITEE) {
+                // 使用gitee
+                url = QsConstant.GITEE_API_LATSET;
+            } else {
+                // 使用github
+                url = QsConstant.GITHUB_API_LATSET;
             }
             QsHttpResponse qsHttpResponse = HttpClient.getInstance().get(url);
             if (!qsHttpResponse.getSuccess()) {

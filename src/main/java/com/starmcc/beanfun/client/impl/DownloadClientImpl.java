@@ -108,11 +108,10 @@ public class DownloadClientImpl extends DownloadClient {
             bos = new ByteArrayOutputStream();
             taskName = AdvancedTimerManager.getInstance().addTask(new AdvancedTimerTask() {
                 private long temp = 0;
-                private BigDecimal speed = BigDecimal.ZERO;
 
                 @Override
                 public void start() throws Exception {
-                    speed = new BigDecimal(progres - temp);
+                    BigDecimal speed = new BigDecimal(progres - temp);
                     temp = progres;
                     process.call(Process.State.SPEED_ECHO, null, null, speed.divide(new BigDecimal(1000), 2, RoundingMode.HALF_UP), null);
                 }

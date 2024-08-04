@@ -8,18 +8,24 @@
     <artifactId>qs-beanfun</artifactId>
     <version>1.0.0</version>
     <name>QsBeanfun</name>
+    <organization>
+        <name>Starmcc</name>
+    </organization>
+    <inceptionYear>2021</inceptionYear>
+    <description>QsBeanfun for Third-party login tools</description>
 
     <properties>
         <maven.compiler.source>8</maven.compiler.source>
         <maven.compiler.target>8</maven.compiler.target>
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <version.lombok>1.18.10</version.lombok>
-        <version.fastJson>1.2.75</version.fastJson>
+        <version.fastJson2>2.0.52</version.fastJson2>
         <version.jna>5.10.0</version.jna>
         <version.httpclient>4.5.13</version.httpclient>
-        <version.commons-text>1.9</version.commons-text>
-        <version.logback-classic>1.2.3</version.logback-classic>
+        <version.commons-text>1.10.0</version.commons-text>
+        <version.logback-classic>1.2.13</version.logback-classic>
         <version.jna-platform-jpms>5.10.0</version.jna-platform-jpms>
-        <version.maven-shade-plugin>1.2.1</version.maven-shade-plugin>
+        <version.maven-assembly-plugin>3.7.1</version.maven-assembly-plugin>
         <version.launch4j-maven-plugin>2.5.1</version.launch4j-maven-plugin>
     </properties>
 
@@ -33,9 +39,9 @@
         </dependency>
         <!--    fastjson    -->
         <dependency>
-            <groupId>com.alibaba</groupId>
-            <artifactId>fastjson</artifactId>
-            <version>${version.fastJson}</version>
+            <groupId>com.alibaba.fastjson2</groupId>
+            <artifactId>fastjson2</artifactId>
+            <version>${version.fastJson2}</version>
         </dependency>
         <!--    jna  com组件调度工具   -->
         <dependency>
@@ -84,13 +90,12 @@
     </dependencies>
 
     <build>
-        <finalName>${artifactId}</finalName>
-
+        <finalName>${project.artifactId}</finalName>
         <plugins>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-assembly-plugin</artifactId>
-                <version>2.6</version>
+                <version>${version.maven-assembly-plugin}</version>
                 <configuration>
                     <appendAssemblyId>false</appendAssemblyId>
                     <archive>
@@ -101,6 +106,7 @@
                     <descriptorRefs>
                         <descriptorRef>jar-with-dependencies</descriptorRef>
                     </descriptorRefs>
+                    <recompressZippedFiles>false</recompressZippedFiles>
                 </configuration>
                 <executions>
                     <execution>
@@ -128,7 +134,7 @@
                             <!--输出的exe文件-->
                             <outfile>${project.build.directory}/QsBeanfun.exe</outfile>
                             <!--需要打包的Jar文件-->
-                            <jar>${project.build.directory}/${artifactId}.jar</jar>
+                            <jar>${project.build.directory}/${project.artifactId}.jar</jar>
                             <classPath>
                                 <mainClass>com.starmcc.beanfun.QsBeanfunApplication</mainClass>
                                 <addDependencies>true</addDependencies>
@@ -140,34 +146,29 @@
                             <manifest>./build/exe.manifest</manifest>
                             <downloadUrl>https://www.oracle.com/java/technologies/downloads/#jre8-windows</downloadUrl>
                             <priority>high</priority>
-<!--                            <singleInstance>-->
-<!--                                <mutexName>${name}</mutexName>-->
-<!--                                <windowTitle>${name}</windowTitle>-->
-<!--                            </singleInstance>-->
+                            <!--                            <singleInstance>-->
+                            <!--                                <mutexName>${name}</mutexName>-->
+                            <!--                                <windowTitle>${name}</windowTitle>-->
+                            <!--                            </singleInstance>-->
                             <!--配置jre-->
                             <jre>
                                 <minVersion>1.8.0</minVersion>
-                                <bundledJre64Bit>false</bundledJre64Bit>
-                                <bundledJreAsFallback>false</bundledJreAsFallback>
-                                <jdkPreference>preferJdk</jdkPreference>
-                                <initialHeapSize>128</initialHeapSize>
-                                <maxHeapSize>1024</maxHeapSize>
-                                <runtimeBits>64</runtimeBits>
                                 <path>./jre</path>
+                                <requires64Bit/>
                                 <opts>
                                     <opt>-Dglass.win.minHiDPI=1</opt>
                                 </opts>
                             </jre>
                             <versionInfo>
-                                <fileVersion>${version}.0</fileVersion>
-                                <txtFileVersion>${version}</txtFileVersion>
-                                <fileDescription>${name}</fileDescription>
-                                <copyright>starmcc</copyright>
-                                <productVersion>${version}.0</productVersion>
-                                <txtProductVersion>${name}</txtProductVersion>
-                                <productName>${name}</productName>
-                                <internalName>${name}</internalName>
-                                <originalFilename>${name}.exe</originalFilename>
+                                <fileVersion>${project.version}.0</fileVersion>
+                                <txtFileVersion>${project.version}</txtFileVersion>
+                                <fileDescription>${project.name}</fileDescription>
+                                <copyright>Starmcc</copyright>
+                                <productVersion>${project.version}.0</productVersion>
+                                <txtProductVersion>${project.name}</txtProductVersion>
+                                <productName>${project.name}</productName>
+                                <internalName>${project.name}</internalName>
+                                <originalFilename>${project.name}.exe</originalFilename>
                                 <language>SIMPLIFIED_CHINESE</language>
                             </versionInfo>
                         </configuration>
