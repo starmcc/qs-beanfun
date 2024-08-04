@@ -125,8 +125,6 @@ public class LoginController implements Initializable {
      */
     @FXML
     public void loginAction() {
-        comboBoxAccount.setValue("qiushuixiaomeng@outlook.com");
-        passwordFieldPassword.setText("Xmbpt46183790");
         LoadPage.task(FXPageEnum.LOGIN, (label) -> {
             String taskName = "";
             try {
