@@ -42,15 +42,19 @@ I don't have a lot of energy to do it.
 
 引用[LR区域模拟元件](https://github.com/InWILL/Locale_Remulator)，支持`32/64bit`台服新枫之谷游戏运行。
 
+---
+
 <p style="font-size: 20px;color: palevioletred">于2024年7月我做了个糊涂又明智的决定</p>
 <p style="font-size: 20px;color: palevioletred">QsBeanfun5.x系列将采用Python语言重新开发！</p>
 <p style="color: palevioletred">至于什么时候完成，慢慢等吧，或许很快！</p>
 <p style="font-size: 18px;color: #00a1ff">QsBeanfun 4.x.x 系列为永存维护版本</p>
 
+---
+
 > 支持登录方式
 
-1. 香港账号 - (账密/双重验证)
-2. 台湾账号 - (账密/进阶登录/(二维码/QR码))
+1. 香港地区账号 - (账密/双重验证)
+2. 台湾地区账号 - (账密/进阶登录/(二维码/QR码))
 3. 内置各种实用小功能
 
 **遵循MIT开源协议**，如遇问题或 Bug 亦或交流，请移步 Issues。

@@ -42,15 +42,19 @@ I don't have a lot of energy to do it.
 
 引用[LR區域模擬元件](https://github.com/InWILL/Locale_Remulator)，支持`32/64bit`臺服新楓之谷遊戲運行。
 
+---
+
 <p style="font-size: 20px;color: palevioletred">於2024年7月我做了個糊塗又明智的決定</p>
 <p style="font-size: 20px;color: palevioletred">QsBeanfun5.x系列將采用Python語言重新開發！</p>
 <p style="color: palevioletred">至於什麽時候完成，慢慢等吧，或許很快！</p>
 <p style="font-size: 18px;color: #00a1ff">QsBeanfun 4.x.x 系列為永存維護版本</p>
 
+---
+
 > 支持登錄方式
 
-1. 香港賬號 - (賬密/雙重驗證)
-2. 臺灣賬號 - (賬密/二維碼/QR碼)
+1. 香港地區賬號 - (賬密/雙重驗證)
+2. 臺灣地區賬號 - (賬密/進階登錄/(二維碼/QR碼))
 3. 內置各種實用小功能
 
 **遵循MIT開源協議**，如遇問題或 Bug 亦或交流，請移步 Issues。
