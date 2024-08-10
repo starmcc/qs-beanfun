@@ -6,6 +6,7 @@ import com.starmcc.beanfun.entity.model.JFXStage;
 import com.starmcc.beanfun.entity.model.QsTray;
 import com.starmcc.beanfun.entity.param.WindowXyParam;
 import com.starmcc.beanfun.entity.thread.ThrowRunnable;
+import com.starmcc.beanfun.entity.thread.ThrowSupplier;
 import com.starmcc.beanfun.manager.*;
 import javafx.application.Platform;
 import javafx.fxml.FXMLLoader;
@@ -22,6 +23,7 @@ import java.awt.*;
 import java.net.URI;
 import java.util.Objects;
 import java.util.Optional;
+import java.util.concurrent.CompletableFuture;
 import java.util.function.Consumer;
 
 /**
@@ -102,16 +104,33 @@ public class FrameManagerImpl implements FrameManager {
 
     @Override
     public void runLater(ThrowRunnable throwRunnable) {
-        Platform.runLater(() -> throwRunnable(throwRunnable));
+        Platform.runLater(() -> {
+            try {
+                throwRunnable.run();
+            } catch (Exception e) {
+                throw new RuntimeException(e);
+            }
+        });
     }
 
-    private static void throwRunnable(ThrowRunnable throwRunnable) {
+    @Override
+    public <T> T runLater(ThrowSupplier<T> throwSupplier) {
+        CompletableFuture<T> future = new CompletableFuture<>();
+        Platform.runLater(() -> {
+            try {
+                future.complete(throwSupplier.get());
+            } catch (Exception e) {
+                throw new RuntimeException(e);
+            }
+        });
         try {
-            throwRunnable.run();
+            // 阻塞等待异步操作完成并获取结果
+            return future.get();
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
     }
+
 
     @Override
     public void openWebUrl(String url) {

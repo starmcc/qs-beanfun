@@ -15,7 +15,7 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.*;
 import java.util.function.Consumer;
-import java.util.function.Function;
+import java.util.function.Supplier;
 
 
 /**
@@ -62,7 +62,7 @@ public class HKBeanfunClientImpl extends BeanfunClient {
     }
 
     @Override
-    public BeanfunStringResult login(String account, String password, Function<Object, Object> extendFnc, Consumer<Double> process) throws Exception {
+    public BeanfunStringResult login(String account, String password, Supplier<Object> extendFnc, Consumer<Double> process) throws Exception {
         BeanfunStringResult result = new BeanfunStringResult();
         if (StringUtils.isEmpty(account) || StringUtils.isEmpty(password)) {
             return result.error(BeanfunResult.CodeEnum.ACT_PWD_IS_NULL);
@@ -131,7 +131,7 @@ public class HKBeanfunClientImpl extends BeanfunClient {
             if (Objects.isNull(extendFnc)) {
                 return result.error(BeanfunResult.CodeEnum.LOGIN_ERROR_MSG);
             }
-            Object objs = extendFnc.apply(null);
+            Object objs = extendFnc.get();
             if (Objects.isNull(objs)) {
                 return result.error(BeanfunResult.CodeEnum.LOGIN_ERROR_MSG);
             }

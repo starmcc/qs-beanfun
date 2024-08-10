@@ -2,6 +2,7 @@ package com.starmcc.beanfun.manager;
 
 import com.starmcc.beanfun.constant.FXPageEnum;
 import com.starmcc.beanfun.entity.thread.ThrowRunnable;
+import com.starmcc.beanfun.entity.thread.ThrowSupplier;
 import com.starmcc.beanfun.manager.impl.FrameManagerImpl;
 import javafx.scene.control.Alert;
 import javafx.stage.Stage;
@@ -121,6 +122,12 @@ public interface FrameManager {
      */
     void runLater(ThrowRunnable throwRunnable);
 
+    /**
+     * JavaFx主线程运行(同步返回结果)
+     *
+     * @param throwSupplier throwSupplier
+     */
+    <T> T runLater(ThrowSupplier<T> throwSupplier);
 
     /**
      * 杀死所有内置线程和任务,并退出托盘

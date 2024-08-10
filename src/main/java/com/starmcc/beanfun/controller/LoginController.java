@@ -169,7 +169,7 @@ public class LoginController implements Initializable {
     }
 
 
-    private Object extendFnc(Object msg) {
+    private Object extendFnc() {
         LoginType.TypeEnum type = LoginType.TypeEnum.getData(QsConstant.config.getLoginType());
         if (type == LoginType.TypeEnum.HK) {
             // 香港双重验证
@@ -183,19 +183,25 @@ public class LoginController implements Initializable {
 
     private List<Integer> getHkDvData() {
         // 用户请输入一个验证
-        String data = FrameManager.getInstance().dialogText("请输入双重验证码", "");
-        data = data.trim();
-        boolean is = RegexUtils.test(RegexUtils.Constant.COMMON_SIX_NUMBER, data);
-        if (!is) {
+        List<Integer> list = FrameManager.getInstance().runLater(() -> {
+            String data = FrameManager.getInstance().dialogText("请输入双重验证码", "");
+            data = data.trim();
+            boolean is = RegexUtils.test(RegexUtils.Constant.COMMON_SIX_NUMBER, data);
+            if (!is) {
+                return new ArrayList<>();
+
+            }
+            List<Integer> result = new ArrayList<>();
+            char[] chars = data.toCharArray();
+            for (char c : chars) {
+                result.add(Integer.parseInt(String.valueOf(c)));
+            }
+            return result;
+        });
+        if (DataTools.collectionIsEmpty(list)) {
             if (FrameManager.getInstance().dialogConfirm("验证码错误", "您输入的验证码错误,是否重新输入？")) {
                 return getHkDvData();
             }
-            return new ArrayList<>();
-        }
-        List<Integer> list = new ArrayList<>();
-        char[] chars = data.toCharArray();
-        for (char c : chars) {
-            list.add(Integer.parseInt(String.valueOf(c)));
         }
         return list;
     }

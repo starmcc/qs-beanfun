@@ -17,7 +17,7 @@ import java.text.SimpleDateFormat;
 import java.util.*;
 import java.util.concurrent.CountDownLatch;
 import java.util.function.Consumer;
-import java.util.function.Function;
+import java.util.function.Supplier;
 
 /**
  * twbeanfun客户端实现
@@ -59,7 +59,7 @@ public class TWBeanfunClientImpl extends BeanfunClient {
         return result.success();
     }
 
-    public String davLogin(String lt, Function<Object, Object> extendFnc) throws Exception {
+    public String davLogin(String lt, Supplier<Object> extendFnc) throws Exception {
         CountDownLatch latch = new CountDownLatch(1);
         Map<String, String> result = new HashMap<>();
         result.put("aKey", "");
@@ -92,13 +92,13 @@ public class TWBeanfunClientImpl extends BeanfunClient {
                 }
             }
         }, 0, 3000);
-        extendFnc.apply(null);
+        extendFnc.get();
         latch.await();
         return result.get("aKey");
     }
 
     @Override
-    public BeanfunStringResult login(String account, String password, Function<Object, Object> extendFnc, Consumer<Double> process) throws Exception {
+    public BeanfunStringResult login(String account, String password, Supplier<Object> extendFnc, Consumer<Double> process) throws Exception {
         BeanfunStringResult result = new BeanfunStringResult();
         if (StringUtils.isEmpty(account) || StringUtils.isEmpty(password)) {
             return result.error(BeanfunResult.CodeEnum.ACT_PWD_IS_NULL);

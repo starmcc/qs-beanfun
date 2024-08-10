@@ -16,7 +16,7 @@ import org.apache.http.cookie.Cookie;
 import java.util.List;
 import java.util.Objects;
 import java.util.function.Consumer;
-import java.util.function.Function;
+import java.util.function.Supplier;
 
 /**
  * beanfun客户端
@@ -66,7 +66,7 @@ public abstract class BeanfunClient {
      * @return {@link BeanfunStringResult}
      * @throws Exception 异常
      */
-    public abstract BeanfunStringResult login(String account, String password, Function<Object, Object> extendFnc, Consumer<Double> process) throws Exception;
+    public abstract BeanfunStringResult login(String account, String password, Supplier<Object> extendFnc, Consumer<Double> process) throws Exception;
 
 
     /**
