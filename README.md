@@ -46,7 +46,7 @@ I don't have a lot of energy to do it.
 
 <p style="font-size: 20px;color: palevioletred">于2024年7月我做了个糊涂又明智的决定</p>
 <p style="font-size: 20px;color: palevioletred">QsBeanfun5.x系列将采用Python语言重新开发！</p>
-<p style="color: palevioletred">至于什么时候完成，慢慢等吧，或许很快！</p>
+<p style="color: palevioletred">目前功能已基本完成，或许很快就和大家见面了！</p>
 <p style="font-size: 18px;color: #00a1ff">QsBeanfun 4.x.x 系列为永存维护版本</p>
 
 ---
@@ -196,10 +196,11 @@ certutil -hashfile 该程序路径
 
 若不想展示，可单独联系我删除名字，部分未展示是实在未能找到您的名字
 
-> 名单更新时间：2024-7-29
+> 名单更新时间：2025-2-8
 
 |           名单           | 金额（RMB） |
 |:----------------------:|:-------:|
+|          匿名者           |   60   |
 |          无名氏           |   200   |
 |          李素雅           |  20.24  |
 |          泡泡茶壶          |    1    |
