@@ -44,10 +44,11 @@ I don't have a lot of energy to do it.
 
 ---
 
-<p style="font-size: 20px;color: palevioletred">于2024年7月我做了个糊涂又明智的决定</p>
-<p style="font-size: 20px;color: palevioletred">QsBeanfun5.x系列将采用Python语言重新开发！</p>
-<p style="color: palevioletred">目前功能已基本完成，或许很快就和大家见面了！</p>
-<p style="font-size: 18px;color: #00a1ff">QsBeanfun 4.x.x 系列为永存维护版本</p>
+## QsBeanfun 5
+
+### QsBeanfun 5.x 已发布
+
+#### *QsBeanfun 4.x 系列为长期维护版本，不会在更新新的功能，于2026年停止所有维护。*
 
 ---
 
