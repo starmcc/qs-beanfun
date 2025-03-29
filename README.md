@@ -46,7 +46,7 @@ I don't have a lot of energy to do it.
 
 ## QsBeanfun 5
 
-### QsBeanfun 5.x 已发布
+### [QsBeanfun 5.x 已发布 点这里前往](https://github.com/starmcc/qs-beanfun-5)
 
 #### *QsBeanfun 4.x 系列为长期维护版本，不会在更新新的功能，于2026年停止所有维护。*
 
